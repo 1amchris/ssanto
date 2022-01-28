@@ -43,7 +43,9 @@ You can also document commands to lint the code or run tests. These steps help t
 ## Authors and acknowledgment
 
 Authors of SSANTO: Martijn Kuller et al.
+
 Development initiative: Françoise Bichai
+
 Development team:
 
 - Christophe Beaulieu
