@@ -10,6 +10,7 @@ import {
   incrementIfOdd,
   selectCount,
 } from '../store/reducers/counter';
+import { FaPlus, FaMinus } from 'react-icons/fa';
 
 export default withTranslation()(function Counter({ t }: any) {
   const count = useAppSelector(selectCount);
@@ -26,7 +27,7 @@ export default withTranslation()(function Counter({ t }: any) {
           aria-label="Decrement value"
           onClick={() => dispatch(decrement())}
         >
-          - {t('decrement-value')}
+          <FaMinus /> {t('decrement-value')}
         </button>
         <span className="badge bg-primary mx-2">{count}</span>
         <button
@@ -34,7 +35,7 @@ export default withTranslation()(function Counter({ t }: any) {
           aria-label="Increment value"
           onClick={() => dispatch(increment())}
         >
-          + {t('increment-value')}
+          <FaPlus /> {t('increment-value')}
         </button>
       </div>
       <div className="row g-1 mb-2">
