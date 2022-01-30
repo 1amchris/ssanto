@@ -19,16 +19,18 @@ function App({ t }: any) {
   const file = 'src/App.tsx';
 
   return (
-    <div className="App">
+    <div className="App container mt-4">
       <header className="App-header">
-        <h2>{t('welcome-message')}</h2>
-        <Counter />
-        <p>
-          <Trans i18nKey="edit-and-save-to-reload" file={file}>
-            Edit <code>{{ file }}</code> and save to reload.
-          </Trans>
-        </p>
+        <h2 className="mb-2">{t('welcome-message')}</h2>
       </header>
+      <main>
+        <Counter />
+      </main>
+      <footer className="alert alert-warning">
+        <Trans i18nKey="edit-and-save-to-reload" file={file}>
+          Edit <code>{{ file }}</code> and save to reload.
+        </Trans>
+      </footer>
     </div>
   );
 }

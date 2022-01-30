@@ -19,35 +19,49 @@ export default withTranslation()(function Counter({ t }: any) {
   const incrementValue = Number(incrementAmount) || 0;
 
   return (
-    <div>
-      <div>
+    <div className="w-100 p-2 card mb-2">
+      <div className="mb-2">
         <button
+          className="btn btn-sm btn-outline-danger"
           aria-label="Decrement value"
           onClick={() => dispatch(decrement())}
         >
           - {t('decrement-value')}
         </button>
-        <span>{count}</span>
+        <span className="badge bg-primary mx-2">{count}</span>
         <button
+          className="btn btn-sm btn-outline-success"
           aria-label="Increment value"
           onClick={() => dispatch(increment())}
         >
           + {t('increment-value')}
         </button>
       </div>
-      <div>
-        <input
-          aria-label="Set increment amount"
-          value={incrementAmount}
-          onChange={e => setIncrementAmount(e.target.value)}
-        />
-        <button onClick={() => dispatch(incrementByAmount(incrementValue))}>
+      <div className="row g-1 mb-2">
+        <div className="col-auto">
+          <input
+            className="form-control"
+            aria-label="Set increment amount"
+            value={incrementAmount}
+            onChange={e => setIncrementAmount(e.target.value)}
+          />
+        </div>
+        <button
+          className="btn col-auto"
+          onClick={() => dispatch(incrementByAmount(incrementValue))}
+        >
           Add Amount
         </button>
-        <button onClick={() => dispatch(incrementAsync(incrementValue))}>
+        <button
+          className="btn col-auto"
+          onClick={() => dispatch(incrementAsync(incrementValue))}
+        >
           Add Async
         </button>
-        <button onClick={() => dispatch(incrementIfOdd(incrementValue))}>
+        <button
+          className="btn col-auto"
+          onClick={() => dispatch(incrementIfOdd(incrementValue))}
+        >
           Add If Odd
         </button>
       </div>

@@ -1,6 +1,6 @@
 {
   "translation": {
-    "welcome-message": "Bienvenue à React et react-i18next",
+    "welcome-message": "Bienvenue à React",
     "edit-and-save-to-reload": "Modifier <1>{{ file }}</1> et sauvegarder pour recharger."
   }
 }
