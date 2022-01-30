@@ -7,11 +7,6 @@ export interface CounterState {
   status: 'idle' | 'loading' | 'failed';
 }
 
-const initialState: CounterState = {
-  value: 0,
-  status: 'idle',
-};
-
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
 // will call the thunk with the `dispatch` function as the first argument. Async
@@ -28,14 +23,12 @@ export const incrementAsync = createAsyncThunk(
 
 export const counterSlice = createSlice({
   name: 'counter',
-  initialState,
-  // The `reducers` field lets us define reducers and generate associated actions
+  initialState: {
+    value: 0,
+    status: 'idle',
+  } as CounterState,
   reducers: {
     increment: state => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
       state.value += 1;
     },
     decrement: state => {

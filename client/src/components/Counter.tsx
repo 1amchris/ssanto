@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { withTranslation } from 'react-i18next';
 
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import {
@@ -10,7 +11,7 @@ import {
   selectCount,
 } from '../store/reducers/counter';
 
-export function Counter() {
+export default withTranslation()(function Counter({ t }: any) {
   const count = useAppSelector(selectCount);
   const dispatch = useAppDispatch();
   const [incrementAmount, setIncrementAmount] = useState('2');
@@ -24,14 +25,14 @@ export function Counter() {
           aria-label="Decrement value"
           onClick={() => dispatch(decrement())}
         >
-          -
+          - {t('decrement-value')}
         </button>
         <span>{count}</span>
         <button
           aria-label="Increment value"
           onClick={() => dispatch(increment())}
         >
-          +
+          + {t('increment-value')}
         </button>
       </div>
       <div>
@@ -52,4 +53,4 @@ export function Counter() {
       </div>
     </div>
   );
-}
+});

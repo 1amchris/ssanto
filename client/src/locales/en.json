@@ -1,6 +1,8 @@
 {
   "translation": {
     "welcome-message": "Welcome to React and react-i18next",
-    "edit-and-save-to-reload": "Edit <1>{{ file }}</1> and save to reload."
+    "edit-and-save-to-reload": "Edit <1>{{ file }}</1> and save to reload.",
+    "decrement-value": "Decrement value",
+    "increment-value": "Increment value"
   }
 }
