@@ -5,6 +5,7 @@ import i18n from 'i18next';
 import { withTranslation, initReactI18next, Trans } from 'react-i18next';
 
 import * as en from '../locales/en.json';
+import InteractiveMapContainer from './InteractiveMapContainer';
 
 i18n.use(initReactI18next).init({
   resources: { en },
@@ -24,6 +25,8 @@ function App({ t }: any) {
         <h2 className="mb-2">{t('welcome-message')}</h2>
       </header>
       <main>
+        <InteractiveMapContainer></InteractiveMapContainer>
+
         <Counter />
       </main>
       <footer className="alert alert-warning">

@@ -8,6 +8,11 @@ import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
+// Leaflet
+import "leaflet/dist/leaflet.css";
+import "leaflet/dist/leaflet.js";
+
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
