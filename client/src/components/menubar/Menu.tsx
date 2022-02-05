@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import MenuItemModel from '../../models/MenuItemModel';
@@ -10,8 +10,11 @@ interface params {
   options: MenuModel;
 }
 
-export default withTranslation()(
-  ({ t, options: { name, enabled, options } }: params): JSX.Element => (
+function Menu({
+  t,
+  options: { name, enabled, options },
+}: params): ReactElement {
+  return (
     <React.Fragment>
       <button
         className="btn btn-sm py-0"
@@ -19,13 +22,13 @@ export default withTranslation()(
         aria-expanded="false"
         disabled={!enabled}
       >
-        {capitalize(t(name))}
+        {capitalize(t(name || 'menu'))}
       </button>
-      <ul className="dropdown-menu small" aria-labelledby="navbarDropdown">
+      <ul className="dropdown-menu small" aria-labelledby="menuDropdown">
         {options
-          .map((menuSection: MenuItemModel[]) =>
-            menuSection.map((menuItem: MenuItemModel) => (
-              <li key={menuItem.name}>
+          .map((menuSection: MenuItemModel[], section: number) =>
+            menuSection.map((menuItem: MenuItemModel, item: number) => (
+              <li key={`${name}/${section}-${item}`}>
                 <MenuItem options={menuItem} />
               </li>
             ))
@@ -33,16 +36,23 @@ export default withTranslation()(
           .reduce(
             // for some reason, replacing "any" on the
             //  following line shows a generic error
-            (prev: JSX.Element[], curr: any, index: number): JSX.Element[] => [
+            (
+              prev: ReactElement[],
+              curr: any,
+              index: number
+            ): ReactElement[] => [
               prev,
-              <li key={`divider-${index}`}>
+              <li key={`${name}/div-${index}`}>
                 <hr className="dropdown-divider small" />
               </li>,
               curr,
-            ]
+            ],
+            []
           )
           .flat()}
       </ul>
     </React.Fragment>
-  )
-);
+  );
+}
+
+export default withTranslation()(Menu);

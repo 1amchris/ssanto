@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
 import MenuModel from '../../models/MenuModel';
 import Menu from './Menu';
@@ -8,8 +8,8 @@ interface params {
   t: (str: string) => string;
 }
 
-export default withTranslation()(
-  ({ t }: params): JSX.Element => (
+function MenuBar({ t }: params): ReactElement {
+  return (
     <nav className="navbar navbar-expand navbar-light border-bottom py-0 small">
       <div className="container-fluid">
         <div className="collapse navbar-collapse">
@@ -21,8 +21,8 @@ export default withTranslation()(
             className="d-inline-block align-text-top me-2"
           />
           <ul className="navbar-nav me-auto">
-            {menus.map((menu: MenuModel) => (
-              <li className="nav-item dropdown" key={menu.name}>
+            {menus.map((menu: MenuModel, index: number) => (
+              <li className="nav-item dropdown" key={`menu/${index}`}>
                 <Menu options={menu} />
               </li>
             ))}
@@ -30,5 +30,7 @@ export default withTranslation()(
         </div>
       </div>
     </nav>
-  )
-);
+  );
+}
+
+export default withTranslation()(MenuBar);
