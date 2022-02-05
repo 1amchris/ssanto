@@ -1,6 +1,6 @@
 import React from 'react';
 import Counter from './Counter';
-import MenuBar from './menubar/MenuBar';
+import MenuBar from './menu-bar/MenuBar';
 
 import i18n from 'i18next';
 import { withTranslation, initReactI18next, Trans } from 'react-i18next';
