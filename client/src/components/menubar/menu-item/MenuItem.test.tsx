@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import MenuItem from './MenuItem';
-import MenuItemModel from '../../models/MenuItemModel';
+import MenuItemModel from '../../../models/MenuItemModel';
 
 test('renders MenuItem', () => {
   const element = render(
