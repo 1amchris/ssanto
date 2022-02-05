@@ -1,9 +1,10 @@
 import React, { ReactElement } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import MenuItemModel from '../../models/MenuItemModel';
-import MenuItem from './MenuItem';
-import MenuModel from '../../models/MenuModel';
+import MenuItemModel from '../../../models/MenuItemModel';
+import MenuItem from './../menu-item/MenuItem';
+import MenuModel from '../../../models/MenuModel';
+import _ from 'lodash';
 
 interface params {
   t: (str: string) => string;
@@ -25,31 +26,30 @@ function Menu({
         {capitalize(t(name || 'menu'))}
       </button>
       <ul className="dropdown-menu small" aria-labelledby="menuDropdown">
-        {options
-          .map((menuSection: MenuItemModel[], section: number) =>
-            menuSection.map((menuItem: MenuItemModel, item: number) => (
-              <li key={`${name}/${section}-${item}`}>
-                <MenuItem options={menuItem} />
-              </li>
-            ))
-          )
-          .reduce(
-            // for some reason, replacing "any" on the
-            //  following line shows a generic error
-            (
-              prev: ReactElement[],
-              curr: any,
-              index: number
-            ): ReactElement[] => [
-              prev,
-              <li key={`${name}/div-${index}`}>
-                <hr className="dropdown-divider small" />
-              </li>,
-              curr,
-            ],
-            []
-          )
-          .flat()}
+        {options.length > 0 &&
+          options
+            .map((menuSection: MenuItemModel[], section: number) =>
+              menuSection.map((menuItem: MenuItemModel, item: number) => (
+                <li key={`${name}/${section}-${item}`}>
+                  <MenuItem options={menuItem} />
+                </li>
+              ))
+            )
+            .reduce(
+              // for some reason, replacing "any" on the
+              //  following line shows a generic error
+              (
+                prev: ReactElement[],
+                curr: any,
+                index: number
+              ): ReactElement[] => [
+                prev,
+                <li key={`${name}/div-${index}`}>
+                  <hr className="dropdown-divider small" />
+                </li>,
+                curr,
+              ]
+            )}
       </ul>
     </React.Fragment>
   );

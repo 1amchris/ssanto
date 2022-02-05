@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
 import MenuModel from '../../models/MenuModel';
-import Menu from './Menu';
+import Menu from './menu/Menu';
 import menus from '../../constants/menus';
 
 interface params {
