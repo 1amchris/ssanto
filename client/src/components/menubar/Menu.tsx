@@ -1,11 +1,17 @@
 import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import MenuItemModel from './interfaces/MenuItemModel';
+import MenuItemModel from '../../models/MenuItemModel';
 import MenuItem from './MenuItem';
+import MenuModel from '../../models/MenuModel';
 
-function Menu({ t, options: { name, enabled, options } }: any): JSX.Element {
-  return (
+interface params {
+  t: (str: string) => string;
+  options: MenuModel;
+}
+
+export default withTranslation()(
+  ({ t, options: { name, enabled, options } }: params): JSX.Element => (
     <React.Fragment>
       <button
         className="btn btn-sm py-0"
@@ -24,17 +30,19 @@ function Menu({ t, options: { name, enabled, options } }: any): JSX.Element {
               </li>
             ))
           )
-          .reduce((prev: JSX.Element, curr: JSX.Element, index: number) => [
-            prev,
-            <li key={`divider-${index}`}>
-              <hr className="dropdown-divider small" />
-            </li>,
-            curr,
-          ])
+          .reduce(
+            // for some reason, replacing "any" on the
+            //  following line shows a generic error
+            (prev: JSX.Element[], curr: any, index: number): JSX.Element[] => [
+              prev,
+              <li key={`divider-${index}`}>
+                <hr className="dropdown-divider small" />
+              </li>,
+              curr,
+            ]
+          )
           .flat()}
       </ul>
     </React.Fragment>
-  );
-}
-
-export default withTranslation()(Menu);
+  )
+);
