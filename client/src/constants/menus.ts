@@ -1,4 +1,4 @@
-import MenuItemModel from '../models/MenuItemModel';
+import * as MenuItems from '../models/menu-item-models/';
 
 const menus = [
   {
@@ -11,14 +11,14 @@ const menus = [
           name: 'new file',
           enabled: true,
           onActionCalled: (event: any) => console.log('/file/new file', event),
-        } as MenuItemModel,
+        } as MenuItems.Action,
         {
           type: 'action',
           name: 'new window',
           enabled: false,
           onActionCalled: (event: any) =>
             console.log('/file/new window', event),
-        } as MenuItemModel,
+        } as MenuItems.Action,
       ],
       [
         {
@@ -27,7 +27,7 @@ const menus = [
           enabled: true,
           onFileImported: (file: File) =>
             console.log('/file/open project', file),
-        } as MenuItemModel,
+        } as MenuItems.Import,
         {
           type: 'export',
           name: 'save project',
@@ -38,7 +38,7 @@ const menus = [
               type: 'text/plain;charset=utf-8',
             });
           },
-        } as MenuItemModel,
+        } as MenuItems.Export,
       ],
     ],
   },
@@ -52,14 +52,14 @@ const menus = [
           name: 'action',
           enabled: false,
           onActionCalled: (event: any) => console.log('/edit/action', event),
-        } as MenuItemModel,
+        } as MenuItems.Action,
         {
           type: 'action',
           name: 'another action',
           enabled: false,
           onActionCalled: (event: any) =>
             console.log('/edit/another action', event),
-        } as MenuItemModel,
+        } as MenuItems.Action,
       ],
       [
         {
@@ -68,7 +68,7 @@ const menus = [
           enabled: true,
           onActionCalled: (event: any) =>
             console.log('/edit/something else here', event),
-        } as MenuItemModel,
+        } as MenuItems.Action,
       ],
     ],
   },
@@ -84,7 +84,7 @@ const menus = [
           onActionCalled: (event: any) => {
             console.log('/help/guide', event);
           },
-        } as MenuItemModel,
+        } as MenuItems.Action,
       ],
     ],
   },

@@ -1,14 +1,9 @@
 import React, { ReactElement } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import MenuItemModel from '../../../models/MenuItemModel';
-import MenuActionModel from '../../../models/MenuItemModels/MenuActionModel';
-import MenuImportModel from '../../../models/MenuImportModel';
-import MenuExportModel from '../../../models/MenuExportModel';
-import MenuActionButton from '../menu-item/MenuActionButton';
+import MenuItem, * as MenuItems from '../../../models/menu-item-models';
 import MenuModel from '../../../models/MenuModel';
-import MenuExportButton from '../menu-item/MenuExportButton';
-import MenuImportButton from '../menu-item/MenuImportButton';
+import * as MenuButtons from '../menu-item-buttons';
 
 interface params {
   t: (str: string) => string;
@@ -16,15 +11,15 @@ interface params {
 }
 
 // TODO: There's probably a better way of doing that, I just can't figure it out right now.
-const menus = new Map<string, (payload: MenuItemModel) => ReactElement>();
-menus.set('action', (payload: MenuItemModel) => (
-  <MenuActionButton options={payload as MenuActionModel} />
+const menus = new Map<string, (payload: MenuItem) => ReactElement>();
+menus.set('action', (payload: MenuItem) => (
+  <MenuButtons.Action options={payload as MenuItems.Action} />
 ));
-menus.set('import', (payload: MenuItemModel) => (
-  <MenuImportButton options={payload as MenuImportModel} />
+menus.set('import', (payload: MenuItem) => (
+  <MenuButtons.Import options={payload as MenuItems.Import} />
 ));
-menus.set('export', (payload: MenuItemModel) => (
-  <MenuExportButton options={payload as MenuExportModel} />
+menus.set('export', (payload: MenuItem) => (
+  <MenuButtons.Export options={payload as MenuItems.Export} />
 ));
 
 function Menu({
@@ -44,10 +39,10 @@ function Menu({
       <ul className="dropdown-menu small" aria-labelledby="menuDropdown">
         {options.length > 0 &&
           options
-            .map((menuSection: MenuItemModel[], section: number) =>
+            .map((menuSection: MenuItem[], section: number) =>
               menuSection
                 .filter(({ type }) => menus.has(type))
-                .map((menuItem: MenuItemModel, item: number) => (
+                .map((menuItem: MenuItem, item: number) => (
                   <li key={`${name}/${section}-${item}`}>
                     {menus.get(menuItem.type)!(menuItem)}
                   </li>

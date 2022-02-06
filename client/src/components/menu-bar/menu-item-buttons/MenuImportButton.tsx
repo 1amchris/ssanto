@@ -1,11 +1,11 @@
 import React, { ReactElement, createRef, RefObject } from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize, first } from 'lodash';
-import MenuImportModel from '../../../models/MenuImportModel';
+import { Import } from '../../../models/menu-item-models';
 
 interface params {
   t: (str: string) => string;
-  options: MenuImportModel;
+  options: Import;
 }
 
 const handleFileChanged =

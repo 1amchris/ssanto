@@ -1,11 +1,11 @@
 import React, { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize } from 'lodash';
-import MenuActionModel from '../../../models/MenuItemModels/MenuActionModel';
+import { Action } from '../../../models/menu-item-models';
 
 interface params {
   t: (str: string) => string;
-  options: MenuActionModel;
+  options: Action;
 }
 
 function MenuActionButton({

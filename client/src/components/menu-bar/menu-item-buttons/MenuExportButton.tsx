@@ -2,11 +2,11 @@ import React, { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize } from 'lodash';
 import { saveAs } from 'file-saver';
-import MenuExportModel from '../../../models/MenuExportModel';
+import { Export } from '../../../models/menu-item-models';
 
 interface params {
   t: (str: string) => string;
-  options: MenuExportModel;
+  options: Export;
 }
 
 function MenuExportButton({

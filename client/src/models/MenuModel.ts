@@ -1,7 +1,7 @@
-import MenuItemModel from './MenuItemModel';
+import MenuItem from './menu-item-models';
 
 export default interface MenuModel {
   name: string;
   enabled: boolean;
-  options: MenuItemModel[][];
+  options: MenuItem[][];
 }
