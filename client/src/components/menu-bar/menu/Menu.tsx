@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import MenuItemModel from '../../../models/MenuItemModel';
-import MenuActionModel from '../../../models/MenuActionModel';
+import MenuActionModel from '../../../models/MenuItemModels/MenuActionModel';
 import MenuImportModel from '../../../models/MenuImportModel';
 import MenuExportModel from '../../../models/MenuExportModel';
 import MenuActionButton from '../menu-item/MenuActionButton';

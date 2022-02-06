@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize } from 'lodash';
-import MenuActionModel from '../../../models/MenuActionModel';
+import MenuActionModel from '../../../models/MenuItemModels/MenuActionModel';
 
 interface params {
   t: (str: string) => string;
