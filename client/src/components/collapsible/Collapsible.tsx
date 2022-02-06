@@ -2,7 +2,6 @@ import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { FcCollapse, FcExpand } from 'react-icons/fc';
 import { uniqueId } from 'lodash';
-import { textChangeRangeIsUnchanged } from 'typescript';
 
 class Collapsible extends React.Component {
   t: (str: string) => string;
