@@ -3,10 +3,10 @@ import React, { ReactElement } from 'react';
 function NavigationBar({ children }: any): ReactElement {
   return (
     <nav
-      className="border-end bg-light p-3 overflow-hidden"
+      className="border-end bg-light overflow-scroll"
       style={{ height: 'calc(100vh - 24px)', width: '270px' }}
     >
-      <ul className="list-unstyled h-100 overflow-scroll">
+      <ul className="list-unstyled m-3">
         {children?.map((child: ReactElement, index: number) => (
           <li
             key={`navigation/item-${index}`}

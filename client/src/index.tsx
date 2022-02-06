@@ -16,7 +16,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 i18n.use(initReactI18next).init({
   resources: { en, fr },
-  lng: 'fr', // if you're using a language detector, do not define the lng option
+  lng: 'en', // if you're using a language detector, do not define the lng option
   fallbackLng: 'en',
   interpolation: {
     escapeValue: false, // done by default by react
