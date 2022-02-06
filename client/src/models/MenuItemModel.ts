@@ -1,5 +1,5 @@
 export default interface MenuItemModel {
+  type: string;
   name: string;
   enabled: boolean;
-  action: (event: any) => null;
 }

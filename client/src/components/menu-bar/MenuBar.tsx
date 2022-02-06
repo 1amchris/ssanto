@@ -1,14 +1,9 @@
-import React, { ReactElement } from 'react';
-import { withTranslation } from 'react-i18next';
+import React from 'react';
 import MenuModel from '../../models/MenuModel';
 import Menu from './menu/Menu';
 import menus from '../../constants/menus';
 
-interface params {
-  t: (str: string) => string;
-}
-
-function MenuBar({ t }: params): ReactElement {
+function MenuBar() {
   return (
     <nav
       className="navbar navbar-expand navbar-light border-bottom py-0 small"
@@ -34,4 +29,4 @@ function MenuBar({ t }: params): ReactElement {
   );
 }
 
-export default withTranslation()(MenuBar);
+export default MenuBar;

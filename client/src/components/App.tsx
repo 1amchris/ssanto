@@ -6,7 +6,7 @@ import NavigationBar from './navigation-bar/NavigationBar';
 import Collapsible from './collapsible/Collapsible';
 
 function App({ t }: any) {
-  const file = 'src/App.tsx';
+  // const file = 'src/App.tsx';
 
   return (
     <div className="App">
