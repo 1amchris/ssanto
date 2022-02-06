@@ -1,48 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { FcCollapse, FcExpand } from 'react-icons/fc';
 import { uniqueId } from 'lodash';
 
-class Collapsible extends React.Component {
-  t: (str: string) => string;
-  title: string;
-  id: string;
+function Collapsible({ t, title, children }: any) {
+  const id = uniqueId('collapsible-');
+  const [open, setOpen] = useState(true);
 
-  state = {
-    open: true,
-  };
-
-  constructor(props: any) {
-    super(props);
-    const { t, title } = props;
-    this.t = t;
-    this.title = title;
-    this.id = uniqueId('collapsible-');
-  }
-
-  render() {
-    return (
-      <React.Fragment>
-        <div
-          className="w-100 d-flex justify-content-between"
-          data-bs-toggle="collapse"
-          data-bs-target={`#${this.id}`}
-          role="button"
-          aria-expanded="true"
-          aria-controls={this.id}
-          onClick={() => {
-            this.setState({ open: !this.state.open });
-          }}
-        >
-          <h5>{this.t(this.title || 'collapsible-title')}</h5>
-          <span>{this.state.open ? <FcCollapse /> : <FcExpand />}</span>
-        </div>
-        <div className="collapse show" id={this.id}>
-          {this.props?.children}
-        </div>
-      </React.Fragment>
-    );
-  }
+  return (
+    <React.Fragment>
+      <div
+        className="w-100 d-flex justify-content-between"
+        data-bs-toggle="collapse"
+        data-bs-target={`#${id}`}
+        role="button"
+        aria-expanded="true"
+        aria-controls={id}
+        onClick={() => {
+          setOpen(!open);
+        }}
+      >
+        <h5>{t(title || 'collapsible-title')}</h5>
+        <span>{open ? <FcCollapse /> : <FcExpand />}</span>
+      </div>
+      <div className="collapse show" id={id}>
+        {children}
+      </div>
+    </React.Fragment>
+  );
 }
 
 export default withTranslation()(Collapsible);
