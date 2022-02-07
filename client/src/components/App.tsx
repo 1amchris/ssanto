@@ -72,7 +72,7 @@ function App({ t }: any) {
             </Collapsible>
           </NavigationBar>
         </aside>
-        <main className="container mt-3">
+        <main className="shadow container mt-3" style={{ zIndex: 1 }}>
           <Counter />
         </main>
       </div>
