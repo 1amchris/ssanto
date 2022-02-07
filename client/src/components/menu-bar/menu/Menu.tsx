@@ -21,6 +21,9 @@ menus.set('import', (payload: MenuItem) => (
 menus.set('export', (payload: MenuItem) => (
   <MenuButtons.Export options={payload as MenuItems.Export} />
 ));
+menus.set('navigation', (payload: MenuItem) => (
+  <MenuButtons.Navigation options={payload as MenuItems.Navigation} />
+));
 
 function Menu({
   t,

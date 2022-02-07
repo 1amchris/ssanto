@@ -13,6 +13,8 @@ import * as fr from './locales/fr.json';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Guide from './components/Guide';
 
 i18n.use(initReactI18next).init({
   resources: { en, fr },
@@ -26,7 +28,12 @@ i18n.use(initReactI18next).init({
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/guide" element={<Guide />} />
+        </Routes>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
