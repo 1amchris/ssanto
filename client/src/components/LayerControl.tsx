@@ -21,11 +21,11 @@ const Layers = () => {
           console.log("layer", layer);
           return (
             <LayersControl.Overlay
-              key={layer[1].name}
+              key={JSON.parse(layer[1]).name}
               checked
-              name={layer[1].name}
+              name={JSON.parse(layer[1]).name}
             >
-              <GeoJSON data={layer[1].data}> </GeoJSON>
+              <GeoJSON data={JSON.parse(layer[1]).data}> </GeoJSON>
             </LayersControl.Overlay>
           );
         })}
