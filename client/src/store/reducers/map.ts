@@ -44,8 +44,13 @@ export const mapSlice = createSlice({
         state.coordinateSystem = action.payload;
       },
     addLayer: (state, action: PayloadAction<Layer>) => {
-      //TODO: check if a layer already has the same key
-      state.layers.push(action.payload);
+      if(!state.layers.some(u=>u.name === action.payload.name)) {
+        state.layers.push(action.payload);
+      }
+      else{
+        alert("layer already exists");
+      }
+      
     },
     updateClickedCoord: (state, action: PayloadAction<[number, number]>) => {
       state.clickedCoord = action.payload;
