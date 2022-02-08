@@ -8,6 +8,7 @@ export interface MapState {
   coordinateSystem: L.CRS;
   cellSize: number;
   layers: Array<Layer>;
+  clickedCoord:[number, number]
   //status: 'idle' | 'loading' | 'failed';
 }
 
@@ -24,6 +25,7 @@ export const mapSlice = createSlice({
     coordinateSystem: L.CRS.EPSG3857,
     cellSize: 20,
     layers: new Array<Layer>(),
+    clickedCoord: [NaN, NaN]
     //status: 'idle',
   } as MapState,
   reducers: {
@@ -45,10 +47,15 @@ export const mapSlice = createSlice({
       //TODO: check if a layer already has the same key
       state.layers.push(action.payload);
     },
+    updateClickedCoord: (state, action: PayloadAction<[number, number]>) => {
+      state.clickedCoord = action.payload;
+      console.log("LAT : ", state.clickedCoord[0]);
+      console.log("LONG : ", state.clickedCoord[1]);
+    },
   },
 });
 
-export const { updateLocation, updateCellSize, updateZoom, addLayer, updateCoordSys } = mapSlice.actions;
+export const { updateLocation, updateCellSize, updateZoom, addLayer, updateCoordSys, updateClickedCoord } = mapSlice.actions;
 
 export const selectmap = (state: RootState) => (state.map);
 

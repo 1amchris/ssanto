@@ -4,6 +4,7 @@ import { withTranslation } from "react-i18next";
 import ev from "../data/espace_vert.json";
 import lh from "../data/limite_h.json";
 
+
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
   updateLocation,
@@ -11,10 +12,11 @@ import {
   updateZoom,
   addLayer,
   selectmap,
+  updateClickedCoord,
   Layer,
 } from "../store/reducers/map";
 import {
-  MapContainer,
+  MapContainer, useMapEvents,
 } from "react-leaflet";
 import Layers from "./LayerControl";
 import L from "leaflet";
@@ -23,6 +25,20 @@ export default withTranslation()(function InteractiveMapContainer({ t }: any) {
   const map = useAppSelector(selectmap);
 
   const dispatch = useAppDispatch();
+
+
+
+  const MapEvents = () => {
+    useMapEvents({
+      click(e) {
+        dispatch(updateClickedCoord([e.latlng.lat, e.latlng.lng]));
+      },
+    });
+    return (<></>);
+}
+
+
+  //À enlever après le binding
   let nb = 1;
 
   let tempLong = map.location[1];
@@ -47,7 +63,7 @@ export default withTranslation()(function InteractiveMapContainer({ t }: any) {
         dispatch(addLayer(l2));
         break;
       case 3:
-        let l3: Layer = { name: "layer3", data: "" };
+        let l3: Layer = { name: "layer3", data: ""};
         dispatch(addLayer(l3));
         break;
       case 4:
@@ -71,6 +87,7 @@ export default withTranslation()(function InteractiveMapContainer({ t }: any) {
         style={{ height: "600px", width: "600px" }}
       >
         <Layers />
+        <MapEvents />
       </MapContainer>
 
       <button onClick={() => dispatch(updateZoom(10))}>move location</button>
@@ -98,8 +115,7 @@ export default withTranslation()(function InteractiveMapContainer({ t }: any) {
       <span className="badge bg-primary mx-2">{map.cellSize}</span>
       <button onClick={changeLayer(1)}>Add a layer 1</button>
       <button onClick={changeLayer(2)}>Add a layer 2</button>
-      <button onClick={changeLayer(3)}>Add a layer 3</button>
-      <button onClick={changeLayer(4)}>Add a layer 4</button>
+      <p>Lat: {map.clickedCoord[0]} Long: {map.clickedCoord[1]}</p>
 
     </div>
   );
