@@ -1,114 +1,39 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useMapEvents, useMap, TileLayer, LayersControl, GeoJSON, Circle  } from 'react-leaflet'
-import WY from '../data/Wyoming.json'
-import MT from '../data/Montana.json'
-import ND from '../data/NorthDakota.json'
-import ev from '../data/espace_vert.json'
-import ts from '../data/terrain_sport_ext.json'
-import { GeoJsonObject } from 'geojson'
-import L, { LatLngExpression } from 'leaflet'
-import icon from '../img/close.png'
-import { LayerService } from './LayerService'
+import { TileLayer, LayersControl, GeoJSON } from "react-leaflet";
 
-
+import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { selectmap } from "../store/reducers/map";
 
 const Layers = () => {
+  const dispatch = useAppDispatch();
+  const layers = useAppSelector(selectmap).layers;
 
-    const [borderData, setBorderData] = useState([ts])
-    const layerService = new LayerService()
+  return (
+    <>
+      <LayersControl position="bottomleft">
+        <LayersControl.Overlay checked name="osm">
+          <TileLayer
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+        </LayersControl.Overlay>
 
-      const map = useMapEvents({
-          // Use leaflet map event as the key and a call back with the 
-          // map method as the value:
-          zoomend: () => {
-            // Get the zoom level once zoom ended:
-            console.log(map.getZoom())
-          },
-          moveend: () => {
-          // Get bounds once move has ended:
-            console.log(map.getBounds())
-          }
-        })
-        const mapRef = useRef();
+        {Object.entries(layers).map((layer) => {
+          console.log("layer", layer);
+          return (
+            <LayersControl.Overlay
+              key={layer[1].name}
+              checked
+              name={layer[1].name}
+            >
+              <GeoJSON data={layer[1].data}> </GeoJSON>
+            </LayersControl.Overlay>
+          );
+        })}
+      </LayersControl>
+    </>
+  );
+};
 
-        function displayLayers() {
-          console.log(layerService.activeLayers);
-          Object.entries(layerService.activeLayers).map( ([name,layer])  =>{
-            console.log("layer", layer);
-            return(
-            <LayersControl.Overlay checked name={name}>
-              <Circle
-                  center={layer as LatLngExpression}
-                  pathOptions={{ fillColor: "green" }}
-                  radius={1000}
-                />
-          </LayersControl.Overlay>)
-  
-        })
-          
+export default Layers;
 
-        }
-
-
-        useEffect(() => {
-            const { current = {} } = mapRef;
-        
-            if ( !map ) return;
-        
-            const parkIcon = new L.Icon({
-              iconUrl: icon,
-              iconSize: [5, 5],
-              popupAnchor: [0, -15],
-              shadowAnchor: [13, 28]
-            });
-        
-            const parksGeojson = new L.GeoJSON(ts as GeoJsonObject, {
-              pointToLayer: (feature, latlng) => {
-                return L.marker(latlng, {
-                  icon: parkIcon
-                });
-              },
-              onEachFeature: (feature , layer) => {
-                const { properties = {} } = feature;
-                const { Name } = properties;
-        
-                if ( !Name ) return;
-        
-                layer.bindPopup(`<p>${Name}</p>`);
-              }
-            });
-            /*parksGeojson.addTo(map);*/
-        
-
-          }, [])
-      
-return (
-  <>  
-    <LayersControl position="bottomleft">
-
-    {
-          Object.entries(layerService.activeLayers).map( ([name,layer])  =>{
-            console.log("layer", layer);
-            return(
-            <LayersControl.Overlay checked name={name}>
-              <Circle
-                  center={layer as LatLngExpression}
-                  pathOptions={{ fillColor: "green" }}
-                  radius={1000}
-                />
-          </LayersControl.Overlay>)
-  
-        })
-          
-
-        }
-
-    </LayersControl>
-
-  </>
-
-)
-}
-
-export default Layers
 
