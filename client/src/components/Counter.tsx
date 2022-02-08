@@ -12,7 +12,7 @@ import {
 } from '../store/reducers/counter';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 
-export default withTranslation()(function Counter({ t }: any) {
+function Counter({ t }: any) {
   const count = useAppSelector(selectCount);
   const dispatch = useAppDispatch();
   const [incrementAmount, setIncrementAmount] = useState('2');
@@ -68,4 +68,6 @@ export default withTranslation()(function Counter({ t }: any) {
       </div>
     </div>
   );
-});
+}
+
+export default withTranslation()(Counter);
