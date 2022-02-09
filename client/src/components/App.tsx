@@ -1,16 +1,14 @@
 import React from 'react';
-import Counter from './Counter';
 import MenuBar from './menu-bar/MenuBar';
 import { withTranslation } from 'react-i18next';
 import NavigationBar from './navigation-bar/NavigationBar';
 import Collapsible from './collapsible/Collapsible';
+import InteractiveMapContainer from './map/InteractiveMapContainer';
 import Data from './data/Data';
 import Step1 from './steps/Step1';
 import Step2 from './steps/Step2';
 
 function App({ t }: any) {
-  // const file = 'src/App.tsx';
-
   return (
     <div className="App">
       <header className="App-header">
@@ -35,13 +33,16 @@ function App({ t }: any) {
             ></Collapsible> */}
           </NavigationBar>
         </aside>
-        <main
-          className="shadow w-100 position-relative"
-          style={{ zIndex: 1, backgroundColor: 'lightblue' }}
-        >
-          <div id="safezone" className="p-3" style={{ marginRight: '270px' }}>
-            <Counter />
-          </div>
+        <main className="shadow w-100 position-relative" style={{ zIndex: 1 }}>
+          <InteractiveMapContainer
+            style={{ zIndex: 0 }}
+            className="w-100 h-100 position-absolute top-0 left-0"
+          />
+          <div
+            id="safezone"
+            className="p-3"
+            style={{ marginRight: '270px' }}
+          ></div>
           <aside
             id="right-aside"
             className="position-absolute top-0 end-0 mh-100 py-3 pe-3 overflow-scroll"
