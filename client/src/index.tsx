@@ -13,6 +13,8 @@ import * as fr from './locales/fr.json';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Guide from './components/Guide';
 
 // Leaflet
 import 'leaflet/dist/leaflet.css';
@@ -20,7 +22,7 @@ import 'leaflet/dist/leaflet.js';
 
 i18n.use(initReactI18next).init({
   resources: { en, fr },
-  lng: 'fr', // if you're using a language detector, do not define the lng option
+  lng: 'en', // if you're using a language detector, do not define the lng option
   fallbackLng: 'en',
   interpolation: {
     escapeValue: false, // done by default by react
@@ -30,7 +32,12 @@ i18n.use(initReactI18next).init({
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/guide" element={<Guide />} />
+        </Routes>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

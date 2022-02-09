@@ -78,13 +78,11 @@ const menus = [
     options: [
       [
         {
-          type: 'action',
+          type: 'navigation',
           name: 'show guide',
           enabled: true,
-          onActionCalled: (event: any) => {
-            console.log('/help/guide', event);
-          },
-        } as MenuItems.Action,
+          target: '/guide',
+        } as MenuItems.Navigation,
       ],
     ],
   },

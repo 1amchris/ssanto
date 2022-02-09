@@ -4,6 +4,7 @@ import { withTranslation } from 'react-i18next';
 import NavigationBar from './navigation-bar/NavigationBar';
 import Collapsible from './collapsible/Collapsible';
 import InteractiveMapContainer from './map/InteractiveMapContainer';
+import Data from './data/Data';
 
 function App({ t }: any) {
   // const file = 'src/App.tsx';
@@ -14,7 +15,7 @@ function App({ t }: any) {
         <MenuBar />
       </header>
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
-        <aside>
+        <aside id="left-aside">
           <NavigationBar>
             <Collapsible title={'Parameters & Settings'}>
               <p style={{ textAlign: 'justify', textIndent: '2rem' }}>
@@ -72,9 +73,41 @@ function App({ t }: any) {
             </Collapsible>
           </NavigationBar>
         </aside>
-        <main className="container mt-3">
-          {/* <Counter /> */}
-          <InteractiveMapContainer />
+        <main
+          className="shadow w-100 position-relative"
+          style={{ zIndex: 1, backgroundColor: 'lightblue' }}
+        >
+          <div id="safezone" className="p-3" style={{ marginRight: '270px' }}>
+            <InteractiveMapContainer />
+          </div>
+          <aside
+            id="right-aside"
+            className="position-absolute top-0 end-0 mh-100 py-3 pe-3 overflow-scroll"
+            style={{ width: '270px' }}
+          >
+            {[
+              'Interpolation chart',
+              'World population',
+              'Vertical bar charts',
+              'Economics & politics',
+            ].map((title: string, index: number) => (
+              <Data key={`data-${index}`}>
+                <Collapsible title={title}>
+                  <p style={{ textAlign: 'justify', textIndent: '2rem' }}>
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life
+                    accusamus terry richardson ad squid. 3 wolf moon officia
+                    aute, non cupidatat skateboard dolor brunch. Food truck
+                    quinoa nesciunt laborum eiusmod.
+                  </p>
+                  <p style={{ textAlign: 'justify', textIndent: '2rem' }}>
+                    Brunch 3 wolf moon tempor, sunt aliqua put a bird on it
+                    probably haven't heard of them accusamus labore sustainable
+                    VHS.
+                  </p>
+                </Collapsible>
+              </Data>
+            ))}
+          </aside>
         </main>
       </div>
       {/* <footer className="alert alert-warning">
