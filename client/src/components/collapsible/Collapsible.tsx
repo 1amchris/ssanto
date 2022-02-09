@@ -3,9 +3,9 @@ import { withTranslation } from 'react-i18next';
 import { FcCollapse, FcExpand } from 'react-icons/fc';
 import { uniqueId } from 'lodash';
 
-function Collapsible({ t, title, children }: any) {
+function Collapsible({ t, title, children, collapsed }: any) {
   const id = uniqueId('collapsible-');
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(!(collapsed as boolean));
 
   return (
     <React.Fragment>
@@ -14,16 +14,16 @@ function Collapsible({ t, title, children }: any) {
         data-bs-toggle="collapse"
         data-bs-target={`#${id}`}
         role="button"
-        aria-expanded="true"
+        aria-expanded={open}
         aria-controls={id}
         onClick={() => {
           setOpen(!open);
         }}
       >
-        <h5>{t(title || 'collapsible-title')}</h5>
+        <h6>{t(title || 'collapsible-title')}</h6>
         <span>{open ? <FcCollapse /> : <FcExpand />}</span>
       </div>
-      <div className="collapse show" id={id}>
+      <div className={`collapse ${open && 'show'}`} id={id}>
         {children}
       </div>
     </React.Fragment>
