@@ -17,7 +17,7 @@ import Layers from './LayerControl';
 import L from 'leaflet';
 import React, { useState } from 'react';
 
-function InteractiveMapContainer({ t }: any) {
+function InteractiveMapContainer({ t, className, style }: any) {
   const {
     location: locationJSON,
     clickedCoord,
@@ -65,55 +65,53 @@ function InteractiveMapContainer({ t }: any) {
   };
 
   return (
-    <div>
-      <div>
-        <label htmlFor="long_input">Long:</label>
-        <input
-          onChange={({ target: { value } }: any) =>
-            setTempLongLat({ long: value, lat: tempLat })
-          }
-          type="text"
-          id="long_input"
-          name="long_input"
-          value={tempLong}
-          required
-        />
-        <label htmlFor="lat_input">Lat:</label>
-        <input
-          onChange={({ target: { value } }: any) => {
-            setTempLongLat({ long: tempLong, lat: value });
-          }}
-          type="text"
-          id="lat_input"
-          name="lat_input"
-          value={tempLat}
-          required
-        />
+    // <React.Fragment>
+    //     <label htmlFor="long_input">Long:</label>
+    //     <input
+    //       onChange={({ target: { value } }: any) =>
+    //         setTempLongLat({ long: value, lat: tempLat })
+    //       }
+    //       type="text"
+    //       id="long_input"
+    //       name="long_input"
+    //       value={tempLong}
+    //       required
+    //     />
+    //     <label htmlFor="lat_input">Lat:</label>
+    //     <input
+    //       onChange={({ target: { value } }: any) => {
+    //         setTempLongLat({ long: tempLong, lat: value });
+    //       }}
+    //       type="text"
+    //       id="lat_input"
+    //       name="lat_input"
+    //       value={tempLat}
+    //       required
+    //     />
 
-        <button
-          onClick={() =>
-            dispatch(updateLocation({ long: +tempLong, lat: +tempLat }))
-          }
-        >
-          Update map center
-        </button>
-        <button onClick={changeLayer(1)}>{t('Add a layer 1')}</button>
-        <button onClick={changeLayer(2)}>{t('Add a layer 2')}</button>
-        <p>Store baked coords: {clickedCoord}</p>
-      </div>
+    //     <button
+    //       onClick={() =>
+    //         dispatch(updateLocation({ long: +tempLong, lat: +tempLat }))
+    //       }
+    //     >
+    //       Update map center
+    //     </button>
+    //     <button onClick={changeLayer(1)}>{t('Add a layer 1')}</button>
+    //     <button onClick={changeLayer(2)}>{t('Add a layer 2')}</button>
+    //     <p>Store baked coords: {clickedCoord}</p>
 
-      <MapContainer
-        key={JSON.stringify([location.lat, location.long])}
-        center={[location.lat, location.long]}
-        crs={L.CRS.EPSG3857}
-        zoom={zoom}
-        className="w-100"
-        style={{ height: '500px' }}
-      >
-        <Layers />
-        <MapEvents />
-      </MapContainer>
-    </div>
+    <MapContainer
+      key={JSON.stringify([location.lat, location.long])}
+      center={[location.lat, location.long]}
+      crs={L.CRS.EPSG3857}
+      zoom={zoom}
+      className={className}
+      style={{ ...style }}
+    >
+      <Layers />
+      <MapEvents />
+    </MapContainer>
+    // </React.Fragment>
   );
 }
 

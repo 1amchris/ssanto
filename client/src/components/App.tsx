@@ -5,6 +5,7 @@ import NavigationBar from './navigation-bar/NavigationBar';
 import Collapsible from './collapsible/Collapsible';
 import InteractiveMapContainer from './map/InteractiveMapContainer';
 import Data from './data/Data';
+import Counter from './Counter';
 
 function App({ t }: any) {
   // const file = 'src/App.tsx';
@@ -77,9 +78,15 @@ function App({ t }: any) {
           className="shadow w-100 position-relative"
           style={{ zIndex: 1, backgroundColor: 'lightblue' }}
         >
-          <div id="safezone" className="p-3" style={{ marginRight: '270px' }}>
-            <InteractiveMapContainer />
-          </div>
+          <InteractiveMapContainer
+            style={{ zIndex: 0 }}
+            className="w-100 h-100 position-absolute top-0 left-0"
+          />
+          <div
+            id="safezone"
+            className="p-3"
+            style={{ marginRight: '270px' }}
+          ></div>
           <aside
             id="right-aside"
             className="position-absolute top-0 end-0 mh-100 py-3 pe-3 overflow-scroll"
