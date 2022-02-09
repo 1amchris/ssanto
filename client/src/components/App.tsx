@@ -74,8 +74,8 @@ function App({ t }: any) {
           </NavigationBar>
         </aside>
         <main className="container mt-3">
-          <Counter />
-          <InteractiveMapContainer/>
+          {/* <Counter /> */}
+          <InteractiveMapContainer />
         </main>
       </div>
       {/* <footer className="alert alert-warning">
