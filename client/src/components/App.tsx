@@ -1,7 +1,6 @@
 import React from 'react';
-import Counter from './Counter';
 import MenuBar from './menu-bar/MenuBar';
-import { withTranslation, Trans } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import NavigationBar from './navigation-bar/NavigationBar';
 import Collapsible from './collapsible/Collapsible';
 import InteractiveMapContainer from './map/InteractiveMapContainer';

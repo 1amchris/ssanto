@@ -15,9 +15,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // Leaflet
-import "leaflet/dist/leaflet.css";
-import "leaflet/dist/leaflet.js";
-
+import 'leaflet/dist/leaflet.css';
+import 'leaflet/dist/leaflet.js';
 
 i18n.use(initReactI18next).init({
   resources: { en, fr },
