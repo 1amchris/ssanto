@@ -6,7 +6,7 @@ class Subject:
         self.sid = sid
         self.sm = sm
         self.data = data
-        self.is_watched = False
+        self.is_watched = False # TODO: Semaphore
     
     def watch(self):
         self.is_watched = True
