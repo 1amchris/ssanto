@@ -1,11 +1,12 @@
 import { withTranslation } from "react-i18next";
 
 //Importation des données à effacer, juste pour démo
-import ev from "../data/espace_vert.json";
-import lh from "../data/limite_h.json";
+import ev from "../../data/espace_vert.json";
+import lh from "../../data/limite_h.json";
 
 
-import { useAppSelector, useAppDispatch } from "../store/hooks";
+
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import {
   updateLocation,
   updateCellSize,
@@ -14,7 +15,7 @@ import {
   selectmap,
   updateClickedCoord,
   Layer,
-} from "../store/reducers/map";
+} from "../../store/reducers/map";
 import {
   MapContainer, useMapEvents,
 } from "react-leaflet";
@@ -33,6 +34,8 @@ export default withTranslation()(function InteractiveMapContainer({ t }: any) {
     useMapEvents({
       click(e) {
         dispatch(updateClickedCoord({lat: e.latlng.lat, long: e.latlng.lng}));
+        console.log(L.CRS.EPSG3395.code)
+        console.log(JSON.stringify(L.CRS.EPSG3395))
       },
     });
     return (<></>);
@@ -79,47 +82,47 @@ export default withTranslation()(function InteractiveMapContainer({ t }: any) {
 
   return (
     <div>
-      <h1>Welcome Bitches!</h1>
-      <MapContainer
-        key={JSON.stringify([location.lat, location.long, map.zoom])}
-        center={[location.lat, location.long]}
-        zoom={map.zoom}
-        scrollWheelZoom={false}
-        style={{ height: "600px", width: "600px" }}
-      >
-        <Layers />
-        <MapEvents />
-      </MapContainer>
+  <div id="temp_tools">
+    <label htmlFor="long_input">Long:</label>
+    <input
+      onChange={handleTempLong}
+      type="text"
+      id="long_input"
+      name="long_input"
+      required
+    />
+    <label htmlFor="lat_input">Lat:</label>
+    <input
+      onChange={handleTempLat}
+      type="text"
+      id="lat_input"
+      name="lat_input"
+      required
+    />
 
-      <button onClick={() => dispatch(updateZoom(10))}>move location</button>
+    <button
+      onClick={() => dispatch(updateLocation({ lat: tempLat, long: tempLong }))}
+    >
+      Update map center
+    </button>
+    <br></br>
+    <button onClick={changeLayer(1)}>Add a layer 1</button>
+    <button onClick={changeLayer(2)}>Add a layer 2</button>
+    <p> {map.clickedCoord}</p>
+  </div>
 
-      <label htmlFor="long_input">Long:</label>
-      <input
-        onChange={handleTempLong}
-        type="text"
-        id="long_input"
-        name="long_input"
-        required
-      />
-      <label htmlFor="lat_input">Lat:</label>
-      <input
-        onChange={handleTempLat}
-        type="text"
-        id="lat_input"
-        name="lat_input"
-        required
-      />
-
-      <button onClick={() => dispatch(updateLocation({lat: tempLat, long: tempLong}))}>
-        Update map center
-      </button>
-      <span className="badge bg-primary mx-2">{map.cellSize}</span>
-      <button onClick={changeLayer(1)}>Add a layer 1</button>
-      <button onClick={changeLayer(2)}>Add a layer 2</button>
-      <p> Lat: {tempLat}, Long: {tempLong}</p>
-      
-
-    </div>
+  <MapContainer
+    key={JSON.stringify([location.lat, location.long, map.zoom])}
+    center={[location.lat, location.long]}
+    crs= {L.CRS.EPSG3857}
+    zoom={map.zoom}
+    scrollWheelZoom={false}
+    style={{ height: "500px", width: "100%" }}
+  >
+    <Layers />
+    <MapEvents />
+  </MapContainer>
+</div>
   );
 });
 

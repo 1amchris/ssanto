@@ -4,11 +4,10 @@ import L from 'leaflet';
 
 
 
-
 export interface MapState {
   location: string;
   zoom: number;
-  //coordinateSystem: L.CRS;
+  coordinateSystem: string;
   cellSize: number;
   layers: Array<string>;
   clickedCoord:string
@@ -29,7 +28,7 @@ export const mapSlice = createSlice({
   initialState: {
     location:JSON.stringify({lat: 45.509, long: -73.553}),
     zoom: 10,
-    //coordinateSystem: L.CRS.EPSG3857,
+    coordinateSystem: "EPSG3857",
     cellSize: 20,
     layers: new Array(),
     clickedCoord: JSON.stringify({lat: NaN, long: NaN}),
@@ -38,7 +37,12 @@ export const mapSlice = createSlice({
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
     updateLocation: (state, action: PayloadAction<LatLong>) => {
-      state.location = JSON.stringify(action.payload);
+      if( !(isNaN(action.payload.lat) || isNaN(action.payload.long))){
+        state.location = JSON.stringify(action.payload);
+      }
+      else{
+        alert("Not a valid coord")
+      } 
     },
 
     updateCellSize: (state, action: PayloadAction<number>) => {
@@ -47,8 +51,8 @@ export const mapSlice = createSlice({
     updateZoom: (state, action: PayloadAction<number>) => {
         state.zoom = action.payload;
       },
-    updateCoordSys: (state, action: PayloadAction<L.CRS>) => {
-        //state.coordinateSystem = action.payload;
+    updateCoordSys: (state, action: PayloadAction<string>) => {
+        state.coordinateSystem = action.payload;
       },
     addLayer: (state, action: PayloadAction<Layer>) => {
       if(!state.layers.some(u=>JSON.parse(u).name === action.payload.name)) {
@@ -57,7 +61,6 @@ export const mapSlice = createSlice({
       else{
         alert("layer already exists");
       }
-      
     },
     updateClickedCoord: (state, action: PayloadAction<LatLong>) => {
       state.clickedCoord = JSON.stringify(action.payload);

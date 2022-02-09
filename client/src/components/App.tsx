@@ -4,6 +4,7 @@ import MenuBar from './menu-bar/MenuBar';
 import { withTranslation, Trans } from 'react-i18next';
 import NavigationBar from './navigation-bar/NavigationBar';
 import Collapsible from './collapsible/Collapsible';
+import InteractiveMapContainer from './map/InteractiveMapContainer';
 
 function App({ t }: any) {
   // const file = 'src/App.tsx';
@@ -74,6 +75,7 @@ function App({ t }: any) {
         </aside>
         <main className="container mt-3">
           <Counter />
+          <InteractiveMapContainer/>
         </main>
       </div>
       {/* <footer className="alert alert-warning">

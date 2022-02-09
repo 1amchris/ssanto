@@ -1,7 +1,7 @@
 import { TileLayer, LayersControl, GeoJSON } from "react-leaflet";
 
-import { useAppSelector, useAppDispatch } from "../store/hooks";
-import { selectmap } from "../store/reducers/map";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { selectmap } from "../../store/reducers/map";
 
 const Layers = () => {
   const dispatch = useAppDispatch();
