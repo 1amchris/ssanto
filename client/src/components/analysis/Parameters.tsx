@@ -7,7 +7,7 @@ import { selectAnalysis, setParameters } from '../../store/reducers/analysis';
 import { withTranslation } from 'react-i18next';
 import Form from '../form/Form';
 
-function Step1({ t }: any) {
+function Parameters({ t }: any) {
   const dispatch = useAppDispatch();
   const { parameters: source } = useAppSelector(selectAnalysis);
   const { analysisName, modelerName, cellSize, coordinateSystem } = source;
@@ -70,4 +70,4 @@ function Step1({ t }: any) {
   );
 }
 
-export default withTranslation()(Step1);
+export default withTranslation()(Parameters);

@@ -6,7 +6,7 @@ import { selectAnalysis, setStudyArea } from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import { Control, Button, Spacer } from '../form/form-components';
 
-function Step2({ t }: any) {
+function StudyArea({ t }: any) {
   const dispatch = useAppDispatch();
   const { studyArea: source } = useAppSelector(selectAnalysis);
 
@@ -28,4 +28,4 @@ function Step2({ t }: any) {
   );
 }
 
-export default withTranslation()(Step2);
+export default withTranslation()(StudyArea);

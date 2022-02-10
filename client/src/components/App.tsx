@@ -4,8 +4,8 @@ import NavigationBar from './navigation-bar/NavigationBar';
 import Collapsible from './collapsible/Collapsible';
 import InteractiveMapContainer from './map/InteractiveMapContainer';
 import Data from './data/Data';
-import { Step1, Step2, Step3 } from './steps/';
-import InterativeMapDemo from './steps/InteractiveMapDemo';
+import { Parameters, StudyArea, NbsSystemType } from './analysis';
+import InterativeMapDemo from './analysis/InteractiveMapDemo';
 
 function App() {
   return (
@@ -17,13 +17,13 @@ function App() {
         <aside id="left-aside">
           <NavigationBar>
             <Collapsible title={'analysis parameters'} collapsed={false}>
-              <Step1 />
+              <Parameters />
             </Collapsible>
             <Collapsible title={'study area'} collapsed={true}>
-              <Step2 />
+              <StudyArea />
             </Collapsible>
             <Collapsible title={'NBS system type'} collapsed={true}>
-              <Step3 />
+              <NbsSystemType />
             </Collapsible>
             <Collapsible title={'interactive map'} collapsed={true}>
               <InterativeMapDemo />

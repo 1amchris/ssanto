@@ -10,7 +10,7 @@ import {
 import Form from '../form/Form';
 import { Select, Button, Spacer } from '../form/form-components';
 
-function Step3({ t }: any) {
+function NbsSystemType({ t }: any) {
   const dispatch = useAppDispatch();
   const { nbsSystem: source } = useAppSelector(selectAnalysis);
   const { type } = source;
@@ -50,4 +50,4 @@ function Step3({ t }: any) {
   );
 }
 
-export default withTranslation()(Step3);
+export default withTranslation()(NbsSystemType);
