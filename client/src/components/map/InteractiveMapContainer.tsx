@@ -1,9 +1,5 @@
 import { withTranslation } from 'react-i18next';
 
-//Importation des données à effacer, juste pour démo
-import ev from '../../data/espace_vert.json';
-import lh from '../../data/limite_h.json';
-
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import {
   updateLocation,
@@ -39,30 +35,7 @@ function InteractiveMapContainer({ t, className, style }: any) {
     return null;
   };
 
-  //Fonction à effacer, juste pour démo
-  const changeLayer = (nb: number) => (_event: any) => {
-    switch (nb) {
-      case 1:
-        let l1: Layer = { name: 'layer1', data: ev };
-        dispatch(addLayer(l1));
-        break;
-      case 2:
-        let l2: Layer = { name: 'layer2', data: lh };
-        dispatch(addLayer(l2));
-        break;
-      case 3:
-        let l3: Layer = { name: 'layer3', data: '' };
-        dispatch(addLayer(l3));
-        break;
-      case 4:
-        let l4: Layer = { name: 'layer4', data: '' };
-        dispatch(addLayer(l4));
-        break;
-      default:
-        break;
-    }
-    nb += 1;
-  };
+  
 
   return (
     // <React.Fragment>

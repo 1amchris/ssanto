@@ -5,6 +5,7 @@ import Collapsible from './collapsible/Collapsible';
 import InteractiveMapContainer from './map/InteractiveMapContainer';
 import Data from './data/Data';
 import { Step1, Step2, Step3 } from './steps/';
+import StepIM from './steps/StepIM';
 
 function App() {
   return (
@@ -23,6 +24,9 @@ function App() {
             </Collapsible>
             <Collapsible title={'NBS system type'} collapsed={true}>
               <Step3 />
+            </Collapsible>
+            <Collapsible title={'interactive map'} collapsed={true}>
+              <StepIM />
             </Collapsible>
             {/* <Collapsible
               title={'Objective hierarchy'}
