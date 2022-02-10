@@ -1,13 +1,12 @@
 import React from 'react';
 import MenuBar from './menu-bar/MenuBar';
-import { withTranslation } from 'react-i18next';
 import NavigationBar from './navigation-bar/NavigationBar';
 import Collapsible from './collapsible/Collapsible';
 import InteractiveMapContainer from './map/InteractiveMapContainer';
 import Data from './data/Data';
 import { Step1, Step2, Step3 } from './steps/';
 
-function App({ t }: any) {
+function App() {
   return (
     <div className="App">
       <header className="App-header">
@@ -75,4 +74,4 @@ function App({ t }: any) {
   );
 }
 
-export default withTranslation()(App);
+export default App;
