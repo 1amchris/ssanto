@@ -5,8 +5,7 @@ import NavigationBar from './navigation-bar/NavigationBar';
 import Collapsible from './collapsible/Collapsible';
 import InteractiveMapContainer from './map/InteractiveMapContainer';
 import Data from './data/Data';
-import Step1 from './steps/Step1';
-import Step2 from './steps/Step2';
+import { Step1, Step2, Step3 } from './steps/';
 
 function App({ t }: any) {
   return (
@@ -17,17 +16,16 @@ function App({ t }: any) {
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
           <NavigationBar>
-            <Collapsible title={'Parameters & Settings'} collapsed={false}>
+            <Collapsible title={'analysis parameters'} collapsed={false}>
               <Step1 />
             </Collapsible>
-            <Collapsible title={'Study area'} collapsed={true}>
+            <Collapsible title={'study area'} collapsed={true}>
               <Step2 />
             </Collapsible>
+            <Collapsible title={'NBS system type'} collapsed={true}>
+              <Step3 />
+            </Collapsible>
             {/* <Collapsible
-              title={'NBS system type'}
-              collapsed={true}
-            ></Collapsible>
-            <Collapsible
               title={'Objective hierarchy'}
               collapsed={true}
             ></Collapsible> */}

@@ -8,7 +8,7 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import {
   updateLocation,
   addLayer,
-  selectmap,
+  selectMap,
   updateClickedCoord,
   Layer,
 } from '../../store/reducers/map';
@@ -22,7 +22,7 @@ function InteractiveMapContainer({ t, className, style }: any) {
     location: locationJSON,
     clickedCoord,
     zoom,
-  } = useAppSelector(selectmap);
+  } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();
 
   const location = JSON.parse(locationJSON);

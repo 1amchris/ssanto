@@ -1,9 +1,9 @@
 import { TileLayer, LayersControl, GeoJSON } from 'react-leaflet';
 import { useAppSelector } from '../../store/hooks';
-import { selectmap } from '../../store/reducers/map';
+import { selectMap } from '../../store/reducers/map';
 
 const Layers = () => {
-  const layers = useAppSelector(selectmap).layers;
+  const layers = useAppSelector(selectMap).layers;
 
   return (
     <LayersControl position="bottomleft">

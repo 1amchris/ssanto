@@ -8,12 +8,10 @@ class FormButton extends FormComponent {
 
   render = () => (
     <button
+      {...this.props}
       id={this.id}
       key={this.key}
-      type={this.props?.type || 'button'}
       className={`btn btn-sm ${this.props?.className}`}
-      onClick={this.props?.onClick}
-      onDoubleClick={this.props?.onDoubleClick}
     >
       {this.props?.children}
     </button>

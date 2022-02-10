@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { FcCollapse, FcExpand } from 'react-icons/fc';
-import { uniqueId } from 'lodash';
+import { capitalize, uniqueId } from 'lodash';
 
 function Collapsible({ t, title, children, collapsed }: any) {
   const id = uniqueId('collapsible-');
@@ -20,7 +20,7 @@ function Collapsible({ t, title, children, collapsed }: any) {
           setOpen(!open);
         }}
       >
-        <h6>{t(title || 'collapsible-title')}</h6>
+        <h6>{capitalize(t(title || 'collapsible-title'))}</h6>
         <span>{open ? <FcCollapse /> : <FcExpand />}</span>
       </div>
       <div className={`collapse ${open && 'show'}`} id={id}>

@@ -8,6 +8,7 @@ class FormSpacer extends FormComponent {
 
   render = () => (
     <div
+      {...this.props}
       id={this.id}
       key={this.key}
       className={`p-1 ${this.props.className}`}

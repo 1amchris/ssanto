@@ -1,4 +1,5 @@
-import { uniqueId } from 'lodash';
+import { capitalize, uniqueId } from 'lodash';
+import { withTranslation } from 'react-i18next';
 import FormComponent from './FormComponent';
 
 class FormControl extends FormComponent {
@@ -8,15 +9,15 @@ class FormControl extends FormComponent {
 
   render = () => {
     const {
-      name,
-      placeholder,
+      t,
+      i18n,
+      tReady,
+      label,
       className,
-      value,
       suffix,
       prefix,
       plaintext = false,
-      type = 'text',
-      onChange,
+      ...props
     } = this.props;
 
     const prefixElement = prefix && (
@@ -29,11 +30,8 @@ class FormControl extends FormComponent {
 
     const inputElement = (
       <input
+        {...props}
         id={this.id}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
         className={`${
           plaintext ? 'form-control-plaintext' : 'form-control'
         } form-control-sm`}
@@ -42,8 +40,8 @@ class FormControl extends FormComponent {
 
     return (
       <div key={this.key} className={className}>
-        <label htmlFor={this.id} className="form-label small">
-          {name}
+        <label htmlFor={this.props.name} className="form-label small">
+          {capitalize(t(label || this.props.name))}
         </label>
         {((suffix || prefix) && (
           <div className="input-group input-group-sm">
@@ -58,4 +56,4 @@ class FormControl extends FormComponent {
   };
 }
 
-export default FormControl;
+export default withTranslation()(FormControl);

@@ -72,6 +72,6 @@ export const {
   updateClickedCoord,
 } = mapSlice.actions;
 
-export const selectmap = (state: RootState) => state.map;
+export const selectMap = (state: RootState) => state.map;
 
 export default mapSlice.reducer;
