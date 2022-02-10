@@ -3,12 +3,12 @@ import L from 'leaflet';
 import { RootState } from '../store';
 
 export interface MapState {
-  location: string;
+  location: LatLong;
   zoom: number;
   coordinateSystem: string;
   cellSize: number;
-  layers: Array<string>;
-  clickedCoord: string;
+  layers: Layer[];
+  clickedCoord: LatLong;
 }
 
 export interface Layer {
@@ -24,41 +24,44 @@ export interface LatLong {
 export const mapSlice = createSlice({
   name: 'map',
   initialState: {
-    location: JSON.stringify({ lat: 45.509, long: -73.553 }),
+    location: { lat: 45.509, long: -73.553 },
     zoom: 10,
     coordinateSystem: `${L.CRS.EPSG3857}`,
     cellSize: 20,
     layers: [],
-    clickedCoord: JSON.stringify({ lat: NaN, long: NaN }),
+    clickedCoord: { lat: NaN, long: NaN },
   } as MapState,
   reducers: {
-    updateLocation: (state, action: PayloadAction<LatLong>) => {
-      if (!(isNaN(action.payload.lat) || isNaN(action.payload.long))) {
-        state.location = JSON.stringify(action.payload);
-      } else {
-        console.error('Coordinates invalid', action.payload);
-      }
+    updateLocation: (state, { payload: location }: PayloadAction<LatLong>) => {
+      if (isNaN(location.lat) || isNaN(location.long))
+        console.error('Invalid coordinates', location);
+      else state.location = location;
     },
     updateCellSize: (state, action: PayloadAction<number>) => {
       state.cellSize = action.payload;
     },
-    updateZoom: (state, action: PayloadAction<number>) => {
-      state.zoom = action.payload;
+    updateZoom: (state, { payload: zoom }: PayloadAction<number>) => {
+      console.warn('Warning: no validation has been applied to zoom');
+      state.zoom = zoom;
     },
-    updateCoordSys: (state, action: PayloadAction<string>) => {
-      state.coordinateSystem = action.payload;
+    updateCoordSys: (state, { payload: system }: PayloadAction<string>) => {
+      console.warn(
+        'Warning: no validation has been applied to coordinate system'
+      );
+      state.coordinateSystem = system;
     },
-    addLayer: (state, action: PayloadAction<Layer>) => {
-      if (!state.layers.some(u => JSON.parse(u).name === action.payload.name)) {
-        state.layers.push(JSON.stringify(action.payload));
-      } else {
+    addLayer: (state, { payload: layer }: PayloadAction<Layer>) => {
+      if (state.layers.some(({ name }) => name === layer.name)) {
         console.error(
-          `A layer with the same name "${action.payload.name}" already exists`
+          `A layer with the same name "${layer.name}" already exists`
         );
-      }
+      } else state.layers.push(layer);
     },
-    updateClickedCoord: (state, action: PayloadAction<LatLong>) => {
-      state.clickedCoord = JSON.stringify(action.payload);
+    updateClickedCoord: (
+      state,
+      { payload: location }: PayloadAction<LatLong>
+    ) => {
+      state.clickedCoord = location;
     },
   },
 });

@@ -1,98 +1,85 @@
-import { capitalize, template } from 'lodash';
-import React, { useState } from 'react';
-import { Control, Select, Spacer, Button } from '../form/form-components';
-import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
+import { capitalize } from 'lodash';
+import React from 'react';
+import { Control, Spacer, Button } from '../form/form-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { addLayer, Layer, selectMap, updateLocation } from '../../store/reducers/map';
+import {
+  addLayer,
+  Layer,
+  selectMap,
+  updateLocation,
+} from '../../store/reducers/map';
 import { withTranslation } from 'react-i18next';
 import Form from '../form/Form';
-import { selectAnalysis, setParameters } from '../../store/reducers/analysis';
 
 //Importation des données à effacer, juste pour démo
 import ev from '../../data/espace_vert.json';
 import lh from '../../data/limite_h.json';
 
 function StepIM({ t }: any) {
-    const {
-        location: locationJSON,
-        clickedCoord,
-        zoom,
-      } = useAppSelector(selectMap);
-      const { parameters: source } = useAppSelector(selectAnalysis);
+  const source = useAppSelector(selectMap);
+  const { location, clickedCoord, layers } = source;
+  const dispatch = useAppDispatch();
 
-      const dispatch = useAppDispatch();
-      const location = JSON.parse(locationJSON) as { long: string; lat: string };
-
-      const [tempLongLat, setTempLongLat] = useState({lat: NaN, long: NaN});
-
-
-      //Fonction à effacer, juste pour démo
-  const changeLayer = (nb: number) => (_event: any) => {
-    switch (nb) {
-      case 1:
-        let l1: Layer = { name: 'layer1', data: ev };
-        dispatch(addLayer(l1));
-        break;
-      case 2:
-        let l2: Layer = { name: 'layer2', data: lh };
-        dispatch(addLayer(l2));
-        break;
-      case 3:
-        let l3: Layer = { name: 'layer3', data: '' };
-        dispatch(addLayer(l3));
-        break;
-      case 4:
-        let l4: Layer = { name: 'layer4', data: '' };
-        dispatch(addLayer(l4));
-        break;
-      default:
-        break;
-    }
+  const newLayers: any = {
+    1: { name: 'layer1', data: ev } as Layer,
+    2: { name: 'layer2', data: lh } as Layer,
   };
 
   const controls = [
     <Control
-      label="Center: Lat"
-      name="center_lat"
+      label="clicked latitude"
+      plaintext
+      defaultValue={`${clickedCoord.lat}º`}
+    />,
+    <Control
+      label="clicked longitude"
+      plaintext
+      defaultValue={`${clickedCoord.long}º`}
+    />,
+    <Spacer />,
+    <Control
+      label="latitude"
+      name="lat"
+      type="number"
       defaultValue={location.lat}
-      onChange={({ target: { value } }: any) =>
-      setTempLongLat({ long:tempLongLat.long , lat: value})
-    }
       required
     />,
     <Control
-    label="Center: Long"
-    name="center_long"
-    defaultValue={location.long}
-    onChange={({ target: { value } }: any) =>{
-    setTempLongLat({ long: value, lat: tempLongLat.lat  })
-}
-    }
-    required
-  />,
-  <Button className="btn-primary w-50" 
-  onClick={() =>dispatch(updateLocation({ long: +tempLongLat.long, lat: +tempLongLat.lat }))}
-  >{capitalize(t('Update center')) }
-  </Button>,
-
-  <Spacer/>,
-  <Button className="btn-primary w-100" onClick={changeLayer(1)} >{capitalize(t('Add layer 1')) }</Button>,
-  <Button className="btn-primary w-100" onClick={changeLayer(2)} >{capitalize(t('Add layer 2')) }</Button>,
+      label="longitude"
+      name="long"
+      type="number"
+      defaultValue={location.long}
+      required
+    />,
+    <Spacer />,
+    <Button className="btn-primary w-100">
+      {capitalize(t('update center'))}
+    </Button>,
+    <Button className="btn-outline-danger w-100" type="reset">
+      {capitalize(t('reset'))}
+    </Button>,
+    <Spacer />,
+    <Button
+      className="btn-outline-primary w-100"
+      type="button"
+      onClick={() => {
+        if (Object.keys(newLayers).some(key => +key === layers.length + 1))
+          dispatch(addLayer(newLayers[layers.length + 1]));
+      }}
+      disabled={layers.length >= 2}
+    >
+      {capitalize(t('add layer'))}
+    </Button>,
   ];
 
   return (
-      <div>
-    <p>
-    Lat: {(JSON.parse(clickedCoord)).lat}<br/> 
-    Long: {(JSON.parse(clickedCoord)).long}</p>
-
     <Form
       controls={controls}
-      store={source}
-      onSubmit={(fields: any) => dispatch(setParameters(fields))}
+      store={location}
+      onSubmit={(fields: any) =>
+        dispatch(updateLocation({ long: fields.long, lat: fields.lat }))
+      }
     />
-    </div>
-
   );
 }
 

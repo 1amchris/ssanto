@@ -1,27 +1,27 @@
 import { TileLayer, LayersControl, GeoJSON } from 'react-leaflet';
 import { useAppSelector } from '../../store/hooks';
-import { selectMap } from '../../store/reducers/map';
+import { Layer, selectMap } from '../../store/reducers/map';
 
 const Layers = () => {
-  const layers = useAppSelector(selectMap).layers;
+  const { layers } = useAppSelector(selectMap);
 
   return (
     <LayersControl position="bottomleft">
-      <LayersControl.Overlay checked name="osm">
+      <LayersControl.BaseLayer checked name="Street">
         <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-      </LayersControl.Overlay>
+      </LayersControl.BaseLayer>
+      <LayersControl.BaseLayer name="None">
+        <TileLayer url="" />
+      </LayersControl.BaseLayer>
 
-      {Object.entries(layers).map(layer => {
-        const { name, data } = JSON.parse(layer[1]);
-        return (
-          <LayersControl.Overlay key={name} checked name={name}>
-            <GeoJSON data={data} />
-          </LayersControl.Overlay>
-        );
-      })}
+      {layers.map(({ name, data }: Layer) => (
+        <LayersControl.Overlay key={name} name={name} checked>
+          <GeoJSON data={data} />
+        </LayersControl.Overlay>
+      ))}
     </LayersControl>
   );
 };
