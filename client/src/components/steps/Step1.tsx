@@ -28,7 +28,7 @@ function Step1({ t }: any) {
     <Control
       label="cell size"
       name="cellSize"
-      // TODO: fix suffix issue (not syncing)
+      // TODO: fix prefix/suffix issue (not syncing)
       suffix={
         <React.Fragment>
           <small className="me-1">x</small>
