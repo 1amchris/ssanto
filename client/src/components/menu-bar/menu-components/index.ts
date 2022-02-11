@@ -1,7 +1,7 @@
-import Action from './MenuActionButton';
-import Import from './MenuImportButton';
-import Export from './MenuExportButton';
-import Navigation from './MenuNavigationButton';
+import Action from './MenuAction';
+import Import from './MenuImport';
+import Export from './MenuExport';
+import Link from './MenuLink';
 import Divider from './MenuDivider';
 
-export { Action, Divider, Import, Export, Navigation };
+export { Action, Divider, Import, Export, Link };

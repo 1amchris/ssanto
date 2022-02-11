@@ -1,9 +1,9 @@
 import React, { createRef, RefObject } from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize, first, uniqueId } from 'lodash';
-import MenuComponent from './MenuItem';
+import MenuComponent from './MenuComponent';
 
-class MenuImportButton extends MenuComponent {
+class MenuImport extends MenuComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('menu/import-'), key);
   }
@@ -47,4 +47,4 @@ class MenuImportButton extends MenuComponent {
       files && files.length > 0 && onFileChanged(first(files)!);
 }
 
-export default withTranslation()(MenuImportButton);
+export default withTranslation()(MenuImport);

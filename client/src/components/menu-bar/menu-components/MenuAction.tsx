@@ -1,9 +1,9 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize, uniqueId } from 'lodash';
-import MenuComponent from './MenuItem';
+import MenuComponent from './MenuComponent';
 
-class MenuActionButton extends MenuComponent {
+class MenuAction extends MenuComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('menu/action-'), key);
   }
@@ -23,4 +23,4 @@ class MenuActionButton extends MenuComponent {
   };
 }
 
-export default withTranslation()(MenuActionButton);
+export default withTranslation()(MenuAction);

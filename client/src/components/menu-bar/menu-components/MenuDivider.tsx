@@ -1,5 +1,5 @@
 import { uniqueId } from 'lodash';
-import MenuComponent from './MenuItem';
+import MenuComponent from './MenuComponent';
 
 class MenuDivider extends MenuComponent {
   constructor(props: any, key?: string) {

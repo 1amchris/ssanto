@@ -1,6 +1,6 @@
 import React from 'react';
 import Menu from './menu/Menu';
-import { Action, Divider, Export, Import, Navigation } from './menu-components';
+import { Action, Divider, Export, Import, Link } from './menu-components';
 
 const menus = [
   {
@@ -54,7 +54,7 @@ const menus = [
   {
     label: 'help',
     disabled: false,
-    controls: [<Navigation label="show guide" targetUrl="/guide" />],
+    controls: [<Link label="show guide" targetUrl="/guide" />],
   },
 ];
 

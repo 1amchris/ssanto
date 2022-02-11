@@ -2,9 +2,9 @@ import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize, uniqueId } from 'lodash';
 import { saveAs } from 'file-saver';
-import MenuComponent from './MenuItem';
+import MenuComponent from './MenuComponent';
 
-class MenuExportButton extends MenuComponent {
+class MenuExport extends MenuComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('menu/export-'), key);
   }
@@ -28,4 +28,4 @@ class MenuExportButton extends MenuComponent {
   };
 }
 
-export default withTranslation()(MenuExportButton);
+export default withTranslation()(MenuExport);
