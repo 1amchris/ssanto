@@ -1,16 +1,23 @@
 import { capitalize } from 'lodash';
-import React from 'react';
-import { Control, Select, Spacer, Button } from '../form/form-components';
-import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
+import React, { createRef, RefObject } from 'react';
+import { Control, Spacer, Button } from '../form/form-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { selectAnalysis, setParameters } from '../../store/reducers/analysis';
+import {
+  selectAnalysis,
+  updateParameters,
+} from '../../store/reducers/analysis';
+import { selectMap, updateCellSize } from '../../store/reducers/map';
 import { withTranslation } from 'react-i18next';
 import Form from '../form/Form';
 
 function Parameters({ t }: any) {
   const dispatch = useAppDispatch();
-  const { parameters: source } = useAppSelector(selectAnalysis);
-  const { analysisName, modelerName, cellSize, coordinateSystem } = source;
+  const {
+    parameters: { analysisName, modelerName },
+  } = useAppSelector(selectAnalysis);
+  const { cellSize } = useAppSelector(selectMap);
+
+  const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
 
   const controls = [
     <Control
@@ -28,31 +35,18 @@ function Parameters({ t }: any) {
     <Control
       label="cell size"
       name="cellSize"
-      // TODO: fix prefix/suffix issue (not syncing)
       suffix={
         <React.Fragment>
           <small className="me-1">x</small>
-          {cellSize}m
+          <span ref={cellSizeRef}>{cellSize}</span>m
         </React.Fragment>
       }
-      // onChange={({ target: { value } }: { target: HTMLInputElement }) =>
-      //   dispatch(setCellSize(+value))
-      // }
+      onChange={({ target: { value } }: { target: HTMLInputElement }) => {
+        if (cellSizeRef.current?.textContent)
+          cellSizeRef.current.textContent = value;
+      }}
       defaultValue={cellSize}
       type="number"
-    />,
-    <Select
-      label="coordinate system"
-      name="coordinateSystem"
-      defaultValue={coordinateSystem}
-      options={
-        [
-          { value: '0', label: 'cartesian' },
-          { value: '1', label: 'polar' },
-          { value: '2', label: 'cylindrical and spherical' },
-          { value: '3', label: 'homogeneous' },
-        ] as FormSelectOptionModel[]
-      }
     />,
     <Spacer />,
     <Button className="btn-primary w-100">{capitalize(t('apply'))}</Button>,
@@ -64,8 +58,17 @@ function Parameters({ t }: any) {
   return (
     <Form
       controls={controls}
-      store={source}
-      onSubmit={(fields: any) => dispatch(setParameters(fields))}
+      onSubmit={({
+        analysisName,
+        modelerName,
+        cellSize,
+        ...rest
+      }: {
+        [p: string]: string;
+      }) => {
+        dispatch(updateParameters({ analysisName, modelerName }));
+        dispatch(updateCellSize(+cellSize));
+      }}
     />
   );
 }

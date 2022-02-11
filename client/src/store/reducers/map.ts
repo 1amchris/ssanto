@@ -44,12 +44,6 @@ export const mapSlice = createSlice({
       console.warn('Warning: no validation has been applied to zoom');
       state.zoom = zoom;
     },
-    updateCoordSys: (state, { payload: system }: PayloadAction<string>) => {
-      console.warn(
-        'Warning: no validation has been applied to coordinate system'
-      );
-      state.coordinateSystem = system;
-    },
     addLayer: (state, { payload: layer }: PayloadAction<Layer>) => {
       if (state.layers.some(({ name }) => name === layer.name)) {
         console.error(
@@ -71,7 +65,6 @@ export const {
   updateCellSize,
   updateZoom,
   addLayer,
-  updateCoordSys,
   updateClickedCoord,
 } = mapSlice.actions;
 

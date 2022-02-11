@@ -4,8 +4,6 @@ import { RootState } from '../store';
 export interface AnalysisParameters {
   modelerName: string;
   analysisName: string;
-  cellSize: number;
-  coordinateSystem: string;
 }
 
 export interface AnalysisStudyArea {
@@ -28,8 +26,6 @@ export const analysisSlice = createSlice({
     parameters: {
       modelerName: '',
       analysisName: '',
-      cellSize: 20,
-      coordinateSystem: '1',
     } as AnalysisParameters,
     studyArea: { file: undefined } as AnalysisStudyArea,
     nbsSystem: { type: '2' } as AnalysisNbsSystem,
@@ -38,7 +34,7 @@ export const analysisSlice = createSlice({
     setParameters: (
       state,
       {
-        payload: { modelerName, analysisName, cellSize, coordinateSystem },
+        payload: { modelerName, analysisName },
       }: PayloadAction<AnalysisParameters>
     ) => {
       modelerName = modelerName.trim();
@@ -56,17 +52,6 @@ export const analysisSlice = createSlice({
         );
       /* TODO: add additional validation here */ else
         state.parameters.analysisName = analysisName;
-
-      if (cellSize < 1)
-        console.error(
-          `The cell size must be of at least 1x1m. Input: "${cellSize}"`
-        );
-      /* TODO: add additional validation here */ else
-        state.parameters.cellSize = cellSize;
-
-      console.warn('No validation was performed on the coordinate system');
-      /* TODO: add additional validation here */
-      state.parameters.coordinateSystem = coordinateSystem;
     },
     setNbsSystemType: (
       state,
@@ -87,7 +72,7 @@ export const analysisSlice = createSlice({
   },
 });
 
-export const { setParameters, setNbsSystemType, setStudyArea } =
+export const { setParameters: updateParameters, setNbsSystemType, setStudyArea } =
   analysisSlice.actions;
 export const selectAnalysis = (state: RootState) => state.analysis;
 

@@ -1,14 +1,13 @@
 import { capitalize } from 'lodash';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { selectAnalysis, setStudyArea } from '../../store/reducers/analysis';
+import { useAppDispatch } from '../../store/hooks';
+import { setStudyArea } from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import { Control, Button, Spacer } from '../form/form-components';
 
 function StudyArea({ t }: any) {
   const dispatch = useAppDispatch();
-  const { studyArea: source } = useAppSelector(selectAnalysis);
 
   const controls = [
     <Control label="study area" name="file" type="file" />,
@@ -22,7 +21,6 @@ function StudyArea({ t }: any) {
   return (
     <Form
       controls={controls}
-      store={source}
       onSubmit={(fields: any) => dispatch(setStudyArea(fields))}
     />
   );

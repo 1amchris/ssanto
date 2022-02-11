@@ -16,38 +16,41 @@ import ev from '../../data/espace_vert.json';
 import lh from '../../data/limite_h.json';
 
 function InterativeMapDemo({ t }: any) {
-  const source = useAppSelector(selectMap);
-  const { location, clickedCoord, layers } = source;
+  const { location, clickedCoord, layers, cellSize } =
+    useAppSelector(selectMap);
   const dispatch = useAppDispatch();
 
   const newLayers: any = {
-    1: { name: 'layer1', data: ev } as Layer,
-    2: { name: 'layer2', data: lh } as Layer,
+    1: { name: 'green spaces', data: ev } as Layer,
+    2: { name: 'build height limit', data: lh } as Layer,
   };
 
   const controls = [
     <Control
       label="clicked latitude"
-      plaintext
+      readOnly
       defaultValue={`${clickedCoord.lat || location.lat}º`}
     />,
     <Control
       label="clicked longitude"
-      plaintext
+      readOnly
       defaultValue={`${clickedCoord.long || location.long}º`}
+    />,
+    <Control
+      label="displayed cell size"
+      readOnly
+      defaultValue={`${cellSize}`}
     />,
     <Spacer />,
     <Control
       label="latitude"
       name="lat"
-      type="number"
       defaultValue={location.lat}
       required
     />,
     <Control
       label="longitude"
       name="long"
-      type="number"
       defaultValue={location.long}
       required
     />,
@@ -75,7 +78,6 @@ function InterativeMapDemo({ t }: any) {
   return (
     <Form
       controls={controls}
-      store={location}
       onSubmit={(fields: any) =>
         dispatch(updateLocation({ long: fields.long, lat: fields.lat }))
       }
