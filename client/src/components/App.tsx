@@ -4,7 +4,12 @@ import NavigationBar from './navigation-bar/NavigationBar';
 import Collapsible from './collapsible/Collapsible';
 import InteractiveMapContainer from './map/InteractiveMapContainer';
 import Data from './data/Data';
-import { Parameters, StudyArea, NbsSystemType } from './analysis';
+import {
+  Parameters,
+  StudyArea,
+  NbsSystemType,
+  ObjectiveHierarchy,
+} from './analysis';
 import InterativeMapDemo from './analysis/InteractiveMapDemo';
 
 function App() {
@@ -16,7 +21,10 @@ function App() {
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
           <NavigationBar>
-            <Collapsible title={'analysis parameters'} collapsed={false}>
+            <Collapsible title={'interactive map'} collapsed={true}>
+              <InterativeMapDemo />
+            </Collapsible>
+            <Collapsible title={'analysis parameters'} collapsed={true}>
               <Parameters />
             </Collapsible>
             <Collapsible title={'study area'} collapsed={true}>
@@ -25,8 +33,8 @@ function App() {
             <Collapsible title={'NBS system type'} collapsed={true}>
               <NbsSystemType />
             </Collapsible>
-            <Collapsible title={'interactive map'} collapsed={true}>
-              <InterativeMapDemo />
+            <Collapsible title={'objective hierarchy'}>
+              <ObjectiveHierarchy />
             </Collapsible>
             {/* <Collapsible
               title={'Objective hierarchy'}

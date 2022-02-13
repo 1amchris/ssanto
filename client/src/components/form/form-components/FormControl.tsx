@@ -12,6 +12,7 @@ class FormControl extends FormComponent {
       t,
       i18n,
       tReady,
+      hideLabel,
       label,
       className,
       suffix,
@@ -40,7 +41,10 @@ class FormControl extends FormComponent {
 
     return (
       <div key={this.key} className={className}>
-        <label htmlFor={this.props.name} className="form-label small">
+        <label
+          htmlFor={this.props.name}
+          className={`form-label small ${this.hideLabel && 'visually-hidden'}`}
+        >
           {capitalize(t(label || this.props.name))}
         </label>
         {((suffix || prefix) && (

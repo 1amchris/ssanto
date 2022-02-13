@@ -3,7 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { FcCollapse, FcExpand } from 'react-icons/fc';
 import { capitalize, uniqueId } from 'lodash';
 
-function Collapsible({ t, title, children, collapsed }: any) {
+function Collapsible({ t, title, children, collapsed = false }: any) {
   const id = uniqueId('collapsible-');
   const [open, setOpen] = useState(!(collapsed as boolean));
 

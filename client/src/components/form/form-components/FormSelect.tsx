@@ -9,14 +9,17 @@ class FormSelect extends FormComponent {
   }
 
   render = () => {
-    const { t, i18n, tReady, options, className, label, ...props } = this.props;
+    const { t, i18n, tReady, options, className, hideLabel, label, ...props } =
+      this.props;
     return (
       <div key={this.key} className={className}>
-        <label htmlFor={this.props.name} className="form-label small">
-          {capitalize(t(label || this.props.name))}
-        </label>
+        {!this.hideLabel && (
+          <label htmlFor={this.props.name} className={`form-label small`}>
+            {capitalize(t(label || this.props.name))}
+          </label>
+        )}
         <select {...props} id={this.id} className="form-select form-select-sm">
-          {options.map(this.getOption)}
+          {options?.map(this.getOption)}
         </select>
       </div>
     );
