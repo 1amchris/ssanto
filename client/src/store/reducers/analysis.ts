@@ -41,16 +41,16 @@ export const analysisSlice = createSlice({
     studyArea: { file: undefined } as AnalysisStudyArea,
     nbsSystem: { type: '2' } as AnalysisNbsSystem,
     objectives: {
-      main: '1',
+      main: '0',
       primaries: [
         {
-          primary: ['1', '0'],
+          primary: ['0', '1'],
           secondaries: [
             {
-              secondary: ['0', '1', '0'],
+              secondary: ['0', '1', '2'],
             },
             {
-              secondary: ['2', '0'],
+              secondary: ['0', '1'],
             },
           ],
         },

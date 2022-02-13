@@ -28,70 +28,54 @@ function ObjectiveHierarchy({ t }: any) {
    *  Generates placeholder options
    *  Remove once computed options are added
    **/
-  const generateOptions = (prefix: string, n: number) =>
+  const generateOptions = (text: string, n: number) =>
     Array.from(Array(n).keys()).map(
       (value: number) =>
         ({
           value: `${value}`,
-          label: `${prefix} ${value}`,
+          label: `${value} ${text}`,
         } as FormSelectOptionModel)
     );
 
-  const secondaryControl = (
-    defaultValue: string = '0',
-    parentName: string = '',
-    index?: number
-  ) => {
-    const prefix = parentName !== '' ? `${parentName}.` : '';
-    const suffix = index !== undefined ? `.${index}` : '';
-
+  const secondaryControlFactory = (props: any) => {
+    const { name, key, orderIndex, defaultValue } = props;
     return [
       <Select
-        key={`${prefix}secondary${suffix}`}
-        name={`${prefix}secondary${suffix}`}
         hideLabel
+        key={key('secondary')}
+        name={name('secondary')}
         defaultValue={defaultValue}
+        label={`secondary objective ${orderIndex}`}
         options={generateOptions('Secondary Objective', 3)}
       />,
     ];
   };
 
-  const primaryControl = (
-    primaryValue: string = '0',
-    parentName?: string,
-    index?: number,
-    secondaryValues?: string[]
-  ) => {
-    const prefix = parentName ? `${parentName}.` : '';
-    const suffix = index !== undefined ? `.${index}` : '';
-    const expandablesName = `${prefix}secondaries${suffix}`;
-
+  const primaryControlFactory = (props: any) => {
+    const { name, key, orderIndex, defaultValue, childrenValues } = props;
     return [
       <Select
         hideLabel
-        label={`primary objective ${index}`}
-        key={`${prefix}primary${suffix}`}
-        name={`${prefix}primary${suffix}`}
-        defaultValue={primaryValue}
+        label={`primary objective ${orderIndex}`}
+        key={key('primary')}
+        name={name('primary')}
+        defaultValue={defaultValue}
         options={generateOptions('Primary Objective', 3)}
       />,
       <ExpandableList
         hideLabel
+        key={key('secondaries')}
+        name={name('secondaries')}
+        factory={secondaryControlFactory}
         label="secondary objectives"
-        key={expandablesName}
-        name={expandablesName}
-        template={secondaryControl()}
-        controls={secondaryValues?.map((value: string, index: number) =>
-          secondaryControl(value, expandablesName, index)
-        )}
+        controls={childrenValues?.map((defaultValue: string) => ({
+          defaultValue,
+        }))}
       />,
     ];
   };
 
-  const mainControls = (index?: number) => {
-    const suffix = index !== undefined ? `.${index}` : '';
-    const expandablesName = `primaries${suffix}`;
-
+  const mainControls = () => {
     return [
       <Select
         key="main"
@@ -102,24 +86,22 @@ function ObjectiveHierarchy({ t }: any) {
       />,
       <ExpandableList
         hideLabel
+        key={`primaries.0`}
+        name={`primaries.0`}
+        factory={primaryControlFactory}
         label={'primary objectives'}
-        key={expandablesName}
-        name={expandablesName}
-        template={primaryControl()}
-        controls={secondaries.primary.map((value: string, index: number) =>
-          primaryControl(
-            value,
-            expandablesName,
-            index,
-            secondaries.secondaries[index]?.secondary
-          )
+        controls={secondaries.primary.map(
+          (defaultValue: string, index: number) => ({
+            defaultValue,
+            childrenValues: secondaries.secondaries[index]?.secondary,
+          })
         )}
       />,
     ];
   };
 
   const controls = [
-    ...mainControls(0),
+    ...mainControls(),
     <Spacer />,
     <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
   ];

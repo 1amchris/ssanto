@@ -3,16 +3,21 @@ import React, { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
 import { FiMinusCircle, FiPlus } from 'react-icons/fi';
 import { MdSubdirectoryArrowRight } from 'react-icons/md';
+import PropsModel from '../../../models/PropsModel';
 import FormComponent from './FormComponent';
+
+export interface FactoryProps extends PropsModel {
+  orderIndex: number;
+  key: (infix: string) => string;
+  name: (infix: string) => string;
+}
 
 class Row extends React.Component<{
   parentId: string;
   index: number;
-  control: ReactElement;
   onDeleteControl?: (index: number) => void;
 }> {
   key?: string;
-
   state = {
     isHovered: false,
   };
@@ -23,8 +28,7 @@ class Row extends React.Component<{
   }
 
   render = () => {
-    const { parentId, index, control, onDeleteControl } = this.props;
-
+    const { parentId, index, children, onDeleteControl } = this.props;
     return (
       <li
         key={this.key}
@@ -49,31 +53,35 @@ class Row extends React.Component<{
             <MdSubdirectoryArrowRight style={{ marginBottom: '3px' }} />
           )}
         </button>
-        <div key={`${parentId}/wrapper-${index}`}>{control}</div>
+        <div key={`${parentId}/wrapper-${index}`}>{children}</div>
       </li>
     );
   };
 }
 
 class FormExpandableList extends FormComponent {
-  template: ReactElement;
+  template: PropsModel;
+  factory: (props: FactoryProps) => ReactElement;
 
-  state: {
-    controls: ReactElement[];
-  } = {
+  state: { controls: PropsModel[] } = {
     controls: [],
   };
 
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/expandable-list-'), key);
-    this.template = <React.Fragment>{this.props.template}</React.Fragment>;
-    this.state.controls = this.props.controls || [];
+    this.factory = this.props.factory;
+    this.template = this.props.template;
+    this.state.controls =
+      this.props.controls?.map((control: PropsModel) => {
+        if (control.id === undefined) control.id = uniqueId();
+        return control;
+      }) || [];
   }
 
   render = () => {
     const { t, label, name } = this.props;
     return (
-      <div>
+      <React.Fragment>
         <label
           htmlFor={name}
           className={`form-label small mb-0 ${
@@ -82,61 +90,61 @@ class FormExpandableList extends FormComponent {
         >
           {capitalize(t(label || name))}
         </label>
+
         <ul className="list-unstyled">
-          {this.state.controls?.map((control, index) => (
+          {this.state.controls?.map((control: any, index: number) => (
             <Row
               key={`${this.id}/row-${index}`}
               parentId={this.id}
-              control={control}
               index={index}
               onDeleteControl={this.removeControlAt}
-            />
+            >
+              {this.factory({
+                ...control,
+                orderIndex: index,
+                key: (infix: string) =>
+                  `${name}.${infix}.${index}.${control.id}`,
+                name: (infix: string) => `${name}.${infix}.${index}`,
+              } as FactoryProps)}
+            </Row>
           ))}
           <Row
             parentId={this.id}
             key={`${this.id}/row-add`}
-            control={
-              <button
-                type="button"
-                className={`btn btn-sm btn-outline-secondary w-100`}
-                onClick={this.addControl}
-              >
-                <FiPlus />
-              </button>
-            }
             index={this.state.controls.length}
-          />
+          >
+            <button
+              type="button"
+              className={`btn btn-sm btn-outline-secondary w-100`}
+              onClick={this.addControl}
+            >
+              <FiPlus />
+            </button>
+          </Row>
         </ul>
-      </div>
+      </React.Fragment>
     );
   };
 
   addControl = () => {
-    const control = this.clone(this.template);
-    this.setState({ controls: this.state.controls.concat(control) });
+    const controls = this.state.controls.concat({
+      ...this.template,
+      id: uniqueId(),
+    });
+    this.updateControls(controls);
   };
 
   removeControlAt = (index: number) => {
     const controls = [...this.state.controls];
     controls.splice(index, 1);
+    this.updateControls(controls);
+  };
+
+  updateControls = (controls: PropsModel[]) => {
     this.setState({
       controls,
     });
   };
-
-  clone = (node: ReactElement, index?: number): ReactElement =>
-    React.cloneElement(
-      node,
-      {
-        ...node.props,
-        name: `${this.props.name}.${node.props.name}.${
-          index || this.state.controls.length
-        }`,
-      },
-      React.Children.map(node.props?.children, (child: ReactElement) =>
-        this.clone(child)
-      )
-    );
 }
 
 export default withTranslation()(FormExpandableList);
