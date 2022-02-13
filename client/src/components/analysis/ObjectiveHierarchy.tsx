@@ -2,7 +2,7 @@ import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Form from '../form/Form';
 import {
   Button,
@@ -10,9 +10,19 @@ import {
   Select,
   ExpandableList,
 } from '../form/form-components';
+import {
+  selectAnalysis,
+  updateObjectives,
+} from '../../store/reducers/analysis';
 
 function ObjectiveHierarchy({ t }: any) {
   const dispatch = useAppDispatch();
+  const {
+    objectives: {
+      main: mainValue,
+      primaries: [secondaries],
+    },
+  } = useAppSelector(selectAnalysis);
 
   const generateOptions = (prefix: string, n: number) =>
     Array.from(Array(n).keys()).map(
@@ -23,48 +33,84 @@ function ObjectiveHierarchy({ t }: any) {
         } as FormSelectOptionModel)
     );
 
-  const controls = [
-    <Select
-      label="objectives"
-      name="main"
-      options={generateOptions('Main Objective', 3)}
-    />,
-    <ExpandableList
-      label={'primary objectives'}
-      name="primary"
-      hideLabel
-      template={[
+  const secondaryControl = (
+    defaultValue: string = '0',
+    parentName: string = '',
+    index?: number
+  ) => {
+    const prefix = parentName !== '' ? `${parentName}.` : '';
+    const suffix = index !== undefined ? `.${index}` : '';
+
+    return [
+      <Select
+        key={`${prefix}secondary${suffix}`}
+        name={`${prefix}secondary${suffix}`}
+        hideLabel
+        defaultValue={defaultValue}
+        options={generateOptions('Secondary Objective', 3)}
+      />,
+    ];
+  };
+
+  const primaryControl =
+    (primaryValue: string = '0', parentName: string = '', index?: number) =>
+    (secondaryValues: string[] = []) => {
+      const prefix = parentName !== '' ? `${parentName}.` : '';
+      const suffix = index !== undefined ? `.${index}` : '';
+      const expandablesName = `${prefix}secondaries${suffix}`;
+
+      return [
         <Select
-          name="primary"
+          key={`${prefix}primary${suffix}`}
+          name={`${prefix}primary${suffix}`}
           hideLabel
+          defaultValue={primaryValue}
           options={generateOptions('Primary Objective', 3)}
         />,
         <ExpandableList
           label="secondary objectives"
-          name="secondary"
+          key={expandablesName}
+          name={expandablesName}
           hideLabel
-          template={[
-            <Select
-              name="secondary"
-              hideLabel
-              options={generateOptions('Secondary Objective', 3)}
-            />,
-            <ExpandableList
-              label="ternary objectives"
-              name="ternary"
-              hideLabel
-              template={
-                <Select
-                  name="ternary"
-                  hideLabel
-                  options={generateOptions('Ternary Objective', 3)}
-                />
-              }
-            />,
-          ]}
+          template={secondaryControl()}
+          controls={secondaryValues.map((value: string, index: number) =>
+            secondaryControl(value, expandablesName, index)
+          )}
         />,
-      ]}
-    />,
+      ];
+    };
+
+  const mainControls = (index?: number) => {
+    const suffix = index !== undefined ? `.${index}` : '';
+    const expandablesName = `primaries${suffix}`;
+
+    return [
+      <Select
+        label="objectives"
+        key="main"
+        name="main"
+        defaultValue={mainValue}
+        options={generateOptions('Main Objective', 3)}
+      />,
+      <ExpandableList
+        label={'primary objectives'}
+        key={expandablesName}
+        name={expandablesName}
+        hideLabel
+        template={primaryControl()()}
+        controls={secondaries.primary.map((value: string, index: number) =>
+          primaryControl(
+            value,
+            expandablesName,
+            index
+          )(secondaries.secondaries[index].secondary)
+        )}
+      />,
+    ];
+  };
+
+  const controls = [
+    ...mainControls(0),
     <Spacer />,
     <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
   ];
@@ -72,32 +118,9 @@ function ObjectiveHierarchy({ t }: any) {
   return (
     <Form
       controls={controls}
-      onSubmit={(fields: any) => {
-        console.log(fields);
-      }}
+      onSubmit={(fields: any) => dispatch(updateObjectives(fields))}
     />
   );
-}
-
-function unflatten(object: { [str: string]: any }) {
-  const result = {};
-  Object.keys(object).forEach(path => {
-    var subpaths = path.split('.'),
-      previous = subpaths.pop();
-
-    subpaths.reduce(
-      (previousValue: any, currentValue: any, currentIndex: any, array: any) =>
-        (previousValue[currentValue] =
-          previousValue[currentValue] ||
-          (isFinite(
-            currentIndex + 1 in array ? array[currentIndex + 1] : previous
-          )
-            ? []
-            : {})),
-      result
-    )[previous!] = object[path];
-  });
-  return result;
 }
 
 export default withTranslation()(ObjectiveHierarchy);

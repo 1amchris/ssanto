@@ -5,7 +5,7 @@ import FormSelectOptionModel from '../../models/form-models/FormSelectOptionMode
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectAnalysis,
-  setNbsSystemType,
+  updateNbsSystemType,
 } from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import { Select, Button, Spacer } from '../form/form-components';
@@ -45,7 +45,7 @@ function NbsSystemType({ t }: any) {
   return (
     <Form
       controls={controls}
-      onSubmit={(fields: any) => dispatch(setNbsSystemType(fields))}
+      onSubmit={(fields: any) => dispatch(updateNbsSystemType(fields))}
     />
   );
 }

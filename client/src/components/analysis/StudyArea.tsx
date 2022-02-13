@@ -2,7 +2,7 @@ import { capitalize } from 'lodash';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch } from '../../store/hooks';
-import { setStudyArea } from '../../store/reducers/analysis';
+import { updateStudyArea } from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import { Control, Button, Spacer } from '../form/form-components';
 
@@ -21,7 +21,7 @@ function StudyArea({ t }: any) {
   return (
     <Form
       controls={controls}
-      onSubmit={(fields: any) => dispatch(setStudyArea(fields))}
+      onSubmit={(fields: any) => dispatch(updateStudyArea(fields))}
     />
   );
 }

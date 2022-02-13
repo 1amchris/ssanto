@@ -36,10 +36,6 @@ function App() {
             <Collapsible title={'objective hierarchy'}>
               <ObjectiveHierarchy />
             </Collapsible>
-            {/* <Collapsible
-              title={'Objective hierarchy'}
-              collapsed={true}
-            ></Collapsible> */}
           </NavigationBar>
         </aside>
         <main className="shadow w-100 position-relative" style={{ zIndex: 1 }}>

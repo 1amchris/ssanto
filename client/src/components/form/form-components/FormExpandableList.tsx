@@ -38,7 +38,6 @@ class FormExpandableList extends FormComponent {
         >
           {capitalize(t(label || this.props.name))}
         </label>
-
         <ul className="list-unstyled">
           {this.state.controls?.map((control: ReactElement, index: number) => (
             <li
@@ -52,6 +51,7 @@ class FormExpandableList extends FormComponent {
               }}
             >
               <button
+                key={`${this.id}/button-${index}`}
                 type="button"
                 className="btn btn-sm mb-auto"
                 onClick={() => this.removeControl(index)}
@@ -65,7 +65,7 @@ class FormExpandableList extends FormComponent {
                   <MdSubdirectoryArrowRight style={{ marginBottom: '3px' }} />
                 )}
               </button>
-              <div>{control}</div>
+              <div key={`${this.id}/wrapper-${index}`}>{control}</div>
             </li>
           ))}
           <li key={`${this.id}/li-plus`} {...this.liProps}>
