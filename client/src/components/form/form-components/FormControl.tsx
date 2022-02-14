@@ -2,6 +2,13 @@ import { capitalize, uniqueId } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormComponent from './FormComponent';
 
+/**
+ * FormControl
+ * @param props .prefix is a ReactElement which will be prepended to the input control
+ *              .suffix is a ReactElement which will be appended to the input control
+ *              .plaintext is a stylistic argument. It will not prevent the user from changing the values
+ * @returns an augmented input control
+ */
 class FormControl extends FormComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/control-'), key);

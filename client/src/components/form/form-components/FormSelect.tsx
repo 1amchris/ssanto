@@ -3,6 +3,11 @@ import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../../models/form-models/FormSelectOptionModel';
 import FormComponent from './FormComponent';
 
+/**
+ * FormSelect
+ * @param props .options: Are FormSelectOptions to be chosen from by the user
+ * @returns an augmented select
+ */
 class FormSelect extends FormComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/select-'), key);
