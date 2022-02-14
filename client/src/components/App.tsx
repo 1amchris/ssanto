@@ -12,7 +12,25 @@ import {
 } from './analysis';
 import InterativeMapDemo from './analysis/InteractiveMapDemo';
 
+import ServerCom from '../apis/ServerCom';
+
+let server: ServerCom;
+
 function App() {
+
+    server = new ServerCom();
+    setTimeout(() => {
+        server.open();
+
+        server.subscribe('myVar', (data: any) => {
+            console.log('`myVar` value is ' + data);
+        });
+
+        server.callFunction('function');
+        server.callMethod('a_class', 'method');
+    }, 1000);
+
+
   return (
     <div className="App">
       <header className="App-header">

@@ -1,10 +1,10 @@
-import { Socket } from 'net';
+import * as net from 'net';
 
 export default class ServerCom {
   host: string;
   port: number;
 
-  client: Socket;
+  client: net.Socket;
 
   messageListeners: Map<string, (data: any) => void>;
 
@@ -12,7 +12,7 @@ export default class ServerCom {
     this.host = '127.0.0.1';
     this.port = 6969;
 
-    this.client = new Socket();
+    this.client = new net.Socket();
 
     this.messageListeners = new Map();
 
