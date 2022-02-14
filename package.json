@@ -1,5 +1,5 @@
 {
-  "name": "prototype-electronxpython",
+  "name": "electron",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "electron": "^16.0.7",
-    "python-shell": "^3.0.1"
+    "electron": "^16.0.7"
   }
 }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script>
+        
+       
+        
+        
+        
+        c = new Client();
+       
+        
+        /*class DataProxy{
+            constructor(varName) {
+                this.varName = varName
+            }
+            get data() {
+                return new Promise((resolve, reject) => {
+                    c.send(this.varName).then( (data) => {
+                        resolve(data)
+                    });
+                });
+            }
+            set data(value){}  };
+        setTimeout(() => {
+            d = new DataProxy("myVar");
+            c.open();
+            (async ()=>{
+                console.log(await d.data);
+            })();
+        }, 1000);*/
+        
+        setTimeout(() => {
+            
+            c.open();
+            
+            c.subscribe('myVar', (data) => {
+                console.log("`myVar` value is " + data);
+            });
+            
+            c.callf('function');
+            c.callm('a_class', 'method')
+            
+             
+            
+        }, 1000);
+        
+        function input(e) {
+            let reader = new FileReader();
+            reader.onload = (f) => {
+                c.sendFile(f.target.result);
+            };
+            reader.readAsText(e.files[0]);
+        }
+    
+    </script>
+  </head>
+  <body>
+    <h1>Electron X Python</h1>
+    Check console for the python output.
+    
+    <input type="file" onchange="input(this)"></input>
+  </body>
+</html>

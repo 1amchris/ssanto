@@ -5,7 +5,7 @@ const path = require("path");
 const {spawn} = require('child_process')
 
 //*
-let python = spawn('python3', ['-u', path.join(__dirname,'main.py')]);
+let python = spawn('python3', ['-u', path.join(__dirname,'./server/main.py')]);
 
 python.stdout.on('data', (data) => {
     process.stdout.write(`[Python][stdout] ${data}`);
@@ -45,12 +45,14 @@ app.on("ready", function () {
             frame: false
         }});
     
+    mainWindow.maximize();
     mainWindow.loadURL(
-        url.format({
-            pathname: path.join(__dirname, "index.html"),
+        'http://localhost:3000'
+        /*url.format({
+            pathname: path.join(__dirname, './client/build/index.html'),
             protocol: "file:",
             slashes: true
-        })
+        })*/
     );
     
     mainWindow.setMenuBarVisibility(false);

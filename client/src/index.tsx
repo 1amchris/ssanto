@@ -4,6 +4,8 @@ import App from './components/App';
 import { store } from './store/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Guide from './components/Guide';
 
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
@@ -13,12 +15,12 @@ import * as fr from './locales/fr.json';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Guide from './components/Guide';
 
 // Leaflet
 import 'leaflet/dist/leaflet.css';
 import 'leaflet/dist/leaflet.js';
+
+import Client from './client_socket';
 
 i18n.use(initReactI18next).init({
   resources: { en, fr },
@@ -47,3 +49,18 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
+const c = new Client();
+
+setTimeout(() => {
+            
+    c.open();
+    
+    c.subscribe('myVar', (data: any) => {
+        console.log("`myVar` value is " + data);
+    });
+    
+    c.callf('function');
+    c.callm('a_class', 'method');
+    
+}, 1000);
