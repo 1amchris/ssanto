@@ -21,7 +21,7 @@ export default class ServerCom {
       console.log('Received: ' + data);
       console.log(obj);
 
-      var callback = this.messageListeners.get(obj?.sid);
+      var callback = this.messageListeners.get(obj.sid);
       if (callback !== undefined) callback(obj.data);
     });
 
