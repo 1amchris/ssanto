@@ -1,9 +1,5 @@
 # SSANTO - Spatial Suitability Analysis Tool
 
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
 ## Description
 
 SSANTO is a spatial suitability analysis tool which uses the techniques of GIS-MCDA (Geo-information systems and multi-criteria decision analysis) following multi-attribute value theory (MAVT). The main functionality is thus to generate colour-coded, raster-based maps that indicate suitability (scale between 0-1) for the implementation for a selected Nature-Based Solution (NBS), where dark red signifies low suitability (0) and green signifies high suitability (1). There are two separate analyses (that work identically in terms of the technical modelling approach) corresponding to the two sides of suitability (represented in suitability maps): opportunities and needs. Opportunities relates to those locations that are most suitable to implementation of NBS, while needs relates to those locations where the benefits of NBS are needed most. More information about SSANTO can be found in Kuller et al. (2019a). The goal is to develop SSANTO as a stand-alone and open-source software, using only open-source dependencies.
