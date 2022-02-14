@@ -1,3 +1,4 @@
+import { control } from 'leaflet';
 import { capitalize, uniqueId } from 'lodash';
 import React, { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
@@ -60,8 +61,10 @@ class Row extends React.Component<{
 }
 
 class FormExpandableList extends FormComponent {
-  template: PropsModel;
-  factory: (props: FactoryProps) => ReactElement;
+  private readonly template: PropsModel;
+  private readonly factory: (
+    props: FactoryProps
+  ) => ReactElement | ReactElement[];
 
   state: { controls: PropsModel[] } = {
     controls: [],
@@ -72,10 +75,10 @@ class FormExpandableList extends FormComponent {
     this.factory = this.props.factory;
     this.template = this.props.template;
     this.state.controls =
-      this.props.controls?.map((control: PropsModel) => {
-        if (control.id === undefined) control.id = uniqueId();
-        return control;
-      }) || [];
+      this.props.controls?.map((control: PropsModel) => ({
+        ...control,
+        id: control?.id !== undefined ? control.id : uniqueId(),
+      })) || [];
   }
 
   render = () => {
@@ -92,7 +95,7 @@ class FormExpandableList extends FormComponent {
         </label>
 
         <ul className="list-unstyled">
-          {this.state.controls?.map((control: any, index: number) => (
+          {this.state.controls?.map((control: PropsModel, index: number) => (
             <Row
               key={`${this.id}/row-${index}`}
               parentId={this.id}
@@ -126,7 +129,7 @@ class FormExpandableList extends FormComponent {
     );
   };
 
-  addControl = () => {
+  private addControl = () => {
     const controls = this.state.controls.concat({
       ...this.template,
       id: uniqueId(),
@@ -134,13 +137,13 @@ class FormExpandableList extends FormComponent {
     this.updateControls(controls);
   };
 
-  removeControlAt = (index: number) => {
+  private removeControlAt = (index: number) => {
     const controls = [...this.state.controls];
     controls.splice(index, 1);
     this.updateControls(controls);
   };
 
-  updateControls = (controls: PropsModel[]) => {
+  private updateControls = (controls: PropsModel[]) => {
     this.setState({
       controls,
     });
