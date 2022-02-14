@@ -12,7 +12,7 @@ class Logger:
     def disableDebugLog(self):
         self.debug = False
 
-    def write(self, msg):
+    def write(self, msg):        
         if self.debug:
             self.stdout.write(msg)
         self.flush()

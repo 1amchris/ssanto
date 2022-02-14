@@ -8,11 +8,11 @@ const {spawn} = require('child_process')
 let python = spawn('python3', ['-u', path.join(__dirname,'main.py')]);
 
 python.stdout.on('data', (data) => {
-  console.log(`[Python][stdout] ${data}`);
+    process.stdout.write(`[Python][stdout] ${data}`);
 });
 
 python.stderr.on('data', (data) => {
-  console.log(`[Python][stderr] ${data}`);
+    console.log(`[Python][stderr] ${data}`);
 });
 
 python.on("error", (error) => {
@@ -30,7 +30,8 @@ python.on("exit", (code, signal) => {
 
 /* ----------------------*/
 
-const {app, BrowserWindow} = electron;
+const {app, BrowserWindow, dialog} = electron;
+
 
 
 let mainWindow = null;
@@ -52,7 +53,7 @@ app.on("ready", function () {
         })
     );
     
-    //mainWindow.setMenuBarVisibility(false);
+    mainWindow.setMenuBarVisibility(false);
     mainWindow.webContents.openDevTools();
     
     mainWindow.on('closed', function () {

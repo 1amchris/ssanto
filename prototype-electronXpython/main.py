@@ -15,6 +15,15 @@ class AClass:
     
 def function():
     print("This function was called from javascript");
+    
+class FileManager:
+    def __init__(self):
+        pass
+        
+    def receive_file(self, cmd):
+        print("Receive file\n", cmd['data'])
+        
+
 
 if __name__ == "__main__":
     try:
@@ -33,6 +42,10 @@ if __name__ == "__main__":
         
         ss.bind_command_m("subscribe", sm, SubjectsManager.subscribe)
         ss.bind_command_m("unsubscribe", sm, SubjectsManager.unsubscribe)
+        
+        
+        fm = FileManager()
+        ss.bind_command_m("file", fm, FileManager.receive_file)
         
         ###
         #ss.bind_command_f("callf", function)

@@ -83,6 +83,15 @@
                 this.client.write(JSON.stringify(obj)+'\0');
             }
             
+            sendFile(file)
+            {
+                var obj = {
+                    cmd: 'file',
+                    data: file
+                };
+                this.client.write(JSON.stringify(obj)+'\0');
+            }
+            
             // TODO: Handle call that return
         };
         
@@ -125,11 +134,21 @@
              
             
         }, 1000);
+        
+        function input(e) {
+            let reader = new FileReader();
+            reader.onload = (f) => {
+                c.sendFile(f.target.result);
+            };
+            reader.readAsText(e.files[0]);
+        }
     
     </script>
   </head>
   <body>
     <h1>Electron X Python</h1>
     Check console for the python output.
+    
+    <input type="file" onchange="input(this)"></input>
   </body>
 </html>

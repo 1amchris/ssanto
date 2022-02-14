@@ -81,22 +81,28 @@ class ServerSocket:
                 if data == b'':
                     return
                 
+                # TODO: Handle big file problem
+                
                 jsons_data = data.decode().split('\0')
                 jsons_data.pop()
                 
                 for json_data in jsons_data:
-                    obj = json.loads(json_data)
-                    print('Receive', obj)
+                    print(json_data)
                     try:
-                        if 'cmd' in obj:
-                            if obj['cmd'] == 'callf':
-                                eval(obj['trg'] + '()')
-                            elif obj['cmd'] == 'callm':
-                                eval(obj['instance'] + '.' + obj['method'] + '()')
-                            if obj['cmd'] in self.commands_handlers:
-                                self.commands_handlers[obj['cmd']](obj)
+                        obj = json.loads(json_data)
+                        try:
+                            if 'cmd' in obj:
+                                if obj['cmd'] == 'callf':
+                                    eval(obj['trg'] + '()')
+                                elif obj['cmd'] == 'callm':
+                                    eval(obj['instance'] + '.' + obj['method'] + '()')
+                                if obj['cmd'] in self.commands_handlers:
+                                    self.commands_handlers[obj['cmd']](obj)
+                        except Exception as e:
+                            print("STDERR", e)
                     except Exception as e:
                         print("STDERR", e)
+                          
                     
                 
     def bind_command_m(self, cmd_type, instance, method):
