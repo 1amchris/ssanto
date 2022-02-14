@@ -16,6 +16,8 @@ class AClass:
 def function():
     print("This function was called from javascript");
     
+    
+    
 class FileManager:
     def __init__(self):
         pass
@@ -23,6 +25,10 @@ class FileManager:
     def receive_file(self, cmd):
         print("Receive file\n", cmd['data'])
         
+
+class Parameters:
+    def __init__(self):
+        pass
 
 
 if __name__ == "__main__":
@@ -39,6 +45,8 @@ if __name__ == "__main__":
         
         sm = SubjectsManager(ss)
         myVar = sm.create('myVar', 1)
+        
+        parameters = sm.create('parameters', [])
         
         ss.bind_command_m("subscribe", sm, SubjectsManager.subscribe)
         ss.bind_command_m("unsubscribe", sm, SubjectsManager.unsubscribe)
