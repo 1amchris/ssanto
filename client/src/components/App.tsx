@@ -17,19 +17,17 @@ import ServerCom from '../apis/ServerCom';
 let server: ServerCom;
 
 function App() {
+  server = new ServerCom();
+  setTimeout(() => {
+    server.open();
 
-    server = new ServerCom();
-    setTimeout(() => {
-        server.open();
+    server.subscribe('myVar', (data: any) => {
+      console.log('`myVar` value is ' + data);
+    });
 
-        server.subscribe('myVar', (data: any) => {
-            console.log('`myVar` value is ' + data);
-        });
-
-        server.callFunction('function');
-        server.callMethod('a_class', 'method');
-    }, 1000);
-
+    server.callFunction('function');
+    server.callMethod('a_class', 'method');
+  }, 1000);
 
   return (
     <div className="App">
@@ -39,19 +37,19 @@ function App() {
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
           <NavigationBar>
-            <Collapsible title={'interactive map'} collapsed={true}>
+            {/* <Collapsible title={'interactive map'} collapsed>
               <InterativeMapDemo />
-            </Collapsible>
-            <Collapsible title={'analysis parameters'} collapsed={true}>
+            </Collapsible> */}
+            <Collapsible title={'analysis parameters'}>
               <Parameters />
             </Collapsible>
-            <Collapsible title={'study area'} collapsed={true}>
+            <Collapsible title={'study area'} collapsed>
               <StudyArea />
             </Collapsible>
-            <Collapsible title={'NBS system type'} collapsed={true}>
+            <Collapsible title={'NBS system type'} collapsed>
               <NbsSystemType />
             </Collapsible>
-            <Collapsible title={'objective hierarchy'}>
+            <Collapsible title={'objective hierarchy'} collapsed>
               <ObjectiveHierarchy />
             </Collapsible>
           </NavigationBar>
