@@ -9,6 +9,7 @@ export const store = configureStore({
     analysis: analysisReducer,
     map: mapReducer,
   },
+  middleware: getDefaultMiddleware => getDefaultMiddleware(),
 });
 
 export type AppDispatch = typeof store.dispatch;
