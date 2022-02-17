@@ -3,6 +3,8 @@ import sys
 
 import time
 
+import asyncio
+
 from py.logger import *
 from py.server_socket import ServerSocket
 from py.subjects_manager import SubjectsManager
@@ -30,9 +32,28 @@ class Parameters:
     def __init__(self):
         pass
 
+async def main():
+    ss = ServerSocket("localhost", 6969)
+
+    sm = SubjectsManager(ss)
+    myVar = sm.create('myVar', 1)
+    
+    ss.bind_command_m("subscribe", sm, SubjectsManager.subscribe)
+    ss.bind_command_m("unsubscribe", sm, SubjectsManager.unsubscribe)
+
+    async with ss.serve():
+        await asyncio.sleep(5)
+        print("edit myVar")
+        await myVar.notify(2)
+        await asyncio.Future()  # run forever
+    
+
 
 if __name__ == "__main__":
-    try:
+    print("Hello from python")
+    
+    asyncio.run(main())
+    '''try:
         print("Hello from python")
             
         ss = ServerSocket("localhost", 6969)
@@ -76,6 +97,6 @@ if __name__ == "__main__":
     except Exception as e:      
         ss.close()
         ss.join()
-        raise e
+        raise e'''
 
     

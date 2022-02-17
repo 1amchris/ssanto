@@ -14,21 +14,24 @@ import InterativeMapDemo from './analysis/InteractiveMapDemo';
 
 import ServerCom from '../apis/ServerCom';
 
-let server: ServerCom;
+let server: ServerCom | undefined = undefined;
 
 function App() {
 
-    server = new ServerCom();
-    setTimeout(() => {
-        server.open();
+    if (server == undefined) {
+        server = new ServerCom();
+        server.open()
+        setTimeout(() => {
+            console.log("called")
+            server!.subscribe('myVar', (data: any) => {
+                console.log('`myVar` value is ' + data);
+            });
 
-        server.subscribe('myVar', (data: any) => {
-            console.log('`myVar` value is ' + data);
-        });
-
-        server.callFunction('function');
-        server.callMethod('a_class', 'method');
-    }, 1000);
+            server!.callFunction('function');
+            server!.callMethod('a_class', 'method');
+    }, 3000);
+    }
+    
 
 
   return (

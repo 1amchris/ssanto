@@ -14,10 +14,10 @@ class Subject:
     def unwatch(self):
         self.is_watched = False
         
-    def notify(self, data):
+    async def notify(self, data):
         self.data = data
         if self.is_watched:
-            self.sm.send(self)
+            await self.sm.send(self)
 
     def get(self):
         return self.data

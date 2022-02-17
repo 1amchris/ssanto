@@ -33,7 +33,6 @@ python.on("exit", (code, signal) => {
 const {app, BrowserWindow, dialog} = electron;
 
 
-
 let mainWindow = null;
 
 app.on("ready", function () {
@@ -45,11 +44,11 @@ app.on("ready", function () {
             frame: false
         }});
     
-    mainWindow.maximize();
+    //mainWindow.maximize();
     mainWindow.loadURL(
         'http://localhost:3000'
         /*url.format({
-            pathname: path.join(__dirname, './client/build/index.html'),
+            pathname: path.join(__dirname, './index.html'),
             protocol: "file:",
             slashes: true
         })*/
