@@ -1,7 +1,4 @@
 import signal
-import sys
-
-import time
 
 import asyncio
 
@@ -41,62 +38,29 @@ async def main():
     ss.bind_command_m("subscribe", sm, SubjectsManager.subscribe)
     ss.bind_command_m("unsubscribe", sm, SubjectsManager.unsubscribe)
 
+    parameters = sm.create('parameters', [])        
+        
+    fm = FileManager()
+    ss.bind_command_m("file", fm, FileManager.receive_file)
+
+    ###
+    #ss.bind_command_f("callf", function)
+    #a_class = AClass()
+    #ss.bind_command_m("callm", a_class, AClass.method)
+    ###
+
+    loop = asyncio.get_running_loop()
+    stop = loop.create_future()
+    loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
+
     async with ss.serve():
         await asyncio.sleep(5)
         print("edit myVar")
-        await myVar.notify(2)
-        await asyncio.Future()  # run forever
-    
+        myVar.notify(2)
+        await stop # run forever
 
 
 if __name__ == "__main__":
     print("Hello from python")
     
-    asyncio.run(main())
-    '''try:
-        print("Hello from python")
-            
-        ss = ServerSocket("localhost", 6969)
-        def signalHandler(signal, frame):
-            ss.close()
-            ss.join()
-            sys.exit(1)
-        signal.signal(signal.SIGTERM, signalHandler)
-        signal.signal(signal.SIGINT, signalHandler)
-        
-        sm = SubjectsManager(ss)
-        myVar = sm.create('myVar', 1)
-        
-        parameters = sm.create('parameters', [])
-        
-        ss.bind_command_m("subscribe", sm, SubjectsManager.subscribe)
-        ss.bind_command_m("unsubscribe", sm, SubjectsManager.unsubscribe)
-        
-        
-        fm = FileManager()
-        ss.bind_command_m("file", fm, FileManager.receive_file)
-        
-        ###
-        #ss.bind_command_f("callf", function)
-        #a_class = AClass()
-        #ss.bind_command_m("callm", a_class, AClass.method)
-        ###
-        
-        if ss.open():
-            print("Unable to open server socket")
-            sys.exit(1)
-            
-        ss.run()
-        
-        time.sleep(3)
-        print("edit myVar")
-        myVar.notify(2)
-        
-        ss.join()
-        ss.close()
-    except Exception as e:      
-        ss.close()
-        ss.join()
-        raise e'''
-
-    
+    asyncio.run(main())    

@@ -19,8 +19,8 @@ class ServerSocket:
         def __init__(self, instance, method):
             self.instance = instance
             self.method = method
-        async def __call__(self, cmd):
-            await self.method(self.instance, cmd)
+        def __call__(self, cmd):
+            self.method(self.instance, cmd)
     
     class MethodFunctor:
         def __init__(self, instance, method):
@@ -52,19 +52,18 @@ class ServerSocket:
         self.commands_handlers[cmd_type] = self.FunctionFunctor(function)
     
     # Data must have to_dict() method implemented
-    async def send(self, data):
-        await self.conn.send(json.dumps(data.to_dict()))    
+    def send(self, data):
+        asyncio.create_task(self.conn.send(json.dumps(data.to_dict())))
 
     async def handler(self, websocket):
         print("Connection from", websocket.remote_address[0])
 
         self.conn = websocket
-        
         while True:
-            data = await websocket.recv()
-            
-            if data == b'':
-                return
+            try:
+                data = await websocket.recv()
+            except websockets.ConnectionClosedOK:
+                break
             
             # TODO: Handle big file problem
             
@@ -82,11 +81,12 @@ class ServerSocket:
                             elif obj['cmd'] == 'callm':
                                 eval(obj['instance'] + '.' + obj['method'] + '()')
                             if obj['cmd'] in self.commands_handlers:
-                                await self.commands_handlers[obj['cmd']](obj)
+                                self.commands_handlers[obj['cmd']](obj)
                     except Exception as e:
                         print("STDERR", e)
                 except Exception as e:
                     print("STDERR", e)
+        
 
     def serve(self):
         return websockets.serve(self.handler, self.host, self.port)

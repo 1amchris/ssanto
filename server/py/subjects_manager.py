@@ -12,14 +12,14 @@ class SubjectsManager:
     def destroy(self):
         raise NotImplementedError("Not implemented yet!")
     
-    async def send(self, s):
-        await self.server_socket.send(s)
+    def send(self, s):
+        self.server_socket.send(s)
         
-    async def subscribe(self, cmd):
+    def subscribe(self, cmd):
         # TODO: Handle sid unavailable
         s = self.subjects[cmd['sid']]
         s.is_watched = True
-        await self.send(s)
+        self.send(s)
         
     def unsubscribe(self, cmd):
         # TODO: Handle sid unavailable
