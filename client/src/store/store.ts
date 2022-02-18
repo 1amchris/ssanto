@@ -4,7 +4,7 @@ import mapReducer from './reducers/map';
 import analysisReducer from './reducers/analysis';
 import ServerMiddleware, {
   subscribe as ServerSubscribeAction,
-} from './middlewares/ServerComMiddleware';
+} from './middlewares/ServerMiddleware';
 
 export const store = configureStore({
   reducer: {

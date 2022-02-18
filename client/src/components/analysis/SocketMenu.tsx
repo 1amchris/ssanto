@@ -8,7 +8,7 @@ import {
   callFunction,
   callMethod,
   sendFile,
-} from '../../store/middlewares/ServerComMiddleware';
+} from '../../store/middlewares/ServerMiddleware';
 
 function SocketMenu({ t }: any) {
   const dispatch = useAppDispatch();

@@ -13,7 +13,7 @@ import {
 
 import SocketMenu from './analysis/SocketMenu';
 import { useAppDispatch } from '../store/hooks';
-import * as server from '../store/middlewares/ServerComMiddleware';
+import * as server from '../store/middlewares/ServerMiddleware';
 import { RootState } from '../store/store';
 
 function App() {
