@@ -4,11 +4,14 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "electron . --no-sandbox"
+    "start": "concurrently \"cross-env BROWSER=none npm --prefix ./client/ run start\" \"wait-on http://localhost:3000 && electron . --no-sandbox\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "electron": "^16.0.7"
+    "concurrently": "^7.0.0",
+    "cross-env": "^7.0.3",
+    "electron": "^16.0.7",
+    "wait-on": "^6.0.1"
   }
 }
