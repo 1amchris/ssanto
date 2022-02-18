@@ -34,7 +34,7 @@ const { app, BrowserWindow } = electron;
 
 let mainWindow = null;
 
-app.on('ready', function () {
+app.on('ready', () => {
   mainWindow = new BrowserWindow({
     title: 'SSanto',
     webPreferences: {
@@ -55,13 +55,13 @@ app.on('ready', function () {
   );
   mainWindow.webContents.openDevTools();
 
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', () => {
     console.log('electron exit');
     python.kill();
   });
 });
 
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   // On macOS specific close process
   if (process.platform !== 'darwin') {
     app.quit();
