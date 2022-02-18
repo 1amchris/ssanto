@@ -20,8 +20,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet/dist/leaflet.js';
 
-import './apis/ServerAPI';
-
 i18n.use(initReactI18next).init({
   resources: { en, fr },
   lng: 'en', // if you're using a language detector, do not define the lng option

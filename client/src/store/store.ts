@@ -2,6 +2,9 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import counterReducer from './reducers/counter';
 import mapReducer from './reducers/map';
 import analysisReducer from './reducers/analysis';
+import ServerMiddleware, {
+  subscribe as ServerSubscribeAction,
+} from './middlewares/ServerComMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -9,7 +12,12 @@ export const store = configureStore({
     analysis: analysisReducer,
     map: mapReducer,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware(),
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [ServerSubscribeAction.type],
+      },
+    }).concat([ServerMiddleware]),
 });
 
 export type AppDispatch = typeof store.dispatch;

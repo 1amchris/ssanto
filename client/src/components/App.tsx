@@ -10,26 +10,29 @@ import {
   NbsSystemType,
   ObjectiveHierarchy,
 } from './analysis';
-import InterativeMapDemo from './analysis/InteractiveMapDemo';
 
-import ServerCom from '../apis/ServerCom';
-
-let server: ServerCom | undefined = undefined;
+import SocketMenu from './analysis/SocketMenu';
+import { useAppDispatch } from '../store/hooks';
+import * as server from '../store/middlewares/ServerComMiddleware';
+import { RootState } from '../store/store';
 
 function App() {
-    if (server == undefined) {
-        server = new ServerCom();
-        server.open()
-        setTimeout(() => {
-            console.log("called")
-            server!.subscribe('myVar', (data: any) => {
-                console.log('`myVar` value is ' + data);
-            });
+  // Establishes connection with the server
+  const dispatch = useAppDispatch();
+  dispatch(server.openConnection());
 
-            server!.callFunction('function');
-            server!.callMethod('a_class', 'method');
-        }, 3000);
-    }
+  // TODO can't subscribe if server connection hasn't been established yet (app crashes)
+  setTimeout(() => {
+    // Subscription example
+    dispatch(
+      server.subscribe({
+        subjectId: 'myVar',
+        callback: (store: RootState) => (data: any) => {
+          console.log('store:', store, '`myVar` value is ' + data);
+        },
+      })
+    );
+  }, 100);
 
   return (
     <div className="App">
@@ -39,9 +42,9 @@ function App() {
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
           <NavigationBar>
-            {/* <Collapsible title={'interactive map'} collapsed>
-              <InterativeMapDemo />
-            </Collapsible> */}
+            <Collapsible title={'socket menu'}>
+              <SocketMenu />
+            </Collapsible>
             <Collapsible title={'analysis parameters'}>
               <Parameters />
             </Collapsible>
