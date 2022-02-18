@@ -4,10 +4,11 @@
   "description": "",
   "main": "electron.js",
   "scripts": {
-    "start": "concurrently \"cross-env BROWSER=none npm --prefix ./client/ run start\" \"wait-on http://localhost:3000 && electron . --no-sandbox\""
+    "start": "concurrently \"cross-env BROWSER=none npm --prefix ./client/ run start\" \"wait-on http://localhost:3000 && electron . --no-sandbox\"",
+    "postinstall": "npm --prefix ./client/ install"
   },
   "author": "",
-  "license": "ISC",
+  "license": "AGPL",
   "dependencies": {
     "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",
