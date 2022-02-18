@@ -2,7 +2,7 @@
   "name": "electron",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "electron.js",
   "scripts": {
     "start": "concurrently \"cross-env BROWSER=none npm --prefix ./client/ run start\" \"wait-on http://localhost:3000 && electron . --no-sandbox\""
   },
