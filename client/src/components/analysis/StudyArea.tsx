@@ -17,18 +17,23 @@ function StudyArea({ t }: any) {
 
   const controls = [
     <Control
-      label="study area"
+      label="select study area"
       name="files"
       type="file"
       accept=".shp, .shx"
       multiple
       required
+      disabled={loading}
     />,
     <Spacer />,
-    <Button loading={loading} className="w-100 btn-primary">
+    <Button disabled={loading} loading={loading} className="w-100 btn-primary">
       {capitalize(t('apply'))}
     </Button>,
-    <Button className="w-100 btn-outline-danger" type="reset">
+    <Button
+      disabled={loading}
+      className="w-100 btn-outline-danger"
+      type="reset"
+    >
       {capitalize(t('reset'))}
     </Button>,
   ];

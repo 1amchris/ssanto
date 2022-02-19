@@ -7,12 +7,13 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Guide from './components/Guide';
 
+// Internationalization
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-
 import * as en from './locales/en.json';
 import * as fr from './locales/fr.json';
 
+// Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
