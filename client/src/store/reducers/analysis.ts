@@ -7,7 +7,8 @@ export interface AnalysisParameters {
 }
 
 export interface AnalysisStudyArea {
-  file?: File;
+  area?: Object; // TODO change to geojson
+  loading: boolean;
 }
 
 export interface AnalysisNbsSystem {
@@ -38,7 +39,7 @@ export const analysisSlice = createSlice({
       modelerName: '',
       analysisName: '',
     } as AnalysisParameters,
-    studyArea: { file: undefined } as AnalysisStudyArea,
+    studyArea: { area: undefined, loading: false } as AnalysisStudyArea,
     nbsSystem: { type: '2' } as AnalysisNbsSystem,
     objectives: {
       main: '0',
@@ -88,13 +89,22 @@ export const analysisSlice = createSlice({
       /* TODO: add additional validation here */
       state.nbsSystem.type = type;
     },
-    updateStudyArea: (
+    updateStudyAreaFiles: (
       state,
-      { payload: { file } }: PayloadAction<AnalysisStudyArea>
+      { payload: files }: PayloadAction<File[]>
     ) => {
-      console.warn('No validation was performed on the study area file');
+      console.warn('No validation was performed on the study area files');
       /* TODO: add additional validation here */
-      state.studyArea.file = file;
+      state.studyArea.loading = files.length > 0;
+    },
+    updateStudyAreaGeojson: (
+      state,
+      { payload: geojson }: PayloadAction<Object>
+    ) => {
+      console.warn('No validation was performed on the study area geojson');
+      /* TODO: add additional validation here */
+      state.studyArea.area = geojson;
+      state.studyArea.loading = false;
     },
     updateObjectives: (
       state,
@@ -110,7 +120,8 @@ export const analysisSlice = createSlice({
 export const {
   updateParameters,
   updateNbsSystemType,
-  updateStudyArea,
+  updateStudyAreaFiles,
+  updateStudyAreaGeojson,
   updateObjectives,
 } = analysisSlice.actions;
 export const selectAnalysis = (state: RootState) => state.analysis;

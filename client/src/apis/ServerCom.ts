@@ -24,8 +24,6 @@ export default class ServerCom {
 
     this.client!.onmessage = (msg: MessageEvent) => {
       var obj = JSON.parse(msg.data.toString());
-      // console.log('Received: ' + msg.data.toString());
-
       this.messageListeners.get(obj.sid)?.call(null, obj.data);
     };
 
@@ -73,8 +71,8 @@ export default class ServerCom {
     });
   }
 
-  sendFiles(files: File[]) {
-    Promise.all(Array.from(files).map(file => file.arrayBuffer()))
+  sendFiles(files: FileList, command: string) {
+    Promise.all(Array.from(files).map((file: File) => file.arrayBuffer()))
       .then((contents: ArrayBuffer[]) =>
         contents.map((content, index) => ({
           fileName: files[index].name,
@@ -84,7 +82,7 @@ export default class ServerCom {
       )
       .then(data =>
         this.writeObject({
-          cmd: 'file',
+          cmd: command || 'file',
           data,
         })
       );

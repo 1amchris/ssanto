@@ -57,7 +57,7 @@ function SocketMenu({ t }: any) {
   return (
     <Form
       controls={controls}
-      onSubmit={(fields: any) => dispatch(sendFiles(fields.files))}
+      onSubmit={(fields: any) => dispatch(sendFiles(fields))}
     />
   );
 }

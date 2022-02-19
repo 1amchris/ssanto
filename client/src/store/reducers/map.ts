@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import L from 'leaflet';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+import { uniqueId } from 'lodash';
 
 export interface MapState {
   location: LatLong;
@@ -12,6 +13,7 @@ export interface MapState {
 }
 
 export interface Layer {
+  identifier?: string;
   name: string;
   data: any;
 }
@@ -44,12 +46,23 @@ export const mapSlice = createSlice({
       console.warn('Warning: no validation has been applied to zoom');
       state.zoom = zoom;
     },
-    addLayer: (state, { payload: layer }: PayloadAction<Layer>) => {
-      if (state.layers.some(({ name }) => name === layer.name)) {
-        console.error(
-          `A layer with the same name "${layer.name}" already exists`
-        );
-      } else state.layers.push(layer);
+    upsertLayer: (state, { payload: layer }: PayloadAction<Layer>) => {
+      const index = state.layers.findIndex(
+        ({ name }: Layer) => name === layer.name
+      );
+
+      console.log('index', index, 'length', state.layers.length);
+
+      const toInsert = {
+        identifier: uniqueId('layer-'),
+        ...layer,
+      } as Layer;
+
+      if (index > -1) {
+        state.layers[index] = toInsert;
+      } else {
+        state.layers.push(toInsert);
+      }
     },
     updateClickedCoord: (
       state,
@@ -64,7 +77,7 @@ export const {
   updateLocation,
   updateCellSize,
   updateZoom,
-  addLayer,
+  upsertLayer,
   updateClickedCoord,
 } = mapSlice.actions;
 

@@ -14,7 +14,9 @@ import {
 import SocketMenu from './analysis/SocketMenu';
 import { useAppDispatch } from '../store/hooks';
 import * as server from '../store/middlewares/ServerMiddleware';
-import { RootState } from '../store/store';
+import { Store } from 'redux';
+import InteractiveMapDemo from './analysis/InteractiveMapDemo';
+import { updateStudyAreaGeojson } from '../store/reducers/analysis';
 
 function App() {
   // Establishes connection with the server
@@ -26,13 +28,12 @@ function App() {
     // Subscription example
     dispatch(
       server.subscribe({
-        subjectId: 'myVar',
-        callback: (store: RootState) => (data: any) => {
-          console.log('store:', store, '`myVar` value is ' + data);
-        },
+        subjectId: 'studyAreaGeoJson',
+        callback: (store: Store) => (geojson: string) =>
+          geojson && store.dispatch(updateStudyAreaGeojson(geojson)),
       })
     );
-  }, 100);
+  }, 250);
 
   return (
     <div className="App">
@@ -42,13 +43,16 @@ function App() {
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
           <NavigationBar>
-            <Collapsible title={'socket menu'}>
+            <Collapsible title={'socket menu'} collapsed>
               <SocketMenu />
             </Collapsible>
-            <Collapsible title={'analysis parameters'}>
+            <Collapsible title={'interactive map'} collapsed>
+              <InteractiveMapDemo />
+            </Collapsible>
+            <Collapsible title={'analysis parameters'} collapsed>
               <Parameters />
             </Collapsible>
-            <Collapsible title={'study area'} collapsed>
+            <Collapsible title={'study area'}>
               <StudyArea />
             </Collapsible>
             <Collapsible title={'NBS system type'} collapsed>

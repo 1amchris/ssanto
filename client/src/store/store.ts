@@ -1,11 +1,12 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import counterReducer from './reducers/counter';
 import mapReducer from './reducers/map';
-import analysisReducer from './reducers/analysis';
+import analysisReducer, { updateStudyAreaFiles } from './reducers/analysis';
 import ServerMiddleware, {
   sendFiles as ServerSendFilesAction,
   subscribe as ServerSubscribeAction,
 } from './middlewares/ServerMiddleware';
+import StudyAreaMiddleware from './middlewares/StudyAreaMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -19,9 +20,10 @@ export const store = configureStore({
         ignoredActions: [
           ServerSubscribeAction.type,
           ServerSendFilesAction.type,
+          updateStudyAreaFiles.type, // Contains a file upload
         ],
       },
-    }).concat([ServerMiddleware]),
+    }).concat([ServerMiddleware, StudyAreaMiddleware]),
 });
 
 export type AppDispatch = typeof store.dispatch;

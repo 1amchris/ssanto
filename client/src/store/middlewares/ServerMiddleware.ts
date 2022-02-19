@@ -1,27 +1,31 @@
-import { createAction } from '@reduxjs/toolkit';
+import { createAction, Store } from '@reduxjs/toolkit';
 import ServerCom from '../../apis/ServerCom';
-import { RootState } from '../store';
 
-export interface callFunctionModel {
+export interface CallFunctionModel {
   functionName: string;
   [arg: string]: any;
 }
 
-export interface callMethodModel {
+export interface CallMethodModel {
   instanceName: string;
   methodName: string;
   [arg: string]: any;
 }
 
+export interface SendFilesModel {
+  files: FileList;
+  command?: string;
+}
+
 export interface SubscriptionModel {
   subjectId: string;
-  callback: (store: RootState) => (data: any) => void;
+  callback: (store: Store) => (data: any) => void;
 }
 
 export const openConnection = createAction<string | undefined>('openSocket');
-export const callFunction = createAction<callFunctionModel>('callFunction');
-export const callMethod = createAction<callMethodModel>('callMethod');
-export const sendFiles = createAction<File[]>('sendFiles');
+export const callFunction = createAction<CallFunctionModel>('callFunction');
+export const callMethod = createAction<CallMethodModel>('callMethod');
+export const sendFiles = createAction<SendFilesModel>('sendFiles');
 export const subscribe = createAction<SubscriptionModel>('subscribe');
 
 const ServerComMiddleware = () => {
@@ -32,7 +36,8 @@ const ServerComMiddleware = () => {
         return serverCom.open(action.payload);
 
       case sendFiles.type:
-        return serverCom.sendFiles(action.payload);
+        const { files, command }: SendFilesModel = action.payload;
+        return serverCom.sendFiles(files, command || 'file');
 
       case callFunction.type:
         const { functionName, ...functionArgs } = action.payload;

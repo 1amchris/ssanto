@@ -1,8 +1,10 @@
+from pyclbr import Function
 import signal
 
 import asyncio
 from base64 import b64decode
-import geopandas
+from geojson_rewind import rewind
+
 import fiona
 import json
 
@@ -30,7 +32,16 @@ class FileManager:
         for file in files:
             with open(file['fileName'], 'bw') as f:
                 f.write(b64decode(file['base64content']))
+
+class StudyAreaManager (FileManager):
+    def __init__(self, callback: Function):
+        super().__init__()
+        self.callback = callback
         
+    def receive_files(self, cmd):
+        super().receive_files(cmd)
+
+        files = cmd['data']        
         shapefiles = [
             (name.rstrip(f'.{ext}'), ext) 
             for name, ext in [
@@ -39,7 +50,7 @@ class FileManager:
             ]
             if ext == 'shp'
         ]
-        for shapefile, ext in shapefiles:
+        for shapefile, ext in shapefiles[:1]: # select the first one only
             try:
                 with fiona.collection(f'{shapefile}.{ext}') as source:
                     layer = {
@@ -47,15 +58,18 @@ class FileManager:
                         "features": list(source),
                     }
 
-                with open(f"{shapefile}.geojson", "w") as f:
-                    f.write(json.dumps(layer))
-            
-                # and now we've got a geojson file with the same filename
+                # rewind enforces geojson's right hand rule
+                geojson = rewind(json.dumps(layer))
+                self.callback(json.loads(geojson))
+                # with open(f"{shapefile}.geojson", "w") as f:
+                #     f.write(geojson)
+                
+
             except Exception as e:
                 # TODO: handle imported shapefile error
                 print("STDERR", 'Shapefile is missing complementary files', e)
 
-        
+    
 
 class Parameters:
     def __init__(self):
@@ -74,6 +88,13 @@ async def main():
         
     fm = FileManager()
     ss.bind_command_m("file", fm, FileManager.receive_files)
+
+    studyAreaGeoJson = sm.create('studyAreaGeoJson', { "type": "FeatureCollection", "features": [] })
+    ss.bind_command_m(
+        "study_area",
+        StudyAreaManager(lambda geojson: studyAreaGeoJson.notify(geojson)),
+        StudyAreaManager.receive_files,
+    )
 
     ###
     #ss.bind_command_f("callf", function)

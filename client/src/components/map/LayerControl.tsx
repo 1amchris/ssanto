@@ -17,8 +17,8 @@ const Layers = () => {
         <TileLayer url="" />
       </LayersControl.BaseLayer>
 
-      {layers.map(({ name, data }: Layer) => (
-        <LayersControl.Overlay key={name} name={name} checked>
+      {layers.map(({ identifier, name, data }: Layer) => (
+        <LayersControl.Overlay key={identifier} name={name} checked>
           <GeoJSON data={data} />
         </LayersControl.Overlay>
       ))}

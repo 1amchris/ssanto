@@ -3,7 +3,7 @@ import React from 'react';
 import { Control, Spacer, Button } from '../form/form-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
-  addLayer,
+  upsertLayer,
   Layer,
   selectMap,
   updateLocation,
@@ -67,7 +67,7 @@ function InterativeMapDemo({ t }: any) {
       type="button"
       onClick={() => {
         if (Object.keys(newLayers).some(key => +key === layers.length + 1))
-          dispatch(addLayer(newLayers[layers.length + 1]));
+          dispatch(upsertLayer(newLayers[layers.length + 1]));
       }}
       disabled={layers.length >= 2}
     >
