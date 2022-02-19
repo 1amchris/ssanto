@@ -32,7 +32,10 @@ function Form({
         const fields = Object.fromEntries(
           Object.entries(e.target)
             .filter(([_, e]: any) => e?.name && (e?.value || e?.defaultValue))
-            .map(([_, input]: any) => [input.name, input.value])
+            .map(([_, input]: any) => [
+              input.name,
+              input.type === 'file' ? input.files : input.value,
+            ])
         );
         onSubmit(unflatten(fields));
       }}

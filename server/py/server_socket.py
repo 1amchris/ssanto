@@ -65,8 +65,6 @@ class ServerSocket:
             except websockets.ConnectionClosedOK:
                 break
             
-            # TODO: Handle big file problem
-            
             jsons_data = data.split('\0')
             jsons_data.pop()
             
@@ -86,7 +84,7 @@ class ServerSocket:
                         print("STDERR", e)
                 except Exception as e:
                     print("STDERR", e)
-        
+    
 
     def serve(self):
         return websockets.serve(self.handler, self.host, self.port)

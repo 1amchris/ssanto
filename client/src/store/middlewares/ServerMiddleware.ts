@@ -21,7 +21,7 @@ export interface SubscriptionModel {
 export const openConnection = createAction<string | undefined>('openSocket');
 export const callFunction = createAction<callFunctionModel>('callFunction');
 export const callMethod = createAction<callMethodModel>('callMethod');
-export const sendFile = createAction<File>('sendFile');
+export const sendFiles = createAction<File[]>('sendFiles');
 export const subscribe = createAction<SubscriptionModel>('subscribe');
 
 const ServerComMiddleware = () => {
@@ -31,8 +31,8 @@ const ServerComMiddleware = () => {
       case openConnection.type:
         return serverCom.open(action.payload);
 
-      case sendFile.type:
-        return serverCom.sendFile(action.payload);
+      case sendFiles.type:
+        return serverCom.sendFiles(action.payload);
 
       case callFunction.type:
         const { functionName, ...functionArgs } = action.payload;

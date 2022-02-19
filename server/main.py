@@ -1,10 +1,15 @@
 import signal
 
 import asyncio
+from base64 import b64decode
+import geopandas
+import fiona
+import json
 
 from py.logger import *
 from py.server_socket import ServerSocket
 from py.subjects_manager import SubjectsManager
+
 
 class AClass:
     def __init__(self):
@@ -13,16 +18,43 @@ class AClass:
         print("This method was called from javascript and contain", self.attribute)
     
 def function():
-    print("This function was called from javascript");
-    
+    print("This function was called from javascript")
     
     
 class FileManager:
     def __init__(self):
         pass
         
-    def receive_file(self, cmd):
-        print("Receive file\n", cmd['data'])
+    def receive_files(self, cmd):
+        files = cmd['data']
+        for file in files:
+            with open(file['fileName'], 'bw') as f:
+                f.write(b64decode(file['base64content']))
+        
+        shapefiles = [
+            (name.rstrip(f'.{ext}'), ext) 
+            for name, ext in [
+                (file['fileName'], file['fileName'].split('.')[-1])
+                for file in files
+            ]
+            if ext == 'shp'
+        ]
+        for shapefile, ext in shapefiles:
+            try:
+                with fiona.collection(f'{shapefile}.{ext}') as source:
+                    my_layer = {
+                        "type": "FeatureCollection",
+                        "features": list(source),
+                    }
+
+                with open(f"{shapefile}.geojson", "w") as f:
+                    f.write(json.dumps(my_layer))
+            
+                # and now we've got a geojson file with the same filename
+            except Exception as e:
+                # TODO: handle imported shapefile error
+                print("STDERR", 'Shapefile is missing complementary files', e)
+
         
 
 class Parameters:
@@ -41,7 +73,7 @@ async def main():
     parameters = sm.create('parameters', [])        
         
     fm = FileManager()
-    ss.bind_command_m("file", fm, FileManager.receive_file)
+    ss.bind_command_m("file", fm, FileManager.receive_files)
 
     ###
     #ss.bind_command_f("callf", function)

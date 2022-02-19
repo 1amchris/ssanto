@@ -7,14 +7,20 @@ import Form from '../form/Form';
 import {
   callFunction,
   callMethod,
-  sendFile,
+  sendFiles,
 } from '../../store/middlewares/ServerMiddleware';
 
 function SocketMenu({ t }: any) {
   const dispatch = useAppDispatch();
 
   const controls = [
-    <Control name="file" label="Upload a file" type="file" />,
+    <Control
+      name="files"
+      label="Upload a file"
+      type="file"
+      multiple
+      required
+    />,
     <Button className="btn-outline-primary w-100" type="submit">
       {capitalize(t('send data'))}
     </Button>,
@@ -51,7 +57,7 @@ function SocketMenu({ t }: any) {
   return (
     <Form
       controls={controls}
-      onSubmit={(fields: any) => dispatch(sendFile(fields.file))}
+      onSubmit={(fields: any) => dispatch(sendFiles(fields.files))}
     />
   );
 }

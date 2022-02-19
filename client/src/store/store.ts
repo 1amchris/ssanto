@@ -3,6 +3,7 @@ import counterReducer from './reducers/counter';
 import mapReducer from './reducers/map';
 import analysisReducer from './reducers/analysis';
 import ServerMiddleware, {
+  sendFiles as ServerSendFilesAction,
   subscribe as ServerSubscribeAction,
 } from './middlewares/ServerMiddleware';
 
@@ -15,7 +16,10 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: [ServerSubscribeAction.type],
+        ignoredActions: [
+          ServerSubscribeAction.type,
+          ServerSendFilesAction.type,
+        ],
       },
     }).concat([ServerMiddleware]),
 });

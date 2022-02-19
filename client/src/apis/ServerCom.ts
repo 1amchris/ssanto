@@ -1,9 +1,7 @@
+import { encode as base64encode } from 'base64-arraybuffer';
+
 export default class ServerCom {
-  // host?: string;
-  // port?: number;
-
   client?: WebSocket;
-
   messageListeners: Map<string, (data: any) => void>;
 
   // TODO: there should probably be a "isOpen" method [returns if the connection is opened]
@@ -18,9 +16,6 @@ export default class ServerCom {
 
   // TODO: there should probably be a "close" method
   open(host = 'localhost', port = 6969) {
-    // this.host = host;
-    // this.port = port;
-
     this.client = new WebSocket(`ws://${host}:${port}`);
 
     this.client!.onopen = () => {
@@ -28,10 +23,8 @@ export default class ServerCom {
     };
 
     this.client!.onmessage = (msg: MessageEvent) => {
-      // console.log(msg.data.toString());
       var obj = JSON.parse(msg.data.toString());
       // console.log('Received: ' + msg.data.toString());
-      // console.log(obj);
 
       this.messageListeners.get(obj.sid)?.call(null, obj.data);
     };
@@ -80,11 +73,21 @@ export default class ServerCom {
     });
   }
 
-  sendFile(file: File) {
-    this.writeObject({
-      cmd: 'file',
-      data: file,
-    });
+  sendFiles(files: File[]) {
+    Promise.all(Array.from(files).map(file => file.arrayBuffer()))
+      .then((contents: ArrayBuffer[]) =>
+        contents.map((content, index) => ({
+          fileName: files[index].name,
+          fileSize: files[index].size,
+          base64content: base64encode(content),
+        }))
+      )
+      .then(data =>
+        this.writeObject({
+          cmd: 'file',
+          data,
+        })
+      );
   }
 
   // TODO: Handle call that return
