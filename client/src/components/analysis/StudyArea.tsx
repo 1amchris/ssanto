@@ -1,13 +1,19 @@
 import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { useAppDispatch } from '../../store/hooks';
-import { updateStudyAreaFiles } from '../../store/reducers/analysis';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {
+  selectAnalysis,
+  updateStudyAreaFiles,
+} from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import { Control, Button, Spacer } from '../form/form-components';
 
 function StudyArea({ t }: any) {
   const dispatch = useAppDispatch();
+  const {
+    studyArea: { loading },
+  } = useAppSelector(selectAnalysis);
 
   const controls = [
     <Control
@@ -16,9 +22,12 @@ function StudyArea({ t }: any) {
       type="file"
       accept=".shp, .shx"
       multiple
+      required
     />,
     <Spacer />,
-    <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
+    <Button loading={loading} className="w-100 btn-primary">
+      {capitalize(t('apply'))}
+    </Button>,
     <Button className="w-100 btn-outline-danger" type="reset">
       {capitalize(t('reset'))}
     </Button>,
@@ -26,6 +35,7 @@ function StudyArea({ t }: any) {
 
   return (
     <Form
+      disabled={loading}
       controls={controls}
       onSubmit={(fields: any) => dispatch(updateStudyAreaFiles(fields.files))}
     />

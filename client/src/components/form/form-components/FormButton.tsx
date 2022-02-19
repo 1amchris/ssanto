@@ -11,16 +11,25 @@ class FormButton extends FormComponent {
     super(props, uniqueId('form/button-'), key);
   }
 
-  render = () => (
-    <button
-      {...this.props}
-      id={this.id}
-      key={this.key}
-      className={`btn btn-sm ${this.props?.className}`}
-    >
-      {this.props?.children}
-    </button>
-  );
+  render = () => {
+    const { className, loading, ...props } = this.props;
+    return (
+      <button
+        {...props}
+        id={this.id}
+        key={this.key}
+        className={`btn btn-sm ${className ? className : ''}`}
+      >
+        {loading ? (
+          <div className="spinner-border spinner-border-sm mx-1" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        ) : (
+          this.props?.children
+        )}
+      </button>
+    );
+  };
 }
 
 export default FormButton;
