@@ -2,6 +2,7 @@ import L from 'leaflet';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { uniqueId } from 'lodash';
+import { GeoJSON } from 'geojson';
 
 export interface MapState {
   location: LatLong;
@@ -14,8 +15,9 @@ export interface MapState {
 
 export interface Layer {
   identifier?: string;
+  label?: string;
   name: string;
-  data: any;
+  data: GeoJSON;
 }
 
 export interface LatLong {
@@ -43,8 +45,13 @@ export const mapSlice = createSlice({
       state.cellSize = action.payload;
     },
     updateZoom: (state, { payload: zoom }: PayloadAction<number>) => {
-      console.warn('Warning: no validation has been applied to zoom');
-      state.zoom = zoom;
+      if (zoom < 1) {
+        console.error(
+          `Error: the zoom must be a positive integer greater than 0; got ${zoom}`
+        );
+      } else {
+        state.zoom = zoom;
+      }
     },
     upsertLayer: (state, { payload: layer }: PayloadAction<Layer>) => {
       const index = state.layers.findIndex(

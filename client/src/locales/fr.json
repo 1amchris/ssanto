@@ -27,6 +27,7 @@
     "green roofs": "toits verts",
     "swales": "rigoles",
     "ponds & lakes": "étangs & lacs",
-    "constructed wetlands": "zones humides artificielles"
+    "constructed wetlands": "zones humides artificielles",
+    "none": "rien"
   }
 }
