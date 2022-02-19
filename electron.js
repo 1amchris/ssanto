@@ -36,6 +36,7 @@ let mainWindow = null;
 
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
+    show: false,
     title: 'SSanto',
     webPreferences: {
       nodeIntegration: true,
@@ -46,14 +47,17 @@ app.on('ready', () => {
 
   //mainWindow.maximize();
   mainWindow.loadURL(
-    'http://localhost:3000'
+    'http://localhost:3000',
     /*url.format({
             pathname: path.join(__dirname, './index.html'),
             protocol: "file:",
             slashes: true
         })*/
+    {}
   );
   mainWindow.webContents.openDevTools();
+  mainWindow.maximize();
+  mainWindow.show();
 
   mainWindow.on('closed', () => {
     console.log('electron exit');
