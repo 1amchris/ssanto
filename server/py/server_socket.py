@@ -11,7 +11,7 @@ class AClass:
 a_class = AClass()
 
 def function():
-    print("This function was called from javascript");
+    print("This function was called from javascript")
     
 
 class ServerSocket:

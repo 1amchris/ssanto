@@ -18,10 +18,10 @@ class SubjectsManager:
     def subscribe(self, cmd):
         # TODO: Handle sid unavailable
         s = self.subjects[cmd['sid']]
-        s.is_watched = True
+        s.watch()
         self.send(s)
         
     def unsubscribe(self, cmd):
         # TODO: Handle sid unavailable
         s = self.subjects[cmd['sid']]
-        s.is_watched = False
+        s.unwatch()

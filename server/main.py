@@ -13,7 +13,7 @@ class AClass:
         print("This method was called from javascript and contain", self.attribute)
     
 def function():
-    print("This function was called from javascript");
+    print("This function was called from javascript")
     
     
     
