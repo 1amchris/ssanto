@@ -59,12 +59,12 @@ class StudyAreaManager (FileManager):
                     }
 
                 # rewind enforces geojson's right hand rule
-                geojson = rewind(json.dumps(layer))
-                self.callback(json.loads(geojson))
+                geojson = rewind(layer)
+                self.callback(shapefile, geojson)
+
                 # with open(f"{shapefile}.geojson", "w") as f:
                 #     f.write(geojson)
                 
-
             except Exception as e:
                 # TODO: handle imported shapefile error
                 print("STDERR", 'Shapefile is missing complementary files', e)
@@ -89,10 +89,16 @@ async def main():
     fm = FileManager()
     ss.bind_command_m("file", fm, FileManager.receive_files)
 
-    studyAreaGeoJson = sm.create('studyAreaGeoJson', { "type": "FeatureCollection", "features": [] })
+    study_area_file_name = sm.create('studyArea.fileName', '')
+    study_area_geojson = sm.create('studyArea.geoJson', { "type": "FeatureCollection", "features": [] })
+    
+    def handle_study_area_changed(file_name, geojson):
+        study_area_geojson.notify(geojson)
+        study_area_file_name.notify(file_name)
+    
     ss.bind_command_m(
         "study_area",
-        StudyAreaManager(lambda geojson: studyAreaGeoJson.notify(geojson)),
+        StudyAreaManager(handle_study_area_changed),
         StudyAreaManager.receive_files,
     )
 

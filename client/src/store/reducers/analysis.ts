@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+import { GeoJSON } from 'geojson';
 
 export interface AnalysisParameters {
   modelerName: string;
@@ -7,7 +8,8 @@ export interface AnalysisParameters {
 }
 
 export interface AnalysisStudyArea {
-  area?: Object; // TODO change to geojson
+  area?: GeoJSON;
+  fileName?: string;
   loading: boolean;
 }
 
@@ -97,9 +99,17 @@ export const analysisSlice = createSlice({
       /* TODO: add additional validation here */
       state.studyArea.loading = files.length > 0;
     },
+    updateStudyAreaFileName: (
+      state,
+      { payload: fileName }: PayloadAction<string>
+    ) => {
+      console.warn('No validation was performed on the study area file name');
+      /* TODO: add additional validation here */
+      state.studyArea.fileName = fileName;
+    },
     updateStudyAreaGeojson: (
       state,
-      { payload: geojson }: PayloadAction<Object>
+      { payload: geojson }: PayloadAction<GeoJSON>
     ) => {
       console.warn('No validation was performed on the study area geojson');
       /* TODO: add additional validation here */
@@ -121,6 +131,7 @@ export const {
   updateParameters,
   updateNbsSystemType,
   updateStudyAreaFiles,
+  updateStudyAreaFileName,
   updateStudyAreaGeojson,
   updateObjectives,
 } = analysisSlice.actions;

@@ -12,10 +12,13 @@ import { Control, Button, Spacer } from '../form/form-components';
 function StudyArea({ t }: any) {
   const dispatch = useAppDispatch();
   const {
-    studyArea: { loading },
+    studyArea: { fileName, loading },
   } = useAppSelector(selectAnalysis);
 
   const controls = [
+    fileName ? (
+      <Control label="selected file" defaultValue={`${fileName}.sh`} disabled />
+    ) : null,
     <Control
       label="select study area"
       name="files"
