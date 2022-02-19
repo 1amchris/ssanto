@@ -55,6 +55,7 @@ app.on('ready', () => {
         })*/
     {}
   );
+  mainWindow.setMenuBarVisibility(false);
   mainWindow.webContents.openDevTools();
   mainWindow.maximize();
   mainWindow.show();
