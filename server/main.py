@@ -42,13 +42,13 @@ class FileManager:
         for shapefile, ext in shapefiles:
             try:
                 with fiona.collection(f'{shapefile}.{ext}') as source:
-                    my_layer = {
+                    layer = {
                         "type": "FeatureCollection",
                         "features": list(source),
                     }
 
                 with open(f"{shapefile}.geojson", "w") as f:
-                    f.write(json.dumps(my_layer))
+                    f.write(json.dumps(layer))
             
                 # and now we've got a geojson file with the same filename
             except Exception as e:
