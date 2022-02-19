@@ -51,18 +51,10 @@ export const mapSlice = createSlice({
         ({ name }: Layer) => name === layer.name
       );
 
-      console.log('index', index, 'length', state.layers.length);
-
-      const toInsert = {
+      state.layers.splice(index, 1, {
         identifier: uniqueId('layer-'),
         ...layer,
-      } as Layer;
-
-      if (index > -1) {
-        state.layers[index] = toInsert;
-      } else {
-        state.layers.push(toInsert);
-      }
+      } as Layer);
     },
     updateClickedCoord: (
       state,
