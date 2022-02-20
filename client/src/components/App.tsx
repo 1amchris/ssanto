@@ -16,10 +16,7 @@ import { useAppDispatch } from '../store/hooks';
 import * as server from '../store/middlewares/ServerMiddleware';
 import { Store } from 'redux';
 import InteractiveMapDemo from './analysis/InteractiveMapDemo';
-import {
-  updateStudyAreaFileName,
-  updateStudyAreaGeojson,
-} from '../store/reducers/analysis';
+import { updateStudyArea } from '../store/reducers/analysis';
 import { GeoJSON } from 'geojson';
 
 function App() {
@@ -29,20 +26,11 @@ function App() {
 
   // TODO can't subscribe if server connection hasn't been established yet (app crashes)
   setTimeout(() => {
-    // Subscription example
     dispatch(
       server.subscribe({
-        subjectId: 'studyArea.geoJson',
-        callback: (store: Store) => (geojson: GeoJSON) =>
-          geojson && store.dispatch(updateStudyAreaGeojson(geojson)),
-      })
-    );
-
-    dispatch(
-      server.subscribe({
-        subjectId: 'studyArea.fileName',
-        callback: (store: Store) => (fileName: string) =>
-          fileName.trim() && store.dispatch(updateStudyAreaFileName(fileName)),
+        subjectId: 'studyArea',
+        callback: (store: Store) => data =>
+          store.dispatch(updateStudyArea(data)),
       })
     );
   }, 250);

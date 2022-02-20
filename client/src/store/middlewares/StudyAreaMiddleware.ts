@@ -1,7 +1,4 @@
-import {
-  updateStudyAreaFiles,
-  updateStudyAreaGeojson,
-} from '../reducers/analysis';
+import { updateStudyArea, updateStudyAreaFiles } from '../reducers/analysis';
 import { Layer, upsertLayer } from '../reducers/map';
 import { sendFiles, SendFilesModel } from './ServerMiddleware';
 
@@ -19,10 +16,15 @@ const StudyAreaMiddleware = () => {
           );
           return next(action);
 
-        case updateStudyAreaGeojson.type:
-          dispatch(
-            upsertLayer({ name: 'study area', data: action.payload } as Layer)
-          );
+        case updateStudyArea.type:
+          if (!action.payload.error && action.payload.area) {
+            dispatch(
+              upsertLayer({
+                name: 'study area',
+                data: action.payload.area,
+              } as Layer)
+            );
+          }
           return next(action);
 
         default:
