@@ -18,7 +18,11 @@ function StudyArea({ t }: any) {
   const controls = [
     error ? <Alert className="alert-danger">{error}</Alert> : null,
     fileName ? (
-      <Control label="selected file" defaultValue={`${fileName}.sh`} disabled />
+      <Control
+        label="selected file"
+        defaultValue={`${fileName}.shp`}
+        disabled
+      />
     ) : null,
     <Control
       label="select study area"
