@@ -23,13 +23,30 @@ export interface StudyAreaChanged {
 export interface AnalysisNbsSystem {
   type: string;
 }
+export interface GeoFile {
+  name: string;
+  extention: string;
+  view: boolean;
+}
+export interface AnalysisGeodatabase {
+  files: GeoFile[];
+}
 
 export interface AnalysisObjectives {
   main: string;
+  options: string[];
   primaries: {
     primary: string[];
+    options: string[];
     secondaries: {
       secondary: string[];
+      options: string[];
+      attributes: {
+        attribute: string[];
+        attributeOptions: string[];
+        dataset: string[];
+        column: string[];
+      }[];
     }[];
   }[];
 }
@@ -39,6 +56,7 @@ export interface AnalysisState {
   studyArea: AnalysisStudyArea;
   nbsSystem: AnalysisNbsSystem;
   objectives: AnalysisObjectives;
+  geodatabase: AnalysisGeodatabase;
 }
 
 export const analysisSlice = createSlice({
@@ -50,17 +68,71 @@ export const analysisSlice = createSlice({
     } as AnalysisParameters,
     studyArea: { area: undefined, loading: false } as AnalysisStudyArea,
     nbsSystem: { type: '2' } as AnalysisNbsSystem,
+    geodatabase: {
+      files: [
+        { name: 'mtl_high', extention: '.json', view: false },
+        { name: 'mtl_revenu_median', extention: '.shp', view: false },
+        { name: 'mtl_parks', extention: '.shp', view: false },
+      ],
+    } as AnalysisGeodatabase,
     objectives: {
       main: '0',
+      options: ['needs', 'oportunities'],
       primaries: [
         {
-          primary: ['0', '1'],
+          primary: ['environmental', 'economic'],
+          options: ['social', 'economic', 'environmental', 'legal', 'cultural'],
           secondaries: [
             {
-              secondary: ['0', '1', '2'],
+              secondary: ['rainfall', 'slope'],
+              options: [
+                'slope',
+                'rainfall',
+                'topography',
+                'contamination',
+                'storage capacity',
+              ],
+              attributes: [
+                {
+                  attribute: ['rain days', 'annual rain'],
+                  attributeOptions: [
+                    'rain days',
+                    'annual rain',
+                    'max rain',
+                    'min rain',
+                  ],
+                  dataset: ['file1', 'file2'],
+                  column: ['c1', 'c2'],
+                },
+                {
+                  attribute: ['digital elevation model'],
+                  attributeOptions: ['digital elevation model'],
+                  dataset: ['file1'],
+                  column: ['c1'],
+                },
+              ],
             },
             {
-              secondary: ['0', '1'],
+              secondary: ['Land value'],
+              options: [
+                'road renewal',
+                'street width or type',
+                'utility infrastructure',
+                ,
+              ],
+              attributes: [
+                {
+                  attribute: ['average house price', 'house price index'],
+                  attributeOptions: [
+                    'average house price',
+                    'house price index',
+                    'capital value',
+                    'rental value',
+                  ],
+                  dataset: ['file1', 'file2'],
+                  column: ['c1', 'c2'],
+                },
+              ],
             },
           ],
         },
@@ -112,6 +184,23 @@ export const analysisSlice = createSlice({
         ? { error: payload.error, ...defaults }
         : { fileName: payload.fileName, area: payload.area, ...defaults };
     },
+    addGeoFile: (state, { payload }: PayloadAction<string>) => {
+      console.warn('No validation was performed on the geodatabase');
+      /* TODO: add additional validation here */
+      state.geodatabase.files.push({
+        name: payload,
+        extention: 'shp',
+        view: false,
+      });
+    },
+    updateGeodatabase: (
+      state,
+      { payload: { files } }: PayloadAction<AnalysisGeodatabase>
+    ) => {
+      console.warn('No validation was performed on the geofile');
+      /* TODO: add additional validation here */
+      state.geodatabase.files = files;
+    },
     updateObjectives: (
       state,
       { payload }: PayloadAction<AnalysisObjectives>
@@ -128,6 +217,8 @@ export const {
   updateNbsSystemType,
   updateStudyAreaFiles,
   updateStudyArea,
+  updateGeodatabase,
+  addGeoFile,
   updateObjectives,
 } = analysisSlice.actions;
 export const selectAnalysis = (state: RootState) => state.analysis;

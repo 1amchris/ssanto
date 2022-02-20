@@ -18,6 +18,8 @@ import { Store } from 'redux';
 import InteractiveMapDemo from './analysis/InteractiveMapDemo';
 import { updateStudyArea } from '../store/reducers/analysis';
 import { GeoJSON } from 'geojson';
+import ObjectiveHierarchy2 from './analysis/ObjectiveHierarchy2';
+import DataImportation from './analysis/DataImportation';
 
 function App() {
   // Establishes connection with the server
@@ -58,8 +60,11 @@ function App() {
             <Collapsible title={'NBS system type'} collapsed>
               <NbsSystemType />
             </Collapsible>
+            <Collapsible title={'data importation'} collapsed>
+              <DataImportation />
+            </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>
-              <ObjectiveHierarchy />
+              <ObjectiveHierarchy2 />
             </Collapsible>
           </NavigationBar>
         </aside>
