@@ -257,7 +257,7 @@ celerybeat.pid
 # Environments
 .venv
 env/
-venv/
+#venv/ # we're currently using python virtual environments
 ENV/
 env.bak/
 venv.bak/
