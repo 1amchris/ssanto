@@ -7,15 +7,16 @@ import {
   updateStudyAreaFiles,
 } from '../../store/reducers/analysis';
 import Form from '../form/Form';
-import { Control, Button, Spacer } from '../form/form-components';
+import { Control, Button, Spacer, Alert } from '../form/form-components';
 
 function StudyArea({ t }: any) {
   const dispatch = useAppDispatch();
   const {
-    studyArea: { fileName, loading },
+    studyArea: { fileName, loading, error },
   } = useAppSelector(selectAnalysis);
 
   const controls = [
+    error ? <Alert className="alert-danger">{error}</Alert> : null,
     fileName ? (
       <Control label="selected file" defaultValue={`${fileName}.sh`} disabled />
     ) : null,

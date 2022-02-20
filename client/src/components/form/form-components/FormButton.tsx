@@ -12,7 +12,7 @@ class FormButton extends FormComponent {
   }
 
   render = () => {
-    const { className, loading, ...props } = this.props;
+    const { className, loading, children, ...props } = this.props;
     return (
       <button
         {...props}
@@ -25,7 +25,7 @@ class FormButton extends FormComponent {
             <span className="visually-hidden">Loading...</span>
           </div>
         ) : (
-          this.props?.children
+          children
         )}
       </button>
     );
