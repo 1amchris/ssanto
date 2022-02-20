@@ -4,7 +4,7 @@ const path = require('path');
 
 const { spawn } = require('child_process');
 
-const python = spawn('./venv/bin/python3.9', ['-u', './main.py'], {
+const python = spawn('python3', ['-u', './main.py'], {
   cwd: path.join(__dirname, 'server'),
 });
 
