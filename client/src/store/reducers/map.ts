@@ -63,6 +63,15 @@ export const mapSlice = createSlice({
         ...layer,
       } as Layer);
     },
+    removeLayer: (state, { payload: name }: PayloadAction<string>) => {
+      const index = state.layers.findIndex(
+        (layer: Layer) => layer.name === name
+      );
+
+      if (index > -1) {
+        state.layers.splice(index);
+      }
+    },
     updateClickedCoord: (
       state,
       { payload: location }: PayloadAction<LatLong>
@@ -77,6 +86,7 @@ export const {
   updateCellSize,
   updateZoom,
   upsertLayer,
+  removeLayer,
   updateClickedCoord,
 } = mapSlice.actions;
 

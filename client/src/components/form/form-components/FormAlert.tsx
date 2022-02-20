@@ -19,24 +19,15 @@ class FormAlert extends FormComponent {
           {...props}
           id={this.id}
           key={this.key}
-          className={`alert alert-dismissible fade show ${
-            className ? className : ''
-          }`}
+          className={`alert alert-dismissible ${className ? className : ''}`}
           style={{
-            paddingTop: '0.75rem',
-            paddingBottom: '0.75rem',
+            paddingTop: '0.55rem',
+            paddingBottom: '0.55rem',
             marginBottom: 0,
           }}
           role="alert"
         >
           {children}
-          <button
-            type="button"
-            className="btn-close"
-            style={{ paddingTop: '1rem', paddingBottom: '1rem' }}
-            data-dismiss="alert"
-            aria-label="Close"
-          ></button>
         </div>
       </small>
     );

@@ -1,5 +1,5 @@
 import { updateStudyArea, updateStudyAreaFiles } from '../reducers/analysis';
-import { Layer, upsertLayer } from '../reducers/map';
+import { Layer, removeLayer, upsertLayer } from '../reducers/map';
 import { sendFiles, SendFilesModel } from './ServerMiddleware';
 
 const StudyAreaMiddleware = () => {
@@ -17,13 +17,16 @@ const StudyAreaMiddleware = () => {
           return next(action);
 
         case updateStudyArea.type:
+          const layerName = 'study area';
           if (!action.payload.error && action.payload.area) {
             dispatch(
               upsertLayer({
-                name: 'study area',
+                name: layerName,
                 data: action.payload.area,
               } as Layer)
             );
+          } else if (action.payload.error) {
+            dispatch(removeLayer(layerName));
           }
           return next(action);
 
