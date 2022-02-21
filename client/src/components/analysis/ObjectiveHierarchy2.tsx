@@ -15,6 +15,44 @@ import {
   updateObjectives,
 } from '../../store/reducers/analysis';
 import { FactoryProps } from '../form/form-components/FormExpandableList';
+import objectivesData from '../../data/objectives.json';
+
+//TODO : ajout d'un objectif => options selon l'objectif parent
+//TODO : update d'un objectif => clear des objectifs enfants et updates de leurs options
+
+function generateHierarchyOptions(level: number, parent?: string) {
+  if (level == 1) {
+    return objectivesData?.mains[0]?.primaries?.map(
+      json =>
+        ({
+          value: `${json.primary}`,
+          label: `${json.primary}`,
+        } as FormSelectOptionModel)
+    );
+  } else if (level == 2) {
+    let secondaries: { secondary: any }[] = [];
+    objectivesData?.mains[0]?.primaries?.map(json => {
+      if (json.primary == parent) {
+        secondaries = json.secondaries;
+      }
+    });
+    return secondaries.map(
+      json =>
+        ({
+          value: `${json?.secondary}`,
+          label: `${json?.secondary}`,
+        } as FormSelectOptionModel)
+    );
+  } else if (level == 0) {
+    return objectivesData?.mains.map(
+      json =>
+        ({
+          value: `${json?.main}`,
+          label: `${json?.main}`,
+        } as FormSelectOptionModel)
+    );
+  }
+}
 
 function ObjectiveHierarchy2({ t }: any) {
   const dispatch = useAppDispatch();
@@ -22,7 +60,7 @@ function ObjectiveHierarchy2({ t }: any) {
     objectives: {
       main: mainValue,
       options: mainValueOptions,
-      primaries: [secondaries],
+      primaries: [primaries],
     },
   } = useAppSelector(selectAnalysis);
 
@@ -36,18 +74,11 @@ function ObjectiveHierarchy2({ t }: any) {
       (value: number) =>
         ({
           value: `${value}`,
-          label: `${value} ${text}`,
+          label: `${text} ${value} `,
         } as FormSelectOptionModel)
     );
 
-  const generateOptions2 = (options: string[], isAt: boolean) =>
-    options?.map(
-      (value: string) =>
-        ({
-          value: `${value}`,
-          label: `${value}`,
-        } as FormSelectOptionModel)
-    );
+  const onChangeSelect = () => console.log('onchange yes');
 
   /**
    * A factory that generates the attributes inputs on demand
@@ -60,23 +91,23 @@ function ObjectiveHierarchy2({ t }: any) {
     name,
     key,
     orderIndex,
-    defaultValue,
-    options,
+    defaultAttribute,
+    defaultDataset,
   }: FactoryProps): ReactElement | ReactElement[] => [
     <Select
       hideLabel
       key={key('attribute')}
       name={name('attribute')}
-      defaultValue={defaultValue}
+      defaultValue={defaultAttribute}
       label={`attribute ${orderIndex}`}
-      options={generateOptions2(options, true)}
+      options={generateOptions('attribute', 3)}
     />,
     <Select
       hideLabel
       key={key('dataset')}
       name={name('dataset')}
-      defaultValue={defaultValue}
-      label={`dataset ${orderIndex}`}
+      defaultValue={defaultDataset}
+      label={`dataset`}
       options={generateOptions('Dataset', 3)}
     />,
   ];
@@ -94,8 +125,8 @@ function ObjectiveHierarchy2({ t }: any) {
     key,
     orderIndex,
     defaultValue,
-    options,
-    childrenValues,
+    primary,
+    childrenValues: attributes,
   }: FactoryProps): ReactElement | ReactElement[] => [
     <Select
       hideLabel
@@ -103,7 +134,7 @@ function ObjectiveHierarchy2({ t }: any) {
       key={key('secondary')}
       name={name('secondary')}
       defaultValue={defaultValue}
-      options={generateOptions2(options, false)}
+      options={generateHierarchyOptions(2, primary)}
     />,
     <ExpandableList
       hideLabel
@@ -111,12 +142,10 @@ function ObjectiveHierarchy2({ t }: any) {
       name={name('attributes')}
       factory={attributesFactory}
       label="attributes"
-      controls={childrenValues.attribute?.map(
-        (defaultValue: string, index: number) => ({
-          defaultValue,
-          options: childrenValues.attributeOptions,
-        })
-      )}
+      controls={attributes?.attribute?.map((defaultAttribute: string) => ({
+        defaultAttribute,
+        attributeOptions: attributes.attributeOptions,
+      }))}
     />,
   ];
   /**
@@ -131,8 +160,7 @@ function ObjectiveHierarchy2({ t }: any) {
     key,
     orderIndex,
     defaultValue,
-    options,
-    childrenValues,
+    childrenValues: secondaries,
   }: FactoryProps): ReactElement | ReactElement[] => [
     <Select
       hideLabel
@@ -140,7 +168,8 @@ function ObjectiveHierarchy2({ t }: any) {
       key={key('primary')}
       name={name('primary')}
       defaultValue={defaultValue}
-      options={generateOptions2(options, false)}
+      onChange={onChangeSelect}
+      options={generateHierarchyOptions(1)}
     />,
     <ExpandableList
       hideLabel
@@ -148,11 +177,11 @@ function ObjectiveHierarchy2({ t }: any) {
       name={name('secondaries')}
       factory={secondaryObjectivesFactory}
       label="secondary objectives"
-      controls={childrenValues.secondary?.map(
-        (defaultValue: string, index: number) => ({
-          defaultValue,
-          options: childrenValues.options,
-          childrenValues: childrenValues.attributes[index],
+      controls={secondaries?.secondary?.map(
+        (defaultValueSecondary: string, index: number) => ({
+          defaultValue: defaultValueSecondary,
+          primary: defaultValue,
+          childrenValues: secondaries?.attributes[index],
         })
       )}
     />,
@@ -164,7 +193,7 @@ function ObjectiveHierarchy2({ t }: any) {
       name="main"
       label="objectives"
       defaultValue={mainValue}
-      options={generateOptions2(mainValueOptions, false)}
+      options={generateHierarchyOptions(0)}
     />,
     <ExpandableList
       hideLabel
@@ -172,11 +201,10 @@ function ObjectiveHierarchy2({ t }: any) {
       name={`primaries.0`}
       factory={primaryObjectivesFactory}
       label={'primary objectives'}
-      controls={secondaries.primary.map(
+      controls={primaries?.primary?.map(
         (defaultValue: string, index: number) => ({
           defaultValue,
-          options: secondaries.options,
-          childrenValues: secondaries.secondaries[index],
+          childrenValues: primaries?.secondaries[index],
         })
       )}
     />,

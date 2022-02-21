@@ -1,0 +1,274 @@
+{
+    "name": "ObjectivesHierarchy",
+    "mains": [
+      {
+        "main": "needs",
+        "primaries": [
+          {
+            "primary": "Biophysical",
+            "secondaries": [
+              {
+                "secondary": "Soil Type",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Hydraulic Conductivity",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Contamination",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Landfill Distance",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Slope",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Building Footprints",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Soil Salinity",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Groundwater Table",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Rainfall Variability",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Surface Water",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Waterways Distance to",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Pre-human Wetland Structure",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              }
+            ]
+          },
+          {
+            "primary": "Socio-Economic",
+            "secondaries": [
+              {
+                "secondary": "Education Level",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Relative Wealth",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Environmental Awareness",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Sense of Community",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              }
+            ]
+          },
+          {
+            "primary": "Urban Form",
+            "secondaries": [
+              {
+                "secondary": "Airports Distance to",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Capital Works Program",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Utility Infrastructure",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Drainage Infrastructure Distance",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Street width/type",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Planned (re)Developments",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Cultural Heritage Sites",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Natural Heritage Sites",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Geological Heritage Sites",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Land Value",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Land Ownership",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Lot Size",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              }
+            ]
+          },
+          {
+            "primary": "Provisioning",
+            "secondaries": [
+              {
+                "secondary": "Irrigation Demand Distance",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Current Rainwater Harvesting",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              }
+            ]
+          },
+          {
+            "primary": "Regulating",
+            "secondaries": [
+              {
+                "secondary": "Heat Vulnerability",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Urban Heat Island Effect",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Effective Imperviousness",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Total Imperviousness",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Current WSUD",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Floods",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Flood Risk",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              }
+            ]
+          },
+          {
+            "primary": "Cultural",
+            "secondaries": [
+              {
+                "secondary": "Visibility",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Visibility Distance ",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Green Cover",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Recreation",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Social Cohesion",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              }
+            ]
+          },
+          {
+            "primary": "Habitat",
+            "secondaries": [
+              {
+                "secondary": "Biodiversity",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Connectedness",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              },
+              {
+                "secondary": "Total Habitat",
+                "attributes": [ "a", "b", "c"],
+                "nbs": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "main": "oportunities",
+        "primary": []
+      }
+    ]
+  }

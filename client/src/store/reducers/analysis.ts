@@ -44,8 +44,8 @@ export interface AnalysisObjectives {
       attributes: {
         attribute: string[];
         attributeOptions: string[];
-        dataset: string[];
-        column: string[];
+        //dataset: string[];
+        //column: string[];
       }[];
     }[];
   }[];
@@ -80,57 +80,38 @@ export const analysisSlice = createSlice({
       options: ['needs', 'oportunities'],
       primaries: [
         {
-          primary: ['environmental', 'economic'],
-          options: ['social', 'economic', 'environmental', 'legal', 'cultural'],
+          primary: ['Biophysical', 'Socio-Economic'],
           secondaries: [
             {
-              secondary: ['rainfall', 'slope'],
-              options: [
-                'slope',
-                'rainfall',
-                'topography',
-                'contamination',
-                'storage capacity',
-              ],
+              secondary: ['Soil Type', 'Slope'],
               attributes: [
                 {
-                  attribute: ['rain days', 'annual rain'],
-                  attributeOptions: [
-                    'rain days',
-                    'annual rain',
-                    'max rain',
-                    'min rain',
-                  ],
-                  dataset: ['file1', 'file2'],
-                  column: ['c1', 'c2'],
+                  attribute: ['a', 'b'],
+                  attributeOptions: ['a', 'b', 'c', 'd'],
+                  //dataset: ['file1', 'file2'],
+                  //column: ['c1', 'c2'],
                 },
                 {
-                  attribute: ['digital elevation model'],
-                  attributeOptions: ['digital elevation model'],
-                  dataset: ['file1'],
-                  column: ['c1'],
+                  attribute: ['a'],
+                  attributeOptions: ['a', 'b'],
+                  //dataset: ['file1'],
+                  //column: ['c1'],
                 },
               ],
             },
             {
-              secondary: ['Land value'],
-              options: [
-                'road renewal',
-                'street width or type',
-                'utility infrastructure',
-                ,
-              ],
+              secondary: ['Education Level'],
               attributes: [
                 {
-                  attribute: ['average house price', 'house price index'],
+                  attribute: ['a', 'b'],
                   attributeOptions: [
                     'average house price',
                     'house price index',
                     'capital value',
                     'rental value',
                   ],
-                  dataset: ['file1', 'file2'],
-                  column: ['c1', 'c2'],
+                  //dataset: ['file1', 'file2'],
+                  //column: ['c1', 'c2'],
                 },
               ],
             },
