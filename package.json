@@ -5,6 +5,8 @@
   "main": "electron.js",
   "scripts": {
     "start": "concurrently \"cross-env BROWSER=none npm --prefix ./client/ run start\" \"wait-on http://localhost:3000 && electron . --no-sandbox\"",
+    "start-web": "cross-env BROWSER=none npm --prefix ./client/ run start",
+    "start-electron": "electron . --no-sandbox",
     "postinstall": "npm --prefix ./client/ install"
   },
   "author": "",

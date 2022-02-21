@@ -1,8 +1,10 @@
-# TODO: Make abstract
+from . import network_definitions as nd
+
+# TODO: Make abstract, maybe
 class Subject:
-    def __init__(self, sm, sid, data):
-        self.sid = sid
-        self.sm = sm
+    def __init__(self, subjects_manager, subject_id, data):
+        self.subject_id = subject_id
+        self.subjects_manager = subjects_manager
         self.data = data
         self.is_watched = False  # TODO: Semaphore
 
@@ -15,10 +17,10 @@ class Subject:
     def notify(self, data):
         self.data = data
         if self.is_watched:
-            self.sm.send(self)
+            self.subjects_manager.send(self)
 
     def get(self):
         return self.data
 
     def to_dict(self):
-        return {"sid": self.sid, "data": self.data}
+        return {nd.SUBJECT_ID_FIELD: self.subject_id, nd.DATA_FIELD: self.data}

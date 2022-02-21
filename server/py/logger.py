@@ -7,10 +7,10 @@ class Logger:
         self.debug = debug
         sys.stdout = self
 
-    def enableDebugLog(self):
+    def enable_debug_log(self):
         self.debug = True
 
-    def disableDebugLog(self):
+    def disable_debug_log(self):
         self.debug = False
 
     def write(self, msg):

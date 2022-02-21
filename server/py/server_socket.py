@@ -2,45 +2,26 @@ import websockets
 import asyncio
 import json
 
+from . import network_definitions as nd
 
-class AClass:
-    def __init__(self):
-        self.attribute = "myString"
-
-    def method(self):
-        print("This method was called from javascript and contain", self.attribute)
-
-
-a_class = AClass()
-
-
-def function():
-    print("This function was called from javascript")
+from .remote_calls import *
 
 
 class ServerSocket:
-    class CmdMethodFunctor:
-        def __init__(self, instance, method):
-            self.instance = instance
-            self.method = method
-
-        def __call__(self, cmd):
-            self.method(self.instance, cmd)
-
     class MethodFunctor:
         def __init__(self, instance, method):
             self.instance = instance
             self.method = method
 
-        def __call__(self, cmd):
-            self.method(self.instance)
+        def __call__(self, command):
+            self.method(self.instance, command)
 
     class FunctionFunctor:
         def __init__(self, function):
             self.function = function
 
-        def __call__(self, cmd):
-            self.function()
+        def __call__(self, command):
+            self.function(command)
 
     # ------------------------------------------
 
@@ -51,11 +32,11 @@ class ServerSocket:
 
         self.commands_handlers = {}
 
-    def bind_command_m(self, cmd_type, instance, method):
-        self.commands_handlers[cmd_type] = self.CmdMethodFunctor(instance, method)
+    def bind_command_m(self, command_name, instance, method):
+        self.commands_handlers[command_name] = self.MethodFunctor(instance, method)
 
-    def bind_command_f(self, cmd_type, function):
-        self.commands_handlers[cmd_type] = self.FunctionFunctor(function)
+    def bind_command_f(self, command_name, function):
+        self.commands_handlers[command_name] = self.FunctionFunctor(function)
 
     # Data must have to_dict() method implemented
     def send(self, data):
@@ -76,20 +57,24 @@ class ServerSocket:
 
             for json_data in jsons_data:
                 print(json_data)
+
                 try:
                     obj = json.loads(json_data)
-                    try:
-                        if "cmd" in obj:
-                            if obj["cmd"] == "callf":
-                                eval(obj["trg"] + "()")
-                            elif obj["cmd"] == "callm":
-                                eval(obj["instance"] + "." + obj["method"] + "()")
-                            if obj["cmd"] in self.commands_handlers:
-                                self.commands_handlers[obj["cmd"]](obj)
-                    except Exception as e:
-                        print("STDERR", e)
                 except Exception as e:
-                    print("STDERR", e)
+                    print("STDERR", "Unable to loads json", e)
+                    continue
+
+                try:
+                    if nd.COMMAND_FIELD in obj:
+                        if obj[nd.COMMAND_FIELD] == "callf":
+                            eval(obj[nd.TARGET_FIELD] + "()")
+                        elif obj[nd.COMMAND_FIELD] == "callm":
+                            eval(obj[nd.INSTANCE_FIELD] + "." + obj[nd.METHOD_FIELD] + "()")
+                        elif obj[nd.COMMAND_FIELD] in self.commands_handlers:
+                            self.commands_handlers[obj[nd.COMMAND_FIELD]](obj)
+                except Exception as e:
+                    print("STDERR", "Unable to call the method/function", e)
+                
 
     def serve(self):
         return websockets.serve(self.handler, self.host, self.port)
