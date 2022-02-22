@@ -1,5 +1,17 @@
 import { encode as base64encode } from 'base64-arraybuffer';
 
+class Commands {
+  static Subscribe = new Commands('subscribe');
+  static CallFunction = new Commands('callf');
+  static CallMethod = new Commands('callm');
+  static SendFile = new Commands('file');
+
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
 export default class ServerCom {
   client?: WebSocket;
   messageListeners: Map<string, (data: any) => void>;
@@ -8,14 +20,19 @@ export default class ServerCom {
   // TODO: there should probably be a "isOpening" method [returns if the connection is opening]
   // TODO: there should probably be a "isClosing" method [returns if the connection is closing]
   // TODO: there should probably be a "isClosed" method [returns if the connection is closed]
-  // TODO: there should probably be a "onOpened" subject [returns a subject to subscribe to]
-  // TODO: there should probably be a "onClosed" subject [returns a subject to subscribe to]
+  // TODO: there should probably be a "onOpened" subject [returns a promise to subscribe to]
+  // TODO: there should probably be a "onClosed" subject [returns a promise to subscribe to]
   constructor() {
     this.messageListeners = new Map();
   }
 
   // TODO: there should probably be a "close" method
   open(host = 'localhost', port = 6969) {
+    if (this.client)
+      return console.warn(
+        'Websocket already connected. Disconnect the active one before reconnecting.'
+      );
+
     this.client = new WebSocket(`ws://${host}:${port}`);
 
     this.client!.onopen = () => {
@@ -49,23 +66,28 @@ export default class ServerCom {
 
   // TODO there should probably be an "unsubscribe" method
   subscribe(subjectId: string, callback: (data: any) => void) {
+    if (this.messageListeners.has(subjectId))
+      return console.warn(
+        `The variable with Subject Id "${subjectId}" has already been subscribed to! Unsubscribe before resubscribing.`
+      );
+
     this.messageListeners.set(subjectId, callback);
     this.writeObject({
-      cmd: 'subscribe',
+      cmd: Commands.Subscribe.name,
       sid: subjectId,
     });
   }
 
   callFunction(functionName: string) {
     this.writeObject({
-      cmd: 'callf',
+      cmd: Commands.CallFunction.name,
       trg: functionName,
     });
   }
 
   callMethod(classInstanceName: string, methodName: string) {
     this.writeObject({
-      cmd: 'callm',
+      cmd: Commands.CallMethod.name,
       instance: classInstanceName,
       method: methodName,
     });
@@ -82,7 +104,7 @@ export default class ServerCom {
       )
       .then(data =>
         this.writeObject({
-          cmd: command || 'file',
+          cmd: command || Commands.SendFile.name,
           data,
         })
       );
