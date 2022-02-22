@@ -4,7 +4,8 @@ const path = require('path');
 
 const { spawn } = require('child_process');
 
-const python = spawn('python3', ['-u', './main.py'], {
+const PYTHON_PATH = 'python3';
+const python = spawn(PYTHON_PATH, ['-u', './main.py'], {
   cwd: path.join(__dirname, 'server'),
 });
 
@@ -45,7 +46,6 @@ app.on('ready', () => {
     },
   });
 
-  //mainWindow.maximize();
   mainWindow.loadURL(
     'http://localhost:3000',
     /*url.format({

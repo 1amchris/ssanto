@@ -1,0 +1,10 @@
+
+# PACKAGE FIELDS
+
+SUBJECT_ID_FIELD = 'sid'
+DATA_FIELD = 'data'
+COMMAND_FIELD = 'cmd'
+TARGET_FIELD = 'trg'
+INSTANCE_FIELD = 'instance'
+METHOD_FIELD = 'method'
+
