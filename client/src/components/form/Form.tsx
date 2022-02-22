@@ -14,10 +14,11 @@ function Form({
   onSubmit = (e: any) => {},
   onReset = (e: any) => {
     e.preventDefault();
-    Object.entries(e.target)
-      .filter(([_, e]: any) => e?.name && e.readOnly === false)
-      .forEach(([_, input]: any) => {
-        input.value = input.type === 'file' ? null : input.defaultValue;
+    Object.values(e.target)
+      .filter((e: any) => e?.name && e?.readOnly !== true)
+      .forEach((input: any, index: number) => {
+        input.value =
+          input.type === 'file' ? null : controls[index].props.defaultValue;
       });
   },
   ...props
@@ -30,9 +31,9 @@ function Form({
       onSubmit={(e: any) => {
         e.preventDefault();
         const fields = Object.fromEntries(
-          Object.entries(e.target)
-            .filter(([_, e]: any) => e?.name && (e?.value || e?.defaultValue))
-            .map(([_, input]: any) => [
+          Object.values(e.target)
+            .filter((e: any) => e?.name && (e?.value || e?.defaultValue))
+            .map((input: any) => [
               input.name,
               input.type === 'file' ? input.files : input.value,
             ])
