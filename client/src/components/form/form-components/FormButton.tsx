@@ -13,10 +13,14 @@ class FormButton extends FormComponent {
   }
 
   render = () => {
-    const { loading, children, variant, ...props } = this.props;
+    const { loading, children, variant, className, visuallyHidden, ...props } =
+      this.props;
     return (
       <Button
         {...props}
+        className={`w-100 ${className} ${
+          visuallyHidden ? 'visually-hidden' : ''
+        }`}
         variant={variant || 'none'}
         size="sm"
         id={this.id}

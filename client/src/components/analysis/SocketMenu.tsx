@@ -21,13 +21,13 @@ function SocketMenu({ t }: any) {
       multiple
       required
     />,
-    <Button className="btn-outline-primary w-100" type="submit">
+    <Button variant="outline-primary" className="w-100" type="submit">
       {capitalize(t('send data'))}
     </Button>,
     <Spacer />,
     <Button
-      className="btn-outline-secondary w-100"
-      type="button"
+      variant="outline-secondary"
+      className="w-100"
       onClick={() =>
         dispatch(
           callFunction({
@@ -39,8 +39,8 @@ function SocketMenu({ t }: any) {
       {capitalize(t('Call function'))}
     </Button>,
     <Button
-      className="btn-outline-secondary w-100"
-      type="button"
+      variant="outline-secondary"
+      className="w-100"
       onClick={() =>
         dispatch(
           callMethod({
@@ -50,7 +50,7 @@ function SocketMenu({ t }: any) {
         )
       }
     >
-      {capitalize(t('Call method'))}
+      {capitalize(t('call method'))}
     </Button>,
   ];
 

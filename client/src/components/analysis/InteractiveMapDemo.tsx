@@ -55,16 +55,16 @@ function InterativeMapDemo({ t }: any) {
       required
     />,
     <Spacer />,
-    <Button className="btn-primary w-100">
+    <Button variant="primary" className="w-100" type="submit">
       {capitalize(t('update center'))}
     </Button>,
-    <Button className="btn-outline-danger w-100" type="reset">
+    <Button variant="outline-danger" className="w-100" type="reset">
       {capitalize(t('reset'))}
     </Button>,
     <Spacer />,
     <Button
-      className="btn-outline-primary w-100"
-      type="button"
+      variant="outline-primary"
+      className="w-100"
       onClick={() => {
         if (Object.keys(newLayers).some(key => +key === layers.length + 1))
           dispatch(upsertLayer(newLayers[layers.length + 1]));

@@ -13,9 +13,13 @@ class FormAlert extends FormComponent {
   }
 
   render = () => {
-    const { children, ...props } = this.props;
+    const { children, visuallyHidden, className, ...props } = this.props;
     return (
-      <small>
+      <small
+        className={`w-100 ${className} ${
+          visuallyHidden ? 'visually-hidden' : ''
+        }`}
+      >
         <Alert
           {...props}
           id={this.id}

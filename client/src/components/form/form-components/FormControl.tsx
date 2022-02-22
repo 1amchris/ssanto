@@ -15,11 +15,26 @@ class FormControl extends FormComponent {
   }
 
   render = () => {
-    const { t, i18n, tReady, hideLabel, label, suffix, prefix, ...props } =
-      this.props;
+    const {
+      t,
+      i18n,
+      tReady,
+      hideLabel,
+      visuallyHidden,
+      className,
+      label,
+      suffix,
+      prefix,
+      ...props
+    } = this.props;
 
     return (
-      <Form.Group key={this.key} className="mb-3">
+      <Form.Group
+        key={this.key}
+        className={`w-100 ${className} ${
+          visuallyHidden ? 'visually-hidden' : ''
+        }`}
+      >
         <Form.Label visuallyHidden={hideLabel}>
           <small>{capitalize(t(label || this.props.name))}</small>
         </Form.Label>

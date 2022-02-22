@@ -34,10 +34,10 @@ function NbsSystemType({ t }: any) {
       }
     />,
     <Spacer />,
-    <Button className="w-100 btn-primary" type="submit">
+    <Button variant="primary" className="w-100" type="submit">
       {capitalize(t('apply'))}
     </Button>,
-    <Button className="w-100 btn-outline-danger" type="reset">
+    <Button variant="outline-danger" className="w-100" type="reset">
       {capitalize(t('reset'))}
     </Button>,
   ];

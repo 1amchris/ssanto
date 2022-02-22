@@ -16,14 +16,15 @@ function StudyArea({ t }: any) {
   } = useAppSelector(selectAnalysis);
 
   const controls = [
-    error ? <Alert className="alert-danger">{error}</Alert> : null,
-    fileName ? (
-      <Control
-        label="selected file"
-        defaultValue={`${fileName}.shp`}
-        disabled
-      />
-    ) : null,
+    <Alert visuallyHidden={!error} className="alert-danger">
+      {error}
+    </Alert>,
+    <Control
+      visuallyHidden={!fileName}
+      label="selected file"
+      value={`${fileName}.shp`}
+      disabled
+    />,
     <Control
       label="select study area"
       name="files"
@@ -34,12 +35,19 @@ function StudyArea({ t }: any) {
       disabled={loading}
     />,
     <Spacer />,
-    <Button disabled={loading} loading={loading} className="w-100 btn-primary">
+    <Button
+      disabled={loading}
+      loading={loading}
+      variant="primary"
+      className="w-100"
+      type="submit"
+    >
       {capitalize(t('apply'))}
     </Button>,
     <Button
       disabled={loading}
-      className="w-100 btn-outline-danger"
+      variant="outline-danger"
+      className="w-100"
       type="reset"
     >
       {capitalize(t('reset'))}

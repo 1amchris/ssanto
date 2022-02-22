@@ -49,8 +49,10 @@ function Parameters({ t }: any) {
       type="number"
     />,
     <Spacer />,
-    <Button className="btn-primary w-100">{capitalize(t('apply'))}</Button>,
-    <Button className="btn-outline-danger w-100" type="reset">
+    <Button variant="primary" className="w-100" type="submit">
+      {capitalize(t('apply'))}
+    </Button>,
+    <Button variant="outline-danger" className="w-100" type="reset">
       {capitalize(t('reset'))}
     </Button>,
   ];
@@ -62,7 +64,6 @@ function Parameters({ t }: any) {
         analysisName,
         modelerName,
         cellSize,
-        ...rest
       }: {
         [p: string]: string;
       }) => {

@@ -15,10 +15,24 @@ class FormSelect extends FormComponent {
   }
 
   render = () => {
-    const { t, i18n, tReady, options, className, hideLabel, label, ...props } =
-      this.props;
+    const {
+      t,
+      i18n,
+      tReady,
+      options,
+      hideLabel,
+      visuallyHidden,
+      className,
+      label,
+      ...props
+    } = this.props;
     return (
-      <Form.Group key={this.key} className={className}>
+      <Form.Group
+        key={this.key}
+        className={`w-100 ${className} ${
+          visuallyHidden ? 'visually-hidden' : ''
+        }`}
+      >
         <Form.Label visuallyHidden={hideLabel}>
           <small>{capitalize(t(label || this.props.name))}</small>
         </Form.Label>

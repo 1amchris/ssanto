@@ -21,6 +21,7 @@ function Form({
           input.type === 'file' ? null : controls[index].props.defaultValue;
       });
   },
+  disabled,
   ...props
 }: any) {
   const id = uniqueId('form-');
@@ -42,11 +43,13 @@ function Form({
       }}
       onReset={onReset}
     >
-      {controls.map((control: any, index: number) => (
-        <div key={`${id}-${index}`} className="mb-2">
-          {control}
-        </div>
-      ))}
+      <fieldset disabled={disabled}>
+        {controls.map((control: any, index: number) => (
+          <div key={`${id}-${index}`} className="mb-2">
+            {control}
+          </div>
+        ))}
+      </fieldset>
     </form>
   );
 }
