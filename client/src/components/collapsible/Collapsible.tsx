@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { FcCollapse, FcExpand } from 'react-icons/fc';
 import { capitalize, uniqueId } from 'lodash';
+import { Collapse, Button } from 'react-bootstrap';
 
 function Collapsible({ t, title, children, collapsed = false }: any) {
   const id = uniqueId('collapsible-');
@@ -9,23 +10,22 @@ function Collapsible({ t, title, children, collapsed = false }: any) {
 
   return (
     <React.Fragment>
-      <div
-        className="w-100 d-flex justify-content-between"
-        data-bs-toggle="collapse"
-        data-bs-target={`#${id}`}
-        role="button"
+      <Button
+        size="sm"
+        variant="none"
+        className="w-100 px-0 mb-1 d-flex justify-content-between"
         aria-expanded={open}
         aria-controls={id}
         onClick={() => {
           setOpen(!open);
         }}
       >
-        <h6>{capitalize(t(title || 'collapsible-title'))}</h6>
+        <h6 className="mb-0">{capitalize(t(title || 'collapsible-title'))}</h6>
         <span>{open ? <FcCollapse /> : <FcExpand />}</span>
-      </div>
-      <div className={`collapse ${open && 'show'}`} id={id}>
-        {children}
-      </div>
+      </Button>
+      <Collapse in={open}>
+        <div>{children}</div>
+      </Collapse>
     </React.Fragment>
   );
 }

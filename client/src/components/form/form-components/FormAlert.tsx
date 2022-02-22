@@ -1,4 +1,5 @@
 import { uniqueId } from 'lodash';
+import { Alert } from 'react-bootstrap';
 import FormComponent from './FormComponent';
 
 /**
@@ -12,23 +13,21 @@ class FormAlert extends FormComponent {
   }
 
   render = () => {
-    const { className, children, ...props } = this.props;
+    const { children, ...props } = this.props;
     return (
       <small>
-        <div
+        <Alert
           {...props}
           id={this.id}
           key={this.key}
-          className={`alert alert-dismissible ${className ? className : ''}`}
           style={{
             paddingTop: '0.55rem',
             paddingBottom: '0.55rem',
             marginBottom: 0,
           }}
-          role="alert"
         >
           {children}
-        </div>
+        </Alert>
       </small>
     );
   };

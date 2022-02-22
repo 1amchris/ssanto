@@ -17,9 +17,8 @@ import * as server from '../store/middlewares/ServerMiddleware';
 import { Store } from 'redux';
 import InteractiveMapDemo from './analysis/InteractiveMapDemo';
 import { updateStudyArea } from '../store/reducers/analysis';
-import { GeoJSON } from 'geojson';
 
-function App() {
+const App: React.FC = () => {
   // Establishes connection with the server
   const dispatch = useAppDispatch();
   dispatch(server.openConnection());
@@ -105,6 +104,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;

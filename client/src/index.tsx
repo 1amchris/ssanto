@@ -15,7 +15,7 @@ import * as fr from './locales/fr.json';
 
 // Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // Leaflet
 import 'leaflet/dist/leaflet.css';

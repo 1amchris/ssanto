@@ -1,4 +1,5 @@
 import { capitalize, uniqueId } from 'lodash';
+import { Form } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../../models/form-models/FormSelectOptionModel';
 import FormComponent from './FormComponent';
@@ -17,16 +18,14 @@ class FormSelect extends FormComponent {
     const { t, i18n, tReady, options, className, hideLabel, label, ...props } =
       this.props;
     return (
-      <div key={this.key} className={className}>
-        {!this.hideLabel && (
-          <label htmlFor={this.props.name} className={`form-label small`}>
-            {capitalize(t(label || this.props.name))}
-          </label>
-        )}
-        <select {...props} id={this.id} className="form-select form-select-sm">
+      <Form.Group key={this.key} className={className}>
+        <Form.Label visuallyHidden={hideLabel}>
+          <small>{capitalize(t(label || this.props.name))}</small>
+        </Form.Label>
+        <Form.Select {...props} id={this.id} size="sm">
           {options?.map(this.getOption)}
-        </select>
-      </div>
+        </Form.Select>
+      </Form.Group>
     );
   };
 
