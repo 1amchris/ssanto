@@ -1,5 +1,5 @@
 import { capitalize, uniqueId } from 'lodash';
-import { Form, InputGroup } from 'react-bootstrap';
+import { Form, InputGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
 import FormComponent from './FormComponent';
 
@@ -25,25 +25,41 @@ class FormControl extends FormComponent {
       label,
       suffix,
       prefix,
+      tooltipPlacement = 'right',
+      tooltipDelay = 750,
+      tooltip,
       ...props
     } = this.props;
 
     return (
-      <Form.Group
+      <OverlayTrigger
         key={this.key}
-        className={`w-100 ${className} ${
-          visuallyHidden ? 'visually-hidden' : ''
-        }`}
+        placement={tooltipPlacement}
+        delay={tooltipDelay}
+        overlay={
+          tooltip ? (
+            <Tooltip id={`tooltip/${this.id}`}>{tooltip}</Tooltip>
+          ) : (
+            <></>
+          )
+        }
       >
-        <Form.Label visuallyHidden={hideLabel}>
-          <small>{capitalize(t(label || this.props.name))}</small>
-        </Form.Label>
-        <InputGroup size="sm">
-          {prefix && <span className="input-group-text">{prefix}</span>}
-          <Form.Control {...props} id={this.id} size="sm" />
-          {suffix && <span className="input-group-text">{suffix}</span>}
-        </InputGroup>
-      </Form.Group>
+        <Form.Group
+          key={this.key}
+          className={`w-100 ${className} ${
+            visuallyHidden ? 'visually-hidden' : ''
+          }`}
+        >
+          <Form.Label visuallyHidden={hideLabel}>
+            <small>{capitalize(t(label || this.props.name))}</small>
+          </Form.Label>
+          <InputGroup size="sm">
+            {prefix && <span className="input-group-text">{prefix}</span>}
+            <Form.Control {...props} id={this.id} size="sm" />
+            {suffix && <span className="input-group-text">{suffix}</span>}
+          </InputGroup>
+        </Form.Group>
+      </OverlayTrigger>
     );
   };
 }

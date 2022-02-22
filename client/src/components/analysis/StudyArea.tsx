@@ -33,6 +33,7 @@ function StudyArea({ t }: any) {
       multiple
       required
       disabled={loading}
+      tooltip={t('the selected files will ...')}
     />,
     <Spacer />,
     <Button

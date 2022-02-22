@@ -1,5 +1,6 @@
+import { tooltip } from 'leaflet';
 import { uniqueId } from 'lodash';
-import { Button, Spinner } from 'react-bootstrap';
+import { Button, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import FormComponent from './FormComponent';
 
 /**
@@ -13,25 +14,47 @@ class FormButton extends FormComponent {
   }
 
   render = () => {
-    const { loading, children, variant, className, visuallyHidden, ...props } =
-      this.props;
+    const {
+      loading,
+      children,
+      variant,
+      className,
+      visuallyHidden,
+      tooltip,
+      tooltipPlacement = 'right',
+      tooltipDelay = 750,
+      ...props
+    } = this.props;
     return (
-      <Button
-        {...props}
-        className={`w-100 ${className} ${
-          visuallyHidden ? 'visually-hidden' : ''
-        }`}
-        variant={variant || 'none'}
-        size="sm"
-        id={this.id}
+      <OverlayTrigger
         key={this.key}
+        placement={tooltipPlacement}
+        delay={tooltipDelay}
+        overlay={
+          tooltip ? (
+            <Tooltip id={`tooltip/${this.id}`}>{tooltip}</Tooltip>
+          ) : (
+            <></>
+          )
+        }
       >
-        {loading ? (
-          <Spinner animation="border" size="sm" className="mx-1" />
-        ) : (
-          children
-        )}
-      </Button>
+        <Button
+          {...props}
+          className={`w-100 ${className} ${
+            visuallyHidden ? 'visually-hidden' : ''
+          }`}
+          variant={variant || 'none'}
+          size="sm"
+          id={this.id}
+          key={this.key}
+        >
+          {loading ? (
+            <Spinner animation="border" size="sm" className="mx-1" />
+          ) : (
+            children
+          )}
+        </Button>
+      </OverlayTrigger>
     );
   };
 }

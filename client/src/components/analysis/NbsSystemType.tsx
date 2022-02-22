@@ -32,6 +32,7 @@ function NbsSystemType({ t }: any) {
           { value: '6', label: 'constructed wetlands' },
         ] as FormSelectOptionModel[]
       }
+      tooltip={t('the selected NBS system type ...')}
     />,
     <Spacer />,
     <Button variant="primary" className="w-100" type="submit">

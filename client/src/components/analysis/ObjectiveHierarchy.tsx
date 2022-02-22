@@ -103,6 +103,7 @@ function ObjectiveHierarchy({ t }: any) {
       label="objectives"
       defaultValue={mainValue}
       options={generateOptions('Main Objective', 3)}
+      tooltip={t('the objective hierarchy is ...')}
     />,
     <ExpandableList
       hideLabel

@@ -1,5 +1,5 @@
 import { capitalize, uniqueId } from 'lodash';
-import { Form } from 'react-bootstrap';
+import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../../models/form-models/FormSelectOptionModel';
 import FormComponent from './FormComponent';
@@ -24,22 +24,38 @@ class FormSelect extends FormComponent {
       visuallyHidden,
       className,
       label,
+      tooltipPlacement = 'right',
+      tooltipDelay = 750,
+      tooltip,
       ...props
     } = this.props;
     return (
-      <Form.Group
+      <OverlayTrigger
         key={this.key}
-        className={`w-100 ${className} ${
-          visuallyHidden ? 'visually-hidden' : ''
-        }`}
+        placement={tooltipPlacement}
+        delay={tooltipDelay}
+        overlay={
+          tooltip ? (
+            <Tooltip id={`tooltip/${this.id}`}>{tooltip}</Tooltip>
+          ) : (
+            <></>
+          )
+        }
       >
-        <Form.Label visuallyHidden={hideLabel}>
-          <small>{capitalize(t(label || this.props.name))}</small>
-        </Form.Label>
-        <Form.Select {...props} id={this.id} size="sm">
-          {options?.map(this.getOption)}
-        </Form.Select>
-      </Form.Group>
+        <Form.Group
+          key={this.key}
+          className={`w-100 ${className} ${
+            visuallyHidden ? 'visually-hidden' : ''
+          }`}
+        >
+          <Form.Label visuallyHidden={hideLabel}>
+            <small>{capitalize(t(label || this.props.name))}</small>
+          </Form.Label>
+          <Form.Select {...props} id={this.id} size="sm">
+            {options?.map(this.getOption)}
+          </Form.Select>
+        </Form.Group>
+      </OverlayTrigger>
     );
   };
 

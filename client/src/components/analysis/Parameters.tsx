@@ -25,12 +25,14 @@ function Parameters({ t }: any) {
       name="analysisName"
       defaultValue={analysisName}
       required
+      tooltip={t('the analysis name will ...')}
     />,
     <Control
       label="name of the modeler"
       name="modelerName"
       defaultValue={modelerName}
       required
+      tooltip={t("the modeler's name will ...")}
     />,
     <Control
       label="cell size"
@@ -47,6 +49,7 @@ function Parameters({ t }: any) {
       }}
       defaultValue={cellSize}
       type="number"
+      tooltip={t('the cell size is ...')}
     />,
     <Spacer />,
     <Button variant="primary" className="w-100" type="submit">
