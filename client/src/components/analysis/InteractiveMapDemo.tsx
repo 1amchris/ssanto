@@ -55,16 +55,15 @@ function InterativeMapDemo({ t }: any) {
       required
     />,
     <Spacer />,
-    <Button variant="primary" className="w-100" type="submit">
+    <Button variant="primary" type="submit">
       {capitalize(t('update center'))}
     </Button>,
-    <Button variant="outline-danger" className="w-100" type="reset">
+    <Button variant="outline-danger" type="reset">
       {capitalize(t('reset'))}
     </Button>,
     <Spacer />,
     <Button
       variant="outline-primary"
-      className="w-100"
       onClick={() => {
         if (Object.keys(newLayers).some(key => +key === layers.length + 1))
           dispatch(upsertLayer(newLayers[layers.length + 1]));

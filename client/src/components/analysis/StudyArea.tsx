@@ -40,17 +40,11 @@ function StudyArea({ t }: any) {
       disabled={loading}
       loading={loading}
       variant="primary"
-      className="w-100"
       type="submit"
     >
       {capitalize(t('apply'))}
     </Button>,
-    <Button
-      disabled={loading}
-      variant="outline-danger"
-      className="w-100"
-      type="reset"
-    >
+    <Button disabled={loading} variant="outline-danger" type="reset">
       {capitalize(t('reset'))}
     </Button>,
   ];
