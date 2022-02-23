@@ -5,7 +5,7 @@ import ServerMiddleware, {
   sendFiles as serverSendFilesAction,
   subscribe as serverSubscribeAction,
 } from './middlewares/ServerMiddleware';
-import StudyAreaMiddleware from './middlewares/StudyAreaMiddleware';
+import AnalysisMiddleware from './middlewares/StudyAreaMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -21,7 +21,7 @@ export const store = configureStore({
           updateStudyAreaFiles.type, // Contains a file upload
         ],
       },
-    }).concat([ServerMiddleware, StudyAreaMiddleware]),
+    }).concat([ServerMiddleware, AnalysisMiddleware]),
 });
 
 export type AppDispatch = typeof store.dispatch;

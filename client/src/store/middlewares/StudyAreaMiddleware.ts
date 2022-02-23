@@ -2,7 +2,7 @@ import { updateStudyArea, updateStudyAreaFiles } from '../reducers/analysis';
 import { Layer, removeLayer, upsertLayer } from '../reducers/map';
 import { sendFiles, SendFilesModel } from './ServerMiddleware';
 
-const StudyAreaMiddleware = () => {
+const AnalysisMiddleware = () => {
   return ({ dispatch }: any) =>
     (next: any) =>
     (action: any) => {
@@ -10,7 +10,7 @@ const StudyAreaMiddleware = () => {
         case updateStudyAreaFiles.type:
           dispatch(
             sendFiles({
-              command: 'study_area',
+              command: 'analysis.update_study_area',
               files: action.payload,
             } as SendFilesModel)
           );
@@ -36,4 +36,4 @@ const StudyAreaMiddleware = () => {
     };
 };
 
-export default StudyAreaMiddleware();
+export default AnalysisMiddleware();

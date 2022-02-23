@@ -27,7 +27,7 @@ const App: React.FC = () => {
   setTimeout(() => {
     dispatch(
       server.subscribe({
-        subjectId: 'studyArea',
+        subjectId: 'analysis.study_area',
         callback: (store: Store) => data =>
           store.dispatch(updateStudyArea(data)),
       })
