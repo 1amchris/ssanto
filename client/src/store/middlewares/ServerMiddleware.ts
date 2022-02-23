@@ -11,9 +11,11 @@ export interface SendFilesModel {
   target: string;
 }
 
+export type StoreHOF = (store: Store) => (data: any) => void;
+
 export interface SubscriptionModel {
   subject: string;
-  callback: (store: Store) => (data: any) => void;
+  callback: StoreHOF;
 }
 
 export const openConnection = createAction<string | undefined>('openSocket');

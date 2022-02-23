@@ -5,7 +5,7 @@ import ServerMiddleware, {
   sendFiles as serverSendFilesAction,
   subscribe as serverSubscribeAction,
 } from './middlewares/ServerMiddleware';
-import AnalysisMiddleware from './middlewares/StudyAreaMiddleware';
+import AnalysisMiddleware from './middlewares/AnalysisMiddleware';
 
 export const store = configureStore({
   reducer: {

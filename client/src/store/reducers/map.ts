@@ -8,7 +8,6 @@ export interface MapState {
   location: LatLong;
   zoom: number;
   coordinateSystem: string;
-  cellSize: number;
   layers: Layer[];
   clickedCoord: LatLong;
 }
@@ -31,7 +30,6 @@ export const mapSlice = createSlice({
     location: { lat: 45.509, long: -73.553 },
     zoom: 10,
     coordinateSystem: `${L.CRS.EPSG3857}`,
-    cellSize: 20,
     layers: [],
     clickedCoord: { lat: NaN, long: NaN },
   } as MapState,
@@ -40,9 +38,6 @@ export const mapSlice = createSlice({
       if (isNaN(location.lat) || isNaN(location.long))
         console.error('Invalid coordinates', location);
       else state.location = location;
-    },
-    updateCellSize: (state, action: PayloadAction<number>) => {
-      state.cellSize = action.payload;
     },
     updateZoom: (state, { payload: zoom }: PayloadAction<number>) => {
       if (zoom < 1) {
@@ -83,7 +78,6 @@ export const mapSlice = createSlice({
 
 export const {
   updateLocation,
-  updateCellSize,
   updateZoom,
   upsertLayer,
   removeLayer,

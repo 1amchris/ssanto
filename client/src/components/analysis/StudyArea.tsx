@@ -16,7 +16,7 @@ import { Store } from 'redux';
 function StudyArea({ t }: any) {
   const dispatch = useAppDispatch();
   const {
-    studyArea: { fileName, loading, error },
+    studyArea: { value, isLoading, error },
   } = useAppSelector(selectAnalysis);
 
   useEffectOnce(() =>
@@ -34,9 +34,9 @@ function StudyArea({ t }: any) {
       {error}
     </Alert>,
     <Control
-      visuallyHidden={!fileName}
+      visuallyHidden={!value!.fileName}
       label="selected file"
-      value={`${fileName}.shp`}
+      value={`${value!.fileName}.shp`}
       disabled
     />,
     <Control
@@ -46,26 +46,20 @@ function StudyArea({ t }: any) {
       accept=".shp, .shx"
       multiple
       required
-      disabled={loading}
       tooltip={t('the selected files will ...')}
     />,
     <Spacer />,
-    <Button
-      disabled={loading}
-      loading={loading}
-      variant="outline-primary"
-      type="submit"
-    >
+    <Button loading={isLoading} variant="outline-primary" type="submit">
       {capitalize(t('apply'))}
     </Button>,
-    <Button disabled={loading} variant="outline-danger" type="reset">
+    <Button variant="outline-danger" type="reset">
       {capitalize(t('reset'))}
     </Button>,
   ];
 
   return (
     <Form
-      disabled={loading}
+      disabled={isLoading}
       controls={controls}
       onSubmit={(fields: any) => dispatch(updateStudyAreaFiles(fields.files))}
     />

@@ -6,16 +6,20 @@ import {
   selectAnalysis,
   updateParameters,
 } from '../../store/reducers/analysis';
-import { selectMap, updateCellSize } from '../../store/reducers/map';
 import { withTranslation } from 'react-i18next';
 import Form from '../form/Form';
+import { useEffectOnce } from '../../hooks';
+import * as Utils from '../../utils';
 
 function Parameters({ t }: any) {
   const dispatch = useAppDispatch();
-  const {
-    parameters: { analysisName, modelerName },
-  } = useAppSelector(selectAnalysis);
-  const { cellSize } = useAppSelector(selectMap);
+  const { parameters } = useAppSelector(selectAnalysis);
+
+  const isLoading = () => Utils.isLoading(Object.values(parameters));
+
+  useEffectOnce(() => {
+    Utils.generateSubscriptions(dispatch, Object.keys(parameters));
+  });
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
 
@@ -23,14 +27,14 @@ function Parameters({ t }: any) {
     <Control
       label="analysis name"
       name="analysisName"
-      defaultValue={analysisName}
+      defaultValue={parameters.analysisName.value}
       required
       tooltip={t('the analysis name will ...')}
     />,
     <Control
       label="name of the modeler"
       name="modelerName"
-      defaultValue={modelerName}
+      defaultValue={parameters.modelerName.value}
       required
       tooltip={t("the modeler's name will ...")}
     />,
@@ -40,19 +44,19 @@ function Parameters({ t }: any) {
       suffix={
         <React.Fragment>
           <small className="me-1">x</small>
-          <span ref={cellSizeRef}>{cellSize}</span>m
+          <span ref={cellSizeRef}>{parameters.cellSize.value}</span>m
         </React.Fragment>
       }
       onChange={({ target: { value } }: { target: HTMLInputElement }) => {
         if (cellSizeRef.current?.textContent)
           cellSizeRef.current.textContent = value;
       }}
-      defaultValue={cellSize}
+      defaultValue={parameters.cellSize.value}
       type="number"
       tooltip={t('the cell size is ...')}
     />,
     <Spacer />,
-    <Button variant="outline-primary" type="submit">
+    <Button variant="outline-primary" type="submit" loading={isLoading()}>
       {capitalize(t('apply'))}
     </Button>,
     <Button variant="outline-danger" type="reset">
@@ -62,16 +66,10 @@ function Parameters({ t }: any) {
 
   return (
     <Form
+      disabled={isLoading()}
       controls={controls}
-      onSubmit={({
-        analysisName,
-        modelerName,
-        cellSize,
-      }: {
-        [p: string]: string;
-      }) => {
-        dispatch(updateParameters({ analysisName, modelerName }));
-        dispatch(updateCellSize(+cellSize));
+      onSubmit={(fields: any) => {
+        dispatch(updateParameters(fields));
       }}
     />
   );

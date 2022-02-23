@@ -1,22 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { GeoJSON } from 'geojson';
+import { updatePropertiesModel } from '../middlewares/AnalysisMiddleware';
 
-export interface AnalysisParameters {
-  modelerName: string;
-  analysisName: string;
+export interface Value {
+  error?: any;
+  value?: any;
+  isLoading: boolean;
+}
+export interface Properties {
+  [key: string]: Value;
 }
 
 export interface AnalysisStudyArea {
   error?: any;
-  area?: GeoJSON;
-  fileName?: string;
-  loading: boolean;
+  value?: { area?: GeoJSON; fileName?: string };
+  isLoading: boolean;
 }
 
 export interface StudyAreaChanged {
-  fileName?: string;
-  area?: GeoJSON;
+  value?: { fileName?: string; area?: GeoJSON };
   error?: any;
 }
 
@@ -35,7 +38,7 @@ export interface AnalysisObjectives {
 }
 
 export interface AnalysisState {
-  parameters: AnalysisParameters;
+  parameters: Properties;
   studyArea: AnalysisStudyArea;
   nbsSystem: AnalysisNbsSystem;
   objectives: AnalysisObjectives;
@@ -45,10 +48,14 @@ export const analysisSlice = createSlice({
   name: 'analysis',
   initialState: {
     parameters: {
-      modelerName: '',
-      analysisName: '',
-    } as AnalysisParameters,
-    studyArea: { area: undefined, loading: false } as AnalysisStudyArea,
+      modelerName: { value: '', isLoading: false },
+      analysisName: { value: '', isLoading: false },
+      cellSize: { value: 20, isLoading: false },
+    } as Properties,
+    studyArea: {
+      value: { area: undefined },
+      isLoading: false,
+    } as AnalysisStudyArea,
     nbsSystem: { type: '2' } as AnalysisNbsSystem,
     objectives: {
       main: '0',
@@ -68,27 +75,25 @@ export const analysisSlice = createSlice({
     } as AnalysisObjectives,
   } as AnalysisState,
   reducers: {
+    receiveParameterFromServer: (
+      state,
+      { payload }: PayloadAction<updatePropertiesModel>
+    ) => {
+      Object.entries(payload).forEach(
+        ([key, { value, error }]: [string, any]) => {
+          state.parameters[key] = { value, error, isLoading: false };
+        }
+      );
+    },
     updateParameters: (
       state,
       {
-        payload: { modelerName, analysisName },
-      }: PayloadAction<AnalysisParameters>
+        payload, //: { modelerName, analysisName, cellSize },
+      }: PayloadAction<Properties>
     ) => {
-      modelerName = modelerName.trim();
-      if (modelerName.length < 3)
-        return console.error(
-          `Modeler name must be at least 3 characters. Input: "${modelerName}"`
-        );
-      /* TODO: add additional validation here */
-      state.parameters.modelerName = modelerName;
-
-      analysisName = analysisName.trim();
-      if (analysisName.length < 3)
-        return console.error(
-          `Analysis name must be at least 3 characters. Input: "${analysisName}"`
-        );
-      /* TODO: add additional validation here */
-      state.parameters.analysisName = analysisName;
+      Object.entries(payload).forEach(([key, value]: [string, any]) => {
+        state.parameters[key] = { value, isLoading: true };
+      });
     },
     updateNbsSystemType: (
       state,
@@ -104,13 +109,18 @@ export const analysisSlice = createSlice({
     ) => {
       console.warn('No validation was performed on the study area files');
       /* TODO: add additional validation here */
-      state.studyArea.loading = files.length > 0;
+      state.studyArea.isLoading = files.length > 0;
     },
     updateStudyArea: (state, { payload }: PayloadAction<StudyAreaChanged>) => {
-      const defaults = { loading: false };
       state.studyArea = payload.error
-        ? { error: payload.error, ...defaults }
-        : { fileName: payload.fileName, area: payload.area, ...defaults };
+        ? { error: payload.error, isLoading: false }
+        : {
+            value: {
+              fileName: payload!.value?.fileName,
+              area: payload!.value?.area,
+            },
+            isLoading: false,
+          };
     },
     updateObjectives: (
       state,
@@ -124,6 +134,7 @@ export const analysisSlice = createSlice({
 });
 
 export const {
+  receiveParameterFromServer,
   updateParameters,
   updateNbsSystemType,
   updateStudyAreaFiles,

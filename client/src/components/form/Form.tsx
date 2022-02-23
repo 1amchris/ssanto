@@ -11,6 +11,7 @@ import { unflatten } from 'flattenizer';
  */
 function Form({
   controls,
+  disabled,
   onSubmit = (e: any) => {},
   onReset = (e: any) => {
     e.preventDefault();
@@ -21,7 +22,6 @@ function Form({
           input.type === 'file' ? null : controls[index].props.defaultValue;
       });
   },
-  disabled,
   ...props
 }: any) {
   const id = uniqueId('form-');
@@ -36,7 +36,11 @@ function Form({
             .filter((e: any) => e?.name && (e?.value || e?.defaultValue))
             .map((input: any) => [
               input.name,
-              input.type === 'file' ? input.files : input.value,
+              input.type === 'file'
+                ? input.files
+                : input.type === 'number'
+                ? +input.value
+                : input.value,
             ])
         );
         onSubmit(unflatten(fields));

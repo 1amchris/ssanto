@@ -16,8 +16,7 @@ import ev from '../../data/espace_vert.json';
 import lh from '../../data/limite_h.json';
 
 function InterativeMapDemo({ t }: any) {
-  const { location, clickedCoord, layers, cellSize } =
-    useAppSelector(selectMap);
+  const { location, clickedCoord, layers } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();
 
   const newLayers: any = {
@@ -35,11 +34,6 @@ function InterativeMapDemo({ t }: any) {
       label="clicked longitude"
       readOnly
       defaultValue={`${clickedCoord.long || location.long}º`}
-    />,
-    <Control
-      label="displayed cell size"
-      readOnly
-      defaultValue={`${cellSize}`}
     />,
     <Spacer />,
     <Control
