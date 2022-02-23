@@ -1,10 +1,10 @@
+from enum import Enum
 
 # PACKAGE FIELDS
 
-SUBJECT_ID_FIELD = 'sid'
-DATA_FIELD = 'data'
-COMMAND_FIELD = 'cmd'
-TARGET_FIELD = 'trg'
-INSTANCE_FIELD = 'instance'
-METHOD_FIELD = 'method'
+class Field(Enum):
+    SUBJECT_ID = 'subject'
+    COMMAND    = 'command'
+    TARGET     = 'target'
+    DATA       = 'data'
 

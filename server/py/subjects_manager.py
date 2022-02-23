@@ -1,5 +1,4 @@
 from .subject import Subject
-from . import network_definitions as nd
 
 
 class SubjectsManager:
@@ -17,13 +16,13 @@ class SubjectsManager:
     def send(self, s):
         self.server_socket.send(s)
 
-    def subscribe(self, command):
+    def subscribe(self, subject):
         # TODO: Handle sid unavailable
-        subject = self.subjects[command[nd.SUBJECT_ID_FIELD]]
+        subject = self.subjects[subject]
         subject.watch()
         self.send(subject)
 
-    def unsubscribe(self, command):
+    def unsubscribe(self, subject):
         # TODO: Handle sid unavailable
-        subject = self.subjects[command[nd.SUBJECT_ID_FIELD]]
+        subject = self.subjects[subject]
         subject.unwatch()

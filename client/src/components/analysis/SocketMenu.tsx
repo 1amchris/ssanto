@@ -4,11 +4,7 @@ import { Control, Spacer, Button } from '../form/form-components';
 import { useAppDispatch } from '../../store/hooks';
 import { withTranslation } from 'react-i18next';
 import Form from '../form/Form';
-import {
-  callFunction,
-  callMethod,
-  sendFiles,
-} from '../../store/middlewares/ServerMiddleware';
+import { call, sendFiles } from '../../store/middlewares/ServerMiddleware';
 
 function SocketMenu({ t }: any) {
   const dispatch = useAppDispatch();
@@ -27,35 +23,30 @@ function SocketMenu({ t }: any) {
     <Spacer />,
     <Button
       variant="outline-secondary"
-      onClick={() =>
+      onClick={() => {
         dispatch(
-          callFunction({
-            functionName: 'function',
+          call({
+            target: 'a_class.method',
           })
-        )
-      }
-    >
-      {capitalize(t('Call function'))}
-    </Button>,
-    <Button
-      variant="outline-secondary"
-      onClick={() =>
+        );
         dispatch(
-          callMethod({
-            instanceName: 'a_class',
-            methodName: 'method',
+          call({
+            target: 'function',
           })
-        )
-      }
+        );
+      }}
+      type="button"
     >
-      {capitalize(t('call method'))}
+      {capitalize(t('call method & function'))}
     </Button>,
   ];
 
   return (
     <Form
       controls={controls}
-      onSubmit={(fields: any) => dispatch(sendFiles(fields))}
+      onSubmit={(fields: any) =>
+        dispatch(sendFiles({ files: fields.files, target: 'file' }))
+      }
     />
   );
 }

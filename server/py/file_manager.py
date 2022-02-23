@@ -3,17 +3,13 @@ from base64 import b64decode
 from geojson_rewind import rewind
 
 import fiona
-import json
-
-from . import network_definitions as nd
 
 
 class FileManager:
     def __init__(self):
         pass
 
-    def receive_files(self, command):
-        files = command[nd.DATA_FIELD]
+    def receive_files(self, *files):
         for file in files:
             with open(file["fileName"], "bw") as f:
                 f.write(b64decode(file["base64content"]))
@@ -24,11 +20,9 @@ class StudyAreaManager(FileManager):
         super().__init__()
         self.callback = callback
 
-    def receive_files(self, command):
+    def receive_files(self, *files):
         try:
-            super().receive_files(command)
-
-            files = command[nd.DATA_FIELD]
+            super().receive_files(*files)
             shapefiles = [
                 (".".join(name.split(".")[:-1]), ext)
                 for name, ext in [(file["fileName"], file["fileName"].split(".")[-1]) for file in files]

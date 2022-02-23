@@ -18,21 +18,19 @@ import { Store } from 'redux';
 import InteractiveMapDemo from './analysis/InteractiveMapDemo';
 import { updateStudyArea } from '../store/reducers/analysis';
 
-const App: React.FC = () => {
-  // Establishes connection with the server
+function App() {
   const dispatch = useAppDispatch();
-  dispatch(server.openConnection());
-
-  // TODO can't subscribe if server connection hasn't been established yet (app crashes)
-  setTimeout(() => {
+  React.useEffect(() => {
+    // Establishes connection with the server
+    dispatch(server.openConnection());
     dispatch(
       server.subscribe({
-        subjectId: 'analysis.study_area',
+        subject: 'study_area',
         callback: (store: Store) => data =>
           store.dispatch(updateStudyArea(data)),
       })
     );
-  }, 250);
+  });
 
   return (
     <div style={{ overflowY: 'clip' }}>
@@ -104,6 +102,6 @@ const App: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
 export default App;
