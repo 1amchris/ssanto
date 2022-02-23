@@ -1,30 +1,31 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { GeoJSON } from 'geojson';
-import { updatePropertiesModel } from '../middlewares/AnalysisMiddleware';
+import { updatePropertiesModel as UpdatePropertiesModel } from '../middlewares/AnalysisMiddleware';
 
-export interface Value {
+export interface Value<ValueType> {
   error?: any;
-  value?: any;
+  value?: ValueType;
+}
+
+export interface LoadingValue<ValueType> extends Value<ValueType> {
   isLoading: boolean;
 }
+
 export interface Properties {
-  [key: string]: Value;
+  [key: string]: LoadingValue<any>;
 }
 
-export interface AnalysisStudyArea {
-  error?: any;
-  value?: { area?: GeoJSON; fileName?: string };
-  isLoading: boolean;
+export interface AreaFile {
+  fileName?: string;
+  area?: GeoJSON;
 }
+
+export interface AnalysisStudyArea extends LoadingValue<AreaFile> {}
 
 export interface StudyAreaChanged {
-  value?: { fileName?: string; area?: GeoJSON };
+  value?: AreaFile;
   error?: any;
-}
-
-export interface AnalysisNbsSystem {
-  type: string;
 }
 
 export interface AnalysisObjectives {
@@ -38,25 +39,26 @@ export interface AnalysisObjectives {
 }
 
 export interface AnalysisState {
-  parameters: Properties;
+  properties: {
+    [key: string]: Properties;
+  };
   studyArea: AnalysisStudyArea;
-  nbsSystem: AnalysisNbsSystem;
   objectives: AnalysisObjectives;
 }
 
+const v = (value: any) => ({ value, isLoading: false });
 export const analysisSlice = createSlice({
   name: 'analysis',
   initialState: {
-    parameters: {
-      modelerName: { value: '', isLoading: false },
-      analysisName: { value: '', isLoading: false },
-      cellSize: { value: 20, isLoading: false },
-    } as Properties,
-    studyArea: {
-      value: { area: undefined },
-      isLoading: false,
-    } as AnalysisStudyArea,
-    nbsSystem: { type: '2' } as AnalysisNbsSystem,
+    properties: {
+      parameters: {
+        modelerName: v(''),
+        analysisName: v(''),
+        cellSize: v(20),
+      } as Properties,
+      nbsSystem: { systemType: v('2') } as Properties,
+    },
+    studyArea: v({}) as AnalysisStudyArea,
     objectives: {
       main: '0',
       primaries: [
@@ -77,31 +79,28 @@ export const analysisSlice = createSlice({
   reducers: {
     receiveParameterFromServer: (
       state,
-      { payload }: PayloadAction<updatePropertiesModel>
-    ) => {
-      Object.entries(payload).forEach(
-        ([key, { value, error }]: [string, any]) => {
-          state.parameters[key] = { value, error, isLoading: false };
-        }
-      );
-    },
-    updateParameters: (
-      state,
       {
-        payload, //: { modelerName, analysisName, cellSize },
-      }: PayloadAction<Properties>
+        payload: { property, properties },
+      }: PayloadAction<{ property: string; properties: UpdatePropertiesModel }>
     ) => {
-      Object.entries(payload).forEach(([key, value]: [string, any]) => {
-        state.parameters[key] = { value, isLoading: true };
+      Object.entries(properties).forEach(([key, res]: [string, Value<any>]) => {
+        state.properties[property][key] = res.error
+          ? { error: res.error, isLoading: false }
+          : {
+              value: res.value,
+              isLoading: false,
+            };
       });
     },
-    updateNbsSystemType: (
+    updateProperties: (
       state,
-      { payload: { type } }: PayloadAction<AnalysisNbsSystem>
+      {
+        payload: { property, properties },
+      }: PayloadAction<{ property: string; properties: Properties }>
     ) => {
-      console.warn('No validation was performed on the nbs system type');
-      /* TODO: add additional validation here */
-      state.nbsSystem.type = type;
+      Object.entries(properties).forEach(([key, value]: [string, any]) => {
+        state.properties[property][key] = { value, isLoading: true };
+      });
     },
     updateStudyAreaFiles: (
       state,
@@ -135,8 +134,7 @@ export const analysisSlice = createSlice({
 
 export const {
   receiveParameterFromServer,
-  updateParameters,
-  updateNbsSystemType,
+  updateProperties,
   updateStudyAreaFiles,
   updateStudyArea,
   updateObjectives,

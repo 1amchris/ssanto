@@ -7,7 +7,7 @@ import Data from './data/Data';
 import {
   Parameters,
   StudyArea,
-  NbsSystemType,
+  NbsSystem,
   ObjectiveHierarchy,
 } from './analysis';
 
@@ -44,7 +44,7 @@ function App() {
               <StudyArea />
             </Collapsible>
             <Collapsible title={'NBS system type'} collapsed>
-              <NbsSystemType />
+              <NbsSystem />
             </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>
               <ObjectiveHierarchy />

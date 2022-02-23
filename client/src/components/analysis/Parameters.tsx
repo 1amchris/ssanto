@@ -4,7 +4,7 @@ import { Control, Spacer, Button } from '../form/form-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectAnalysis,
-  updateParameters,
+  updateProperties,
 } from '../../store/reducers/analysis';
 import { withTranslation } from 'react-i18next';
 import Form from '../form/Form';
@@ -12,13 +12,13 @@ import { useEffectOnce } from '../../hooks';
 import * as Utils from '../../utils';
 
 function Parameters({ t }: any) {
+  const property = 'parameters';
+  const parameters = useAppSelector(selectAnalysis).properties[property];
   const dispatch = useAppDispatch();
-  const { parameters } = useAppSelector(selectAnalysis);
-
   const isLoading = () => Utils.isLoading(Object.values(parameters));
 
   useEffectOnce(() => {
-    Utils.generateSubscriptions(dispatch, Object.keys(parameters));
+    Utils.generateSubscriptions(dispatch, property, Object.keys(parameters));
   });
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
@@ -69,7 +69,7 @@ function Parameters({ t }: any) {
       disabled={isLoading()}
       controls={controls}
       onSubmit={(fields: any) => {
-        dispatch(updateParameters(fields));
+        dispatch(updateProperties({ property, properties: fields }));
       }}
     />
   );

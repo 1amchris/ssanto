@@ -1,8 +1,6 @@
-import { createAction } from '@reduxjs/toolkit';
-import { toSnakeProperties } from '../../utils';
+import { toObjectWithSnakeCaseKeys } from '../../utils';
 import {
-  updateNbsSystemType,
-  updateParameters,
+  updateProperties,
   updateStudyArea,
   updateStudyAreaFiles,
 } from '../reducers/analysis';
@@ -10,11 +8,9 @@ import { Layer, removeLayer, upsertLayer } from '../reducers/map';
 import { call, sendFiles, SendFilesModel } from './ServerMiddleware';
 
 export interface updatePropertiesModel {
+  property: string;
   [key: string]: any;
 }
-
-export const updateProperties =
-  createAction<updatePropertiesModel>('updateProperties');
 
 // TODO: Remove properties from model when forwarding action after dispatching server call
 const AnalysisMiddleware = () => {
@@ -23,15 +19,11 @@ const AnalysisMiddleware = () => {
     (action: any) => {
       switch (action.type) {
         case updateProperties.type:
-          return Object.entries(action.payload).forEach(
-            ([target, value]: [string, any]) => {
-              dispatch(call({ target, args: [value] }));
-            }
-          );
-
-        case updateParameters.type:
-        case updateNbsSystemType.type:
-          dispatch(updateProperties(toSnakeProperties(action.payload)));
+          Object.entries(
+            toObjectWithSnakeCaseKeys(action.payload.properties)
+          ).forEach(([target, values]: [string, any]) => {
+            dispatch(call({ target, args: [].concat(values) }));
+          });
           return next(action);
 
         case updateStudyAreaFiles.type:

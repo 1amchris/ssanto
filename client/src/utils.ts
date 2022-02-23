@@ -3,9 +3,12 @@ import {
   subscribe,
   SubscriptionModel,
 } from './store/middlewares/ServerMiddleware';
-import { receiveParameterFromServer, Value } from './store/reducers/analysis';
+import {
+  receiveParameterFromServer,
+  LoadingValue,
+} from './store/reducers/analysis';
 
-export const toSnakeProperties = (properties: { [key: string]: any }) =>
+export const toObjectWithSnakeCaseKeys = (properties: { [key: string]: any }) =>
   Object.fromEntries(
     Object.entries(properties).map(([key, value]: [string, any]) => [
       toSnakeCase(key),
@@ -16,13 +19,14 @@ export const toSnakeProperties = (properties: { [key: string]: any }) =>
 export const toSnakeCase = (value: string) =>
   value.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 
-export const isLoading = (values: Value[]) =>
+export const isLoading = (values: LoadingValue<any>[]) =>
   Array.from(values)
     .map(value => value.isLoading)
     .reduce((wasLoading, isLoading) => wasLoading && isLoading);
 
 export const generateSubscriptions = (
   dispatch: (action: any) => void,
+  property: string,
   subjects: string[]
 ) =>
   Array.from(subjects).forEach(target =>
@@ -33,7 +37,10 @@ export const generateSubscriptions = (
           ({ dispatch }: Store) =>
           (data: any) =>
             dispatch(
-              receiveParameterFromServer(Object.fromEntries([[target, data]]))
+              receiveParameterFromServer({
+                property,
+                properties: Object.fromEntries([[target, data]]),
+              })
             ),
       } as SubscriptionModel)
     )

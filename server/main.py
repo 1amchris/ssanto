@@ -44,19 +44,14 @@ async def main():
     # Analysis
     def notify(subject: Subject):
         def callback(value):
-            print(subject, value)
             subject.notify({"value": value})
 
         return callback
 
-    subjects = []
-    for key, value in {
-        "analysis_name": {"value": ""},
-        "modeler_name": {"value": ""},
-        "cell_size": {"value": 20},
-    }.items():
-        subjects.append(subjects_manager.create(key, value))
-        server_socket.bind_command(key, notify(subjects[-1]))
+    # subjects = []
+    for key, value in {"analysis_name": "", "modeler_name": "", "cell_size": 20, "system_type": "2"}.items():
+        subject = subjects_manager.create(key, {"value": value})
+        server_socket.bind_command(key, notify(subject))
 
     loop = asyncio.get_running_loop()
     stop = loop.create_future()

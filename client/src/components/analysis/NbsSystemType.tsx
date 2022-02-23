@@ -1,26 +1,31 @@
 import { capitalize } from 'lodash';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
+import { useEffectOnce } from '../../hooks';
 import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectAnalysis,
-  updateNbsSystemType,
+  updateProperties,
 } from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import { Select, Button, Spacer } from '../form/form-components';
+import * as Utils from '../../utils';
 
-function NbsSystemType({ t }: any) {
+function NbsSystem({ t }: any) {
+  const property = 'nbsSystem';
+  const nbsSystem = useAppSelector(selectAnalysis).properties[property];
   const dispatch = useAppDispatch();
-  const {
-    nbsSystem: { type },
-  } = useAppSelector(selectAnalysis);
+
+  useEffectOnce(() => {
+    Utils.generateSubscriptions(dispatch, property, Object.keys(nbsSystem));
+  });
 
   const controls = [
     <Select
       label="NBS system type"
-      name="type"
-      defaultValue={type}
+      name="systemType"
+      defaultValue={nbsSystem.systemType.value}
       options={
         [
           { value: '0', label: 'raingardens & bioretention systems' },
@@ -46,9 +51,11 @@ function NbsSystemType({ t }: any) {
   return (
     <Form
       controls={controls}
-      onSubmit={(fields: any) => dispatch(updateNbsSystemType(fields))}
+      onSubmit={(fields: any) =>
+        dispatch(updateProperties({ property, properties: fields }))
+      }
     />
   );
 }
 
-export default withTranslation()(NbsSystemType);
+export default withTranslation()(NbsSystem);
