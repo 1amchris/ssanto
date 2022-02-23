@@ -4,6 +4,9 @@ export default class ServerCom {
   client?: WebSocket;
   messageListeners: Map<string, (data: any) => void>;
 
+  messageBuffer: Array<string>;
+  isOpen: boolean;
+
   // TODO: there should probably be a "isOpen" method [returns if the connection is opened]
   // TODO: there should probably be a "isOpening" method [returns if the connection is opening]
   // TODO: there should probably be a "isClosing" method [returns if the connection is closing]
@@ -12,14 +15,23 @@ export default class ServerCom {
   // TODO: there should probably be a "onClosed" subject [returns a subject to subscribe to]
   constructor() {
     this.messageListeners = new Map();
+    this.messageBuffer = [];
+    this.isOpen = false;
   }
 
   // TODO: there should probably be a "close" method
   open(host = 'localhost', port = 6969) {
     this.client = new WebSocket(`ws://${host}:${port}`);
+    this.isOpen = false;
 
     this.client!.onopen = () => {
       console.log(`Connected to ws://${host}:${port}`);
+
+      this.isOpen = true;
+      for (let message of this.messageBuffer) {
+        this.client!.send(message);
+      }
+      this.messageBuffer = [];
     };
 
     this.client!.onmessage = (msg: MessageEvent) => {
@@ -29,6 +41,7 @@ export default class ServerCom {
 
     this.client!.onclose = () => {
       console.log('Connection closed');
+      this.isOpen = false;
     };
   }
 
@@ -44,7 +57,15 @@ export default class ServerCom {
     }*/
 
   private writeObject(object: any) {
-    this.client?.send(JSON.stringify(object) + '\0');
+    const sendData: string = JSON.stringify(object);
+    if (!this.isOpen || !this.client)
+    {
+      this.messageBuffer.push(sendData);
+    }
+    else
+    {
+      this.client.send(sendData);
+    }
   }
 
   // TODO there should probably be an "unsubscribe" method

@@ -17,15 +17,14 @@ import * as server from '../store/middlewares/ServerMiddleware';
 import { Store } from 'redux';
 import InteractiveMapDemo from './analysis/InteractiveMapDemo';
 import { updateStudyArea } from '../store/reducers/analysis';
-import { GeoJSON } from 'geojson';
+
 
 function App() {
-  // Establishes connection with the server
-  const dispatch = useAppDispatch();
-  dispatch(server.openConnection());
 
-  // TODO can't subscribe if server connection hasn't been established yet (app crashes)
-  setTimeout(() => {
+  const dispatch = useAppDispatch();
+  React.useEffect(() => {
+    // Establishes connection with the server
+    dispatch(server.openConnection());
     dispatch(
       server.subscribe({
         subjectId: 'studyArea',
@@ -33,7 +32,8 @@ function App() {
           store.dispatch(updateStudyArea(data)),
       })
     );
-  }, 250);
+  });
+  
 
   return (
     <div className="App">

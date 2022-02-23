@@ -28,13 +28,17 @@ function SocketMenu({ t }: any) {
     <Button
       className="btn-outline-secondary w-100"
       type="button"
-      onClick={() =>
+      onClick={() => {
         dispatch(
           callFunction({
             functionName: 'function',
-          })
-        )
-      }
+          }));
+        dispatch(
+            callFunction({
+              functionName: 'function',
+            })
+          )
+      }}
     >
       {capitalize(t('Call function'))}
     </Button>,

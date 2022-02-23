@@ -1,3 +1,4 @@
+from copyreg import constructor
 import websockets
 import asyncio
 import json
@@ -52,28 +53,26 @@ class ServerSocket:
             except websockets.ConnectionClosedOK:
                 break
 
-            jsons_data = data.split("\0")
-            jsons_data.pop()
+            print(data)
 
-            for json_data in jsons_data:
-                print(json_data)
+            try:
+                obj = json.loads(data)
+            except Exception as e:
+                print("STDERR", "Unable to loads json", e)
+                continue
 
-                try:
-                    obj = json.loads(json_data)
-                except Exception as e:
-                    print("STDERR", "Unable to loads json", e)
-                    continue
-
-                try:
-                    if nd.COMMAND_FIELD in obj:
-                        if obj[nd.COMMAND_FIELD] == "callf":
-                            eval(obj[nd.TARGET_FIELD] + "()")
-                        elif obj[nd.COMMAND_FIELD] == "callm":
-                            eval(obj[nd.INSTANCE_FIELD] + "." + obj[nd.METHOD_FIELD] + "()")
-                        elif obj[nd.COMMAND_FIELD] in self.commands_handlers:
-                            self.commands_handlers[obj[nd.COMMAND_FIELD]](obj)
-                except Exception as e:
-                    print("STDERR", "Unable to call the method/function", e)
+            try:
+                if nd.COMMAND_FIELD in obj:
+                    if obj[nd.COMMAND_FIELD] == "callf":
+                        eval(obj[nd.TARGET_FIELD] + "()")
+                    elif obj[nd.COMMAND_FIELD] == "callm":
+                        eval(obj[nd.INSTANCE_FIELD] + "." + obj[nd.METHOD_FIELD] + "()")
+                    elif obj[nd.COMMAND_FIELD] in self.commands_handlers:
+                        self.commands_handlers[obj[nd.COMMAND_FIELD]](obj)
+            except Exception as e:
+                print("STDERR", "Unable to call the method/function", e)
+                
+        print("Disconnect from", websocket.remote_address[0])
                 
 
     def serve(self):
