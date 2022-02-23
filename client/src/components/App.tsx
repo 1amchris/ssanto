@@ -14,22 +14,13 @@ import {
 import SocketMenu from './analysis/SocketMenu';
 import { useAppDispatch } from '../store/hooks';
 import * as server from '../store/middlewares/ServerMiddleware';
-import { Store } from 'redux';
 import InteractiveMapDemo from './analysis/InteractiveMapDemo';
-import { updateStudyArea } from '../store/reducers/analysis';
+import { useEffectOnce } from '../hooks';
 
 function App() {
   const dispatch = useAppDispatch();
-  React.useEffect(() => {
-    // Establishes connection with the server
+  useEffectOnce(() => {
     dispatch(server.openConnection());
-    dispatch(
-      server.subscribe({
-        subject: 'study_area',
-        callback: (store: Store) => data =>
-          store.dispatch(updateStudyArea(data)),
-      })
-    );
   });
 
   return (

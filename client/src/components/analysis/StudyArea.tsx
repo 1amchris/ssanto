@@ -1,19 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectAnalysis,
+  updateStudyArea,
   updateStudyAreaFiles,
 } from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import { Control, Button, Spacer, Alert } from '../form/form-components';
+import { useEffectOnce } from '../../hooks';
+import * as server from '../../store/middlewares/ServerMiddleware';
+import { Store } from 'redux';
 
 function StudyArea({ t }: any) {
   const dispatch = useAppDispatch();
   const {
     studyArea: { fileName, loading, error },
   } = useAppSelector(selectAnalysis);
+
+  useEffectOnce(() =>
+    dispatch(
+      server.subscribe({
+        subject: 'study_area',
+        callback: (store: Store) => data =>
+          store.dispatch(updateStudyArea(data)),
+      })
+    )
+  );
 
   const controls = [
     <Alert visuallyHidden={!error} className="alert-danger">
