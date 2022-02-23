@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
 import { FiMinusCircle, FiPlus } from 'react-icons/fi';
 import { MdSubdirectoryArrowRight } from 'react-icons/md';
-import PropsModel from '../../../models/PropsModel';
+import PropsModel from '@models/PropsModel';
 import FormComponent from './FormComponent';
 
 export interface FactoryProps extends PropsModel {

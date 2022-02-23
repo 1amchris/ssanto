@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { selectMap, updateClickedCoord } from '../../store/reducers/map';
+import { useAppSelector, useAppDispatch } from '@store/hooks';
+import { selectMap, updateClickedCoord } from '@store/reducers/map';
 import { MapContainer, useMapEvents } from 'react-leaflet';
 import Layers from './LayerControl';
 import L from 'leaflet';

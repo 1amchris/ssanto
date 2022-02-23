@@ -12,10 +12,10 @@ import {
 } from './analysis';
 
 import SocketMenu from './analysis/SocketMenu';
-import { useAppDispatch } from '../store/hooks';
-import * as server from '../store/middlewares/ServerMiddleware';
+import { useAppDispatch } from '@store/hooks';
+import * as server from '@store/middlewares/ServerMiddleware';
 import InteractiveMapDemo from './analysis/InteractiveMapDemo';
-import { useEffectOnce } from '../hooks';
+import { useEffectOnce } from '@root/hooks';
 
 function App() {
   const dispatch = useAppDispatch();

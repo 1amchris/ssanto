@@ -1,7 +1,7 @@
 import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { Button } from '../form/form-components';
+import { Button } from '@components/form/form-components';
 
 function FormsBar({ children, className, t }: any, key?: string) {
   const closeOverlay = () => document.body.click();

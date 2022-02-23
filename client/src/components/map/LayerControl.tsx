@@ -1,8 +1,8 @@
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { TileLayer, LayersControl, GeoJSON } from 'react-leaflet';
-import { useAppSelector } from '../../store/hooks';
-import { Layer, selectMap } from '../../store/reducers/map';
+import { useAppSelector } from '@store/hooks';
+import { Layer, selectMap } from '@store/reducers/map';
 
 const Layers = ({ t }: any) => {
   const { layers } = useAppSelector(selectMap);

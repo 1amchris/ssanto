@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import {
   selectAnalysis,
   updateStudyArea,
   updateStudyAreaFiles,
-} from '../../store/reducers/analysis';
-import Form from '../form/Form';
-import { Control, Button, Spacer, Alert } from '../form/form-components';
-import { useEffectOnce } from '../../hooks';
-import * as server from '../../store/middlewares/ServerMiddleware';
+} from '@store/reducers/analysis';
+import Form from '@components/form/Form';
+import { Control, Button, Spacer, Alert } from '@components/form/form-components';
+import { useEffectOnce } from '@root/hooks';
+import * as server from '@store/middlewares/ServerMiddleware';
 import { Store } from 'redux';
 
 function StudyArea({ t }: any) {
