@@ -2,8 +2,8 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import mapReducer from './reducers/map';
 import analysisReducer, { updateStudyAreaFiles } from './reducers/analysis';
 import ServerMiddleware, {
-  sendFiles as ServerSendFilesAction,
-  subscribe as ServerSubscribeAction,
+  sendFiles as serverSendFilesAction,
+  subscribe as serverSubscribeAction,
 } from './middlewares/ServerMiddleware';
 import StudyAreaMiddleware from './middlewares/StudyAreaMiddleware';
 
@@ -16,8 +16,8 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [
-          ServerSubscribeAction.type,
-          ServerSendFilesAction.type,
+          serverSubscribeAction.type,
+          serverSendFilesAction.type,
           updateStudyAreaFiles.type, // Contains a file upload
         ],
       },
