@@ -1,5 +1,4 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from './reducers/counter';
 import mapReducer from './reducers/map';
 import analysisReducer, { updateStudyAreaFiles } from './reducers/analysis';
 import ServerMiddleware, {
@@ -10,7 +9,6 @@ import StudyAreaMiddleware from './middlewares/StudyAreaMiddleware';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
     analysis: analysisReducer,
     map: mapReducer,
   },

@@ -1,5 +1,4 @@
 import React from 'react';
-import Counter from './Counter';
 import MenuBar from './menu-bar/MenuBar';
 import FormsBar from './forms-bar/FormsBar';
 import { withTranslation } from 'react-i18next';
@@ -39,7 +38,7 @@ function Guide({ t }: any) {
           </FormsBar>
         </aside>
         <main className="shadow container mt-3" style={{ zIndex: 1 }}>
-          <Counter />
+          This is a guide :)
         </main>
       </div>
     </div>
