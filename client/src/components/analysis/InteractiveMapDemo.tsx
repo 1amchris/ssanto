@@ -1,19 +1,19 @@
 import { capitalize } from 'lodash';
 import React from 'react';
-import { Control, Spacer, Button } from '@components/form/form-components';
-import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { Control, Spacer, Button } from '../form/form-components';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   upsertLayer,
   Layer,
   selectMap,
   updateLocation,
-} from '@store/reducers/map';
+} from '../../store/reducers/map';
 import { withTranslation } from 'react-i18next';
-import Form from '@components/form/Form';
+import Form from '../form/Form';
 
 //Importation des données à effacer, juste pour démo
-import ev from '@data/espace_vert.json';
-import lh from '@data/limite_h.json';
+import ev from '../../data/espace_vert.json';
+import lh from '../../data/limite_h.json';
 
 function InterativeMapDemo({ t }: any) {
   const { location, clickedCoord, layers, cellSize } =

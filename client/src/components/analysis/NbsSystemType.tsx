@@ -1,13 +1,14 @@
 import { capitalize } from 'lodash';
+import React from 'react';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from '@models/form-models/FormSelectOptionModel';
-import { useAppDispatch, useAppSelector } from '@store/hooks';
+import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectAnalysis,
   updateNbsSystemType,
-} from '@store/reducers/analysis';
-import Form from '@components/form/Form';
-import { Select, Button, Spacer } from '@components/form/form-components';
+} from '../../store/reducers/analysis';
+import Form from '../form/Form';
+import { Select, Button, Spacer } from '../form/form-components';
 
 function NbsSystemType({ t }: any) {
   const dispatch = useAppDispatch();

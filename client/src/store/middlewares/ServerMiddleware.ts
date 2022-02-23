@@ -1,5 +1,5 @@
 import { createAction, Store } from '@reduxjs/toolkit';
-import ServerCom from '@apis/ServerCom';
+import ServerCom from '../../apis/ServerCom';
 
 export interface CallModel {
   target: string;

@@ -1,5 +1,5 @@
-import { updateStudyArea, updateStudyAreaFiles } from '@store/reducers/analysis';
-import { Layer, removeLayer, upsertLayer } from '@store/reducers/map';
+import { updateStudyArea, updateStudyAreaFiles } from '../reducers/analysis';
+import { Layer, removeLayer, upsertLayer } from '../reducers/map';
 import { sendFiles, SendFilesModel } from './ServerMiddleware';
 
 const AnalysisMiddleware = () => {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { capitalize } from 'lodash';
-import { Control, Spacer, Button } from '@components/form/form-components';
-import { useAppDispatch } from '@store/hooks';
+import { Control, Spacer, Button } from '../form/form-components';
+import { useAppDispatch } from '../../store/hooks';
 import { withTranslation } from 'react-i18next';
-import Form from '@components/form/Form';
-import { call, sendFiles } from '@store/middlewares/ServerMiddleware';
+import Form from '../form/Form';
+import { call, sendFiles } from '../../store/middlewares/ServerMiddleware';
 
 function SocketMenu({ t }: any) {
   const dispatch = useAppDispatch();

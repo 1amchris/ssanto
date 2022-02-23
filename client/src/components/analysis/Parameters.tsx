@@ -1,14 +1,14 @@
 import { capitalize } from 'lodash';
 import React, { createRef, RefObject } from 'react';
-import { Control, Spacer, Button } from '@components/form/form-components';
-import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { Control, Spacer, Button } from '../form/form-components';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectAnalysis,
   updateParameters,
-} from '@store/reducers/analysis';
-import { selectMap, updateCellSize } from '@store/reducers/map';
+} from '../../store/reducers/analysis';
+import { selectMap, updateCellSize } from '../../store/reducers/map';
 import { withTranslation } from 'react-i18next';
-import Form from '@components/form/Form';
+import Form from '../form/Form';
 
 function Parameters({ t }: any) {
   const dispatch = useAppDispatch();
