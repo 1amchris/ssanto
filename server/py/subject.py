@@ -1,4 +1,4 @@
-from . import network_definitions as nd
+from .network_definitions import Field
 
 # TODO: Make abstract, maybe
 class Subject:
@@ -23,4 +23,4 @@ class Subject:
         return self.data
 
     def to_dict(self):
-        return {nd.SUBJECT_ID_FIELD: self.subject_id, nd.DATA_FIELD: self.data}
+        return {Field.SUBJECT_ID.value: self.subject_id, Field.DATA.value: self.data}

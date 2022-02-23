@@ -10,7 +10,7 @@ const StudyAreaMiddleware = () => {
         case updateStudyAreaFiles.type:
           dispatch(
             sendFiles({
-              command: 'study_area',
+              target: 'study_area',
               files: action.payload,
             } as SendFilesModel)
           );

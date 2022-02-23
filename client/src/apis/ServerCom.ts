@@ -1,17 +1,5 @@
 import { encode as base64encode } from 'base64-arraybuffer';
 
-class Commands {
-  static Subscribe = new Commands('subscribe');
-  static CallFunction = new Commands('callf');
-  static CallMethod = new Commands('callm');
-  static SendFile = new Commands('file');
-
-  name: string;
-  constructor(name: string) {
-    this.name = name;
-  }
-}
-
 export default class ServerCom {
   client?: WebSocket;
   messageListeners: Map<string, (data: any) => void>;
@@ -53,7 +41,7 @@ export default class ServerCom {
 
     this.client!.onmessage = (msg: MessageEvent) => {
       var obj = JSON.parse(msg.data.toString());
-      this.messageListeners.get(obj.sid)?.call(null, obj.data);
+      this.messageListeners.get(obj.subject)?.call(null, obj.data);
     };
 
     this.client!.onclose = () => {
@@ -61,17 +49,6 @@ export default class ServerCom {
       this.isOpen = false;
     };
   }
-
-  /*send(varName)
-    {
-        this.client.write('get ' + varName);
-        return new Promise((resolve, reject) => {
-            this.client.once('data', (data) => {
-                var obj = JSON.parse(data);
-                resolve(obj.data);
-            });
-        });
-    }*/
 
   private writeObject(object: any) {
     const sendData: string = JSON.stringify(object);
@@ -86,35 +63,25 @@ export default class ServerCom {
   }
 
   // TODO there should probably be an "unsubscribe" method
-  subscribe(subjectId: string, callback: (data: any) => void) {
-    if (this.messageListeners.has(subjectId))
+  subscribe(subject: string, callback: (data: any) => void) {
+    if (this.messageListeners.has(subject))
       return console.warn(
-        `The variable with Subject Id "${subjectId}" has already been subscribed to! Unsubscribe before resubscribing.`
+        `The variable with Subject Id "${subject}" has already been subscribed to! Unsubscribe before resubscribing.`
       );
 
-    this.messageListeners.set(subjectId, callback);
+    this.messageListeners.set(subject, callback);
+    
+    this.call("subscribe", [subject])
+  }
+
+  call(target: string, args: any[]) {
     this.writeObject({
-      cmd: Commands.Subscribe.name,
-      sid: subjectId,
+      target: target,
+      data: args
     });
   }
 
-  callFunction(functionName: string) {
-    this.writeObject({
-      cmd: Commands.CallFunction.name,
-      trg: functionName,
-    });
-  }
-
-  callMethod(classInstanceName: string, methodName: string) {
-    this.writeObject({
-      cmd: Commands.CallMethod.name,
-      instance: classInstanceName,
-      method: methodName,
-    });
-  }
-
-  sendFiles(files: FileList, command: string) {
+  sendFiles(files: FileList, target: string) {
     Promise.all(Array.from(files).map((file: File) => file.arrayBuffer()))
       .then((contents: ArrayBuffer[]) =>
         contents.map((content, index) => ({
@@ -124,10 +91,7 @@ export default class ServerCom {
         }))
       )
       .then(data =>
-        this.writeObject({
-          cmd: command || Commands.SendFile.name,
-          data,
-        })
+        this.call(target, data)
       );
   }
 

@@ -5,8 +5,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { withTranslation } from 'react-i18next';
 import Form from '../form/Form';
 import {
-  callFunction,
-  callMethod,
+  call,
   sendFiles,
 } from '../../store/middlewares/ServerMiddleware';
 
@@ -30,38 +29,27 @@ function SocketMenu({ t }: any) {
       type="button"
       onClick={() => {
         dispatch(
-          callFunction({
-            functionName: 'function',
-          }));
-        dispatch(
-            callFunction({
-              functionName: 'function',
-            })
-          )
-      }}
-    >
-      {capitalize(t('Call function'))}
-    </Button>,
-    <Button
-      className="btn-outline-secondary w-100"
-      type="button"
-      onClick={() =>
-        dispatch(
-          callMethod({
-            instanceName: 'a_class',
-            methodName: 'method',
+          call({
+            target: "AClass.method"
           })
         )
-      }
+
+        dispatch(
+            call({
+                target: "function"
+            })
+          )
+        
+      }}
     >
-      {capitalize(t('Call method'))}
+      {capitalize(t('Calls'))}
     </Button>,
   ];
 
   return (
     <Form
       controls={controls}
-      onSubmit={(fields: any) => dispatch(sendFiles(fields))}
+      onSubmit={(fields: any) => dispatch(sendFiles({files: fields.files, target:'file'}))}
     />
   );
 }

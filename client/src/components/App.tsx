@@ -27,7 +27,7 @@ function App() {
     dispatch(server.openConnection());
     dispatch(
       server.subscribe({
-        subjectId: 'studyArea',
+        subject: 'studyArea',
         callback: (store: Store) => data =>
           store.dispatch(updateStudyArea(data)),
       })

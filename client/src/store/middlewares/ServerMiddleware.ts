@@ -1,30 +1,23 @@
 import { createAction, Store } from '@reduxjs/toolkit';
 import ServerCom from '../../apis/ServerCom';
 
-export interface CallFunctionModel {
-  functionName: string;
-  [arg: string]: any;
-}
-
-export interface CallMethodModel {
-  instanceName: string;
-  methodName: string;
-  [arg: string]: any;
+export interface CallModel {
+  target: string;
+  args?: any[];
 }
 
 export interface SendFilesModel {
   files: FileList;
-  command?: string;
+  target: string;
 }
 
 export interface SubscriptionModel {
-  subjectId: string;
+  subject: string;
   callback: (store: Store) => (data: any) => void;
 }
 
 export const openConnection = createAction<string | undefined>('openSocket');
-export const callFunction = createAction<CallFunctionModel>('callFunction');
-export const callMethod = createAction<CallMethodModel>('callMethod');
+export const call = createAction<CallModel>('call');
 export const sendFiles = createAction<SendFilesModel>('sendFiles');
 export const subscribe = createAction<SubscriptionModel>('subscribe');
 
@@ -35,21 +28,19 @@ const ServerComMiddleware = () => {
       case openConnection.type:
         return serverCom.open(action.payload);
 
-      case sendFiles.type:
-        const { files, command }: SendFilesModel = action.payload;
-        return serverCom.sendFiles(files, command || 'file');
+      case sendFiles.type: {
+        const { files, target }: SendFilesModel = action.payload;
+        return serverCom.sendFiles(files, target);
+      }
 
-      case callFunction.type:
-        const { functionName, ...functionArgs } = action.payload;
-        return serverCom.callFunction(functionName);
-
-      case callMethod.type:
-        const { instanceName, methodName, ...methodArgs } = action.payload;
-        return serverCom.callMethod(instanceName, methodName);
+      case call.type: {
+        const { target, args } = action.payload;
+        return serverCom.call(target, args || []);
+      }
 
       case subscribe.type:
-        const { subjectId, callback } = action.payload;
-        return serverCom.subscribe(subjectId, callback(store));
+        const { subject, callback } = action.payload;
+        return serverCom.subscribe(subject, callback(store));
 
       default:
         return next(action);
