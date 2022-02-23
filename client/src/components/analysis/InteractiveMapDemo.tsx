@@ -55,7 +55,7 @@ function InterativeMapDemo({ t }: any) {
       required
     />,
     <Spacer />,
-    <Button variant="primary" type="submit">
+    <Button variant="outline-primary" type="submit">
       {capitalize(t('update center'))}
     </Button>,
     <Button variant="outline-danger" type="reset">

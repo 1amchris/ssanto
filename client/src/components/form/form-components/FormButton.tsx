@@ -1,6 +1,5 @@
-import { tooltip } from 'leaflet';
 import { uniqueId } from 'lodash';
-import { Button, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import FormComponent from './FormComponent';
 
 /**
@@ -15,38 +14,28 @@ class FormButton extends FormComponent {
 
   render = () => {
     const {
+      type,
       loading,
       children,
       variant,
       className,
       visuallyHidden,
-      tooltip,
-      tooltipPlacement = 'right',
-      tooltipDelay = 750,
+      size = 'sm',
       ...props
-    } = this.props;
+    } = this.getFilteredProps();
+
     return (
-      <OverlayTrigger
-        key={this.key}
-        placement={tooltipPlacement}
-        delay={tooltipDelay}
-        overlay={
-          tooltip ? (
-            <Tooltip id={`tooltip/${this.id}`}>{tooltip}</Tooltip>
-          ) : (
-            <></>
-          )
-        }
-      >
+      <this.Overlay>
         <Button
           {...props}
           className={`w-100 ${className} ${
             visuallyHidden ? 'visually-hidden' : ''
           }`}
           variant={variant || 'none'}
-          size="sm"
+          size={size}
           id={this.id}
           key={this.key}
+          type={type}
         >
           {loading ? (
             <Spinner animation="border" size="sm" className="mx-1" />
@@ -54,7 +43,7 @@ class FormButton extends FormComponent {
             children
           )}
         </Button>
-      </OverlayTrigger>
+      </this.Overlay>
     );
   };
 }

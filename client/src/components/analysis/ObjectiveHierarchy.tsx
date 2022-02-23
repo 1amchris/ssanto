@@ -123,7 +123,7 @@ function ObjectiveHierarchy({ t }: any) {
   const controls = [
     ...mainControls,
     <Spacer />,
-    <Button variant="primary" type="submit">
+    <Button variant="outline-primary" type="submit">
       {capitalize(t('apply'))}
     </Button>,
   ];

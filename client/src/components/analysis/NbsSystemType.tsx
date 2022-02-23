@@ -35,7 +35,7 @@ function NbsSystemType({ t }: any) {
       tooltip={t('the selected NBS system type ...')}
     />,
     <Spacer />,
-    <Button variant="primary" type="submit">
+    <Button variant="outline-primary" type="submit">
       {capitalize(t('apply'))}
     </Button>,
     <Button variant="outline-danger" type="reset">

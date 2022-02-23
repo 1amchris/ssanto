@@ -39,7 +39,7 @@ function StudyArea({ t }: any) {
     <Button
       disabled={loading}
       loading={loading}
-      variant="primary"
+      variant="outline-primary"
       type="submit"
     >
       {capitalize(t('apply'))}

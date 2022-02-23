@@ -1,6 +1,6 @@
 import React from 'react';
 import MenuBar from './menu-bar/MenuBar';
-import NavigationBar from './navigation-bar/NavigationBar';
+import FormsBar from './forms-bar/FormsBar';
 import Collapsible from './collapsible/Collapsible';
 import InteractiveMapContainer from './map/InteractiveMapContainer';
 import Data from './data/Data';
@@ -35,13 +35,13 @@ const App: React.FC = () => {
   }, 250);
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div style={{ overflowY: 'clip' }}>
+      <header>
         <MenuBar />
       </header>
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
-          <NavigationBar>
+          <FormsBar>
             <Collapsible title={'socket menu'} collapsed>
               <SocketMenu />
             </Collapsible>
@@ -60,7 +60,7 @@ const App: React.FC = () => {
             <Collapsible title={'objective hierarchy'} collapsed>
               <ObjectiveHierarchy />
             </Collapsible>
-          </NavigationBar>
+          </FormsBar>
         </aside>
         <main className="shadow w-100 position-relative" style={{ zIndex: 1 }}>
           <InteractiveMapContainer

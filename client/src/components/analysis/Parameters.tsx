@@ -52,7 +52,7 @@ function Parameters({ t }: any) {
       tooltip={t('the cell size is ...')}
     />,
     <Spacer />,
-    <Button variant="primary" type="submit">
+    <Button variant="outline-primary" type="submit">
       {capitalize(t('apply'))}
     </Button>,
     <Button variant="outline-danger" type="reset">
