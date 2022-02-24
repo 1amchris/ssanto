@@ -2,7 +2,6 @@ import { toObjectWithSnakeCaseKeys, toSnakeCase } from 'utils';
 import { receiveProperties, sendProperties } from 'store/reducers/analysis';
 import { Layer, removeLayer, upsertLayer } from 'store/reducers/map';
 import { call } from 'store/middlewares/ServerMiddleware';
-import { GeoJSON } from 'geojson';
 
 export interface UpdatePropertiesModel {
   property: string;
@@ -51,29 +50,6 @@ const AnalysisMiddleware = () => {
             dispatch(removeLayer(name));
           }
           return next(action);
-
-        // case updateStudyAreaFiles.type:
-        //   dispatch(
-        //     sendFiles({
-        //       target: 'study_area',
-        //       files: action.payload,
-        //     } as SendFilesModel)
-        //   );
-        //   return next(action);
-
-        // case updateStudyArea.type:
-        //   const layerName = 'study area';
-        //   if (!action.payload.error && action.payload.value?.area) {
-        //     dispatch(
-        //       upsertLayer({
-        //         name: layerName,
-        //         data: action.payload.value?.area,
-        //       } as Layer)
-        //     );
-        //   } else if (action.payload.error) {
-        //     dispatch(removeLayer(layerName));
-        //   }
-        //   return next(action);
 
         default:
           return next(action);
