@@ -3,7 +3,7 @@ import MenuBar from 'components/menu-bar/MenuBar';
 import FormsBar from 'components/forms-bar/FormsBar';
 import Collapsible from 'components/collapsible/Collapsible';
 import InteractiveMapContainer from 'components/map/InteractiveMapContainer';
-import Data from 'components/data/Data';
+import InformationCard from 'components/information-card/InformationCard';
 import {
   Parameters,
   StudyArea,
@@ -72,7 +72,7 @@ function App() {
               'Vertical bar charts',
               'Economics & politics',
             ].map((title: string, index: number) => (
-              <Data key={`data-${index}`}>
+              <InformationCard key={`data-${index}`}>
                 <Collapsible title={title}>
                   <p style={{ textAlign: 'justify', textIndent: '2rem' }}>
                     Anim pariatur cliche reprehenderit, enim eiusmod high life
@@ -86,7 +86,7 @@ function App() {
                     VHS.
                   </p>
                 </Collapsible>
-              </Data>
+              </InformationCard>
             ))}
           </aside>
         </main>
