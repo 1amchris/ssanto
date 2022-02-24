@@ -1,10 +1,11 @@
 import { control } from 'leaflet';
 import { capitalize, uniqueId } from 'lodash';
 import React, { ReactElement } from 'react';
+import { Button } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
 import { FiMinusCircle, FiPlus } from 'react-icons/fi';
 import { MdSubdirectoryArrowRight } from 'react-icons/md';
-import PropsModel from '../../../models/PropsModel';
+import PropsModel from 'models/PropsModel';
 import FormComponent from './FormComponent';
 
 export interface FactoryProps extends PropsModel {
@@ -46,9 +47,10 @@ class Row extends React.Component<{
         onMouseEnter={() => this.setState({ isHovered: true })}
         onMouseLeave={() => this.setState({ isHovered: false })}
       >
-        <button
-          type="button"
-          className="btn btn-sm mb-auto"
+        <Button
+          variant="none"
+          size="sm"
+          className="mb-auto"
           key={`${parentId}/button-${index}`}
           disabled={onDeleteControl === undefined}
           onClick={() => onDeleteControl!(index)}
@@ -61,7 +63,7 @@ class Row extends React.Component<{
           ) : (
             <MdSubdirectoryArrowRight style={{ marginBottom: '3px' }} />
           )}
-        </button>
+        </Button>
         <div key={`${parentId}/wrapper-${index}`}>{children}</div>
       </li>
     );
@@ -132,13 +134,14 @@ class FormExpandableList extends FormComponent {
             key={`${this.id}/row-add`}
             index={this.state.controls.length}
           >
-            <button
-              type="button"
-              className={`btn btn-sm btn-outline-secondary w-100`}
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              className="w-100"
               onClick={this.addControl}
             >
               <FiPlus />
-            </button>
+            </Button>
           </Row>
         </ul>
       </React.Fragment>

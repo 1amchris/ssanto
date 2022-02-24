@@ -1,20 +1,17 @@
 import React, { ReactElement } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import Form from '../form/Form';
+import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import Form from 'components/form/Form';
 import {
   Button,
   Spacer,
   Select,
   ExpandableList,
-} from '../form/form-components';
-import {
-  selectAnalysis,
-  updateObjectives,
-} from '../../store/reducers/analysis';
-import { FactoryProps } from '../form/form-components/FormExpandableList';
+} from 'components/form/form-components';
+import { selectAnalysis, updateObjectives } from 'store/reducers/analysis';
+import { FactoryProps } from 'components/form/form-components/FormExpandableList';
 
 function ObjectiveHierarchy({ t }: any) {
   const dispatch = useAppDispatch();
@@ -103,6 +100,7 @@ function ObjectiveHierarchy({ t }: any) {
       label="objectives"
       defaultValue={mainValue}
       options={generateOptions('Main Objective', 3)}
+      tooltip={t('the objective hierarchy is ...')}
     />,
     <ExpandableList
       hideLabel
@@ -122,7 +120,9 @@ function ObjectiveHierarchy({ t }: any) {
   const controls = [
     ...mainControls,
     <Spacer />,
-    <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
+    <Button variant="outline-primary" type="submit">
+      {capitalize(t('apply'))}
+    </Button>,
   ];
 
   return (

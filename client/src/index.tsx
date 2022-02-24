@@ -1,21 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App';
-import { store } from './store/store';
 import { Provider } from 'react-redux';
-import * as serviceWorker from './serviceWorker';
+import * as serviceWorker from 'serviceWorker';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Guide from './components/Guide';
+import App from 'components/App';
+import Guide from 'components/Guide';
+import { store } from 'store/store';
 
 // Internationalization
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import * as en from './locales/en.json';
-import * as fr from './locales/fr.json';
+import * as en from 'locales/en.json';
+import * as fr from 'locales/fr.json';
 
 // Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // Leaflet
 import 'leaflet/dist/leaflet.css';

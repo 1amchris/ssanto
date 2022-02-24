@@ -6,7 +6,6 @@ import {
   addGeoFile,
   selectAnalysis,
   updateGeodatabase,
-  updateStudyArea,
 } from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import {

@@ -1,6 +1,7 @@
 import { capitalize, uniqueId } from 'lodash';
+import { Form } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from '../../../models/form-models/FormSelectOptionModel';
+import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import FormComponent from './FormComponent';
 
 /**
@@ -14,19 +15,34 @@ class FormSelect extends FormComponent {
   }
 
   render = () => {
-    const { t, i18n, tReady, options, className, hideLabel, label, ...props } =
-      this.props;
+    const {
+      t,
+      i18n,
+      tReady,
+      options,
+      hideLabel,
+      visuallyHidden,
+      className,
+      label,
+      ...props
+    } = this.getFilteredProps();
+
     return (
-      <div key={this.key} className={className}>
-        {!this.hideLabel && (
-          <label htmlFor={this.props.name} className={`form-label small`}>
-            {capitalize(t(label || this.props.name))}
-          </label>
-        )}
-        <select {...props} id={this.id} className="form-select form-select-sm">
-          {options?.map(this.getOption)}
-        </select>
-      </div>
+      <Form.Group
+        key={this.key}
+        className={`w-100 ${className} ${
+          visuallyHidden ? 'visually-hidden' : ''
+        }`}
+      >
+        <Form.Label visuallyHidden={hideLabel}>
+          <small>{capitalize(t(label || this.props.name))}</small>
+        </Form.Label>
+        <this.Overlay>
+          <Form.Select {...props} id={this.id} size="sm">
+            {options?.map(this.getOption)}
+          </Form.Select>
+        </this.Overlay>
+      </Form.Group>
     );
   };
 

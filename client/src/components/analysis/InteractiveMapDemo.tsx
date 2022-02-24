@@ -1,23 +1,22 @@
-import { capitalize } from 'lodash';
 import React from 'react';
-import { Control, Spacer, Button } from '../form/form-components';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { capitalize } from 'lodash';
+import { Control, Spacer, Button } from 'components/form/form-components';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
   upsertLayer,
   Layer,
   selectMap,
   updateLocation,
-} from '../../store/reducers/map';
+} from 'store/reducers/map';
 import { withTranslation } from 'react-i18next';
-import Form from '../form/Form';
+import Form from 'components/form/Form';
 
 //Importation des données à effacer, juste pour démo
-import ev from '../../data/espace_vert.json';
-import lh from '../../data/limite_h.json';
+import ev from 'data/espace_vert.json';
+import lh from 'data/limite_h.json';
 
 function InterativeMapDemo({ t }: any) {
-  const { location, clickedCoord, layers, cellSize } =
-    useAppSelector(selectMap);
+  const { location, clickedCoord, layers } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();
 
   const newLayers: any = {
@@ -36,11 +35,6 @@ function InterativeMapDemo({ t }: any) {
       readOnly
       defaultValue={`${clickedCoord.long || location.long}º`}
     />,
-    <Control
-      label="displayed cell size"
-      readOnly
-      defaultValue={`${cellSize}`}
-    />,
     <Spacer />,
     <Control
       label="latitude"
@@ -55,16 +49,15 @@ function InterativeMapDemo({ t }: any) {
       required
     />,
     <Spacer />,
-    <Button className="btn-primary w-100">
+    <Button variant="outline-primary" type="submit">
       {capitalize(t('update center'))}
     </Button>,
-    <Button className="btn-outline-danger w-100" type="reset">
+    <Button variant="outline-danger" type="reset">
       {capitalize(t('reset'))}
     </Button>,
     <Spacer />,
     <Button
-      className="btn-outline-primary w-100"
-      type="button"
+      variant="outline-primary"
       onClick={() => {
         if (Object.keys(newLayers).some(key => +key === layers.length + 1))
           dispatch(upsertLayer(newLayers[layers.length + 1]));

@@ -1,50 +1,41 @@
 import React from 'react';
-import MenuBar from './menu-bar/MenuBar';
-import NavigationBar from './navigation-bar/NavigationBar';
-import Collapsible from './collapsible/Collapsible';
-import InteractiveMapContainer from './map/InteractiveMapContainer';
-import Data from './data/Data';
+import MenuBar from 'components/menu-bar/MenuBar';
+import FormsBar from 'components/forms-bar/FormsBar';
+import Collapsible from 'components/collapsible/Collapsible';
+import InteractiveMapContainer from 'components/map/InteractiveMapContainer';
+import InformationCard from 'components/information-card/InformationCard';
 import {
   Parameters,
   StudyArea,
-  NbsSystemType,
+  NbsSystem,
   ObjectiveHierarchy,
-} from './analysis';
+} from 'components/analysis';
 
-import SocketMenu from './analysis/SocketMenu';
-import { useAppDispatch } from '../store/hooks';
-import * as server from '../store/middlewares/ServerMiddleware';
 import { Store } from 'redux';
-import InteractiveMapDemo from './analysis/InteractiveMapDemo';
-import { updateStudyArea } from '../store/reducers/analysis';
+//import { updateStudyArea } from '../store/reducers/analysis';
 import { GeoJSON } from 'geojson';
 import ObjectiveHierarchy2 from './analysis/ObjectiveHierarchy2';
 import DataImportation from './analysis/DataImportation';
+import { useEffectOnce } from 'hooks';
+import SocketMenu from 'components/analysis/SocketMenu';
+import InteractiveMapDemo from 'components/analysis/InteractiveMapDemo';
+import { useAppDispatch } from 'store/hooks';
+import * as server from 'store/middlewares/ServerMiddleware';
 
 function App() {
-  // Establishes connection with the server
   const dispatch = useAppDispatch();
-  dispatch(server.openConnection());
-
-  // TODO can't subscribe if server connection hasn't been established yet (app crashes)
-  setTimeout(() => {
-    dispatch(
-      server.subscribe({
-        subjectId: 'studyArea',
-        callback: (store: Store) => data =>
-          store.dispatch(updateStudyArea(data)),
-      })
-    );
-  }, 250);
+  useEffectOnce(() => {
+    dispatch(server.openConnection());
+  });
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div style={{ overflowY: 'clip' }}>
+      <header>
         <MenuBar />
       </header>
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
-          <NavigationBar>
+          <FormsBar>
             <Collapsible title={'socket menu'} collapsed>
               <SocketMenu />
             </Collapsible>
@@ -58,7 +49,7 @@ function App() {
               <StudyArea />
             </Collapsible>
             <Collapsible title={'NBS system type'} collapsed>
-              <NbsSystemType />
+              <NbsSystem />
             </Collapsible>
             <Collapsible title={'data importation'} collapsed>
               <DataImportation />
@@ -66,7 +57,7 @@ function App() {
             <Collapsible title={'objective hierarchy'} collapsed>
               <ObjectiveHierarchy2 />
             </Collapsible>
-          </NavigationBar>
+          </FormsBar>
         </aside>
         <main className="shadow w-100 position-relative" style={{ zIndex: 1 }}>
           <InteractiveMapContainer
@@ -89,7 +80,7 @@ function App() {
               'Vertical bar charts',
               'Economics & politics',
             ].map((title: string, index: number) => (
-              <Data key={`data-${index}`}>
+              <InformationCard key={`data-${index}`}>
                 <Collapsible title={title}>
                   <p style={{ textAlign: 'justify', textIndent: '2rem' }}>
                     Anim pariatur cliche reprehenderit, enim eiusmod high life
@@ -103,7 +94,7 @@ function App() {
                     VHS.
                   </p>
                 </Collapsible>
-              </Data>
+              </InformationCard>
             ))}
           </aside>
         </main>

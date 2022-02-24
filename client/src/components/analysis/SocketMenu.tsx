@@ -1,14 +1,10 @@
 import React from 'react';
 import { capitalize } from 'lodash';
-import { Control, Spacer, Button } from '../form/form-components';
-import { useAppDispatch } from '../../store/hooks';
 import { withTranslation } from 'react-i18next';
-import Form from '../form/Form';
-import {
-  callFunction,
-  callMethod,
-  sendFiles,
-} from '../../store/middlewares/ServerMiddleware';
+import { Control, Spacer, Button } from 'components/form/form-components';
+import Form from 'components/form/Form';
+import { useAppDispatch } from 'store/hooks';
+import { call, sendFiles } from 'store/middlewares/ServerMiddleware';
 
 function SocketMenu({ t }: any) {
   const dispatch = useAppDispatch();
@@ -21,43 +17,36 @@ function SocketMenu({ t }: any) {
       multiple
       required
     />,
-    <Button className="btn-outline-primary w-100" type="submit">
+    <Button variant="outline-primary" type="submit">
       {capitalize(t('send data'))}
     </Button>,
     <Spacer />,
     <Button
-      className="btn-outline-secondary w-100"
-      type="button"
-      onClick={() =>
+      variant="outline-secondary"
+      onClick={() => {
         dispatch(
-          callFunction({
-            functionName: 'function',
+          call({
+            target: 'a_class.method',
           })
-        )
-      }
-    >
-      {capitalize(t('Call function'))}
-    </Button>,
-    <Button
-      className="btn-outline-secondary w-100"
-      type="button"
-      onClick={() =>
+        );
         dispatch(
-          callMethod({
-            instanceName: 'a_class',
-            methodName: 'method',
+          call({
+            target: 'function',
           })
-        )
-      }
+        );
+      }}
+      type="button"
     >
-      {capitalize(t('Call method'))}
+      {capitalize(t('call method & function'))}
     </Button>,
   ];
 
   return (
     <Form
       controls={controls}
-      onSubmit={(fields: any) => dispatch(sendFiles(fields))}
+      onSubmit={(fields: any) =>
+        dispatch(sendFiles({ files: fields.files, target: 'file' }))
+      }
     />
   );
 }

@@ -1,11 +1,10 @@
 import React from 'react';
-import Counter from './Counter';
-import MenuBar from './menu-bar/MenuBar';
-import NavigationBar from './navigation-bar/NavigationBar';
 import { withTranslation } from 'react-i18next';
 import { FcPrevious } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { capitalize } from 'lodash';
+import MenuBar from 'components/menu-bar/MenuBar';
+import FormsBar from 'components/forms-bar/FormsBar';
 
 function Guide({ t }: any) {
   return (
@@ -15,7 +14,7 @@ function Guide({ t }: any) {
       </header>
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside>
-          <NavigationBar>
+          <FormsBar>
             <Link to="/" className="text-decoration-none text-muted small">
               <FcPrevious className="me-1" />
               <span>{capitalize(t('return'))}</span>
@@ -36,10 +35,10 @@ function Guide({ t }: any) {
                 </li>
               ))}
             </ul>
-          </NavigationBar>
+          </FormsBar>
         </aside>
         <main className="shadow container mt-3" style={{ zIndex: 1 }}>
-          <Counter />
+          This is a guide :)
         </main>
       </div>
     </div>

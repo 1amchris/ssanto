@@ -1,16 +1,15 @@
-from pyclbr import Function
 import signal
 
 import asyncio
-from base64 import b64decode
-from geojson_rewind import rewind
-
-import fiona
-import json
 
 from py.logger import *
 from py.server_socket import ServerSocket
+from py.file_manager import StudyAreaManager
 from py.subjects_manager import SubjectsManager
+from py.subject import Subject
+
+
+### For test purposes
 
 
 class AClass:
@@ -25,95 +24,58 @@ def function():
     print("This function was called from javascript")
 
 
-class FileManager:
-    def __init__(self):
-        pass
-
-    def receive_files(self, cmd):
-        files = cmd["data"]
-        for file in files:
-            with open(file["fileName"], "bw") as f:
-                f.write(b64decode(file["base64content"]))
-
-
-class StudyAreaManager(FileManager):
-    def __init__(self, callback: Function):
-        super().__init__()
-        self.callback = callback
-
-    def receive_files(self, cmd):
-        try:
-            super().receive_files(cmd)
-
-            files = cmd["data"]
-            shapefiles = [
-                (".".join(name.split(".")[:-1]), ext)
-                for name, ext in [(file["fileName"], file["fileName"].split(".")[-1]) for file in files]
-                if ext == "shp"
-            ]
-
-            if len(shapefiles) == 0:
-                raise Exception("No shapefiles received.")
-
-            for shapefile, ext in shapefiles[:1]:  # select the first one only
-                with fiona.collection(f"{shapefile}.{ext}") as source:
-                    geojson = {
-                        "type": "FeatureCollection",
-                        "features": list(source),
-                    }
-
-                # rewind enforces geojson's 2016 standards
-                self.callback({"fileName": shapefile, "area": rewind(geojson)})
-
-        except Exception as e:
-            print("STDERR", "Error: ", e)
-            self.callback({"error": str(e)})
-
-
-class Parameters:
-    def __init__(self):
-        pass
+###
 
 
 async def main():
-    ss = ServerSocket("localhost", 6969)
+    server_socket = ServerSocket("localhost", 6969)
 
-    sm = SubjectsManager(ss)
-    myVar = sm.create("myVar", 1)
+    subjects_manager = SubjectsManager(server_socket)
 
-    ss.bind_command_m("subscribe", sm, SubjectsManager.subscribe)
-    ss.bind_command_m("unsubscribe", sm, SubjectsManager.unsubscribe)
+    server_socket.bind_command("subscribe", subjects_manager.subscribe)
+    server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
 
-    parameters = sm.create("parameters", [])
+    server_socket.bind_command("a_class.method", AClass().method)
+    server_socket.bind_command("function", function)
 
-    # fm = FileManager()
-    # ss.bind_command_m("file", fm, FileManager.receive_files)
+    # Analysis
+    def notify(subject: Subject):
+        def callback(value):
+            subject.notify({"value": value})
 
-    study_area = sm.create("studyArea", {"fileName": ""})
-    ss.bind_command_m(
-        "study_area",
-        StudyAreaManager(study_area.notify),
-        StudyAreaManager.receive_files,
-    )
+        return callback
 
-    ###
-    # ss.bind_command_f("callf", function)
-    # a_class = AClass()
-    # ss.bind_command_m("callm", a_class, AClass.method)
-    ###
+    # subjects = []
+    for key, value in {
+        "parameters.analysis_name": "",
+        "parameters.modeler_name": "",
+        "parameters.cell_size": 20,
+        "nbs_system.system_type": "2",
+    }.items():
+        subject = subjects_manager.create(key, {"value": value})
+        server_socket.bind_command(key, notify(subject))
+
+    study_area_file_name = subjects_manager.create("study_area.file_name", None)
+    study_area_area = subjects_manager.create("study_area.area", {})
+
+    def handle_study_area_changed(study_area):
+        if "error" in study_area:
+            study_area_file_name.notify({"error": study_area["error"]})
+            study_area_area.notify({"error": study_area["error"]})
+        else:
+            study_area_file_name.notify({"value": study_area["file_name"]})
+            study_area_area.notify({"value": study_area["area"]})
+
+    server_socket.bind_command("study_area.files/files", StudyAreaManager(handle_study_area_changed).receive_files)
 
     loop = asyncio.get_running_loop()
     stop = loop.create_future()
     loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
+    loop.add_signal_handler(signal.SIGINT, stop.set_result, None)
 
-    async with ss.serve():
-        await asyncio.sleep(5)
-        print("edit myVar")
-        myVar.notify(2)
+    async with server_socket.serve():
         await stop  # run forever
 
 
 if __name__ == "__main__":
-    print("Hello from python")
-
     asyncio.run(main())

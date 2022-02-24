@@ -1,25 +1,32 @@
 import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  selectAnalysis,
-  updateStudyAreaFiles,
-} from '../../store/reducers/analysis';
-import Form from '../form/Form';
-import { Control, Button, Spacer, Alert } from '../form/form-components';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { selectAnalysis, sendProperties } from 'store/reducers/analysis';
+import Form from 'components/form/Form';
+import { Control, Button, Spacer } from 'components/form/form-components';
+import { useEffectOnce } from 'hooks';
+import * as Utils from 'utils';
 
 function StudyArea({ t }: any) {
+  const property = 'studyArea';
+  const properties = useAppSelector(selectAnalysis).properties[property];
   const dispatch = useAppDispatch();
-  const {
-    studyArea: { fileName, loading, error },
-  } = useAppSelector(selectAnalysis);
+
+  const getErrors = () => Utils.getErrors(Object.values(properties));
+  const isLoading = () => Utils.isLoading(Object.values(properties));
+
+  useEffectOnce(() => {
+    Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
+  });
 
   const controls = [
-    error ? <Alert className="alert-danger">{error}</Alert> : null,
-    fileName ? (
-      <Control label="selected file" defaultValue={`${fileName}.sh`} disabled />
-    ) : null,
+    <Control
+      visuallyHidden={!properties?.fileName?.value}
+      label="selected file"
+      value={`${properties?.fileName?.value}.shp`}
+      disabled
+    />,
     <Control
       label="select study area"
       name="files"
@@ -27,26 +34,25 @@ function StudyArea({ t }: any) {
       accept=".shp, .shx"
       multiple
       required
-      disabled={loading}
+      tooltip={t('the selected files will ...')}
     />,
     <Spacer />,
-    <Button disabled={loading} loading={loading} className="w-100 btn-primary">
+    <Button variant="outline-primary" type="submit" loading={isLoading()}>
       {capitalize(t('apply'))}
     </Button>,
-    <Button
-      disabled={loading}
-      className="w-100 btn-outline-danger"
-      type="reset"
-    >
+    <Button variant="outline-danger" type="reset">
       {capitalize(t('reset'))}
     </Button>,
   ];
 
   return (
     <Form
-      disabled={loading}
+      disabled={isLoading()}
       controls={controls}
-      onSubmit={(fields: any) => dispatch(updateStudyAreaFiles(fields.files))}
+      errors={getErrors()}
+      onSubmit={(fields: any) =>
+        dispatch(sendProperties({ property, properties: fields }))
+      }
     />
   );
 }

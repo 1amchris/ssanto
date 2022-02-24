@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../store';
 import { GeoJSON } from 'geojson';
+import { RootState } from 'store/store';
+import { UpdatePropertiesModel } from 'store/middlewares/AnalysisMiddleware';
+import { Value } from 'store/models/Value';
+import { Properties } from 'store/models/Properties';
+import { AnalysisObjectives } from '../models/AnalysisObjectives';
 
 export interface AnalysisParameters {
   modelerName: string;
@@ -32,7 +36,7 @@ export interface AnalysisGeodatabase {
   files: GeoFile[];
 }
 
-export interface AnalysisObjectives {
+export interface AnalysisObjectivesTemp {
   main: string;
   options: string[];
   primaries: {
@@ -52,22 +56,26 @@ export interface AnalysisObjectives {
 }
 
 export interface AnalysisState {
-  parameters: AnalysisParameters;
-  studyArea: AnalysisStudyArea;
-  nbsSystem: AnalysisNbsSystem;
-  objectives: AnalysisObjectives;
+  properties: {
+    [key: string]: Properties;
+  };
+  objectives: AnalysisObjectivesTemp;
   geodatabase: AnalysisGeodatabase;
 }
 
+const v = (value: any) => ({ value, isLoading: false });
 export const analysisSlice = createSlice({
   name: 'analysis',
   initialState: {
-    parameters: {
-      modelerName: '',
-      analysisName: '',
-    } as AnalysisParameters,
-    studyArea: { area: undefined, loading: false } as AnalysisStudyArea,
-    nbsSystem: { type: '2' } as AnalysisNbsSystem,
+    properties: {
+      parameters: {
+        modelerName: v(''),
+        analysisName: v(''),
+        cellSize: v(20),
+      } as Properties,
+      nbsSystem: { systemType: v('2') } as Properties,
+      studyArea: { fileName: v(''), area: v(undefined) } as Properties,
+    },
     geodatabase: {
       files: [
         { name: 'mtl_high', extention: '.json', view: false },
@@ -118,52 +126,114 @@ export const analysisSlice = createSlice({
           ],
         },
       ],
-    } as AnalysisObjectives,
+    } as AnalysisObjectivesTemp,
   } as AnalysisState,
   reducers: {
-    updateParameters: (
+    /**
+     * receiveProperties
+     *  Updates generated fields of a property in state.properties
+     * Example:
+     *  Before method execution
+     *    state: {
+     *      properties: {
+     *        foo: {
+     *          a: { isLoading: false, value: 1 },
+     *          b: { isLoading: true,  value: '2' }
+     *        },
+     *        bar: {
+     *          c: { isLoading: true, value: '3' }
+     *        }
+     *      }
+     *    }
+     *    payload: {
+     *      property: 'foo',
+     *      properties: {
+     *        a: { error: "couldn't update" },
+     *        c: { value: '10' }
+     *      }
+     *    }
+     *
+     *  After method execution:
+     *    state: {
+     *      properties: {
+     *        foo: {
+     *          a: { isLoading: false, error: "couldn't update" },
+     *          b: { isLoading: false, value: '2' },
+     *          c: { isLoading: false, value: '10' }
+     *        },
+     *        bar: {
+     *          c: { isLoading: false, value: '3' }
+     *        }
+     *      }
+     */
+    receiveProperties: (
       state,
       {
-        payload: { modelerName, analysisName },
-      }: PayloadAction<AnalysisParameters>
+        payload: { property, properties },
+      }: PayloadAction<{ property: string; properties: UpdatePropertiesModel }>
     ) => {
-      modelerName = modelerName.trim();
-      if (modelerName.length < 3)
-        return console.error(
-          `Modeler name must be at least 3 characters. Input: "${modelerName}"`
-        );
-      /* TODO: add additional validation here */
-      state.parameters.modelerName = modelerName;
+      Object.entries(properties)
+        .filter(([key, res]) => key && res)
+        .forEach(([key, res]: [string, Value<any>]) => {
+          state.properties[property][key] = res.error
+            ? { error: res.error, isLoading: false }
+            : {
+                value: res.value,
+                isLoading: false,
+              };
+        });
+    },
 
-      analysisName = analysisName.trim();
-      if (analysisName.length < 3)
-        return console.error(
-          `Analysis name must be at least 3 characters. Input: "${analysisName}"`
-        );
-      /* TODO: add additional validation here */
-      state.parameters.analysisName = analysisName;
-    },
-    updateNbsSystemType: (
+    /**
+     * sendProperties
+     *  Sends modified fields to the server through a
+     *  middleware call and updates isLoading property
+     * Example:
+     *  Before method execution
+     *    state: {
+     *      properties: {
+     *        foo: {
+     *          a: { isLoading: false, value: 1 },
+     *          b: { isLoading: true,  value: '2' }
+     *        },
+     *        bar: {
+     *          c: { isLoading: true, value: '3' }
+     *        }
+     *      }
+     *    }
+     *    payload: {
+     *      property: 'foo',
+     *      properties: {
+     *        a: { value: 1 },
+     *        c: { value: '10' }
+     *      }
+     *    }
+     *
+     *  After method execution:
+     *    state: {
+     *      properties: {
+     *        foo: {
+     *          a: { isLoading: true, value: 1 },
+     *          b: { isLoading: false, value: '2' },
+     *          c: { isLoading: true }
+     *        },
+     *        bar: {
+     *          c: { isLoading: false, value: '3' }
+     *        }
+     *      }
+     */
+    sendProperties: (
       state,
-      { payload: { type } }: PayloadAction<AnalysisNbsSystem>
+      {
+        payload: { property, properties },
+      }: PayloadAction<{ property: string; properties: Properties }>
     ) => {
-      console.warn('No validation was performed on the nbs system type');
-      /* TODO: add additional validation here */
-      state.nbsSystem.type = type;
-    },
-    updateStudyAreaFiles: (
-      state,
-      { payload: files }: PayloadAction<File[]>
-    ) => {
-      console.warn('No validation was performed on the study area files');
-      /* TODO: add additional validation here */
-      state.studyArea.loading = files.length > 0;
-    },
-    updateStudyArea: (state, { payload }: PayloadAction<StudyAreaChanged>) => {
-      const defaults = { loading: false };
-      state.studyArea = payload.error
-        ? { error: payload.error, ...defaults }
-        : { fileName: payload.fileName, area: payload.area, ...defaults };
+      Object.keys(properties).forEach((key: string) => {
+        state.properties[property][key] = {
+          ...state.properties[property][key],
+          isLoading: true,
+        };
+      });
     },
     addGeoFile: (state, { payload }: PayloadAction<string>) => {
       console.warn('No validation was performed on the geodatabase');
@@ -182,9 +252,10 @@ export const analysisSlice = createSlice({
       /* TODO: add additional validation here */
       state.geodatabase.files = files;
     },
+
     updateObjectives: (
       state,
-      { payload }: PayloadAction<AnalysisObjectives>
+      { payload }: PayloadAction<AnalysisObjectivesTemp>
     ) => {
       console.warn('No validation was performed on the objectives hierarchy');
       /* TODO: add additional validation here */
@@ -194,13 +265,11 @@ export const analysisSlice = createSlice({
 });
 
 export const {
-  updateParameters,
-  updateNbsSystemType,
-  updateStudyAreaFiles,
-  updateStudyArea,
+  receiveProperties,
+  sendProperties,
+  updateObjectives,
   updateGeodatabase,
   addGeoFile,
-  updateObjectives,
 } = analysisSlice.actions;
 export const selectAnalysis = (state: RootState) => state.analysis;
 

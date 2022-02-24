@@ -1,4 +1,5 @@
 import { uniqueId } from 'lodash';
+import { Button, Spinner } from 'react-bootstrap';
 import FormComponent from './FormComponent';
 
 /**
@@ -12,22 +13,37 @@ class FormButton extends FormComponent {
   }
 
   render = () => {
-    const { className, loading, children, ...props } = this.props;
+    const {
+      type,
+      loading,
+      children,
+      variant,
+      className,
+      visuallyHidden,
+      size = 'sm',
+      ...props
+    } = this.getFilteredProps();
+
     return (
-      <button
-        {...props}
-        id={this.id}
-        key={this.key}
-        className={`btn btn-sm ${className ? className : ''}`}
-      >
-        {loading ? (
-          <div className="spinner-border spinner-border-sm mx-1" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        ) : (
-          children
-        )}
-      </button>
+      <this.Overlay>
+        <Button
+          {...props}
+          className={`w-100 ${className} ${
+            visuallyHidden ? 'visually-hidden' : ''
+          }`}
+          variant={variant || 'none'}
+          size={size}
+          id={this.id}
+          key={this.key}
+          type={type}
+        >
+          {loading ? (
+            <Spinner animation="border" size="sm" className="mx-1" />
+          ) : (
+            children
+          )}
+        </Button>
+      </this.Overlay>
     );
   };
 }

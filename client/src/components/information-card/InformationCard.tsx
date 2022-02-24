@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 
-function Data({ title, children, className }: any, key?: string) {
+function InformationCard({ title, children, className }: any, key?: string) {
   return (
     <article key={key} className={`${className} card mb-2`}>
       {[].concat(children).map((child: ReactElement, index: number) => (
@@ -12,4 +12,4 @@ function Data({ title, children, className }: any, key?: string) {
   );
 }
 
-export default Data;
+export default InformationCard;

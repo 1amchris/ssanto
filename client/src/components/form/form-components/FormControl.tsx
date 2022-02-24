@@ -1,4 +1,5 @@
 import { capitalize, uniqueId } from 'lodash';
+import { Form, InputGroup } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
 import FormComponent from './FormComponent';
 
@@ -6,7 +7,6 @@ import FormComponent from './FormComponent';
  * FormControl
  * @param props .prefix is a ReactElement which will be prepended to the input control
  *              .suffix is a ReactElement which will be appended to the input control
- *              .plaintext is a stylistic argument. It will not prevent the user from changing the values
  * @returns an augmented input control
  */
 class FormControl extends FormComponent {
@@ -20,49 +20,32 @@ class FormControl extends FormComponent {
       i18n,
       tReady,
       hideLabel,
-      label,
+      visuallyHidden,
       className,
+      label,
       suffix,
       prefix,
-      plaintext = false,
       ...props
-    } = this.props;
-
-    const prefixElement = prefix && (
-      <span className="input-group-text">{prefix}</span>
-    );
-
-    const suffixElement = suffix && (
-      <span className="input-group-text">{suffix}</span>
-    );
-
-    const inputElement = (
-      <input
-        {...props}
-        id={this.id}
-        className={`${
-          plaintext ? 'form-control-plaintext' : 'form-control'
-        } form-control-sm`}
-      />
-    );
+    } = this.getFilteredProps();
 
     return (
-      <div key={this.key} className={className}>
-        <label
-          htmlFor={this.props.name}
-          className={`form-label small ${this.hideLabel && 'visually-hidden'}`}
-        >
-          {capitalize(t(label || this.props.name))}
-        </label>
-        {((suffix || prefix) && (
-          <div className="input-group input-group-sm">
-            {prefixElement}
-            {inputElement}
-            {suffixElement}
-          </div>
-        )) ||
-          inputElement}
-      </div>
+      <Form.Group
+        key={this.key}
+        className={`w-100 ${className} ${
+          visuallyHidden ? 'visually-hidden' : ''
+        }`}
+      >
+        <Form.Label visuallyHidden={hideLabel}>
+          <small>{capitalize(t(label || this.props.name))}</small>
+        </Form.Label>
+        <this.Overlay>
+          <InputGroup size="sm">
+            {prefix && <span className="input-group-text">{prefix}</span>}
+            <Form.Control {...props} id={this.id} size="sm" />
+            {suffix && <span className="input-group-text">{suffix}</span>}
+          </InputGroup>
+        </this.Overlay>
+      </Form.Group>
     );
   };
 }

@@ -1,16 +1,15 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from './reducers/counter';
-import mapReducer from './reducers/map';
-import analysisReducer, { updateStudyAreaFiles } from './reducers/analysis';
+import mapReducer from 'store/reducers/map';
+import analysisReducer, { sendProperties } from 'store/reducers/analysis';
 import ServerMiddleware, {
-  sendFiles as ServerSendFilesAction,
-  subscribe as ServerSubscribeAction,
-} from './middlewares/ServerMiddleware';
-import StudyAreaMiddleware from './middlewares/StudyAreaMiddleware';
+  call,
+  sendFiles as serverSendFilesAction,
+  subscribe as serverSubscribeAction,
+} from 'store/middlewares/ServerMiddleware';
+import AnalysisMiddleware from 'store/middlewares/AnalysisMiddleware';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
     analysis: analysisReducer,
     map: mapReducer,
   },
@@ -18,12 +17,13 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [
-          ServerSubscribeAction.type,
-          ServerSendFilesAction.type,
-          updateStudyAreaFiles.type, // Contains a file upload
+          serverSubscribeAction.type, // contains a callback function
+          serverSendFilesAction.type, // contains files
+          sendProperties.type, // May contain uploaded files
+          call.type, // May contain uploaded files
         ],
       },
-    }).concat([ServerMiddleware, StudyAreaMiddleware]),
+    }).concat([ServerMiddleware, AnalysisMiddleware]),
 });
 
 export type AppDispatch = typeof store.dispatch;
