@@ -1,42 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
-import { GeoJSON } from 'geojson';
-import { updatePropertiesModel as UpdatePropertiesModel } from 'store/middlewares/AnalysisMiddleware';
-
-export interface Value<ValueType> {
-  error?: any;
-  value?: ValueType;
-}
-
-export interface LoadingValue<ValueType> extends Value<ValueType> {
-  isLoading: boolean;
-}
-
-export interface Properties {
-  [key: string]: LoadingValue<any>;
-}
-
-export interface AreaFile {
-  fileName?: string;
-  area?: GeoJSON;
-}
-
-export interface AnalysisStudyArea extends LoadingValue<AreaFile> {}
-
-export interface StudyAreaChanged {
-  value?: AreaFile;
-  error?: any;
-}
-
-export interface AnalysisObjectives {
-  main: string;
-  primaries: {
-    primary: string[];
-    secondaries: {
-      secondary: string[];
-    }[];
-  }[];
-}
+import { UpdatePropertiesModel } from 'store/middlewares/AnalysisMiddleware';
+import { Value } from 'store/models/Value';
+import { Properties } from 'store/models/Properties';
+import { AnalysisStudyArea } from 'store/models/AnalysisStudyArea';
+import { StudyAreaChanged } from 'store/models/StudyAreaChanged';
+import { AnalysisObjectives } from '../models/AnalysisObjectives';
 
 export interface AnalysisState {
   properties: {
@@ -77,7 +46,44 @@ export const analysisSlice = createSlice({
     } as AnalysisObjectives,
   } as AnalysisState,
   reducers: {
-    receiveParameterFromServer: (
+    /**
+     * receiveProperties
+     *  Updates generated fields of a property in state.properties
+     * Example:
+     *  Before method execution
+     *    state: {
+     *      properties: {
+     *        foo: {
+     *          a: { isLoading: false, value: 1 },
+     *          b: { isLoading: true,  value: '2' }
+     *        },
+     *        bar: {
+     *          c: { isLoading: true, value: '3' }
+     *        }
+     *      }
+     *    }
+     *    payload: {
+     *      property: 'foo',
+     *      properties: {
+     *        a: { error: "couldn't update" },
+     *        c: { value: '10' }
+     *      }
+     *    }
+     *
+     *  After method execution:
+     *    state: {
+     *      properties: {
+     *        foo: {
+     *          a: { isLoading: false, error: "couldn't update" },
+     *          b: { isLoading: false, value: '2' },
+     *          c: { isLoading: false, value: '10' }
+     *        },
+     *        bar: {
+     *          c: { isLoading: false, value: '3' }
+     *        }
+     *      }
+     */
+    receiveProperties: (
       state,
       {
         payload: { property, properties },
@@ -92,16 +98,59 @@ export const analysisSlice = createSlice({
             };
       });
     },
-    updateProperties: (
+
+    /**
+     * sendProperties
+     *  Sends modified fields to the server through a
+     *  middleware call and updates isLoading property
+     * Example:
+     *  Before method execution
+     *    state: {
+     *      properties: {
+     *        foo: {
+     *          a: { isLoading: false, value: 1 },
+     *          b: { isLoading: true,  value: '2' }
+     *        },
+     *        bar: {
+     *          c: { isLoading: true, value: '3' }
+     *        }
+     *      }
+     *    }
+     *    payload: {
+     *      property: 'foo',
+     *      properties: {
+     *        a: { value: 1 },
+     *        c: { value: '10' }
+     *      }
+     *    }
+     *
+     *  After method execution:
+     *    state: {
+     *      properties: {
+     *        foo: {
+     *          a: { isLoading: true, value: 1 },
+     *          b: { isLoading: false, value: '2' },
+     *          c: { isLoading: true }
+     *        },
+     *        bar: {
+     *          c: { isLoading: false, value: '3' }
+     *        }
+     *      }
+     */
+    sendProperties: (
       state,
       {
         payload: { property, properties },
       }: PayloadAction<{ property: string; properties: Properties }>
     ) => {
-      Object.entries(properties).forEach(([key, value]: [string, any]) => {
-        state.properties[property][key] = { value, isLoading: true };
+      Object.keys(properties).forEach((key: string) => {
+        state.properties[property][key] = {
+          ...state.properties[property][key],
+          isLoading: true,
+        };
       });
     },
+
     updateStudyAreaFiles: (
       state,
       { payload: files }: PayloadAction<File[]>
@@ -121,6 +170,7 @@ export const analysisSlice = createSlice({
             isLoading: false,
           };
     },
+
     updateObjectives: (
       state,
       { payload }: PayloadAction<AnalysisObjectives>
@@ -133,8 +183,8 @@ export const analysisSlice = createSlice({
 });
 
 export const {
-  receiveParameterFromServer,
-  updateProperties,
+  receiveProperties,
+  sendProperties,
   updateStudyAreaFiles,
   updateStudyArea,
   updateObjectives,

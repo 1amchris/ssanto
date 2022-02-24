@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next';
 import { useEffectOnce } from 'hooks';
 import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectAnalysis, updateProperties } from 'store/reducers/analysis';
+import { selectAnalysis, sendProperties } from 'store/reducers/analysis';
 import Form from 'components/form/Form';
 import { Select, Button, Spacer } from 'components/form/form-components';
 import * as Utils from 'utils';
@@ -54,7 +54,7 @@ function NbsSystem({ t }: any) {
       errors={getErrors()}
       disabled={isLoading()}
       onSubmit={(fields: any) =>
-        dispatch(updateProperties({ property, properties: fields }))
+        dispatch(sendProperties({ property, properties: fields }))
       }
     />
   );

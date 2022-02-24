@@ -1,6 +1,6 @@
 import { toObjectWithSnakeCaseKeys } from 'utils';
 import {
-  updateProperties,
+  sendProperties,
   updateStudyArea,
   updateStudyAreaFiles,
 } from 'store/reducers/analysis';
@@ -11,7 +11,7 @@ import {
   SendFilesModel,
 } from 'store/middlewares/ServerMiddleware';
 
-export interface updatePropertiesModel {
+export interface UpdatePropertiesModel {
   property: string;
   [key: string]: any;
 }
@@ -22,7 +22,7 @@ const AnalysisMiddleware = () => {
     (next: any) =>
     (action: any) => {
       switch (action.type) {
-        case updateProperties.type:
+        case sendProperties.type:
           Object.entries(
             toObjectWithSnakeCaseKeys(action.payload.properties)
           ).forEach(([target, values]: [string, any]) => {

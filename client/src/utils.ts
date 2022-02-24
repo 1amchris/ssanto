@@ -3,11 +3,9 @@ import {
   subscribe,
   SubscriptionModel,
 } from 'store/middlewares/ServerMiddleware';
-import {
-  receiveParameterFromServer,
-  LoadingValue,
-  Value,
-} from 'store/reducers/analysis';
+import { receiveProperties } from 'store/reducers/analysis';
+import { LoadingValue } from 'store/models/LoadingValue';
+import { Value } from 'store/models/Value';
 
 export const toObjectWithSnakeCaseKeys = (properties: { [key: string]: any }) =>
   Object.fromEntries(
@@ -43,7 +41,7 @@ export const generateSubscriptions = (
           ({ dispatch }: Store) =>
           (data: any) =>
             dispatch(
-              receiveParameterFromServer({
+              receiveProperties({
                 property,
                 properties: Object.fromEntries([[target, data]]),
               })
