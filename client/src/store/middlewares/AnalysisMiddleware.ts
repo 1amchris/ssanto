@@ -28,10 +28,9 @@ const AnalysisMiddleware = () => {
           return next(action);
 
         case receiveProperties.type:
+          // if 'area' exists in properties, display it on the map
           if (!action.payload.properties.area) return next(action);
 
-          // if the returned value is a GeoJSON
-          // (has property 'area'), display it on the map
           const {
             property,
             properties: {
