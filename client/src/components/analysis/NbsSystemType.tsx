@@ -14,6 +14,9 @@ function NbsSystem({ t }: any) {
   const nbsSystem = useAppSelector(selectAnalysis).properties[property];
   const dispatch = useAppDispatch();
 
+  const getErrors = () => Utils.getErrors(Object.values(nbsSystem));
+  const isLoading = () => Utils.isLoading(Object.values(nbsSystem));
+
   useEffectOnce(() => {
     Utils.generateSubscriptions(dispatch, property, Object.keys(nbsSystem));
   });
@@ -37,7 +40,7 @@ function NbsSystem({ t }: any) {
       tooltip={t('the selected NBS system type ...')}
     />,
     <Spacer />,
-    <Button variant="outline-primary" type="submit">
+    <Button variant="outline-primary" type="submit" loading={isLoading()}>
       {capitalize(t('apply'))}
     </Button>,
     <Button variant="outline-danger" type="reset">
@@ -48,6 +51,8 @@ function NbsSystem({ t }: any) {
   return (
     <Form
       controls={controls}
+      errors={getErrors()}
+      disabled={isLoading()}
       onSubmit={(fields: any) =>
         dispatch(updateProperties({ property, properties: fields }))
       }

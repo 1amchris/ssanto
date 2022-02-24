@@ -12,6 +12,8 @@ function Parameters({ t }: any) {
   const property = 'parameters';
   const parameters = useAppSelector(selectAnalysis).properties[property];
   const dispatch = useAppDispatch();
+
+  const getErrors = () => Utils.getErrors(Object.values(parameters));
   const isLoading = () => Utils.isLoading(Object.values(parameters));
 
   useEffectOnce(() => {
@@ -63,8 +65,9 @@ function Parameters({ t }: any) {
 
   return (
     <Form
-      disabled={isLoading()}
       controls={controls}
+      disabled={isLoading()}
+      errors={getErrors()}
       onSubmit={(fields: any) => {
         dispatch(updateProperties({ property, properties: fields }));
       }}

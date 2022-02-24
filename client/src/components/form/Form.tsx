@@ -1,6 +1,7 @@
 import React from 'react';
 import { uniqueId } from 'lodash';
 import { unflatten } from 'flattenizer';
+import { Alert } from './form-components';
 
 /**
  * Form
@@ -12,6 +13,7 @@ import { unflatten } from 'flattenizer';
 function Form({
   controls,
   disabled,
+  errors = [],
   onSubmit = (e: any) => {},
   onReset = (e: any) => {
     e.preventDefault();
@@ -48,6 +50,18 @@ function Form({
       onReset={onReset}
     >
       <fieldset disabled={disabled}>
+        {[]
+          .concat(errors)
+          .filter((error: any) => error)
+          .map((error: any, index: number) => (
+            <Alert
+              key={`${id}-${index}/error`}
+              variant="danger"
+              className="mb-2"
+            >
+              {error}
+            </Alert>
+          ))}
         {controls.map((control: any, index: number) => (
           <div key={`${id}-${index}`} className="mb-2">
             {control}

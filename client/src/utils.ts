@@ -2,11 +2,12 @@ import { Store } from 'redux';
 import {
   subscribe,
   SubscriptionModel,
-} from './store/middlewares/ServerMiddleware';
+} from 'store/middlewares/ServerMiddleware';
 import {
   receiveParameterFromServer,
   LoadingValue,
-} from './store/reducers/analysis';
+  Value,
+} from 'store/reducers/analysis';
 
 export const toObjectWithSnakeCaseKeys = (properties: { [key: string]: any }) =>
   Object.fromEntries(
@@ -18,6 +19,11 @@ export const toObjectWithSnakeCaseKeys = (properties: { [key: string]: any }) =>
 
 export const toSnakeCase = (value: string) =>
   value.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+export const getErrors = (values: Value<any>[]) =>
+  Array.from(values)
+    .map((value: any) => value.error)
+    .filter((error: any) => error);
 
 export const isLoading = (values: LoadingValue<any>[]) =>
   Array.from(values)

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Store } from 'redux';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
@@ -8,21 +9,17 @@ import {
   updateStudyAreaFiles,
 } from 'store/reducers/analysis';
 import Form from 'components/form/Form';
-import {
-  Control,
-  Button,
-  Spacer,
-  Alert,
-} from 'components/form/form-components';
-import { useEffectOnce } from 'hooks';
+import { Control, Button, Spacer } from 'components/form/form-components';
 import * as server from 'store/middlewares/ServerMiddleware';
-import { Store } from 'redux';
+import { useEffectOnce } from 'hooks';
+import * as Utils from 'utils';
 
 function StudyArea({ t }: any) {
   const dispatch = useAppDispatch();
-  const {
-    studyArea: { value, isLoading, error },
-  } = useAppSelector(selectAnalysis);
+  const studyArea = useAppSelector(selectAnalysis).studyArea;
+
+  const getErrors = () => Utils.getErrors(Object.values(studyArea));
+  const isLoading = () => Utils.isLoading(Object.values(studyArea));
 
   useEffectOnce(() =>
     dispatch(
@@ -35,13 +32,10 @@ function StudyArea({ t }: any) {
   );
 
   const controls = [
-    <Alert visuallyHidden={!error} className="alert-danger">
-      {error}
-    </Alert>,
     <Control
-      visuallyHidden={!value!.fileName}
+      visuallyHidden={!studyArea?.value?.fileName}
       label="selected file"
-      value={`${value!.fileName}.shp`}
+      value={`${studyArea?.value?.fileName}.shp`}
       disabled
     />,
     <Control
@@ -54,7 +48,7 @@ function StudyArea({ t }: any) {
       tooltip={t('the selected files will ...')}
     />,
     <Spacer />,
-    <Button loading={isLoading} variant="outline-primary" type="submit">
+    <Button variant="outline-primary" type="submit" loading={isLoading()}>
       {capitalize(t('apply'))}
     </Button>,
     <Button variant="outline-danger" type="reset">
@@ -64,8 +58,9 @@ function StudyArea({ t }: any) {
 
   return (
     <Form
-      disabled={isLoading}
+      disabled={isLoading()}
       controls={controls}
+      errors={getErrors()}
       onSubmit={(fields: any) => dispatch(updateStudyAreaFiles(fields.files))}
     />
   );
