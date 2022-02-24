@@ -90,12 +90,12 @@
               {
                 "secondary": "Environmental Awareness",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Rain tanks", "Swales"]
+                "nbs": ["Rain tanks", "Swales", "Rain gardens", "Infiltration systems", "Green roofs", "Wetlands"]
               },
               {
                 "secondary": "Sense of Community",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Swales"]
+                "nbs": ["Swales", "Rain gardens", "Infiltration systems", "Wetlands"]
               }
             ]
           },
@@ -105,7 +105,7 @@
               {
                 "secondary": "Airports Distance to",
                 "attributes": [ "a", "b", "c"],
-                "nbs": []
+                "nbs": ["Ponds & Lakes","Wetlands" ]
               },
               {
                 "secondary": "Capital Works Program",
@@ -115,17 +115,17 @@
               {
                 "secondary": "Utility Infrastructure",
                 "attributes": [ "a", "b", "c"],
-                "nbs": []
+                "nbs": ["Rain gardens", "Infiltration systems", "Ponds & Lakes", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Drainage Infrastructure Distance",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Swales"]
+                "nbs": ["Swales", "Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes",  "Wetlands"]
               },
               {
                 "secondary": "Street width/type",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Swales"]
+                "nbs": ["Swales", "Rain gardens", "Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Planned (re)Developments",
@@ -135,22 +135,22 @@
               {
                 "secondary": "Cultural Heritage Sites",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Swales"]
+                "nbs": ["Swales", "Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Natural Heritage Sites",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Swales"]
+                "nbs": ["Swales", "Rain gardens", "Infiltration systems", "Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Geological Heritage Sites",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Swales"]
+                "nbs": ["Swales", "Rain gardens", "Infiltration systems",  "Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Land Value",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Swales"]
+                "nbs": ["Rain gardens", "Green roofs", "Ponds & Lakes", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Land Ownership",
