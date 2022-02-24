@@ -163,10 +163,7 @@ export const analysisSlice = createSlice({
       state.studyArea = payload.error
         ? { error: payload.error, isLoading: false }
         : {
-            value: {
-              fileName: payload!.value?.fileName,
-              area: payload!.value?.area,
-            },
+            value: { ...payload.value },
             isLoading: false,
           };
     },
