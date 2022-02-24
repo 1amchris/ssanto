@@ -1,5 +1,4 @@
-import { encode as base64encode } from 'base64-arraybuffer';
-import FileContentModel from 'models/FileContentModel';
+import * as Utils from 'utils';
 
 export default class ServerCom {
   client?: WebSocket;
@@ -103,26 +102,12 @@ export default class ServerCom {
 
   private sendFiles(target: string, files: File[]) {
     if (files.length > 0) {
-      Promise.all(
-        Array.from(files).map(async (file: File) => ({
-          name: file.name,
-          size: file.size,
-          content: await file.arrayBuffer(),
-        }))
-      )
-        .then((contents: FileContentModel[]) =>
-          contents.map(({ name: fileName, size: fileSize, content }) => ({
-            fileName,
-            fileSize,
-            base64content: base64encode(content),
-          }))
-        )
-        .then(data => {
-          this.writeObject({
-            target: `${target}/files`,
-            data: data,
-          });
+      Utils.extractContentFromFiles(files).then(data => {
+        this.writeObject({
+          target: `${target}/files`,
+          data: data,
         });
+      });
     }
   }
 }
