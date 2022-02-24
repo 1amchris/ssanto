@@ -1,15 +1,12 @@
 import { capitalize } from 'lodash';
 import React, { createRef, RefObject } from 'react';
-import { Control, Spacer, Button } from '../../components/form/form-components';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  selectAnalysis,
-  updateProperties,
-} from '../../store/reducers/analysis';
+import { Control, Spacer, Button } from 'components/form/form-components';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { selectAnalysis, updateProperties } from 'store/reducers/analysis';
 import { withTranslation } from 'react-i18next';
-import Form from '../form/Form';
-import { useEffectOnce } from '../../hooks';
-import * as Utils from '../../utils';
+import Form from 'components/form/Form';
+import { useEffectOnce } from 'hooks';
+import * as Utils from 'utils';
 
 function Parameters({ t }: any) {
   const property = 'parameters';

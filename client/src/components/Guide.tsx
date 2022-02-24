@@ -1,10 +1,10 @@
 import React from 'react';
-import MenuBar from './menu-bar/MenuBar';
-import FormsBar from './forms-bar/FormsBar';
 import { withTranslation } from 'react-i18next';
 import { FcPrevious } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { capitalize } from 'lodash';
+import MenuBar from 'components/menu-bar/MenuBar';
+import FormsBar from 'components/forms-bar/FormsBar';
 
 function Guide({ t }: any) {
   return (

@@ -1,21 +1,21 @@
 import React from 'react';
-import MenuBar from './menu-bar/MenuBar';
-import FormsBar from './forms-bar/FormsBar';
-import Collapsible from './collapsible/Collapsible';
-import InteractiveMapContainer from './map/InteractiveMapContainer';
-import Data from './data/Data';
+import MenuBar from 'components/menu-bar/MenuBar';
+import FormsBar from 'components/forms-bar/FormsBar';
+import Collapsible from 'components/collapsible/Collapsible';
+import InteractiveMapContainer from 'components/map/InteractiveMapContainer';
+import Data from 'components/data/Data';
 import {
   Parameters,
   StudyArea,
   NbsSystem,
   ObjectiveHierarchy,
-} from './analysis';
+} from 'components/analysis';
 
-import SocketMenu from './analysis/SocketMenu';
-import { useAppDispatch } from '../store/hooks';
-import * as server from '../store/middlewares/ServerMiddleware';
-import InteractiveMapDemo from './analysis/InteractiveMapDemo';
-import { useEffectOnce } from '../hooks';
+import { useEffectOnce } from 'hooks';
+import SocketMenu from 'components/analysis/SocketMenu';
+import InteractiveMapDemo from 'components/analysis/InteractiveMapDemo';
+import { useAppDispatch } from 'store/hooks';
+import * as server from 'store/middlewares/ServerMiddleware';
 
 function App() {
   const dispatch = useAppDispatch();

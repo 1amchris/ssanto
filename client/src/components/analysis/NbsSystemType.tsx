@@ -1,16 +1,13 @@
-import { capitalize } from 'lodash';
 import React from 'react';
+import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { useEffectOnce } from '../../hooks';
-import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  selectAnalysis,
-  updateProperties,
-} from '../../store/reducers/analysis';
-import Form from '../form/Form';
-import { Select, Button, Spacer } from '../form/form-components';
-import * as Utils from '../../utils';
+import { useEffectOnce } from 'hooks';
+import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { selectAnalysis, updateProperties } from 'store/reducers/analysis';
+import Form from 'components/form/Form';
+import { Select, Button, Spacer } from 'components/form/form-components';
+import * as Utils from 'utils';
 
 function NbsSystem({ t }: any) {
   const property = 'nbsSystem';

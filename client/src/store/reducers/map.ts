@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../store/store';
+import { RootState } from 'store/store';
 import { uniqueId } from 'lodash';
 import { GeoJSON } from 'geojson';
 

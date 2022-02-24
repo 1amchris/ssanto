@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../store/store';
+import { RootState } from 'store/store';
 import { GeoJSON } from 'geojson';
-import { updatePropertiesModel as UpdatePropertiesModel } from '../middlewares/AnalysisMiddleware';
+import { updatePropertiesModel as UpdatePropertiesModel } from 'store/middlewares/AnalysisMiddleware';
 
 export interface Value<ValueType> {
   error?: any;

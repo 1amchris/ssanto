@@ -1,11 +1,15 @@
-import { toObjectWithSnakeCaseKeys } from '../../utils';
+import { toObjectWithSnakeCaseKeys } from 'utils';
 import {
   updateProperties,
   updateStudyArea,
   updateStudyAreaFiles,
-} from '../reducers/analysis';
-import { Layer, removeLayer, upsertLayer } from '../reducers/map';
-import { call, sendFiles, SendFilesModel } from './ServerMiddleware';
+} from 'store/reducers/analysis';
+import { Layer, removeLayer, upsertLayer } from 'store/reducers/map';
+import {
+  call,
+  sendFiles,
+  SendFilesModel,
+} from 'store/middlewares/ServerMiddleware';
 
 export interface updatePropertiesModel {
   property: string;

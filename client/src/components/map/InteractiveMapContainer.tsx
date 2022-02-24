@@ -1,9 +1,9 @@
 import React from 'react';
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { selectMap, updateClickedCoord } from '../../store/reducers/map';
-import { MapContainer, useMapEvents } from 'react-leaflet';
-import Layers from './LayerControl';
 import L from 'leaflet';
+import { MapContainer, useMapEvents } from 'react-leaflet';
+import { useAppSelector, useAppDispatch } from 'store/hooks';
+import { selectMap, updateClickedCoord } from 'store/reducers/map';
+import Layers from './LayerControl';
 
 function InteractiveMapContainer({ className, style }: any) {
   const { location, zoom } = useAppSelector(selectMap);

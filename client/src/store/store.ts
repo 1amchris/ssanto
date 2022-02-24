@@ -1,11 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import mapReducer from './reducers/map';
-import analysisReducer, { updateStudyAreaFiles } from './reducers/analysis';
+import mapReducer from 'store/reducers/map';
+import analysisReducer, { updateStudyAreaFiles } from 'store/reducers/analysis';
 import ServerMiddleware, {
   sendFiles as serverSendFilesAction,
   subscribe as serverSubscribeAction,
-} from './middlewares/ServerMiddleware';
-import AnalysisMiddleware from './middlewares/AnalysisMiddleware';
+} from 'store/middlewares/ServerMiddleware';
+import AnalysisMiddleware from 'store/middlewares/AnalysisMiddleware';
 
 export const store = configureStore({
   reducer: {

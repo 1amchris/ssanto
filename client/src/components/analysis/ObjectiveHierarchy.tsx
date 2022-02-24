@@ -1,20 +1,17 @@
 import React, { ReactElement } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import Form from '../../components/form/Form';
+import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import Form from 'components/form/Form';
 import {
   Button,
   Spacer,
   Select,
   ExpandableList,
-} from '../form/form-components';
-import {
-  selectAnalysis,
-  updateObjectives,
-} from '../../store/reducers/analysis';
-import { FactoryProps } from '../form/form-components/FormExpandableList';
+} from 'components/form/form-components';
+import { selectAnalysis, updateObjectives } from 'store/reducers/analysis';
+import { FactoryProps } from 'components/form/form-components/FormExpandableList';
 
 function ObjectiveHierarchy({ t }: any) {
   const dispatch = useAppDispatch();
