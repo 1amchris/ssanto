@@ -34,6 +34,7 @@
               },
               {
                 "secondary": "Building Footprints",
+                "otherName": "Building foundations",
                 "attributes": [ "a", "b", "c"],
                 "nbs": ["Rain gardens", "Infiltration systems","Green roofs", "Ponds & Lakes", "Rain tanks", "Swales", "Wetlands"]
               },
@@ -155,13 +156,19 @@
               {
                 "secondary": "Land Ownership",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Swales"]
+                "nbs": ["Swales", "Rain gardens", "Infiltration systems"]
               },
               {
                 "secondary": "Lot Size",
                 "attributes": [ "a", "b", "c"],
-                "nbs": []
+                "nbs": ["Ponds & Lakes", "Wetlands"]
+              },
+              {
+                "secondary": "Land Use Type",
+                "attributes": [ "a", "b", "c"],
+                "nbs": ["Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Swales", "Wetlands"]
               }
+
             ]
           },
           {
@@ -169,6 +176,7 @@
             "secondaries": [
               {
                 "secondary": "Irrigation Demand Distance",
+                "otherName": "Proximity to water demand",
                 "attributes": [ "a", "b", "c"],
                 "nbs": []
               },
@@ -185,7 +193,7 @@
               {
                 "secondary": "Heat Vulnerability",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Rain tanks", "Swales"]
+                "nbs": ["Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Rain tanks", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Urban Heat Island Effect",
@@ -195,27 +203,27 @@
               {
                 "secondary": "Effective Imperviousness",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Rain tanks", "Swales"]
+                "nbs": ["Rain gardens", "Infiltration systems",  "Green roofs", "Ponds & Lakes","Rain tanks", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Total Imperviousness",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Rain tanks", "Swales"]
+                "nbs": ["Rain gardens", "Infiltration systems",  "Green roofs", "Ponds & Lakes", "Rain tanks", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Current WSUD",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Rain tanks", "Swales"]
+                "nbs": ["Rain tanks", "Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Floods",
                 "attributes": [ "a", "b", "c"],
-                "nbs": []
+                "nbs": ["Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Rain tanks", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Flood Risk",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Rain tanks", "Swales"]
+                "nbs": []
               }
             ]
           },
@@ -230,7 +238,7 @@
               {
                 "secondary": "Visibility Distance ",
                 "attributes": [ "a", "b", "c"],
-                "nbs": ["Swales"]
+                "nbs": ["Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Green Cover",
@@ -240,12 +248,12 @@
               {
                 "secondary": "Recreation",
                 "attributes": [ "a", "b", "c"],
-                "nbs": []
+                "nbs": ["Ponds & Lakes", "Wetlands" ]
               },
               {
                 "secondary": "Social Cohesion",
                 "attributes": [ "a", "b", "c"],
-                "nbs": []
+                "nbs": ["Rain gardens", "Ponds & Lakes", "Wetlands"]
               }
             ]
           },
@@ -259,6 +267,7 @@
               },
               {
                 "secondary": "Connectedness",
+                "otherName": "Connected impervious area",
                 "attributes": [ "a", "b", "c"],
                 "nbs": []
               },
