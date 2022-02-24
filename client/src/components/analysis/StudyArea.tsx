@@ -1,41 +1,30 @@
 import React from 'react';
-import { Store } from 'redux';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import {
-  selectAnalysis,
-  updateStudyArea,
-  updateStudyAreaFiles,
-} from 'store/reducers/analysis';
+import { selectAnalysis, sendProperties } from 'store/reducers/analysis';
 import Form from 'components/form/Form';
 import { Control, Button, Spacer } from 'components/form/form-components';
-import * as server from 'store/middlewares/ServerMiddleware';
 import { useEffectOnce } from 'hooks';
 import * as Utils from 'utils';
 
 function StudyArea({ t }: any) {
+  const property = 'studyArea';
+  const properties = useAppSelector(selectAnalysis).properties[property];
   const dispatch = useAppDispatch();
-  const studyArea = useAppSelector(selectAnalysis).studyArea;
 
-  const getErrors = () => Utils.getErrors(Object.values(studyArea));
-  const isLoading = () => Utils.isLoading(Object.values(studyArea));
+  const getErrors = () => Utils.getErrors(Object.values(properties));
+  const isLoading = () => Utils.isLoading(Object.values(properties));
 
-  useEffectOnce(() =>
-    dispatch(
-      server.subscribe({
-        subject: 'study_area',
-        callback: (store: Store) => data =>
-          store.dispatch(updateStudyArea(data)),
-      })
-    )
-  );
+  useEffectOnce(() => {
+    Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
+  });
 
   const controls = [
     <Control
-      visuallyHidden={!studyArea?.value?.fileName}
+      visuallyHidden={!properties?.fileName?.value}
       label="selected file"
-      value={`${studyArea?.value?.fileName}.shp`}
+      value={`${properties?.fileName?.value}.shp`}
       disabled
     />,
     <Control
@@ -61,7 +50,9 @@ function StudyArea({ t }: any) {
       disabled={isLoading()}
       controls={controls}
       errors={getErrors()}
-      onSubmit={(fields: any) => dispatch(updateStudyAreaFiles(fields.files))}
+      onSubmit={(fields: any) =>
+        dispatch(sendProperties({ property, properties: fields }))
+      }
     />
   );
 }

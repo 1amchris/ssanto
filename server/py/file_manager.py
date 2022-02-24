@@ -40,7 +40,7 @@ class StudyAreaManager(FileManager):
                     }
 
                 # rewind enforces geojson's 2016 standards
-                self.callback({"value": {"fileName": shapefile, "area": rewind(geojson)}})
+                self.callback({"file_name": shapefile, "area": rewind(geojson)})
 
         except Exception as e:
             print("STDERR", "Error: ", e)

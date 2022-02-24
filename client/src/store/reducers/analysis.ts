@@ -3,15 +3,12 @@ import { RootState } from 'store/store';
 import { UpdatePropertiesModel } from 'store/middlewares/AnalysisMiddleware';
 import { Value } from 'store/models/Value';
 import { Properties } from 'store/models/Properties';
-import { AnalysisStudyArea } from 'store/models/AnalysisStudyArea';
-import { StudyAreaChanged } from 'store/models/StudyAreaChanged';
 import { AnalysisObjectives } from '../models/AnalysisObjectives';
 
 export interface AnalysisState {
   properties: {
     [key: string]: Properties;
   };
-  studyArea: AnalysisStudyArea;
   objectives: AnalysisObjectives;
 }
 
@@ -26,8 +23,8 @@ export const analysisSlice = createSlice({
         cellSize: v(20),
       } as Properties,
       nbsSystem: { systemType: v('2') } as Properties,
+      studyArea: { fileName: v(''), area: v(undefined) } as Properties,
     },
-    studyArea: v({}) as AnalysisStudyArea,
     objectives: {
       main: '0',
       primaries: [
@@ -89,14 +86,16 @@ export const analysisSlice = createSlice({
         payload: { property, properties },
       }: PayloadAction<{ property: string; properties: UpdatePropertiesModel }>
     ) => {
-      Object.entries(properties).forEach(([key, res]: [string, Value<any>]) => {
-        state.properties[property][key] = res.error
-          ? { error: res.error, isLoading: false }
-          : {
-              value: res.value,
-              isLoading: false,
-            };
-      });
+      Object.entries(properties)
+        .filter(([key, res]) => key && res)
+        .forEach(([key, res]: [string, Value<any>]) => {
+          state.properties[property][key] = res.error
+            ? { error: res.error, isLoading: false }
+            : {
+                value: res.value,
+                isLoading: false,
+              };
+        });
     },
 
     /**
@@ -151,23 +150,6 @@ export const analysisSlice = createSlice({
       });
     },
 
-    updateStudyAreaFiles: (
-      state,
-      { payload: files }: PayloadAction<File[]>
-    ) => {
-      console.warn('No validation was performed on the study area files');
-      /* TODO: add additional validation here */
-      state.studyArea.isLoading = files.length > 0;
-    },
-    updateStudyArea: (state, { payload }: PayloadAction<StudyAreaChanged>) => {
-      state.studyArea = payload.error
-        ? { error: payload.error, isLoading: false }
-        : {
-            value: { ...payload.value },
-            isLoading: false,
-          };
-    },
-
     updateObjectives: (
       state,
       { payload }: PayloadAction<AnalysisObjectives>
@@ -179,13 +161,8 @@ export const analysisSlice = createSlice({
   },
 });
 
-export const {
-  receiveProperties,
-  sendProperties,
-  updateStudyAreaFiles,
-  updateStudyArea,
-  updateObjectives,
-} = analysisSlice.actions;
+export const { receiveProperties, sendProperties, updateObjectives } =
+  analysisSlice.actions;
 export const selectAnalysis = (state: RootState) => state.analysis;
 
 export default analysisSlice.reducer;

@@ -11,21 +11,21 @@ import * as Utils from 'utils';
 
 function NbsSystem({ t }: any) {
   const property = 'nbsSystem';
-  const nbsSystem = useAppSelector(selectAnalysis).properties[property];
+  const properties = useAppSelector(selectAnalysis).properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = () => Utils.getErrors(Object.values(nbsSystem));
-  const isLoading = () => Utils.isLoading(Object.values(nbsSystem));
+  const getErrors = () => Utils.getErrors(Object.values(properties));
+  const isLoading = () => Utils.isLoading(Object.values(properties));
 
   useEffectOnce(() => {
-    Utils.generateSubscriptions(dispatch, property, Object.keys(nbsSystem));
+    Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
   });
 
   const controls = [
     <Select
       label="NBS system type"
       name="systemType"
-      defaultValue={nbsSystem.systemType.value}
+      defaultValue={properties.systemType.value}
       options={
         [
           { value: '0', label: 'raingardens & bioretention systems' },

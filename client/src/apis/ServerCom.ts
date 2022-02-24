@@ -1,4 +1,5 @@
 import { encode as base64encode } from 'base64-arraybuffer';
+import FileContentModel from 'models/FileContentModel';
 
 export default class ServerCom {
   client?: WebSocket;
@@ -52,12 +53,9 @@ export default class ServerCom {
 
   private writeObject(object: any) {
     const sendData: string = JSON.stringify(object);
-    if (!this.isOpen || !this.client)
-    {
+    if (!this.isOpen || !this.client) {
       this.messageBuffer.push(sendData);
-    }
-    else
-    {
+    } else {
       this.client.send(sendData);
     }
   }
@@ -70,30 +68,61 @@ export default class ServerCom {
       );
 
     this.messageListeners.set(subject, callback);
-    
-    this.call("subscribe", [subject])
+    this.call('subscribe', [subject]);
   }
 
   call(target: string, args: any[]) {
-    this.writeObject({
-      target: target,
-      data: args
-    });
+    // In theory, there should only be one type: files or not files,
+    //  but I want its more robust that way
+    const { files, notFiles } = this.separateFiles(args);
+    this.sendAny(target, notFiles);
+    this.sendFiles(target, files);
   }
 
-  sendFiles(files: FileList, target: string) {
-    Promise.all(Array.from(files).map((file: File) => file.arrayBuffer()))
-      .then((contents: ArrayBuffer[]) =>
-        contents.map((content, index) => ({
-          fileName: files[index].name,
-          fileSize: files[index].size,
-          base64content: base64encode(content),
+  private separateFiles(args: any[]): { files: File[]; notFiles: any[] } {
+    return args.reduce(
+      (reducer, arg) => {
+        if (arg instanceof FileList) {
+          reducer.files = reducer.files.concat(Array.from(arg));
+        } else {
+          reducer.notFiles.push(arg);
+        }
+        return reducer;
+      },
+      { files: [], notFiles: [] }
+    );
+  }
+
+  private sendAny(target: string, args: any[]) {
+    if (args.length > 0)
+      this.writeObject({
+        target: target,
+        data: args,
+      });
+  }
+
+  private sendFiles(target: string, files: File[]) {
+    if (files.length > 0) {
+      Promise.all(
+        Array.from(files).map(async (file: File) => ({
+          name: file.name,
+          size: file.size,
+          content: await file.arrayBuffer(),
         }))
       )
-      .then(data =>
-        this.call(target, data)
-      );
+        .then((contents: FileContentModel[]) =>
+          contents.map(({ name: fileName, size: fileSize, content }) => ({
+            fileName,
+            fileSize,
+            base64content: base64encode(content),
+          }))
+        )
+        .then(data => {
+          this.writeObject({
+            target: `${target}/files`,
+            data: data,
+          });
+        });
+    }
   }
-
-  // TODO: Handle call that return
 }

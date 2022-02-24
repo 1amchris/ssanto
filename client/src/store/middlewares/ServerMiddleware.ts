@@ -27,12 +27,8 @@ const ServerComMiddleware = () => {
   let serverCom = new ServerCom();
   return (store: any) => (next: any) => (action: any) => {
     switch (action.type) {
-      case openConnection.type:
+      case openConnection.type: {
         return serverCom.open(action.payload);
-
-      case sendFiles.type: {
-        const { files, target }: SendFilesModel = action.payload;
-        return serverCom.sendFiles(files, target);
       }
 
       case call.type: {
@@ -40,9 +36,10 @@ const ServerComMiddleware = () => {
         return serverCom.call(target, args || []);
       }
 
-      case subscribe.type:
+      case subscribe.type: {
         const { subject, callback } = action.payload;
         return serverCom.subscribe(subject, callback(store));
+      }
 
       default:
         return next(action);

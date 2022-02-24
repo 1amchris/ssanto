@@ -10,30 +10,29 @@ import * as Utils from 'utils';
 
 function Parameters({ t }: any) {
   const property = 'parameters';
-  const parameters = useAppSelector(selectAnalysis).properties[property];
+  const properties = useAppSelector(selectAnalysis).properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = () => Utils.getErrors(Object.values(parameters));
-  const isLoading = () => Utils.isLoading(Object.values(parameters));
+  const getErrors = () => Utils.getErrors(Object.values(properties));
+  const isLoading = () => Utils.isLoading(Object.values(properties));
 
   useEffectOnce(() => {
-    Utils.generateSubscriptions(dispatch, property, Object.keys(parameters));
+    Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
   });
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
-
   const controls = [
     <Control
       label="analysis name"
       name="analysisName"
-      defaultValue={parameters.analysisName.value}
+      defaultValue={properties.analysisName.value}
       required
       tooltip={t('the analysis name will ...')}
     />,
     <Control
       label="name of the modeler"
       name="modelerName"
-      defaultValue={parameters.modelerName.value}
+      defaultValue={properties.modelerName.value}
       required
       tooltip={t("the modeler's name will ...")}
     />,
@@ -43,14 +42,14 @@ function Parameters({ t }: any) {
       suffix={
         <React.Fragment>
           <small className="me-1">x</small>
-          <span ref={cellSizeRef}>{parameters.cellSize.value}</span>m
+          <span ref={cellSizeRef}>{properties.cellSize.value}</span>m
         </React.Fragment>
       }
       onChange={({ target: { value } }: { target: HTMLInputElement }) => {
         if (cellSizeRef.current?.textContent)
           cellSizeRef.current.textContent = value;
       }}
-      defaultValue={parameters.cellSize.value}
+      defaultValue={properties.cellSize.value}
       type="number"
       tooltip={t('the cell size is ...')}
     />,
