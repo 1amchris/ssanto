@@ -1,7 +1,7 @@
 import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import MenuComponent from '../menu-components/MenuComponent';
+import MenuComponent from '../../../components/menu-bar/menu-components/MenuComponent';
 
 function Menu({ t, label, disabled, controls }: any) {
   return (

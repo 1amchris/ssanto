@@ -3,7 +3,7 @@ import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import Form from '../form/Form';
+import Form from '../../components/form/Form';
 import {
   Button,
   Spacer,

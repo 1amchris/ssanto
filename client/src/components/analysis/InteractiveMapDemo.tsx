@@ -9,7 +9,7 @@ import {
   updateLocation,
 } from '../../store/reducers/map';
 import { withTranslation } from 'react-i18next';
-import Form from '../form/Form';
+import Form from '../../components/form/Form';
 
 //Importation des données à effacer, juste pour démo
 import ev from '../../data/espace_vert.json';

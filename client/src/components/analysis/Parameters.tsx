@@ -1,6 +1,6 @@
 import { capitalize } from 'lodash';
 import React, { createRef, RefObject } from 'react';
-import { Control, Spacer, Button } from '../form/form-components';
+import { Control, Spacer, Button } from '../../components/form/form-components';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectAnalysis,

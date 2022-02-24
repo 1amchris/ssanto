@@ -7,8 +7,13 @@ import {
   updateStudyArea,
   updateStudyAreaFiles,
 } from '../../store/reducers/analysis';
-import Form from '../form/Form';
-import { Control, Button, Spacer, Alert } from '../form/form-components';
+import Form from '../../components/form/Form';
+import {
+  Control,
+  Button,
+  Spacer,
+  Alert,
+} from '../../components/form/form-components';
 import { useEffectOnce } from '../../hooks';
 import * as server from '../../store/middlewares/ServerMiddleware';
 import { Store } from 'redux';
