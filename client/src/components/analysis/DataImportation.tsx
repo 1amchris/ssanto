@@ -87,13 +87,12 @@ function DataImportation({ t }: any) {
       key={`geofiles`}
       name={`geofiles`}
       label={'geofile'}
+      onDeleteControl={{ action: dispatch(sendProperties), property: property }}
       factory={importedFilesFactory}
       controls={files?.map((file: GeoFile, index: number) => ({
         file,
       }))}
     />,
-
-    <button onClick={addFakeFile}> add test </button>,
   ];
 
   return (

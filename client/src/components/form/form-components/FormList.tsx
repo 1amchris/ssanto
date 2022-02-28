@@ -86,6 +86,7 @@ class FormList extends FormComponent {
   private readonly factory: (
     props: FactoryProps
   ) => ReactElement | ReactElement[];
+  private onDeleteControl: any;
 
   state: { controls: PropsModel[] } = {
     controls: [],
@@ -95,6 +96,8 @@ class FormList extends FormComponent {
     super(props, uniqueId('form/expandable-list-'), key);
     this.factory = this.props.factory;
     this.template = this.props.template;
+    this.onDeleteControl = this.props.onDeleteControl;
+
     this.state.controls =
       this.props.controls?.map((control: PropsModel) => ({
         ...control,
@@ -147,6 +150,14 @@ class FormList extends FormComponent {
     this.setState({
       controls,
     });
+    // Ici, update le serveur??
+    /*
+    console.log('controls', controls);
+    this.onDeleteControl.action({
+      property: this.onDeleteControl.property,
+      properties: controls,
+    });
+    */
   };
 }
 

@@ -31,11 +31,11 @@ export interface GeoFile {
   name: string;
   extention: string;
   view: boolean;
-  data?: File;
+  data?: GeoJSON;
 }
 export interface AnalysisGeodatabase {
   error?: any;
-  files?: GeoFile[];
+  files: GeoFile[];
   fileName?: String;
   area?: GeoJSON;
   loading?: boolean;
@@ -84,11 +84,7 @@ export const analysisSlice = createSlice({
       geoDatabase: { fileName: v(''), data: v(undefined) } as Properties,
     },
     geodatabase: {
-      files: [
-        { name: 'mtl_high', extention: '.json', view: false },
-        { name: 'mtl_revenu_median', extention: '.shp', view: false },
-        { name: 'mtl_parks', extention: '.shp', view: false },
-      ],
+      files: [],
       fileName: '',
     } as AnalysisGeodatabase,
     objectives: {
@@ -191,16 +187,19 @@ export const analysisSlice = createSlice({
                 isLoading: false,
               };
 
-          /* Fred: À retirer/ linker directement + Nom du fichier dans le json*/
+          /* Fred: À retirer/ linker directement + Nom du fichier dans le json? */
 
-          if (property == 'geoDatabase' && key == 'data' && res.value) {
+          if (property == 'geoDatabase' && key == 'fileName' && res.value) {
             console.log('test9', res.value);
             state.geodatabase.files?.push({
-              name: 'test9',
+              name: res.value,
               extention: '.json',
-              data: res.value,
               view: false,
             });
+          } else if (property == 'geoDatabase' && key == 'data' && res.value) {
+            console.log('test9', res.value);
+            state.geodatabase.files[state.geodatabase.files.length - 1].data =
+              res.value;
           }
         });
     },
