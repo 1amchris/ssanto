@@ -41,6 +41,7 @@ export default class ServerCom {
 
     this.client!.onmessage = (msg: MessageEvent) => {
       var obj = JSON.parse(msg.data.toString());
+      console.log('onmessage', obj);
       this.messageListeners.get(obj.subject)?.call(null, obj.data);
     };
 

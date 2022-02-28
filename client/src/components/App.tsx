@@ -21,6 +21,7 @@ import SocketMenu from 'components/analysis/SocketMenu';
 import InteractiveMapDemo from 'components/analysis/InteractiveMapDemo';
 import { useAppDispatch } from 'store/hooks';
 import * as server from 'store/middlewares/ServerMiddleware';
+import { addGeoFile } from 'store/reducers/analysis';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -45,13 +46,13 @@ function App() {
             <Collapsible title={'analysis parameters'} collapsed>
               <Parameters />
             </Collapsible>
-            <Collapsible title={'study area'}>
+            <Collapsible title={'study area'} collapsed>
               <StudyArea />
             </Collapsible>
             <Collapsible title={'NBS system type'} collapsed>
               <NbsSystem />
             </Collapsible>
-            <Collapsible title={'data importation'} collapsed>
+            <Collapsible title={'data importation'}>
               <DataImportation />
             </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>

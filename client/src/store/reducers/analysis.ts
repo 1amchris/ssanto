@@ -31,9 +31,14 @@ export interface GeoFile {
   name: string;
   extention: string;
   view: boolean;
+  data?: File;
 }
 export interface AnalysisGeodatabase {
-  files: GeoFile[];
+  error?: any;
+  files?: GeoFile[];
+  fileName?: String;
+  area?: GeoJSON;
+  loading?: boolean;
 }
 
 export interface AnalysisObjectivesTemp {
@@ -58,6 +63,7 @@ export interface AnalysisObjectivesTemp {
 export interface AnalysisState {
   properties: {
     [key: string]: Properties;
+    geoDatabase: Properties;
   };
   objectives: AnalysisObjectivesTemp;
   geodatabase: AnalysisGeodatabase;
@@ -75,6 +81,7 @@ export const analysisSlice = createSlice({
       } as Properties,
       nbsSystem: { systemType: v('2') } as Properties,
       studyArea: { fileName: v(''), area: v(undefined) } as Properties,
+      geoDatabase: { fileName: v(''), data: v(undefined) } as Properties,
     },
     geodatabase: {
       files: [
@@ -82,6 +89,7 @@ export const analysisSlice = createSlice({
         { name: 'mtl_revenu_median', extention: '.shp', view: false },
         { name: 'mtl_parks', extention: '.shp', view: false },
       ],
+      fileName: '',
     } as AnalysisGeodatabase,
     objectives: {
       main: '0',
@@ -172,6 +180,7 @@ export const analysisSlice = createSlice({
         payload: { property, properties },
       }: PayloadAction<{ property: string; properties: UpdatePropertiesModel }>
     ) => {
+      //console.log('receiveProperties', property, properties);
       Object.entries(properties)
         .filter(([key, res]) => key && res)
         .forEach(([key, res]: [string, Value<any>]) => {
@@ -181,6 +190,18 @@ export const analysisSlice = createSlice({
                 value: res.value,
                 isLoading: false,
               };
+
+          /* Fred: À retirer/ linker directement + Nom du fichier dans le json*/
+
+          if (property == 'geoDatabase' && key == 'data' && res.value) {
+            console.log('test9', res.value);
+            state.geodatabase.files?.push({
+              name: 'test9',
+              extention: '.json',
+              data: res.value,
+              view: false,
+            });
+          }
         });
     },
 
@@ -228,6 +249,7 @@ export const analysisSlice = createSlice({
         payload: { property, properties },
       }: PayloadAction<{ property: string; properties: Properties }>
     ) => {
+      console.log('sendProperties', properties);
       Object.keys(properties).forEach((key: string) => {
         state.properties[property][key] = {
           ...state.properties[property][key],
@@ -235,11 +257,11 @@ export const analysisSlice = createSlice({
         };
       });
     },
-    addGeoFile: (state, { payload }: PayloadAction<string>) => {
+    addGeoFile: state => {
       console.warn('No validation was performed on the geodatabase');
       /* TODO: add additional validation here */
-      state.geodatabase.files.push({
-        name: payload,
+      state.geodatabase?.files?.push({
+        name: 'test',
         extention: 'shp',
         view: false,
       });

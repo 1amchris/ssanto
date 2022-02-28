@@ -7,6 +7,7 @@ export interface UpdatePropertiesModel {
   property: string;
   [key: string]: any;
 }
+//Fred: recoit les modifications du serveur et applique les actions nécessaires.
 
 // TODO: Remove properties from model when forwarding action after dispatching server call
 const AnalysisMiddleware = () => {
@@ -26,29 +27,59 @@ const AnalysisMiddleware = () => {
             );
           });
           return next(action);
+          break;
 
         case receiveProperties.type:
-          // if 'area' exists in properties, display it on the map
-          if (!action.payload.properties.area) return next(action);
+          console.log('receiveProperties', action);
+          console.log('keys ', action.payload.properties.key);
 
-          const {
-            property,
-            properties: {
-              area: { value: data, error },
-            },
-          } = action.payload;
-          const name = toSnakeCase(property);
-          if (!error && data) {
-            dispatch(
-              upsertLayer({
-                name,
-                data,
-              } as Layer)
-            );
-          } else if (error) {
-            dispatch(removeLayer(name));
+          // if 'area' exists in properties, display it on the map
+          if (action.payload.properties.area) {
+            const {
+              property,
+              properties: {
+                area: { value: data, error },
+              },
+            } = action.payload;
+            const name = toSnakeCase(property);
+            if (!error && data) {
+              dispatch(
+                upsertLayer({
+                  name,
+                  data,
+                } as Layer)
+              );
+            } else if (error) {
+              dispatch(removeLayer(name));
+            }
+            return next(action);
+            // if 'data' exists in properties, display it on the map
+          } else if (action.payload.properties.data) {
+            //display it on the map dans une sous catégorie
+            console.log('OUIOUI');
+            const {
+              property,
+              properties: {
+                data: { value: data, error },
+              },
+            } = action.payload;
+            const name = toSnakeCase(property);
+            if (!error && data) {
+              dispatch(
+                upsertLayer({
+                  name,
+                  data,
+                } as Layer)
+              );
+            } else if (error) {
+              dispatch(removeLayer(name));
+            }
+            return next(action);
+            // if 'data' exists in properties, display it on the map
+          } else {
+            return next(action);
           }
-          return next(action);
+          break;
 
         default:
           return next(action);
