@@ -93,11 +93,10 @@ export default class ServerCom {
   }
 
   private sendAny(target: string, args: any[]) {
-    if (args.length > 0)
-      this.writeObject({
-        target: target,
-        data: args,
-      });
+    this.writeObject({
+      target: target,
+      data: args,
+    });
   }
 
   private sendFiles(target: string, files: File[]) {

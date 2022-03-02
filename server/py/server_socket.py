@@ -3,6 +3,7 @@ import asyncio
 import json
 
 from .network_definitions import Field
+import traceback
 
 
 class ServerSocket:
@@ -44,6 +45,7 @@ class ServerSocket:
                         self.commands_handlers[obj[Field.TARGET.value]](*obj[Field.DATA.value])
             except Exception as e:
                 print("STDERR", "Unable to call the method/function", e)
+                print("STDERR", traceback.format_exc())
 
         print("Disconnect from", websocket.remote_address[0])
                 

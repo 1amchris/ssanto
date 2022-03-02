@@ -2,9 +2,10 @@ import sys
 
 
 class Logger:
-    def __init__(self, debug=True):
+    def __init__(self, debug=True, max_line_length=-1):
         self.stdout = sys.stdout
         self.debug = debug
+        self.max_line_length = max_line_length
         sys.stdout = self
 
     def enable_debug_log(self):
@@ -15,7 +16,7 @@ class Logger:
 
     def write(self, msg):
         if self.debug:
-            printed_msg = self.truncate_middle(msg, 80)
+            printed_msg = msg if self.max_line_length < 0 else self.truncate_middle(msg, self.max_line_length)
             self.stdout.write(printed_msg)
         self.flush()
 
@@ -31,4 +32,4 @@ class Logger:
 
 
 # Create the logger at global scope
-Logger(True)
+Logger(True, 80)
