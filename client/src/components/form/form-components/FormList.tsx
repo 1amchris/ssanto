@@ -124,7 +124,7 @@ class FormList extends FormComponent {
               key={`${this.id}/row-${control.index}`}
               parentId={this.id}
               index={control.index}
-              onDeleteControl={this.removeControlAt}
+              onDeleteControl={this.onDeleteControl}
             >
               {this.factory({
                 ...control,
@@ -138,14 +138,6 @@ class FormList extends FormComponent {
         </ListGroup>
       </React.Fragment>
     );
-  };
-
-  private removeControlAt = (index: number) => {
-    this.updateServer(index);
-  };
-
-  private updateServer = (index: number) => {
-    this.onDeleteControl(index);
   };
 }
 

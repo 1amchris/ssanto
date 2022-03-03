@@ -1,5 +1,9 @@
 import { toObjectWithSnakeCaseKeys, toSnakeCase } from 'utils';
-import { receiveProperties, sendProperties } from 'store/reducers/analysis';
+import {
+  receiveProperties,
+  sendProperties,
+  deleteFile,
+} from 'store/reducers/analysis';
 import { Layer, removeLayer, upsertLayer } from 'store/reducers/map';
 import { call } from 'store/middlewares/ServerMiddleware';
 
@@ -30,10 +34,6 @@ const AnalysisMiddleware = () => {
           break;
 
         case receiveProperties.type:
-          console.log('receiveProperties', action);
-          console.log('keys ', action.payload.properties.key);
-
-          // if 'area' exists in properties, display it on the map
           if (action.payload.properties.area) {
             const {
               property,
@@ -53,10 +53,7 @@ const AnalysisMiddleware = () => {
               dispatch(removeLayer(name));
             }
             return next(action);
-            // if 'data' exists in properties, display it on the map
           } else if (action.payload.properties.data) {
-            //display it on the map dans une sous catégorie
-            console.log('OUIOUI');
             const {
               property,
               properties: {
@@ -79,6 +76,16 @@ const AnalysisMiddleware = () => {
           } else {
             return next(action);
           }
+          break;
+
+        case deleteFile.type:
+          dispatch(
+            call({
+              target: 'delete_file.index',
+              args: [].concat(action.payload.index),
+            })
+          );
+          return next(action);
           break;
 
         default:

@@ -4,10 +4,11 @@ import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   addGeoFile,
+  deleteFile,
   GeoFile,
   selectAnalysis,
   sendProperties,
-  updateGeodatabase,
+  updateGeoDataBase,
 } from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import { Control, Button, Spacer, List } from '../form/form-components';
@@ -16,6 +17,8 @@ import { useEffectOnce } from 'hooks';
 import { FactoryProps } from 'components/form/form-components/FormExpandableList';
 import { Badge } from 'react-bootstrap';
 import { Properties } from 'store/models/Properties';
+import { subscribe } from 'store/middlewares/ServerMiddleware';
+import { Store } from '@reduxjs/toolkit';
 
 const importedFilesFactory = ({
   file,
@@ -48,11 +51,9 @@ function DataImportation({ t }: any) {
     geodatabase: { files },
   } = useAppSelector(selectAnalysis);
 
-  //TODO humm pas génial
   const property = 'newGeoFile';
   const properties = useAppSelector(selectAnalysis).properties[property];
-  const deletedGeoFileProperties =
-    useAppSelector(selectAnalysis).properties['deletedGeoFile'];
+
   const dispatch = useAppDispatch();
 
   const getErrors = () => Utils.getErrors(Object.values(properties));
@@ -60,20 +61,17 @@ function DataImportation({ t }: any) {
 
   useEffectOnce(() => {
     Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
-    Utils.generateSubscriptions(
-      dispatch,
-      'deletedGeoFile',
-      Object.keys(deletedGeoFileProperties)
+    dispatch(
+      subscribe({
+        subject: 'file_manager.files',
+        callback: (store: Store) => (data: any) => {
+          dispatch(updateGeoDataBase(data));
+        },
+      })
     );
   });
 
-  const onDeleteControl = (index: string) =>
-    dispatch(
-      sendProperties({
-        property: 'deletedGeoFile',
-        properties: { index: { index, isLoading: false } } as Properties,
-      })
-    );
+  const onDeleteControl = (index: string) => dispatch(deleteFile({ index }));
 
   const controls = [
     <Control
@@ -103,7 +101,7 @@ function DataImportation({ t }: any) {
       factory={importedFilesFactory}
       controls={files?.map((file: GeoFile) => ({
         file,
-        index: file.index,
+        index: file.id,
       }))}
     />,
   ];

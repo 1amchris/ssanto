@@ -29,16 +29,12 @@ export interface AnalysisNbsSystem {
 }
 export interface GeoFile {
   name: string;
-  extention: string;
-  view: boolean;
-  index: string;
-  data?: GeoJSON;
+  extension: string;
+  id: string;
 }
 export interface AnalysisGeodatabase {
   error?: any;
   files: GeoFile[];
-  fileName?: String;
-  area?: GeoJSON;
   loading?: boolean;
 }
 
@@ -86,8 +82,6 @@ export const analysisSlice = createSlice({
         data: v(undefined),
         index: v(-1),
       } as Properties,
-      deletedGeoFile: { index: v(-1) } as Properties,
-      db: { files: v([]) } as Properties,
     },
     geodatabase: {
       files: [],
@@ -182,7 +176,6 @@ export const analysisSlice = createSlice({
         payload: { property, properties },
       }: PayloadAction<{ property: string; properties: UpdatePropertiesModel }>
     ) => {
-      //console.log('receiveProperties', property, properties);
       Object.entries(properties)
         .filter(([key, res]) => key && res)
         .forEach(([key, res]: [string, Value<any>]) => {
@@ -192,33 +185,6 @@ export const analysisSlice = createSlice({
                 value: res.value,
                 isLoading: false,
               };
-
-          /* Fred: À retirer/ linker directement + Nom du fichier dans le json? */
-          //TODO: FRED: ajouter un id au fileName et data
-          if (property == 'newGeoFile' && key == 'fileName' && res.value) {
-            state.geodatabase.files?.push({
-              name: res.value,
-              extention: '.json',
-              view: false,
-              index: '-1',
-            });
-          } else if (property == 'newGeoFile' && key == 'data' && res.value) {
-            state.geodatabase.files[state.geodatabase.files.length - 1].data =
-              res.value;
-          } else if (property == 'newGeoFile' && key == 'index' && res.value) {
-            state.geodatabase.files[state.geodatabase.files.length - 1].index =
-              res.value;
-            //TODO: validation à faire
-          } else if (
-            property == 'deletedGeoFile' &&
-            key == 'index' &&
-            res.value
-          ) {
-            state.geodatabase.files = state.geodatabase.files.filter(
-              file => file.index !== res.value.index
-            );
-            console.log(state.geodatabase.files);
-          }
         });
     },
 
@@ -266,7 +232,6 @@ export const analysisSlice = createSlice({
         payload: { property, properties },
       }: PayloadAction<{ property: string; properties: Properties }>
     ) => {
-      console.log('sendProperties', property, properties);
       Object.keys(properties).forEach((key: string) => {
         state.properties[property][key] = {
           ...state.properties[property][key],
@@ -275,38 +240,24 @@ export const analysisSlice = createSlice({
       });
     },
 
-    /* TODO: envoyer un index de file à retirer */
-
+    /* Delete the file with the specify index from the db */
     deleteFile: (
       state,
-      {
-        payload: { property, properties },
-      }: PayloadAction<{ property: string; properties: Properties }>
-    ) => {
-      console.log('sendProperties', properties);
-      Object.keys(properties).forEach((key: string) => {
-        state.properties[property][key] = {
-          ...state.properties[property][key],
-          isLoading: true,
-        };
-      });
-    },
+      { payload: { index } }: PayloadAction<{ index: string }>
+    ) => {},
 
-    /* TODO: envoyer un nom de file, data et index à ajouter */
-
-    addFile: (
+    /* Update client geodatabase */
+    updateGeoDataBase: (
       state,
       {
-        payload: { property, properties },
-      }: PayloadAction<{ property: string; properties: Properties }>
+        payload: { value, error },
+      }: PayloadAction<{ value: GeoFile[]; error: any }>
     ) => {
-      console.log('sendProperties', properties);
-      Object.keys(properties).forEach((key: string) => {
-        state.properties[property][key] = {
-          ...state.properties[property][key],
-          isLoading: true,
-        };
-      });
+      if (error) {
+        console.warn('Error with update of geoDatabase');
+      } else {
+        state.geodatabase.files = value;
+      }
     },
 
     addGeoFile: state => {
@@ -314,18 +265,9 @@ export const analysisSlice = createSlice({
       /* TODO: add additional validation here */
       state.geodatabase?.files?.push({
         name: 'test',
-        extention: 'shp',
-        view: false,
-        index: '-1',
+        extension: 'shp',
+        id: '-1',
       });
-    },
-    updateGeodatabase: (
-      state,
-      { payload: { files } }: PayloadAction<AnalysisGeodatabase>
-    ) => {
-      console.warn('No validation was performed on the geofile');
-      /* TODO: add additional validation here */
-      state.geodatabase.files = files;
     },
 
     updateObjectives: (
@@ -343,8 +285,9 @@ export const {
   receiveProperties,
   sendProperties,
   updateObjectives,
-  updateGeodatabase,
+  updateGeoDataBase,
   addGeoFile,
+  deleteFile,
 } = analysisSlice.actions;
 export const selectAnalysis = (state: RootState) => state.analysis;
 

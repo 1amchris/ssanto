@@ -32,7 +32,9 @@ const Layers = ({ t }: any) => {
         <TileLayer url="" />
       </LayersControl.BaseLayer>
 
-      {files
+      {/*
+      
+      files
         ?.filter((file: GeoFile, index: number) => file.data != undefined)
         .map((file: GeoFile, index: number) => (
           <LayersControl.Overlay
@@ -42,7 +44,9 @@ const Layers = ({ t }: any) => {
           >
             <GeoJSON data={file.data ? file.data : defaultData} />
           </LayersControl.Overlay>
-        ))}
+        ))
+      
+        */}
     </LayersControl>
   );
 };
