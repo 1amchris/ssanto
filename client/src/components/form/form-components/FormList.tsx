@@ -121,9 +121,9 @@ class FormList extends FormComponent {
         <ListGroup>
           {this.state.controls?.map((control: PropsModel, index: number) => (
             <Row
-              key={`${this.id}/row-${index}`}
+              key={`${this.id}/row-${control.index}`}
               parentId={this.id}
-              index={index}
+              index={control.index}
               onDeleteControl={this.removeControlAt}
             >
               {this.factory({
@@ -141,23 +141,11 @@ class FormList extends FormComponent {
   };
 
   private removeControlAt = (index: number) => {
-    const controls = [...this.state.controls];
-    controls.splice(index, 1);
-    this.updateControls(controls);
+    this.updateServer(index);
   };
 
-  private updateControls = (controls: PropsModel[]) => {
-    this.setState({
-      controls,
-    });
-    // Ici, update le serveur??
-    /*
-    console.log('controls', controls);
-    this.onDeleteControl.action({
-      property: this.onDeleteControl.property,
-      properties: controls,
-    });
-    */
+  private updateServer = (index: number) => {
+    this.onDeleteControl(index);
   };
 }
 

@@ -10,7 +10,7 @@
               {
                 "secondary": "Soil Type",
                 "attributes": [ "a", "b", "c"],
-                "nbs": [""]
+                "nbs": []
               },
               {
                 "secondary": "Hydraulic Conductivity",

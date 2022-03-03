@@ -1,11 +1,14 @@
 from py.file_manager import StudyAreaManager
 from py.server_socket import ServerSocket
 from py.subjects_manager import SubjectsManager
+from server.py.file_manager import GeoDatabaseManager
 
 
 class AnalysisManager:
     namespace = "analysis"
-    defaultValues = {"modeler_name": "", "analysis_name": "", "cell_size": 20, "study_area": {"fileName": ""}}
+    defaultValues = {"modeler_name": "", "analysis_name": "",
+                     "cell_size": 20, "study_area": {"fileName": ""},
+                     "geo_database": {"fileName"}}
 
     def __init__(self, subjects_manager: SubjectsManager, socket: ServerSocket):
         """
@@ -18,7 +21,8 @@ class AnalysisManager:
             'analysis.study_area':    {'filename': ''}
         """
         self.properties = {
-            property: subjects_manager.create(f"{self.namespace}.{property}", defaultValue)
+            property: subjects_manager.create(
+                f"{self.namespace}.{property}", defaultValue)
             for property, defaultValue in self.defaultValues.items()
         }
 
@@ -27,7 +31,13 @@ class AnalysisManager:
             StudyAreaManager(self.properties["study_area"].notify),
             StudyAreaManager.receive_files,
         )
-        socket.bind_command_m(f"{self.namespace}.update_properties", self, self.update)
+        socket.bind_command_m(
+            f"{self.namespace}.update_geo_database",
+            GeoDatabaseManager(self.properties["geo_database"].notify),
+            GeoDatabaseManager.receive_files,
+        )
+        socket.bind_command_m(
+            f"{self.namespace}.update_properties", self, self.update)
 
     def update(self, properties: dict):
         # validate all properties match

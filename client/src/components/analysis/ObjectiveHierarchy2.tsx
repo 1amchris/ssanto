@@ -78,7 +78,8 @@ function ObjectiveHierarchy2({ t }: any) {
         } as FormSelectOptionModel)
     );
 
-  const onChangeSelect = () => console.log('onchange yes');
+  const onChangeSelect = (e: any) =>
+    console.log('onchangeselect', e.target.value);
 
   /**
    * A factory that generates the attributes inputs on demand
@@ -134,6 +135,9 @@ function ObjectiveHierarchy2({ t }: any) {
       key={key('secondary')}
       name={name('secondary')}
       defaultValue={defaultValue}
+      onChange={(e: any) => {
+        onChangeSelect(e);
+      }}
       options={generateHierarchyOptions(2, primary)}
     />,
     <ExpandableList

@@ -15,6 +15,7 @@ import * as Utils from 'utils';
 import { useEffectOnce } from 'hooks';
 import { FactoryProps } from 'components/form/form-components/FormExpandableList';
 import { Badge } from 'react-bootstrap';
+import { Properties } from 'store/models/Properties';
 
 const importedFilesFactory = ({
   file,
@@ -43,15 +44,15 @@ const importedFilesFactory = ({
 ];
 
 function DataImportation({ t }: any) {
-  //* a retirer
   const {
     geodatabase: { files },
   } = useAppSelector(selectAnalysis);
 
-  //* ****
-
-  const property = 'geoDatabase';
+  //TODO humm pas génial
+  const property = 'newGeoFile';
   const properties = useAppSelector(selectAnalysis).properties[property];
+  const deletedGeoFileProperties =
+    useAppSelector(selectAnalysis).properties['deletedGeoFile'];
   const dispatch = useAppDispatch();
 
   const getErrors = () => Utils.getErrors(Object.values(properties));
@@ -59,9 +60,20 @@ function DataImportation({ t }: any) {
 
   useEffectOnce(() => {
     Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
+    Utils.generateSubscriptions(
+      dispatch,
+      'deletedGeoFile',
+      Object.keys(deletedGeoFileProperties)
+    );
   });
 
-  const addFakeFile = () => dispatch(addGeoFile());
+  const onDeleteControl = (index: string) =>
+    dispatch(
+      sendProperties({
+        property: 'deletedGeoFile',
+        properties: { index: { index, isLoading: false } } as Properties,
+      })
+    );
 
   const controls = [
     <Control
@@ -87,10 +99,11 @@ function DataImportation({ t }: any) {
       key={`geofiles`}
       name={`geofiles`}
       label={'geofile'}
-      onDeleteControl={{ action: dispatch(sendProperties), property: property }}
+      onDeleteControl={onDeleteControl}
       factory={importedFilesFactory}
-      controls={files?.map((file: GeoFile, index: number) => ({
+      controls={files?.map((file: GeoFile) => ({
         file,
+        index: file.index,
       }))}
     />,
   ];

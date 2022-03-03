@@ -31,6 +31,7 @@ export interface GeoFile {
   name: string;
   extention: string;
   view: boolean;
+  index: string;
   data?: GeoJSON;
 }
 export interface AnalysisGeodatabase {
@@ -63,7 +64,6 @@ export interface AnalysisObjectivesTemp {
 export interface AnalysisState {
   properties: {
     [key: string]: Properties;
-    geoDatabase: Properties;
   };
   objectives: AnalysisObjectivesTemp;
   geodatabase: AnalysisGeodatabase;
@@ -81,7 +81,13 @@ export const analysisSlice = createSlice({
       } as Properties,
       nbsSystem: { systemType: v('2') } as Properties,
       studyArea: { fileName: v(''), area: v(undefined) } as Properties,
-      geoDatabase: { fileName: v(''), data: v(undefined) } as Properties,
+      newGeoFile: {
+        fileName: v(''),
+        data: v(undefined),
+        index: v(-1),
+      } as Properties,
+      deletedGeoFile: { index: v(-1) } as Properties,
+      db: { files: v([]) } as Properties,
     },
     geodatabase: {
       files: [],
@@ -188,18 +194,30 @@ export const analysisSlice = createSlice({
               };
 
           /* Fred: À retirer/ linker directement + Nom du fichier dans le json? */
-
-          if (property == 'geoDatabase' && key == 'fileName' && res.value) {
-            console.log('test9', res.value);
+          //TODO: FRED: ajouter un id au fileName et data
+          if (property == 'newGeoFile' && key == 'fileName' && res.value) {
             state.geodatabase.files?.push({
               name: res.value,
               extention: '.json',
               view: false,
+              index: '-1',
             });
-          } else if (property == 'geoDatabase' && key == 'data' && res.value) {
-            console.log('test9', res.value);
+          } else if (property == 'newGeoFile' && key == 'data' && res.value) {
             state.geodatabase.files[state.geodatabase.files.length - 1].data =
               res.value;
+          } else if (property == 'newGeoFile' && key == 'index' && res.value) {
+            state.geodatabase.files[state.geodatabase.files.length - 1].index =
+              res.value;
+            //TODO: validation à faire
+          } else if (
+            property == 'deletedGeoFile' &&
+            key == 'index' &&
+            res.value
+          ) {
+            state.geodatabase.files = state.geodatabase.files.filter(
+              file => file.index !== res.value.index
+            );
+            console.log(state.geodatabase.files);
           }
         });
     },
@@ -248,6 +266,23 @@ export const analysisSlice = createSlice({
         payload: { property, properties },
       }: PayloadAction<{ property: string; properties: Properties }>
     ) => {
+      console.log('sendProperties', property, properties);
+      Object.keys(properties).forEach((key: string) => {
+        state.properties[property][key] = {
+          ...state.properties[property][key],
+          isLoading: true,
+        };
+      });
+    },
+
+    /* TODO: envoyer un index de file à retirer */
+
+    deleteFile: (
+      state,
+      {
+        payload: { property, properties },
+      }: PayloadAction<{ property: string; properties: Properties }>
+    ) => {
       console.log('sendProperties', properties);
       Object.keys(properties).forEach((key: string) => {
         state.properties[property][key] = {
@@ -256,6 +291,24 @@ export const analysisSlice = createSlice({
         };
       });
     },
+
+    /* TODO: envoyer un nom de file, data et index à ajouter */
+
+    addFile: (
+      state,
+      {
+        payload: { property, properties },
+      }: PayloadAction<{ property: string; properties: Properties }>
+    ) => {
+      console.log('sendProperties', properties);
+      Object.keys(properties).forEach((key: string) => {
+        state.properties[property][key] = {
+          ...state.properties[property][key],
+          isLoading: true,
+        };
+      });
+    },
+
     addGeoFile: state => {
       console.warn('No validation was performed on the geodatabase');
       /* TODO: add additional validation here */
@@ -263,6 +316,7 @@ export const analysisSlice = createSlice({
         name: 'test',
         extention: 'shp',
         view: false,
+        index: '-1',
       });
     },
     updateGeodatabase: (
