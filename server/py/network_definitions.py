@@ -4,7 +4,10 @@ from enum import Enum
 
 class Field(Enum):
     SUBJECT_ID = 'subject'
-    COMMAND    = 'command'
     TARGET     = 'target'
     DATA       = 'data'
 
+class SendType(Enum):
+    SUBJECT = 0,
+    CALL    = 1,
+    ERROR   = -1

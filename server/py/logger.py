@@ -2,6 +2,7 @@ import sys
 
 
 class Logger:
+    # max_line_length: -1 to see all the text
     def __init__(self, debug=True, max_line_length=-1):
         self.stdout = sys.stdout
         self.debug = debug

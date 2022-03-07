@@ -29,25 +29,29 @@ export default class ServerCom {
     this.client = new WebSocket(`ws://${host}:${port}`);
     this.isOpen = false;
 
-    this.client!.onopen = () => {
-      console.log(`Connected to ws://${host}:${port}`);
+    this.client!.onopen = () => this.onOpen();
+    this.client!.onmessage = (msg: MessageEvent) => this.onMessage(msg);
+    this.client!.onclose = () => this.onClose();
+  }
 
-      this.isOpen = true;
-      for (let message of this.messageBuffer) {
-        this.client!.send(message);
-      }
-      this.messageBuffer = [];
-    };
+  private onOpen() {
+    console.log(`Connected to ${this.client!.url}`);
 
-    this.client!.onmessage = (msg: MessageEvent) => {
-      var obj = JSON.parse(msg.data.toString());
-      this.messageListeners.get(obj.subject)?.call(null, obj.data);
-    };
+    this.isOpen = true;
+    for (let message of this.messageBuffer) {
+      this.client!.send(message);
+    }
+    this.messageBuffer = [];
+}
 
-    this.client!.onclose = () => {
-      console.log('Connection closed');
-      this.isOpen = false;
-    };
+  private onMessage(msg: MessageEvent) {
+    var obj = JSON.parse(msg.data.toString());
+    this.messageListeners.get(obj.subject)?.call(null, obj.data);
+  }
+
+  private onClose() {
+    console.log('Connection closed');
+    this.isOpen = false;
   }
 
   private writeObject(object: any) {

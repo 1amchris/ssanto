@@ -1,18 +1,27 @@
-from pyclbr import Function
 from base64 import b64decode
 from geojson_rewind import rewind
-
 import shapefile
+
 from io import BytesIO
 from os.path import splitext
 
 
-class FileManager:
-    def __init__(self):
-        self.files = {}
+class FileParser:
+    @staticmethod
+    def load(files_manager, full_name):
+        name, ext = splitext(full_name)
 
-    def load_shp(self, name):
-        reader = shapefile.Reader(shp=self.files[name + '.shp'], shx=self.files[name + '.shx'])
+        if ext == '.shp':
+            shp = files_manager.get_file(name+'.shp')
+            shx = files_manager.get_file(name+'.shx')
+            return FileParser.load_shp(shp, shx)
+        # elif ext == '.'
+
+        return None
+
+    @staticmethod
+    def __load_shp(shp_file, shx_file):
+        reader = shapefile.Reader(shp=shp_file, shx=shx_file)
 
         features = []
         for shp in reader.shapes():
@@ -28,39 +37,21 @@ class FileManager:
         }
         return rewind(geojson)
 
+
+class FilesManager:
+    def __init__(self):
+        self.files = {}
+
+    def get_file(self, name):
+        return self.files[name]
+
     def get_filenames(self):
         return self.files.keys()
 
     def remove_file(self, name):
         self.files.pop(name)
 
-    def receive_files(self, *files):
-        for file in files:
-            self.files[file["fileName"]] = BytesIO(b64decode(file["base64content"]))
+    def add_file(self, name, data):
+        self.files[name] = BytesIO(b64decode(data))
 
-
-class StudyAreaManager(FileManager):
-    def __init__(self, callback: Function):
-        super().__init__()
-        self.callback = callback
-
-    def receive_files(self, *files):
-        try:
-            super().receive_files(*files)
-
-            shapefiles = [
-                name
-                for name, ext in [splitext(file["fileName"]) for file in files]
-                if ext == ".shp"
-            ]
-
-            if len(shapefiles) == 0:
-                raise Exception("No shapefiles received.")
-
-            for shapefile in shapefiles:
-                geojson = self.load_shp(shapefile)
-                self.callback({"file_name": shapefile, "area": geojson})            
-
-        except Exception as e:
-            print("STDERR", "Error: ", e)
-            self.callback({"error": str(e)})
+    # Add loaded file to the file manager?

@@ -2,11 +2,33 @@ import websockets
 import asyncio
 import json
 
-from .network_definitions import Field
+from .network_definitions import Field, SendType
 import traceback
 
+class CallException(Exception):
+    pass
 
+
+# TODO Split command handling and networking from this class
 class ServerSocket:
+    REQUEST_SUCCEEDED = 0
+    REQUEST_FAILED = -1
+
+    class CommandFunctor:
+        def __init__(self, callable):
+            self.callable = callable
+            
+        def __call__(self, *data):
+            code = self.REQUEST_SUCCEEDED
+            data = None
+            try:
+                data = self.callable(*data)
+            except CallException as e:
+                code = self.REQUEST_FAILED
+                data = str(e)
+
+            return code, data
+
     def __init__(self, host_address, port):
         self.server_socket = None
         self.host = host_address
@@ -15,11 +37,15 @@ class ServerSocket:
         self.commands_handlers = {}
 
     def bind_command(self, command_name, callable):
-        self.commands_handlers[command_name] = callable
+        self.commands_handlers[command_name] = self.CommandFunctor(callable)
 
-    # Data must have to_dict() method implemented
-    def send(self, data):
-        asyncio.create_task(self.conn.send(json.dumps(data.to_dict())))
+    # Type can be 0: subject update, 1: call return, -1: error (use SendType enum)
+    def send(self, type, data):
+        send_data = {
+            'type': type,
+            'data': data
+        }
+        asyncio.create_task(self.conn.send(json.dumps(send_data, default=lambda o: o.__dict__)))
 
     async def handler(self, websocket):
         print("Connection from", websocket.remote_address[0])
@@ -42,10 +68,13 @@ class ServerSocket:
             try:
                 if obj[Field.TARGET.value] in self.commands_handlers:
                     if Field.DATA.value in obj:
-                        self.commands_handlers[obj[Field.TARGET.value]](*obj[Field.DATA.value])
+                        code, return_data = self.commands_handlers[obj[Field.TARGET.value]](*obj[Field.DATA.value])
+                        type = SendType.CALL.value if code == self.REQUEST_SUCCEEDED else SendType.ERROR.value
+                        self.send(type, return_data)
             except Exception as e:
                 print("STDERR", "Unable to call the method/function", e)
                 print("STDERR", traceback.format_exc())
+                self.send(SendType.ERROR.value, "Unknown error occured")
 
         print("Disconnect from", websocket.remote_address[0])
                 
