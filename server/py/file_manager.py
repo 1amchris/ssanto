@@ -52,12 +52,10 @@ class StudyAreaManager(FileManager):
 
 
 class GeoDatabaseManager(FileManager):
-    def __init__(self, callback: Function):
+    def __init__(self,  callback: Function):
         super().__init__()
         self.callback = callback
         self.files = []
-        # list fichiers importés
-        # fichier : nom, type, data, actif ou pas, ++
 
     def receive_files(self, *files):
         print("receive_files_top", files)
@@ -80,11 +78,11 @@ class GeoDatabaseManager(FileManager):
                     }
 
                 # rewind enforces geojson's 2016 standards
-                newFile = {"file_name": shapefile, "data": rewind(
-                    geojson), "index": str(uuid.uuid4()), "add": True}
+                newFile = {"name": shapefile, "data": rewind(
+                    geojson), "id": str(uuid.uuid4())}
                 self.files.append(newFile)
-                print("NewFile: ", newFile)
-                self.callback(newFile)
+                self.callback({"value": list(map(lambda file: {
+                    "id": file["id"], "name": file["name"], "extension": "shp"}, self.files))})
 
         except Exception as e:
             print("STDERR", "Error: ", e)
@@ -93,10 +91,10 @@ class GeoDatabaseManager(FileManager):
     def deleteFile(self, file_index):
         try:
             self.files = [file for file in self.files if not (
-                file['index'] == file_index)]
-            self.callback({"index": file_index, "remove": True})
-            print(self.files)
+                file['id'] == file_index)]
+            self.callback({"value": list(map(lambda file: {
+                "id": file["id"], "name": file["name"], "extension": "shp"}, self.files))})
 
         except Exception as e:
             print("STDERR", "Error: ", e)
-            self.callback({"error": str(e), "remove": True})
+            self.callback({"error": str(e)})

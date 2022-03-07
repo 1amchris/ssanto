@@ -58,16 +58,8 @@ async def main():
         "study_area.file_name", None)
     study_area_area = subjects_manager.create("study_area.area", {})
 
-    # Le frontend s'abonne à ces variable;
-    new_geofile_file_name = subjects_manager.create(
-        "new_geo_file.file_name", None)
-    new_geofile_data = subjects_manager.create("new_geo_file.data", {})
-    new_geofile_index = subjects_manager.create("new_geo_file.index", None)
-
-    deleted_geofile_index = subjects_manager.create(
-        "deleted_geo_file.index", None)
-
     # STUDY AREA
+
     def handle_study_area_changed(study_area):
         print("handle_study_area_changed")
         if "error" in study_area:
@@ -82,37 +74,17 @@ async def main():
     server_socket.bind_command(
         "study_area.files/files", StudyAreaManager(handle_study_area_changed).receive_files)
 
-    # ADD GEOFILE
-    def handle_geodatabase_changed(geo_file):
-        print("handle_geodatabase_changed")
-        print(geo_file)
-        if ("add" in geo_file):
-            if "error" in geo_file:
-                print("if")
-                new_geofile_file_name.notify({"error": geo_file["error"]})
-                new_geofile_data.notify({"error": geo_file["error"]})
-                new_geofile_index.notify({"error": geo_file["error"]})
+    # add/remove geofile
+    files = subjects_manager.create(
+        "file_manager.files", None)
 
-            else:
-                print("else")
-                new_geofile_file_name.notify(
-                    {"value": geo_file["file_name"]})
-                new_geofile_data.notify({"value": geo_file["data"]})
-                new_geofile_index.notify({"value": geo_file["index"]})
-                print("index: ", geo_file["index"])
-        if("remove" in geo_file):
-            if "error" in geo_file:
-                deleted_geofile_index.notify({"error": geo_file["error"]})
-            else:
-                print("else")
-                deleted_geofile_index.notify({"value": geo_file["index"]})
+    geodatabase_manager = GeoDatabaseManager(files.notify)
 
     server_socket.bind_command(
-        "new_geo_file.files/files", GeoDatabaseManager(handle_geodatabase_changed).receive_files)
+        "new_geo_file.files/files", geodatabase_manager.receive_files)
 
-    # REMOVE GEOFILE
-    server_socket.bind_command("deleted_geo_file.index", GeoDatabaseManager(
-        handle_geodatabase_changed).deleteFile)
+    server_socket.bind_command(
+        "delete_file.index", geodatabase_manager.deleteFile)
 
     loop = asyncio.get_running_loop()
     stop = loop.create_future()
