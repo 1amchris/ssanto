@@ -9,68 +9,120 @@
             "secondaries": [
               {
                 "secondary": "Soil Type",
-                "attributes": [ "a", "b", "c"],
+                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Hydraulic Conductivity",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Contamination",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Landfill Distance",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Swales", "Rain gardens", "Infiltration systems", "Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Slope",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Swales", "Infiltration systems", "Wetlands"]
               },
               {
                 "secondary": "Building Footprints",
                 "otherName": "Building foundations",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Infiltration systems","Green roofs", "Ponds & Lakes", "Rain tanks", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Soil Salinity",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Groundwater Table",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Infiltration systems"]
               },
               {
                 "secondary": "Greenery",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Infiltration systems", "Green roofs", "Wetlands", "Swales"]
               },
               {
                 "secondary": "Rainfall Variability",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain tanks", "Green roofs"]
               },
               {
                 "secondary": "Surface Water",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain tanks", "Infiltration systems"]
               },
               {
                 "secondary": "Waterways Distance to",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Swales", "Rain gardens", "Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Pre-human Wetland Structure",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Ponds & Lakes", "Wetlands"]
               }
             ]
@@ -80,22 +132,38 @@
             "secondaries": [
               {
                 "secondary": "Education Level",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Rain tanks", "Swales", "Infiltration systems", "Green roofs", "Wetlands"]
               },
               {
                 "secondary": "Relative Wealth",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain tanks"]
               },
               {
                 "secondary": "Environmental Awareness",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain tanks", "Swales", "Rain gardens", "Infiltration systems", "Green roofs", "Wetlands"]
               },
               {
                 "secondary": "Sense of Community",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Swales", "Rain gardens", "Infiltration systems", "Wetlands"]
               }
             ]
@@ -105,67 +173,119 @@
             "secondaries": [
               {
                 "secondary": "Airports Distance to",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Ponds & Lakes","Wetlands" ]
               },
               {
                 "secondary": "Capital Works Program",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Utility Infrastructure",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Infiltration systems", "Ponds & Lakes", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Drainage Infrastructure Distance",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Swales", "Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes",  "Wetlands"]
               },
               {
                 "secondary": "Street width/type",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Swales", "Rain gardens", "Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Planned (re)Developments",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Cultural Heritage Sites",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Swales", "Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Natural Heritage Sites",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Swales", "Rain gardens", "Infiltration systems", "Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Geological Heritage Sites",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Swales", "Rain gardens", "Infiltration systems",  "Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Land Value",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Green roofs", "Ponds & Lakes", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Land Ownership",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Swales", "Rain gardens", "Infiltration systems"]
               },
               {
                 "secondary": "Lot Size",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Ponds & Lakes", "Wetlands"]
               },
               {
                 "secondary": "Land Use Type",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Swales", "Wetlands"]
               }
 
@@ -177,12 +297,20 @@
               {
                 "secondary": "Irrigation Demand Distance",
                 "otherName": "Proximity to water demand",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Current Rainwater Harvesting",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               }
             ]
@@ -192,37 +320,65 @@
             "secondaries": [
               {
                 "secondary": "Heat Vulnerability",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Rain tanks", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Urban Heat Island Effect",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Effective Imperviousness",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Infiltration systems",  "Green roofs", "Ponds & Lakes","Rain tanks", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Total Imperviousness",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Infiltration systems",  "Green roofs", "Ponds & Lakes", "Rain tanks", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Current WSUD",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain tanks", "Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Floods",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Rain tanks", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Flood Risk",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               }
             ]
@@ -232,27 +388,47 @@
             "secondaries": [
               {
                 "secondary": "Visibility",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Visibility Distance ",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Infiltration systems", "Green roofs", "Ponds & Lakes", "Swales", "Wetlands"]
               },
               {
                 "secondary": "Green Cover",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Recreation",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Ponds & Lakes", "Wetlands" ]
               },
               {
                 "secondary": "Social Cohesion",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": ["Rain gardens", "Ponds & Lakes", "Wetlands"]
               }
             ]
@@ -262,18 +438,30 @@
             "secondaries": [
               {
                 "secondary": "Biodiversity",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Connectedness",
                 "otherName": "Connected impervious area",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               },
               {
                 "secondary": "Total Habitat",
-                "attributes": [ "a", "b", "c"],
+                                "attributes": [
+                  {"attribute": "a"},
+                  {"attribute": "b"},
+                  {"attribute": "c"}
+                  ],
                 "nbs": []
               }
             ]

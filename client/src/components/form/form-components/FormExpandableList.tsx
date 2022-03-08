@@ -87,10 +87,14 @@ class FormExpandableList extends FormComponent {
   state: { controls: PropsModel[] } = {
     controls: [],
   };
+  onAddControl: Function;
+  onRemoveControl: Function;
 
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/expandable-list-'), key);
     this.factory = this.props.factory;
+    this.onAddControl = this.props.onAddControl;
+    this.onRemoveControl = this.props.onRemoveControl;
     this.template = this.props.template;
     this.state.controls =
       this.props.controls?.map((control: PropsModel) => ({
@@ -149,17 +153,23 @@ class FormExpandableList extends FormComponent {
   };
 
   private addControl = () => {
+    /*
     const controls = this.state.controls.concat({
       ...this.template,
       id: uniqueId(),
     });
+    */
+    this.onAddControl();
+    /*
     this.updateControls(controls);
+    */
   };
 
   private removeControlAt = (index: number) => {
-    const controls = [...this.state.controls];
-    controls.splice(index, 1);
-    this.updateControls(controls);
+    //const controls = [...this.state.controls];
+    //controls.splice(index, 1);
+    //this.updateControls(controls);
+    this.onRemoveControl(index);
   };
 
   private updateControls = (controls: PropsModel[]) => {

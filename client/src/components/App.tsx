@@ -14,7 +14,7 @@ import {
 import { Store } from 'redux';
 //import { updateStudyArea } from '../store/reducers/analysis';
 import { GeoJSON } from 'geojson';
-import ObjectiveHierarchy2 from './analysis/ObjectiveHierarchy2';
+import ObjectiveHierarchy2 from './analysis/ObjectiveHierarchy';
 import DataImportation from './analysis/DataImportation';
 import { useEffectOnce } from 'hooks';
 import SocketMenu from 'components/analysis/SocketMenu';
@@ -52,11 +52,11 @@ function App() {
             <Collapsible title={'NBS system type'} collapsed>
               <NbsSystem />
             </Collapsible>
-            <Collapsible title={'data importation'}>
+            <Collapsible title={'data importation'} collapsed>
               <DataImportation />
             </Collapsible>
-            <Collapsible title={'objective hierarchy'} collapsed>
-              <ObjectiveHierarchy2 />
+            <Collapsible title={'objective hierarchy'}>
+              <ObjectiveHierarchy />
             </Collapsible>
           </FormsBar>
         </aside>

@@ -92,10 +92,22 @@ export const analysisSlice = createSlice({
       options: ['needs', 'oportunities'],
       primaries: [
         {
-          primary: ['Biophysical', 'Socio-Economic'],
+          primary: ['Provisioning', 'Socio-Economic'],
+          options: [
+            'Provisioning',
+            'Socio-Economic',
+            'Urban Form',
+            'Biophysical',
+          ],
           secondaries: [
             {
               secondary: ['Soil Type', 'Slope'],
+              options: [
+                'Soil Type',
+                'Slope',
+                'Irrigation Demand Distance',
+                'test',
+              ],
               attributes: [
                 {
                   attribute: ['a', 'b'],
@@ -112,8 +124,20 @@ export const analysisSlice = createSlice({
               ],
             },
             {
-              secondary: ['Education Level'],
+              secondary: ['Education Level', 'Test'],
+              options: ['Test', 'Education Level', 'a', 'b', 'c', 'd'],
               attributes: [
+                {
+                  attribute: ['a', 'b'],
+                  attributeOptions: [
+                    'average house price',
+                    'house price index',
+                    'capital value',
+                    'rental value',
+                  ],
+                  //dataset: ['file1', 'file2'],
+                  //column: ['c1', 'c2'],
+                },
                 {
                   attribute: ['a', 'b'],
                   attributeOptions: [
