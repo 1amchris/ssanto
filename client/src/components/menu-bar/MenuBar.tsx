@@ -1,25 +1,19 @@
 import React from 'react';
-import Menu from './menu/Menu';
 import { Action, Divider, Export, Import, Link } from './menu-components';
+import Menu from './menu/Menu';
 
-const menus = [
-  {
-    label: 'file',
-    disabled: false,
-    controls: [
+function MenuBar() {
+  const getMenus = () => [
+    <Menu label="project">
       <Action
-        label="new file"
-        onClick={(event: any) => console.log('/file/new file', event)}
-      />,
-      <Action
-        label="new window"
-        onClick={(event: any) => console.log('/file/new window', event)}
-      />,
-      <Divider />,
+        label="new project"
+        onClick={(event: any) => console.log('/file/new project', event)}
+      />
       <Import
         label="open project"
         onFileImported={(file: File) => console.log('/file/open project', file)}
-      />,
+      />
+      <Divider />
       <Export
         label="save project"
         getExportedFile={() =>
@@ -27,38 +21,30 @@ const menus = [
             type: 'text/plain;charset=utf-8',
           })
         }
-      />,
-    ],
-  },
-  {
-    label: 'edit',
-    disabled: true,
-    controls: [
+      />
+    </Menu>,
+    <Menu label="edit">
       <Action
         label="action"
         onClick={(event: any) => console.log('/edit/action', event)}
-      />,
+      />
       <Action
         label="another action"
         onClick={(event: any) => console.log('/edit/another action', event)}
-      />,
-      <Divider />,
+      />
+      <Divider />
       <Action
         label="something else here"
         onClick={(event: any) =>
           console.log('/edit/something else here', event)
         }
-      />,
-    ],
-  },
-  {
-    label: 'help',
-    disabled: false,
-    controls: [<Link label="show guide" targetUrl="/guide" />],
-  },
-];
+      />
+    </Menu>,
+    <Menu label="help">
+      <Link label="show guide" targetUrl="/guide" />
+    </Menu>,
+  ];
 
-function MenuBar() {
   return (
     <nav
       className="navbar navbar-expand navbar-light border-bottom py-0 small"
@@ -73,9 +59,9 @@ function MenuBar() {
           className="d-inline-block align-text-top me-2"
         />
         <ul className="navbar-nav me-auto">
-          {menus.map((menu: any, index: number) => (
-            <li className="nav-item dropdown" key={`menu/li-${index}`}>
-              <Menu {...menu} />
+          {getMenus()?.map((menu, index: number) => (
+            <li className="nav-item dropdown" key={`menubar/menu-${index}`}>
+              {menu}
             </li>
           ))}
         </ul>
