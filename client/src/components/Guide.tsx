@@ -8,13 +8,11 @@ import ReactMarkdown from 'react-markdown';
 import Collapsible from './collapsible/Collapsible';
 import categories, { CategoryModel, TopicModel } from 'data/categories';
 
-function Code({ children }: any) {
-  return (
-    <code className="bg-light px-1 rounded border d-inline-block">
-      {children}
-    </code>
-  );
-}
+const Code = ({ children }: any) => (
+  <code className="bg-light px-1 rounded border d-inline-block">
+    {children}
+  </code>
+);
 
 const markdownOptions = {
   components: {
@@ -23,67 +21,57 @@ const markdownOptions = {
 };
 
 const TopicLink = withTranslation()(
-  ({ t, categoryName, children: topic }: any) => {
-    return (
-      <a
-        href={`#${categoryName}/${topic.name}`}
-        className="text-reset text-decoration-none"
-      >
-        {capitalize(t(topic.label))}
-      </a>
-    );
-  }
+  ({ t, categoryName, children: topic }: any) => (
+    <a
+      href={`#${categoryName}/${topic.name}`}
+      className="text-reset text-decoration-none"
+    >
+      {capitalize(t(topic.label))}
+    </a>
+  )
 );
 
-function TopicLinks({ categoryName, children: topics }: any) {
-  return (
-    <ul className="list-unstyled ps-2">
-      {concat([], topics).map((topic: TopicModel) => (
-        <li key={`guide/links/categories/${categoryName}/${topic.name}`}>
-          <TopicLink categoryName={categoryName}>{topic}</TopicLink>
-        </li>
-      ))}
-    </ul>
-  );
-}
+const TopicLinks = ({ categoryName, children: topics }: any) => (
+  <ul className="list-unstyled ps-2">
+    {concat([], topics).map((topic: TopicModel) => (
+      <li key={`guide/links/categories/${categoryName}/${topic.name}`}>
+        <TopicLink categoryName={categoryName}>{topic}</TopicLink>
+      </li>
+    ))}
+  </ul>
+);
 
-function CategoryLink({ children: category }: any) {
-  return (
-    <Collapsible collapsed title={category.label}>
-      <TopicLinks categoryName={category.name}>{category.topics}</TopicLinks>
-    </Collapsible>
-  );
-}
+const CategoryLink = ({ children: category }: any) => (
+  <Collapsible collapsed title={category.label}>
+    <TopicLinks categoryName={category.name}>{category.topics}</TopicLinks>
+  </Collapsible>
+);
 
-function CategoryLinks({ children: categories }: any) {
-  return (
-    <ul className="list-unstyled px-3 pt-2 overflow-scroll bottom-0">
-      {categories.map((category: CategoryModel) => (
-        <li key={`guide/links/categories/${category.name}`} className="pb-2">
-          <CategoryLink>{category}</CategoryLink>
-        </li>
-      ))}
-    </ul>
-  );
-}
+const CategoryLinks = ({ children: categories }: any) => (
+  <ul className="list-unstyled px-3 pt-2 overflow-scroll bottom-0">
+    {categories.map((category: CategoryModel) => (
+      <li key={`guide/links/categories/${category.name}`} className="pb-2">
+        <CategoryLink>{category}</CategoryLink>
+      </li>
+    ))}
+  </ul>
+);
 
-const Topic = withTranslation()(({ t, id, children: topic }: any) => {
-  return (
-    <section id={id}>
-      <h2>{capitalize(t(topic.label))}</h2>
-      <ReactMarkdown {...markdownOptions}>{topic.content}</ReactMarkdown>
-    </section>
-  );
-});
+const Topic = withTranslation()(({ t, id, children: topic }: any) => (
+  <section id={id}>
+    <h2>{capitalize(t(topic.label))}</h2>
+    <ReactMarkdown {...markdownOptions}>{topic.content}</ReactMarkdown>
+  </section>
+));
 
 const Categories = withTranslation()(({ t, children: categories }: any) => {
   return (
     <React.Fragment>
       {concat([], categories)
         .filter(category => category)
-        .map((category: CategoryModel, index: number) => (
+        .map((category: CategoryModel) => (
           <article id={category.name} key={`categories/${category.name}`}>
-            <h1>{capitalize(t(category.label || `category ${index}`))}</h1>
+            <h1>{capitalize(t(category.label))}</h1>
             {concat([], category.topics).map((topic: TopicModel) => (
               <Topic
                 id={`${category.name}/${topic.name}`}
