@@ -84,15 +84,10 @@ function App() {
               <InformationCard key={`data-${index}`}>
                 <Collapsible title={title}>
                   <p style={{ textAlign: 'justify', textIndent: '2rem' }}>
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life
-                    accusamus terry richardson ad squid. 3 wolf moon officia
-                    aute, non cupidatat skateboard dolor brunch. Food truck
-                    quinoa nesciunt laborum eiusmod.
+                    **Chart**
                   </p>
                   <p style={{ textAlign: 'justify', textIndent: '2rem' }}>
-                    Brunch 3 wolf moon tempor, sunt aliqua put a bird on it
-                    probably haven't heard of them accusamus labore sustainable
-                    VHS.
+                    **Export button**
                   </p>
                 </Collapsible>
               </InformationCard>
