@@ -42,13 +42,16 @@ const TopicLinks = ({ categoryName, children: topics }: any) => (
 );
 
 const CategoryLink = ({ children: category }: any) => (
-  <Collapsible collapsed title={category.label}>
+  <Collapsible title={category.label}>
     <TopicLinks categoryName={category.name}>{category.topics}</TopicLinks>
   </Collapsible>
 );
 
-const CategoryLinks = ({ children: categories }: any) => (
-  <ul className="list-unstyled px-3 pt-2 overflow-scroll bottom-0">
+const CategoryLinks = ({ children: categories, style }: any) => (
+  <ul
+    className="list-unstyled px-3 pt-2 overflow-scroll bottom-0"
+    style={style}
+  >
     {categories.map((category: CategoryModel) => (
       <li key={`guide/links/categories/${category.name}`} className="pb-2">
         <CategoryLink>{category}</CategoryLink>
@@ -115,7 +118,14 @@ function Guide({ t }: any) {
                   <span>{capitalize(t('return'))}</span>
                 </Link>,
                 categories.length > 0 && (
-                  <CategoryLinks>{categories}</CategoryLinks>
+                  <CategoryLinks
+                    style={{
+                      overflow: 'auto',
+                      height: 'calc(100vh - 24px - 40px - 33px)',
+                    }}
+                  >
+                    {categories}
+                  </CategoryLinks>
                 ),
               ]
                 .filter(children => children)
