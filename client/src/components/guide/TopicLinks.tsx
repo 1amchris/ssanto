@@ -1,7 +1,7 @@
 import React from 'react';
 import { concat } from 'lodash';
 import TopicModel from 'models/guide/TopicModel';
-import TopicLink from './TopicLink';
+import TopicLink from 'components/guide/TopicLink';
 
 function TopicLinks({ categoryName, children: topics }: any) {
   return (

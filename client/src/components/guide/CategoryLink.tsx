@@ -1,6 +1,6 @@
 import React from 'react';
-import Collapsible from './collapsible/Collapsible';
-import TopicLinks from './TopicLinks';
+import Collapsible from 'components/collapsible/Collapsible';
+import TopicLinks from 'components/guide/TopicLinks';
 
 function CategoryLink({ children: category, collapsed = true }: any) {
   return (

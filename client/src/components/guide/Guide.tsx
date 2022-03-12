@@ -4,8 +4,8 @@ import { FcPrevious } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { capitalize } from 'lodash';
 import MenuBar from 'components/menu-bar/MenuBar';
-import Categories from './Categories';
-import CategoryLinks from './CategoryLinks';
+import Categories from 'components/guide/Categories';
+import CategoryLinks from 'components/guide/CategoryLinks';
 
 // replace by call to API (updated from store)
 import categories from 'data/categories';

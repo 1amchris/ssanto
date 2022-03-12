@@ -1,7 +1,7 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize } from 'lodash';
-import Topics from './Topics';
+import Topics from 'components/guide/Topics';
 
 function Category({ t, children: category }: any) {
   return (
