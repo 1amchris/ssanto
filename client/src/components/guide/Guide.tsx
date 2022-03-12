@@ -3,14 +3,15 @@ import { withTranslation } from 'react-i18next';
 import { FcPrevious } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { capitalize } from 'lodash';
+import { useAppSelector } from 'store/hooks';
+import { selectGuide } from 'store/reducers/guide';
 import MenuBar from 'components/menu-bar/MenuBar';
 import Categories from 'components/guide/Categories';
 import CategoryLinks from 'components/guide/CategoryLinks';
 
-// replace by call to API (updated from store)
-import categories from 'data/categories';
-
 function Guide({ t }: any) {
+  const categories = useAppSelector(selectGuide).categories;
+
   return (
     <div className="Guide">
       <header className="Guide-header">

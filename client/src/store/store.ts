@@ -1,5 +1,6 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import mapReducer from 'store/reducers/map';
+import guideReducer from 'store/reducers/guide';
 import analysisReducer, { sendProperties } from 'store/reducers/analysis';
 import ServerMiddleware, {
   call,
@@ -12,6 +13,7 @@ export const store = configureStore({
   reducer: {
     analysis: analysisReducer,
     map: mapReducer,
+    guide: guideReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
