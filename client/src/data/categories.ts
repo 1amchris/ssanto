@@ -1,14 +1,4 @@
-export interface TopicModel {
-  name: string;
-  label: string;
-  content: string;
-}
-
-export interface CategoryModel {
-  name: string;
-  label: string;
-  topics: TopicModel | TopicModel[];
-}
+import CategoryModel from '../models/guide/CategoryModel';
 
 const categories: CategoryModel[] = [
   {
