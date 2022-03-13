@@ -14,7 +14,7 @@ class FileParser:
         if ext == '.shp':
             shp = files_manager.get_file(name+'.shp')
             shx = files_manager.get_file(name+'.shx')
-            return FileParser.load_shp(shp, shx)
+            return FileParser.__load_shp(shp, shx)
         # elif ext == '.'
 
         return None

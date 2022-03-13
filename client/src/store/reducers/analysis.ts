@@ -1,29 +1,29 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
-import { UpdatePropertiesModel } from 'store/middlewares/AnalysisMiddleware';
-import { Value } from 'store/models/Value';
-import { Properties } from 'store/models/Properties';
 import { AnalysisObjectives } from '../models/AnalysisObjectives';
 
-export interface AnalysisState {
-  properties: {
-    [key: string]: Properties;
-  };
-  objectives: AnalysisObjectives;
-}
 
 const v = (value: any) => ({ value, isLoading: false });
 export const analysisSlice = createSlice({
   name: 'analysis',
   initialState: {
     properties: {
+      // Subjects
       parameters: {
-        modelerName: v(''),
-        analysisName: v(''),
-        cellSize: v(20),
-      } as Properties,
-      nbsSystem: { systemType: v('2') } as Properties,
-      studyArea: { fileName: v(''), area: v(undefined) } as Properties,
+        modeler_name: '',
+        analysis_name: '',
+        cell_size: 20,
+      },
+      nbs_system: { system_type: '2' },
+      // Returned value
+      studyArea: { fileName: '', area: undefined },
+      // Js variables
+      parametersLoading: false,
+      parametersError: '',
+      nbsSystemLoading: false,
+      nbsSystemError: '',
+      studyAreaLoading: false,
+      studyAreaError: '',
     },
     objectives: {
       main: '0',
@@ -40,115 +40,75 @@ export const analysisSlice = createSlice({
           ],
         },
       ],
-    } as AnalysisObjectives,
-  } as AnalysisState,
+    },
+  },
   reducers: {
-    /**
-     * receiveProperties
-     *  Updates generated fields of a property in state.properties
-     * Example:
-     *  Before method execution
-     *    state: {
-     *      properties: {
-     *        foo: {
-     *          a: { isLoading: false, value: 1 },
-     *          b: { isLoading: true,  value: '2' }
-     *        },
-     *        bar: {
-     *          c: { isLoading: true, value: '3' }
-     *        }
-     *      }
-     *    }
-     *    payload: {
-     *      property: 'foo',
-     *      properties: {
-     *        a: { error: "couldn't update" },
-     *        c: { value: '10' }
-     *      }
-     *    }
-     *
-     *  After method execution:
-     *    state: {
-     *      properties: {
-     *        foo: {
-     *          a: { isLoading: false, error: "couldn't update" },
-     *          b: { isLoading: false, value: '2' },
-     *          c: { isLoading: false, value: '10' }
-     *        },
-     *        bar: {
-     *          c: { isLoading: false, value: '3' }
-     *        }
-     *      }
-     */
     receiveProperties: (
       state,
       {
-        payload: { property, properties },
-      }: PayloadAction<{ property: string; properties: UpdatePropertiesModel }>
+        payload: { property, data },
+      }: PayloadAction<{ property: string; data: any; }>
     ) => {
-      Object.entries(properties)
-        .filter(([key, res]) => key && res)
-        .forEach(([key, res]: [string, Value<any>]) => {
-          state.properties[property][key] = res.error
-            ? { error: res.error, isLoading: false }
-            : {
-                value: res.value,
-                isLoading: false,
-              };
-        });
+        if (state.properties.hasOwnProperty(property)) {
+            let d: any = state.properties // kinda hacky :/
+            d[property] = data
+        }
     },
 
-    /**
-     * sendProperties
-     *  Sends modified fields to the server through a
-     *  middleware call and updates isLoading property
-     * Example:
-     *  Before method execution
-     *    state: {
-     *      properties: {
-     *        foo: {
-     *          a: { isLoading: false, value: 1 },
-     *          b: { isLoading: true,  value: '2' }
-     *        },
-     *        bar: {
-     *          c: { isLoading: true, value: '3' }
-     *        }
-     *      }
-     *    }
-     *    payload: {
-     *      property: 'foo',
-     *      properties: {
-     *        a: { value: 1 },
-     *        c: { value: '10' }
-     *      }
-     *    }
-     *
-     *  After method execution:
-     *    state: {
-     *      properties: {
-     *        foo: {
-     *          a: { isLoading: true, value: 1 },
-     *          b: { isLoading: false, value: '2' },
-     *          c: { isLoading: true }
-     *        },
-     *        bar: {
-     *          c: { isLoading: false, value: '3' }
-     *        }
-     *      }
-     */
-    sendProperties: (
-      state,
-      {
-        payload: { property, properties },
-      }: PayloadAction<{ property: string; properties: Properties }>
-    ) => {
-      Object.keys(properties).forEach((key: string) => {
-        state.properties[property][key] = {
-          ...state.properties[property][key],
-          isLoading: true,
-        };
-      });
-    },
+    defaultCallSuccess: (
+        state,
+        {
+          payload: { params, data },
+        }: PayloadAction<{ params: any, data: any }>
+      ) => {
+          //console.log("defaultCallSuccess called with data:", data)
+          
+      },
+    defaultCallError: (
+        state,
+        {
+          payload: { params, data },
+        }: PayloadAction<{ params: any, data: any }>
+      ) => {
+          //console.log("defaultCallError called with data:", data)
+      },
+
+    setError: (
+        state,
+        {
+            payload: { params, data },
+          }: PayloadAction<{ params: any, data: any }>
+      ) => {
+          //console.log("SetError")
+          let temp: any = state.properties;
+          temp[params+'Error'] = data;    
+          temp[params+'Loading'] = false;          
+      },
+
+    setLoading: (
+        state,
+        {
+            payload: { params, data },
+          }: PayloadAction<{ params: any, data: any }>
+      ) => {
+          //console.log("SetLoading")
+          if (data == null)
+            data = false;
+
+          let temp: any = state.properties;
+          temp[params+'Loading'] = data;          
+      },
+
+    studyAreaReceived: (
+        state,
+        {
+            payload: { params, data },
+          }: PayloadAction<{ params: any, data: any }>
+      ) => {
+          state.properties['studyAreaLoading'] = false;
+          state.properties.studyArea.fileName = data.file_name;
+          state.properties.studyArea.area = data.area;
+      },
 
     updateObjectives: (
       state,
@@ -161,7 +121,10 @@ export const analysisSlice = createSlice({
   },
 });
 
-export const { receiveProperties, sendProperties, updateObjectives } =
+export const { receiveProperties, updateObjectives,
+    defaultCallSuccess, defaultCallError,
+    setError, setLoading,
+    studyAreaReceived } =
   analysisSlice.actions;
 export const selectAnalysis = (state: RootState) => state.analysis;
 

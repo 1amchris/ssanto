@@ -33,4 +33,4 @@ class Logger:
 
 
 # Create the logger at global scope
-Logger(True, 80)
+Logger(True, -1)

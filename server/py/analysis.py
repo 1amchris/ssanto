@@ -1,5 +1,5 @@
 
-from server.py.file_manager import FileParser
+from .file_manager import FileParser
 from .server_socket import CallException
 
 from os.path import splitext
@@ -10,7 +10,7 @@ class Analysis:
         self.files_manager = files_manager
 
         self.parameters = subjects_manager.create('parameters', {
-            'analysis_name': '',
+            'analysis_name': 'allo',
             'modeler_name': '',
             'cell_size': 20,
         })
@@ -18,11 +18,6 @@ class Analysis:
         self.nbs = subjects_manager.create('nbs_system', {
             'system_type': '2', 
             # ...
-        })
-
-        self.study_area = subjects_manager.create('study_area', {
-            'file_name': '',
-            'area': {},
         })
 
     def perform_analysis(self):
@@ -48,5 +43,5 @@ class Analysis:
 
         # We only read the first one
         shapefile = shapefiles[0]
-        geojson = FileParser.load(shapefile)
+        geojson = FileParser.load(self.files_manager, shapefile)
         return {"file_name": shapefile, "area": geojson}
