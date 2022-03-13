@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import * as serviceWorker from 'serviceWorker';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from 'components/App';
-import Guide from 'components/Guide';
+import Guide from 'components/guide/Guide';
 import { store } from 'store/store';
 
 // Internationalization

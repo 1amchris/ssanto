@@ -1,6 +1,7 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import mapReducer from 'store/reducers/map';
 import analysisReducer from 'store/reducers/analysis';
+import guideReducer from 'store/reducers/guide';
 import ServerMiddleware, {
   call,
   sendFiles as serverSendFilesAction,
@@ -12,6 +13,7 @@ export const store = configureStore({
   reducer: {
     analysis: analysisReducer,
     map: mapReducer,
+    guide: guideReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

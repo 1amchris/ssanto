@@ -1,4 +1,3 @@
-import * as Utils from 'utils';
 
 enum SendType {
   SUBJECT = 0,

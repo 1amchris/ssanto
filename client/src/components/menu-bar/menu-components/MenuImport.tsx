@@ -2,6 +2,7 @@ import React, { createRef, RefObject } from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize, first, uniqueId } from 'lodash';
 import MenuComponent from './MenuComponent';
+import { Dropdown } from 'react-bootstrap';
 
 class MenuImport extends MenuComponent {
   constructor(props: any, key?: string) {
@@ -28,15 +29,18 @@ class MenuImport extends MenuComponent {
           type="file"
           className="visually-hidden"
           accept={accept}
+          key={this.key ? this.key + '/input' : undefined}
           onChange={this.handleFileChanged(onFileImported)}
         />
-        <button
+        <Dropdown.Item
+          as="button"
           className={`small dropdown-item ${className}`}
           onClick={() => inputRef.current?.click()}
+          key={this.key}
           {...rest}
         >
           {capitalize(t(label || 'import item'))}
-        </button>
+        </Dropdown.Item>
       </React.Fragment>
     );
   };

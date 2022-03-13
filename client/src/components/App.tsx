@@ -12,8 +12,6 @@ import {
 } from 'components/analysis';
 
 import { useEffectOnce } from 'hooks';
-import SocketMenu from 'components/analysis/SocketMenu';
-import InteractiveMapDemo from 'components/analysis/InteractiveMapDemo';
 import { useAppDispatch } from 'store/hooks';
 import * as server from 'store/middlewares/ServerMiddleware';
 
@@ -31,12 +29,6 @@ function App() {
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
           <FormsBar>
-            <Collapsible title={'socket menu'} collapsed>
-              <SocketMenu />
-            </Collapsible>
-            <Collapsible title={'interactive map'} collapsed>
-              <InteractiveMapDemo />
-            </Collapsible>
             <Collapsible title={'analysis parameters'} collapsed>
               <Parameters />
             </Collapsible>

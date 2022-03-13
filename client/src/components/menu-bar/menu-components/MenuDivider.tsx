@@ -1,4 +1,5 @@
 import { uniqueId } from 'lodash';
+import { Dropdown } from 'react-bootstrap';
 import MenuComponent from './MenuComponent';
 
 class MenuDivider extends MenuComponent {
@@ -7,13 +8,13 @@ class MenuDivider extends MenuComponent {
   }
 
   render = () => {
-    const { t, i18n, tReady, className, ...rest } = this.props;
+    const { className, ...rest } = this.props;
 
     return (
-      <hr
-        {...rest}
+      <Dropdown.Divider
+        className={`small ${className ? className : ''}`}
         key={this.key}
-        className={`dropdown-divider small ${className}`}
+        {...rest}
       />
     );
   };
