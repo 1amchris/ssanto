@@ -7,7 +7,8 @@
     "start": "concurrently \"cross-env BROWSER=none npm --prefix ./client/ run start\" \"wait-on http://localhost:3000 && electron . --no-sandbox\"",
     "start-web": "cross-env BROWSER=none npm --prefix ./client/ run start",
     "start-electron": "electron . --no-sandbox",
-    "postinstall": "npm --prefix ./client/ install"
+    "postinstall": "npm --prefix ./client/ install",
+    "prepare": "husky install"
   },
   "author": "",
   "license": "AGPL",
@@ -17,5 +18,23 @@
     "cross-env": "^7.0.3",
     "electron": "^16.0.7",
     "wait-on": "^6.0.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
+    "eslint": "^8.10.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-react": "^7.29.2",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.4",
+    "prettier": "2.5.1"
+  },
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write",
+    "*.js": "eslint --cache --fix"
   }
 }
