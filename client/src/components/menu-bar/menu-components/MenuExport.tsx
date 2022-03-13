@@ -3,12 +3,8 @@ import { withTranslation } from 'react-i18next';
 import { capitalize, uniqueId } from 'lodash';
 import { saveAs } from 'file-saver';
 import MenuComponent from './MenuComponent';
-<<<<<<< HEAD
 //import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 //import ReactPDF from '@react-pdf/renderer';
-=======
-import { Dropdown } from 'react-bootstrap';
->>>>>>> dev
 
 class MenuExport extends MenuComponent {
   constructor(props: any, key?: string) {
