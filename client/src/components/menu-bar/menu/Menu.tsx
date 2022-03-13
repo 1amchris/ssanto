@@ -1,25 +1,19 @@
 import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import MenuComponent from 'components/menu-bar/menu-components/MenuComponent';
+import { DropdownButton } from 'react-bootstrap';
 
-function Menu({ t, label, disabled, controls }: any) {
+function Menu({ t, label, disabled, children }: any) {
   return (
-    <React.Fragment>
-      <button
-        className="btn btn-sm py-0"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-        disabled={disabled}
-      >
-        {capitalize(t(label || 'menu'))}
-      </button>
-      <ul className="dropdown-menu small" aria-labelledby="menuDropdown">
-        {controls?.map((child: MenuComponent, item: number) => (
-          <li key={`${label}-${item}`}>{child}</li>
-        ))}
-      </ul>
-    </React.Fragment>
+    <DropdownButton
+      variant="none"
+      size="sm"
+      className="small py-0"
+      disabled={disabled}
+      title={capitalize(t(label || 'menu'))}
+    >
+      {children}
+    </DropdownButton>
   );
 }
 

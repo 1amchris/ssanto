@@ -3,8 +3,12 @@ import { withTranslation } from 'react-i18next';
 import { capitalize, uniqueId } from 'lodash';
 import { saveAs } from 'file-saver';
 import MenuComponent from './MenuComponent';
+<<<<<<< HEAD
 //import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 //import ReactPDF from '@react-pdf/renderer';
+=======
+import { Dropdown } from 'react-bootstrap';
+>>>>>>> dev
 
 class MenuExport extends MenuComponent {
   constructor(props: any, key?: string) {
@@ -16,16 +20,18 @@ class MenuExport extends MenuComponent {
       this.props;
 
     return (
-      <button
-        className={`small dropdown-item ${className}`}
+      <Dropdown.Item
+        as="button"
+        className={`small dropdown-item ${className ? className : ''}`}
         onClick={() => {
           const file: File = getExportedFile();
           saveAs(file, file.name);
         }}
+        key={this.key}
         {...rest}
       >
         {capitalize(t(label || 'export item'))}
-      </button>
+      </Dropdown.Item>
     );
   };
 }

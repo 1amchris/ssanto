@@ -2,6 +2,7 @@ import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize, uniqueId } from 'lodash';
 import MenuComponent from './MenuComponent';
+import { Dropdown } from 'react-bootstrap';
 
 class MenuAction extends MenuComponent {
   constructor(props: any, key?: string) {
@@ -12,13 +13,14 @@ class MenuAction extends MenuComponent {
     const { t, i18n, tReady, className, label, ...rest } = this.props;
 
     return (
-      <button
-        className={`small dropdown-item ${className}`}
+      <Dropdown.Item
+        as="button"
+        className={`small dropdown-item ${className ? className : ''}`}
         key={this.key}
         {...rest}
       >
         {capitalize(t(label || 'action item'))}
-      </button>
+      </Dropdown.Item>
     );
   };
 }
