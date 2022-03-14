@@ -2,18 +2,12 @@ import { capitalize } from 'lodash';
 import React, { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  selectAnalysis,
-} from '../../store/reducers/analysis';
+import { selectAnalysis } from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import { Control, Button, Spacer, List } from '../form/form-components';
-import * as Utils from 'utils';
 import { useEffectOnce } from 'hooks';
 import { FactoryProps } from 'components/form/form-components/FormExpandableList';
 import { Badge } from 'react-bootstrap';
-import { Properties } from 'store/models/Properties';
-import { subscribe } from 'store/middlewares/ServerMiddleware';
-import { Store } from '@reduxjs/toolkit';
 
 const importedFilesFactory = ({
   file,
@@ -47,12 +41,12 @@ function DataImportation({ t }: any) {
   } = useAppSelector(selectAnalysis);
 
   const property = 'newGeoFile';
-  const properties = '';//useAppSelector(selectAnalysis).properties[property];
+  const properties = ''; //useAppSelector(selectAnalysis).properties[property];
 
   const dispatch = useAppDispatch();
 
-  const getErrors = '';//() => Utils.getErrors(Object.values(properties));
-  const isLoading = false;//() => Utils.isLoading(Object.values(properties));
+  const getErrors = ''; //() => Utils.getErrors(Object.values(properties));
+  const isLoading = false; //() => Utils.isLoading(Object.values(properties));
 
   useEffectOnce(() => {
     /*Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
@@ -66,7 +60,7 @@ function DataImportation({ t }: any) {
     );*/
   });
 
-  const onDeleteControl = (index: string) => {};//dispatch(deleteFile({ index }));
+  const onDeleteControl = (index: string) => {}; //dispatch(deleteFile({ index }));
 
   const controls = [
     <Control
@@ -76,12 +70,13 @@ function DataImportation({ t }: any) {
       accept=".shp, .shx"
       multiple
       required
-      tooltip={t('the selected files will ...')}
+      tooltip={capitalize(
+        t('the selected files will be uploaded to the server for further use.')
+      )}
     />,
-
     <Spacer />,
     <Button variant="outline-primary" type="submit" loading={isLoading}>
-      {capitalize(t('Add'))}
+      {capitalize(t('add'))}
     </Button>,
     <Button variant="outline-danger" type="reset">
       {capitalize(t('reset'))}
@@ -106,8 +101,8 @@ function DataImportation({ t }: any) {
       disabled={isLoading}
       controls={controls}
       errors={getErrors}
-      onSubmit={(fields: any) =>
-        {}//dispatch(sendProperties({ property, properties: fields }))
+      onSubmit={
+        (fields: any) => {} //dispatch(sendProperties({ property, properties: fields }))
       }
     />
   );
