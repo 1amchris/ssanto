@@ -9,7 +9,8 @@ const AnalysisMiddleware = () => {
       switch (action.type) {          
 
         case studyAreaReceived.type:
-          const { data } = action.payload;          
+          const { data } = action.payload;
+          console.log(data)
             dispatch(
                 upsertLayer({
                 name: data.file_name,
@@ -17,6 +18,7 @@ const AnalysisMiddleware = () => {
                 } as Layer)
             );
           return next(action);
+          break;
 
         default:
           return next(action);

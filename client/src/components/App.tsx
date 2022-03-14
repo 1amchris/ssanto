@@ -2,6 +2,7 @@ import React from 'react';
 import MenuBar from 'components/menu-bar/MenuBar';
 import FormsBar from 'components/forms-bar/FormsBar';
 import Collapsible from 'components/collapsible/Collapsible';
+import DataImportation from './analysis/DataImportation';
 import InteractiveMapContainer from 'components/map/InteractiveMapContainer';
 import InformationCard from 'components/information-card/InformationCard';
 import {
@@ -38,9 +39,13 @@ function App() {
             <Collapsible title={'NBS system type'} collapsed>
               <NbsSystem />
             </Collapsible>
+            <Collapsible title={'data importation'} collapsed>
+              <DataImportation />
+            </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>
               <ObjectiveHierarchy />
             </Collapsible>
+            
           </FormsBar>
         </aside>
         <main className="shadow w-100 position-relative" style={{ zIndex: 1 }}>

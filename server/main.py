@@ -10,7 +10,7 @@ from py.subjects_manager import SubjectsManager
 from py.analysis import Analysis
 
 
-### For test purposes
+# For test purposes
 
 
 class AClass:
@@ -45,6 +45,16 @@ async def main():
 
     analysis = Analysis(subjects_manager, files_manager)
     server_socket.bind_command("study_area.files", analysis.receive_study_area)
+
+    '''
+    geodatabase_manager = GeoDatabaseManager(files.notify)
+
+    server_socket.bind_command(
+        "new_geo_file.files/files", geodatabase_manager.receive_files)
+
+    server_socket.bind_command(
+        "delete_file.index", geodatabase_manager.deleteFile)
+    '''
 
     # Main loop
     loop = asyncio.get_running_loop()

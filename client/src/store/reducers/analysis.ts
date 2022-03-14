@@ -25,22 +25,78 @@ export const analysisSlice = createSlice({
       studyAreaLoading: false,
       studyAreaError: '',
     },
-    objectives: {
-      main: '0',
-      primaries: [
-        {
-          primary: ['0', '1'],
-          secondaries: [
-            {
-              secondary: ['0', '1', '2'],
-            },
-            {
-              secondary: ['0', '1'],
-            },
-          ],
-        },
-      ],
+    geodatabase: {
+        files: [],
+        fileName: '',
     },
+    objectives: {
+        main: '0',
+        options: ['needs', 'oportunities'],
+        primaries: [
+          {
+            primary: ['Provisioning', 'Socio-Economic'],
+            options: [
+              'Provisioning',
+              'Socio-Economic',
+              'Urban Form',
+              'Biophysical',
+            ],
+            secondaries: [
+              {
+                secondary: ['Soil Type', 'Slope'],
+                options: [
+                  'Soil Type',
+                  'Slope',
+                  'Irrigation Demand Distance',
+                  'test',
+                ],
+                attributes: [
+                  {
+                    attribute: ['a', 'b'],
+                    attributeOptions: ['a', 'b', 'c', 'd'],
+                    //dataset: ['file1', 'file2'],
+                    //column: ['c1', 'c2'],
+                  },
+                  {
+                    attribute: ['a'],
+                    attributeOptions: ['a', 'b'],
+                    //dataset: ['file1'],
+                    //column: ['c1'],
+                  },
+                ],
+              },
+              {
+                secondary: ['Education Level', 'Test'],
+                options: ['Test', 'Education Level', 'a', 'b', 'c', 'd'],
+                attributes: [
+                  {
+                    attribute: ['a', 'b'],
+                    attributeOptions: [
+                      'average house price',
+                      'house price index',
+                      'capital value',
+                      'rental value',
+                    ],
+                    //dataset: ['file1', 'file2'],
+                    //column: ['c1', 'c2'],
+                  },
+                  {
+                    attribute: ['a', 'b'],
+                    attributeOptions: [
+                      'average house price',
+                      'house price index',
+                      'capital value',
+                      'rental value',
+                    ],
+                    //dataset: ['file1', 'file2'],
+                    //column: ['c1', 'c2'],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
   },
   reducers: {
     receiveProperties: (
@@ -116,7 +172,7 @@ export const analysisSlice = createSlice({
     ) => {
       console.warn('No validation was performed on the objectives hierarchy');
       /* TODO: add additional validation here */
-      state.objectives = payload;
+      //state.objectives = payload;
     },
   },
 });
