@@ -8,6 +8,7 @@ import ServerMiddleware, {
   subscribe as serverSubscribeAction,
 } from 'store/middlewares/ServerMiddleware';
 import AnalysisMiddleware from 'store/middlewares/AnalysisMiddleware';
+import ExportMiddleware from './middlewares/ExportMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -23,9 +24,10 @@ export const store = configureStore({
           serverSendFilesAction.type, // contains files
           sendProperties.type, // May contain uploaded files
           call.type, // May contain uploaded files
+
         ],
       },
-    }).concat([ServerMiddleware, AnalysisMiddleware]),
+    }).concat([ServerMiddleware, AnalysisMiddleware, ExportMiddleware]),
 });
 
 export type AppDispatch = typeof store.dispatch;
