@@ -8,6 +8,7 @@ from py.file_manager import FilesManager
 from py.subjects_manager import SubjectsManager
 
 from py.analysis import Analysis
+from py.guide_builder import GuideBuilder
 
 
 # For test purposes
@@ -49,6 +50,9 @@ async def main():
 
     analysis = Analysis(subjects_manager, files_manager)
     server_socket.bind_command("study_area.files", analysis.receive_study_area)
+
+    guide_builder = GuideBuilder()
+    server_socket.bind_command("get_guide", guide_builder.generate_guide_data)
 
     # Main loop
     loop = asyncio.get_running_loop()
