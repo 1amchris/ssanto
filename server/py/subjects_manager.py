@@ -1,4 +1,5 @@
 from .subject import Subject
+from .network_definitions import Field, SendType
 
 
 class SubjectsManager:
@@ -14,7 +15,9 @@ class SubjectsManager:
         raise NotImplementedError("Not implemented yet!")
 
     def send(self, s):
-        self.server_socket.send(s)
+        self.server_socket.send(
+            SendType.SUBJECT.value, {Field.SUBJECT_ID.value: s.subject_id, Field.DATA.value: s.value()}
+        )
 
     def subscribe(self, subject):
         # TODO: Handle sid unavailable
@@ -26,3 +29,6 @@ class SubjectsManager:
         # TODO: Handle sid unavailable
         subject = self.subjects[subject]
         subject.unwatch()
+
+    def update(self, subject, data):
+        self.subjects[subject].notify(data)

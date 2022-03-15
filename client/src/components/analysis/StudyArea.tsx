@@ -1,30 +1,34 @@
-import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectAnalysis, sendProperties } from 'store/reducers/analysis';
+import {
+  selectAnalysis,
+  setError,
+  setLoading,
+  studyAreaReceived,
+} from 'store/reducers/analysis';
 import Form from 'components/form/Form';
 import { Control, Button, Spacer } from 'components/form/form-components';
 import { useEffectOnce } from 'hooks';
 import * as Utils from 'utils';
+import { call } from 'store/middlewares/ServerMiddleware';
 
 function StudyArea({ t }: any) {
   const property = 'studyArea';
-  const properties = useAppSelector(selectAnalysis).properties[property];
+  const selector = useAppSelector(selectAnalysis);
+  const properties = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = () => Utils.getErrors(Object.values(properties));
-  const isLoading = () => Utils.isLoading(Object.values(properties));
+  const getErrors = selector.properties['studyAreaError'];
+  const isLoading = selector.properties['studyAreaLoading'];
 
-  useEffectOnce(() => {
-    Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
-  });
+  useEffectOnce(() => {});
 
   const controls = [
     <Control
-      visuallyHidden={!properties?.fileName?.value}
+      visuallyHidden={!properties?.fileName}
       label="selected file"
-      value={`${properties?.fileName?.value}.shp`}
+      value={`${properties?.fileName}`}
       disabled
     />,
     <Control
@@ -37,7 +41,7 @@ function StudyArea({ t }: any) {
       tooltip={t('the selected files will ...')}
     />,
     <Spacer />,
-    <Button variant="outline-primary" type="submit" loading={isLoading()}>
+    <Button variant="outline-primary" type="submit" loading={isLoading}>
       {capitalize(t('apply'))}
     </Button>,
     <Button variant="outline-danger" type="reset">
@@ -47,12 +51,28 @@ function StudyArea({ t }: any) {
 
   return (
     <Form
-      disabled={isLoading()}
+      disabled={isLoading}
       controls={controls}
-      errors={getErrors()}
-      onSubmit={(fields: any) =>
-        dispatch(sendProperties({ property, properties: fields }))
-      }
+      errors={getErrors}
+      onSubmit={(fields: any) => {
+        Utils.extractContentFromFiles(Array.from(fields.files)).then(files => {
+          dispatch(
+            call({
+              target: 'study_area.files',
+              args: [
+                ...files.map(file => ({
+                  name: file.name,
+                  content: file.base64content,
+                })),
+              ],
+              successAction: studyAreaReceived,
+              failureAction: setError,
+              failureData: property,
+            })
+          );
+        });
+        dispatch(setLoading({ params: property, data: true }));
+      }}
     />
   );
 }

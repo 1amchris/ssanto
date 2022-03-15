@@ -2,118 +2,117 @@ import { capitalize } from 'lodash';
 import React, { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  addGeoFile,
-  deleteFile,
-  GeoFile,
-  selectAnalysis,
-  sendProperties,
-  updateGeoDataBase,
-} from '../../store/reducers/analysis';
 import Form from '../form/Form';
 import { Control, Button, Spacer, List } from '../form/form-components';
-import * as Utils from 'utils';
-import { useEffectOnce } from 'hooks';
 import { FactoryProps } from 'components/form/form-components/FormExpandableList';
 import { Badge } from 'react-bootstrap';
-import { Properties } from 'store/models/Properties';
-import { subscribe } from 'store/middlewares/ServerMiddleware';
-import { Store } from '@reduxjs/toolkit';
+import { call, subscribe } from 'store/middlewares/ServerMiddleware';
+import * as Utils from 'utils';
+import { setLoading, setError, selectAnalysis } from 'store/reducers/analysis';
+import { useEffectOnce } from 'hooks';
+import FileMetadataModel from 'models/FileMetadataModel';
 
-const importedFilesFactory = ({
+const FileRowFactory = ({
   file,
   key,
-}: FactoryProps): ReactElement | ReactElement[] => [
-  <ul
-    className="list-group list-group-horizontal"
-    style={{ listStyleType: 'none' }}
+}: FactoryProps): ReactElement | ReactElement[] => (
+  <div
     key={key('file')}
+    className=" small position-absolute top-50 w-100"
+    style={{ transform: 'translateY(-50%)' }}
   >
-    <li
-      className="me-auto small"
-      style={{
-        width: '100px',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-      }}
-    >
-      {file.name}
-    </li>
-    <li>
-      <Badge className=" bg-primary rounded-pill">{file.extention}</Badge>
-    </li>
-  </ul>,
-];
+    <div className="position-relative d-flex justify-content-between">
+      <span className="d-block-inline text-truncate text-nowrap">
+        {file.name}
+      </span>
+      <span className="d-inline-block">
+        <Badge bg="primary" pill>
+          .{file.extension}
+        </Badge>
+      </span>
+    </div>
+  </div>
+);
 
 function DataImportation({ t }: any) {
-  const {
-    geodatabase: { files },
-  } = useAppSelector(selectAnalysis);
-
-  const property = 'newGeoFile';
-  const properties = useAppSelector(selectAnalysis).properties[property];
-
+  const property = 'files';
+  const selector = useAppSelector(selectAnalysis);
+  const files = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = () => Utils.getErrors(Object.values(properties));
-  const isLoading = () => Utils.isLoading(Object.values(properties));
+  const getErrors = selector.properties['filesError'];
+  const isLoading = selector.properties['filesLoading'];
 
   useEffectOnce(() => {
-    Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
-    dispatch(
-      subscribe({
-        subject: 'file_manager.files',
-        callback: (store: Store) => (data: any) => {
-          dispatch(updateGeoDataBase(data));
-        },
-      })
-    );
+    dispatch(subscribe({ subject: property }));
   });
-
-  const onDeleteControl = (index: string) => dispatch(deleteFile({ index }));
 
   const controls = [
     <Control
-      label="Geodatabase"
+      label="Select files"
       name="files"
       type="file"
-      accept=".shp, .shx"
       multiple
       required
-      tooltip={t('the selected files will ...')}
+      tooltip={capitalize(
+        t('the selected files will be uploaded to the server for further use.')
+      )}
     />,
-
-    <Spacer />,
-    <Button variant="outline-primary" type="submit" loading={isLoading()}>
-      {capitalize(t('Add'))}
+    <Button variant="outline-primary" type="submit">
+      {capitalize(t('add'))}
     </Button>,
-    <Button variant="outline-danger" type="reset">
-      {capitalize(t('reset'))}
-    </Button>,
-    <Spacer />,
-    <List
-      hideLabel
-      key={`geofiles`}
-      name={`geofiles`}
-      label={'geofile'}
-      onDeleteControl={onDeleteControl}
-      factory={importedFilesFactory}
-      controls={files?.map((file: GeoFile) => ({
-        file,
-        index: file.id,
-      }))}
-    />,
+    files?.length > 0 && <Spacer />,
+    files?.length > 0 && (
+      <List
+        key={'files'}
+        name={'files'}
+        label={'existing files'}
+        factory={FileRowFactory}
+        onDeleteControl={(index: number) =>
+          dispatch(
+            call({
+              target: 'file_manager.remove_file',
+              args: [(files[index] as FileMetadataModel).id],
+              successAction: setLoading,
+              successData: property,
+              failureAction: setError,
+              failureData: property,
+            })
+          )
+        }
+        controls={files?.map((file: any) => ({
+          file,
+          index: file.id,
+        }))}
+      />
+    ),
   ];
 
   return (
     <Form
-      disabled={isLoading()}
       controls={controls}
-      errors={getErrors()}
-      onSubmit={(fields: any) =>
-        dispatch(sendProperties({ property, properties: fields }))
-      }
+      errors={getErrors}
+      disabled={isLoading}
+      onSubmit={(fields: any) => {
+        Utils.extractContentFromFiles(Array.from(fields.files)).then(files =>
+          dispatch(
+            call({
+              target: 'file_manager.add_files',
+              args: [
+                ...files.map(file => ({
+                  name: file.name,
+                  content: file.base64content,
+                })),
+              ],
+              successAction: setLoading,
+              successData: property,
+              failureAction: setError,
+              failureData: property,
+            })
+          )
+        );
+        dispatch(setLoading({ params: property, data: true }));
+      }}
     />
   );
 }

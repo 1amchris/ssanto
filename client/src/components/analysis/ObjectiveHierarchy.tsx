@@ -22,6 +22,9 @@ import { stringify, StringifyOptions } from 'querystring';
 //TODO : update d'un objectif => clear des objectifs enfants et updates de leurs options
 
 function ObjectiveHierarchy({ t }: any) {
+  // TODO remove me to log stuff
+  console.log = () => {};
+
   const dispatch = useAppDispatch();
   const {
     objectives: {

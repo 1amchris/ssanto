@@ -1,4 +1,3 @@
-import L from 'leaflet';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
 import categories from 'data/categories';
@@ -27,7 +26,6 @@ export const guideSlice = createSlice({
 
 export const { exportPDF } = guideSlice.actions;
 export const { exportJPEG } = guideSlice.actions;
-
 
 export const selectGuide = (state: RootState) => state.guide;
 

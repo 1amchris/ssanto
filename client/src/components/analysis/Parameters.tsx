@@ -2,59 +2,60 @@ import { capitalize } from 'lodash';
 import React, { createRef, RefObject } from 'react';
 import { Control, Spacer, Button } from 'components/form/form-components';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectAnalysis, sendProperties } from 'store/reducers/analysis';
+import { selectAnalysis, setError, setLoading } from 'store/reducers/analysis';
 import { withTranslation } from 'react-i18next';
 import Form from 'components/form/Form';
 import { useEffectOnce } from 'hooks';
-import * as Utils from 'utils';
+import { call, subscribe } from 'store/middlewares/ServerMiddleware';
 
 function Parameters({ t }: any) {
   const property = 'parameters';
-  const properties = useAppSelector(selectAnalysis).properties[property];
+  const selector = useAppSelector(selectAnalysis);
+  const properties = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = () => Utils.getErrors(Object.values(properties));
-  const isLoading = () => Utils.isLoading(Object.values(properties));
+  const getErrors = selector.properties['parametersError'];
+  const isLoading = selector.properties['parametersLoading'];
 
   useEffectOnce(() => {
-    Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
+    dispatch(subscribe({ subject: property }));
   });
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
   const controls = [
     <Control
       label="analysis name"
-      name="analysisName"
-      defaultValue={properties.analysisName.value}
+      name="analysis_name"
+      defaultValue={properties.analysis_name}
       required
       tooltip={t('the analysis name will ...')}
     />,
     <Control
       label="name of the modeler"
-      name="modelerName"
-      defaultValue={properties.modelerName.value}
+      name="modeler_name"
+      defaultValue={properties.modeler_name}
       required
       tooltip={t("the modeler's name will ...")}
     />,
     <Control
       label="cell size"
-      name="cellSize"
+      name="cell_size"
       suffix={
         <React.Fragment>
           <small className="me-1">x</small>
-          <span ref={cellSizeRef}>{properties.cellSize.value}</span>m
+          <span ref={cellSizeRef}>{properties.cell_size}</span>m
         </React.Fragment>
       }
       onChange={({ target: { value } }: { target: HTMLInputElement }) => {
         if (cellSizeRef.current?.textContent)
           cellSizeRef.current.textContent = value;
       }}
-      defaultValue={properties.cellSize.value}
+      defaultValue={properties.cell_size}
       type="number"
       tooltip={t('the cell size is ...')}
     />,
     <Spacer />,
-    <Button variant="outline-primary" type="submit" loading={isLoading()}>
+    <Button variant="outline-primary" type="submit" loading={isLoading}>
       {capitalize(t('apply'))}
     </Button>,
     <Button variant="outline-danger" type="reset">
@@ -65,10 +66,20 @@ function Parameters({ t }: any) {
   return (
     <Form
       controls={controls}
-      disabled={isLoading()}
-      errors={getErrors()}
+      disabled={isLoading}
+      errors={getErrors}
       onSubmit={(fields: any) => {
-        dispatch(sendProperties({ property, properties: fields }));
+        dispatch(
+          call({
+            target: 'update',
+            args: [property, fields],
+            successAction: setLoading,
+            successData: property,
+            failureAction: setError,
+            failureData: property,
+          })
+        );
+        dispatch(setLoading({ params: property, data: true }));
       }}
     />
   );

@@ -1,31 +1,31 @@
-import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useEffectOnce } from 'hooks';
 import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectAnalysis, sendProperties } from 'store/reducers/analysis';
+import { selectAnalysis, setError, setLoading } from 'store/reducers/analysis';
 import Form from 'components/form/Form';
 import { Select, Button, Spacer } from 'components/form/form-components';
-import * as Utils from 'utils';
+import { call, subscribe } from 'store/middlewares/ServerMiddleware';
 
 function NbsSystem({ t }: any) {
-  const property = 'nbsSystem';
-  const properties = useAppSelector(selectAnalysis).properties[property];
+  const property = 'nbs_system';
+  const selector = useAppSelector(selectAnalysis);
+  const properties = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = () => Utils.getErrors(Object.values(properties));
-  const isLoading = () => Utils.isLoading(Object.values(properties));
+  const getErrors = selector.properties['nbsSystemError'];
+  const isLoading = selector.properties['nbsSystemLoading'];
 
   useEffectOnce(() => {
-    Utils.generateSubscriptions(dispatch, property, Object.keys(properties));
+    dispatch(subscribe({ subject: property }));
   });
 
   const controls = [
     <Select
       label="NBS system type"
-      name="systemType"
-      defaultValue={properties.systemType.value}
+      name="system_type"
+      defaultValue={properties.system_type}
       options={
         [
           { value: '0', label: 'raingardens & bioretention systems' },
@@ -40,7 +40,7 @@ function NbsSystem({ t }: any) {
       tooltip={t('the selected NBS system type ...')}
     />,
     <Spacer />,
-    <Button variant="outline-primary" type="submit" loading={isLoading()}>
+    <Button variant="outline-primary" type="submit" loading={isLoading}>
       {capitalize(t('apply'))}
     </Button>,
     <Button variant="outline-danger" type="reset">
@@ -51,11 +51,20 @@ function NbsSystem({ t }: any) {
   return (
     <Form
       controls={controls}
-      errors={getErrors()}
-      disabled={isLoading()}
-      onSubmit={(fields: any) =>
-        dispatch(sendProperties({ property, properties: fields }))
-      }
+      errors={getErrors}
+      disabled={isLoading}
+      onSubmit={(fields: any) => {
+        dispatch(
+          call({
+            target: 'update',
+            args: [property, fields],
+            successAction: setLoading,
+            successData: property,
+            failureAction: setError,
+            failureData: property,
+          })
+        );
+      }}
     />
   );
 }

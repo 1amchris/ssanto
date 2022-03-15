@@ -1,5 +1,3 @@
-from .network_definitions import Field
-
 # TODO: Make abstract, maybe
 class Subject:
     def __init__(self, subjects_manager, subject_id, data):
@@ -19,8 +17,9 @@ class Subject:
         if self.is_watched:
             self.subjects_manager.send(self)
 
-    def get(self):
-        return self.data
+    def update(self):
+        if self.is_watched:
+            self.subjects_manager.send(self)
 
-    def to_dict(self):
-        return {Field.SUBJECT_ID.value: self.subject_id, Field.DATA.value: self.data}
+    def value(self):
+        return self.data

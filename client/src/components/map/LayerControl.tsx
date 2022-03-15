@@ -3,22 +3,18 @@ import { withTranslation } from 'react-i18next';
 import { TileLayer, LayersControl, GeoJSON } from 'react-leaflet';
 import { Layer, selectMap } from 'store/reducers/map';
 import { useAppSelector } from 'store/hooks';
-import { GeoFile, selectAnalysis } from 'store/reducers/analysis';
 
-const defaultData: GeoJSON.Feature = {
-  type: 'Feature',
-  geometry: {
-    type: 'Point',
-    coordinates: [],
-  },
-  properties: {},
-};
+// const defaultData: GeoJSON.Feature = {
+//   type: 'Feature',
+//   geometry: {
+//     type: 'Point',
+//     coordinates: [],
+//   },
+//   properties: {},
+// };
 
 const Layers = ({ t }: any) => {
   const { layers } = useAppSelector(selectMap);
-  const {
-    geodatabase: { files },
-  } = useAppSelector(selectAnalysis);
 
   return (
     <LayersControl position="bottomleft">
@@ -31,7 +27,15 @@ const Layers = ({ t }: any) => {
       <LayersControl.BaseLayer name={capitalize(t('none'))}>
         <TileLayer url="" />
       </LayersControl.BaseLayer>
-
+      {layers.map(({ identifier, label, name, data }: Layer) => (
+        <LayersControl.Overlay
+          key={identifier}
+          name={capitalize(t(label || name))}
+          checked
+        >
+          <GeoJSON data={data} />
+        </LayersControl.Overlay>
+      ))}
       {/*
       
       files

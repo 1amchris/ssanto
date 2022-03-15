@@ -1,7 +1,7 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import mapReducer from 'store/reducers/map';
+import analysisReducer from 'store/reducers/analysis';
 import guideReducer from 'store/reducers/guide';
-import analysisReducer, { sendProperties } from 'store/reducers/analysis';
 import ServerMiddleware, {
   call,
   sendFiles as serverSendFilesAction,
@@ -13,8 +13,8 @@ import ExportMiddleware from './middlewares/ExportMiddleware';
 export const store = configureStore({
   reducer: {
     analysis: analysisReducer,
-    map: mapReducer,
     guide: guideReducer,
+    map: mapReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
@@ -22,7 +22,6 @@ export const store = configureStore({
         ignoredActions: [
           serverSubscribeAction.type, // contains a callback function
           serverSendFilesAction.type, // contains files
-          sendProperties.type, // May contain uploaded files
           call.type, // May contain uploaded files
 
         ],

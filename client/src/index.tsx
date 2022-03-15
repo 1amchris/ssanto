@@ -32,12 +32,7 @@ i18n.use(initReactI18next).init({
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/guide" element={<Guide />} />
-        </Routes>
-      </BrowserRouter>
+      <App />
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
