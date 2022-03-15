@@ -25,72 +25,49 @@ export const analysisSlice = createSlice({
       filesError: '',
     },
     objectives: {
-      main: '0',
-      options: ['needs', 'oportunities'],
-      primaries: [
-        {
-          primary: ['Provisioning', 'Socio-Economic'],
-          options: [
-            'Provisioning',
-            'Socio-Economic',
-            'Urban Form',
-            'Biophysical',
-          ],
-          secondaries: [
-            {
-              secondary: ['Soil Type', 'Slope'],
-              options: [
-                'Soil Type',
-                'Slope',
-                'Irrigation Demand Distance',
-                'test',
-              ],
-              attributes: [
-                {
-                  attribute: ['a', 'b'],
-                  attributeOptions: ['a', 'b', 'c', 'd'],
-                  //dataset: ['file1', 'file2'],
-                  //column: ['c1', 'c2'],
-                },
-                {
-                  attribute: ['a'],
-                  attributeOptions: ['a', 'b'],
-                  //dataset: ['file1'],
-                  //column: ['c1'],
-                },
-              ],
-            },
-            {
-              secondary: ['Education Level', 'Test'],
-              options: ['Test', 'Education Level', 'a', 'b', 'c', 'd'],
-              attributes: [
-                {
-                  attribute: ['a', 'b'],
-                  attributeOptions: [
-                    'average house price',
-                    'house price index',
-                    'capital value',
-                    'rental value',
-                  ],
-                  //dataset: ['file1', 'file2'],
-                  //column: ['c1', 'c2'],
-                },
-                {
-                  attribute: ['a', 'b'],
-                  attributeOptions: [
-                    'average house price',
-                    'house price index',
-                    'capital value',
-                    'rental value',
-                  ],
-                  //dataset: ['file1', 'file2'],
-                  //column: ['c1', 'c2'],
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      main: 'Needs',
+      primaries: {
+        primary: ['Provisioning', 'Socio-Economic'],
+
+        secondaries: [
+          {
+            secondary: ['Soil Type', 'Slope'],
+
+            attributes: [
+              {
+                attribute: ['a', 'b'],
+                dataset: ['', ''],
+
+                //dataset: ['file1', 'file2'],
+                //column: ['c1', 'c2'],
+              },
+              {
+                attribute: ['a'],
+                dataset: [''],
+                //dataset: ['file1'],
+                //column: ['c1'],
+              },
+            ],
+          },
+          {
+            secondary: ['Education Level', 'Test'],
+            attributes: [
+              {
+                attribute: ['a', 'b'],
+                dataset: ['', ''],
+                //dataset: ['file1', 'file2'],
+                //column: ['c1', 'c2'],
+              },
+              {
+                attribute: ['a', 'b'],
+                dataset: ['', ''],
+                //dataset: ['file1', 'file2'],
+                //column: ['c1', 'c2'],
+              },
+            ],
+          },
+        ],
+      },
     },
   },
   reducers: {

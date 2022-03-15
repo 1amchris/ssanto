@@ -30,10 +30,10 @@ function App() {
             <Collapsible title={'NBS system type'} collapsed>
               <NbsSystem />
             </Collapsible>
-            <Collapsible title={'data importation'}>
+            <Collapsible title={'data importation'} collapsed>
               <DataImportation />
             </Collapsible>
-            <Collapsible title={'objective hierarchy'} collapsed>
+            <Collapsible title={'objective hierarchy'}>
               <ObjectiveHierarchy />
             </Collapsible>
           </FormsBar>
