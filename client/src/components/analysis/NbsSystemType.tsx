@@ -4,8 +4,8 @@ import { useEffectOnce } from 'hooks';
 import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectAnalysis, setError, setLoading } from 'store/reducers/analysis';
-import Form from 'components/form/Form';
-import { Select, Button, Spacer } from 'components/form/form-components';
+import Form from 'components/forms/Form';
+import { Select, Button, Spacer } from 'components/forms/components';
 import { call, subscribe } from 'store/middlewares/ServerMiddleware';
 
 function NbsSystem({ t }: any) {

@@ -1,8 +1,8 @@
 import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { Control, Spacer, Button } from 'components/form/form-components';
-import Form from 'components/form/Form';
+import { Control, Spacer, Button } from 'components/forms/components';
+import Form from 'components/forms/Form';
 import { useAppDispatch } from 'store/hooks';
 import { call, sendFiles } from 'store/middlewares/ServerMiddleware';
 

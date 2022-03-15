@@ -1,6 +1,6 @@
 import React from 'react';
-import { Action, Divider, Export, Import, Link } from './menu-components';
-import Menu from './menu/Menu';
+import { Action, Divider, Export, Import, Link } from './components';
+import Menu from './Menu';
 
 function MenuBar() {
   const getMenus = () => [

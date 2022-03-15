@@ -3,20 +3,19 @@ import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import Form from '../form/Form';
+import Form from '../forms/Form';
 import {
   Button,
   Spacer,
   Select,
   ExpandableList,
-} from '../form/form-components';
+} from '../forms/components';
 import {
   selectAnalysis,
   updateObjectives,
 } from '../../store/reducers/analysis';
-import { FactoryProps } from '../form/form-components/FormExpandableList';
+import { FactoryProps } from '../forms/components/FormExpandableList';
 import objectivesData from '../../data/objectives.json';
-import { stringify, StringifyOptions } from 'querystring';
 
 //TODO : ajout d'un objectif => options selon l'objectif parent
 //TODO : update d'un objectif => clear des objectifs enfants et updates de leurs options
@@ -29,7 +28,7 @@ function ObjectiveHierarchy({ t }: any) {
   const {
     objectives: {
       main: mainValue,
-      options: mainValueOptions,
+      // options: mainValueOptions,
       primaries: [primaries],
     },
   } = useAppSelector(selectAnalysis);
@@ -42,7 +41,7 @@ function ObjectiveHierarchy({ t }: any) {
     var options: string[] = [];
     var objectiveHierachyData =
       (objectivesData?.mains[0]?.primaries as any) ?? [];
-    objectiveHierachyData.map((json: { primary: string }) => {
+    objectiveHierachyData.forEach((json: { primary: string }) => {
       options.push(json.primary);
     });
     return options;
@@ -50,9 +49,9 @@ function ObjectiveHierarchy({ t }: any) {
 
   const getAllSecondaryOptions = (primary: string) => {
     var options: string[] = [];
-    objectivesData?.mains[0]?.primaries?.map(json => {
-      if (json.primary == primary) {
-        json.secondaries.map(json => {
+    objectivesData?.mains[0]?.primaries?.forEach(json => {
+      if (json.primary === primary) {
+        json.secondaries.forEach(json => {
           options.push(json.secondary);
         });
       }
@@ -64,13 +63,13 @@ function ObjectiveHierarchy({ t }: any) {
     var primaryOptions: string[] = getAllPrimaryOptions();
 
     let secondariesOptions: { primary: string; secondary: string[] }[] = [];
-    localPrimaries.primary.map(primary => {
+    localPrimaries.primary.forEach(primary => {
       primaryOptions.splice(primaryOptions.indexOf(primary), 1);
       var secondaryOptions: string[] = getAllSecondaryOptions(primary);
       console.log('secondaryOptions', secondaryOptions);
       localPrimaries.secondaries[
         localPrimaries.primary.indexOf(primary)
-      ].secondary.map(secondary => {
+      ].secondary.forEach(secondary => {
         secondaryOptions.splice(secondaryOptions.indexOf(secondary));
       });
       secondariesOptions.push({
@@ -95,9 +94,9 @@ function ObjectiveHierarchy({ t }: any) {
     JSON.stringify(mainValue)
   ) as typeof mainValue;
 
-  var localMainValueOptions = JSON.parse(
-    JSON.stringify(mainValueOptions)
-  ) as typeof mainValueOptions;
+  // var localMainValueOptions = JSON.parse(
+  //   JSON.stringify(mainValueOptions)
+  // ) as typeof mainValueOptions;
 
   //Add
 
@@ -235,7 +234,7 @@ function ObjectiveHierarchy({ t }: any) {
     objectivesData?.mains[0]?.primaries?.map(json => {
       if (
         !localPrimaries.primary.includes(json.primary) ||
-        localPrimaries.primary[primaryIndex] == json.primary
+        localPrimaries.primary[primaryIndex] === json.primary
       ) {
         options.push(json.primary);
       }
@@ -268,8 +267,8 @@ function ObjectiveHierarchy({ t }: any) {
       localPrimaries.secondaries[primaryIndex].secondary[secondaryIndex];
     var options: string[] = [];
 
-    localOptions.secondaries.map(value => {
-      if (value.primary == primaryValue) {
+    localOptions.secondaries.forEach(value => {
+      if (value.primary === primaryValue) {
         options = value.secondary;
       }
     });
@@ -294,7 +293,7 @@ function ObjectiveHierarchy({ t }: any) {
           !localPrimaries.secondaries[primaryIndex].secondary.includes(
             json.secondary
           ) ||
-          localPrimaries.secondaries[primaryIndex].secondary[secondaryIndex] ==
+          localPrimaries.secondaries[primaryIndex].secondary[secondaryIndex] ===
             json.secondary
         ) {
           options.push(json.secondary);
@@ -314,38 +313,38 @@ function ObjectiveHierarchy({ t }: any) {
     );
   };
 
-  const generateOptionsAttributes = (
-    primaryIndex: number,
-    secondaryIndex: number,
-    attributeIndex: number
-  ) => {
-    var options: string[] = [];
-    var objectiveHierachyData =
-      (objectivesData?.mains[0]?.primaries as any) ?? [];
-    objectiveHierachyData[primaryIndex].secondaries[
-      secondaryIndex
-    ].attributes.map((json: any) => {
-      if (
-        !localPrimaries.secondaries[primaryIndex].secondary.includes(
-          json.secondary
-        ) ||
-        localPrimaries.secondaries[primaryIndex].secondary[secondaryIndex] ==
-          json.secondary
-      ) {
-        options.push(json.secondary);
-      }
-    });
+  // const generateOptionsAttributes = (
+  //   primaryIndex: number,
+  //   secondaryIndex: number,
+  //   attributeIndex: number
+  // ) => {
+  //   var options: string[] = [];
+  //   var objectiveHierachyData =
+  //     (objectivesData?.mains[0]?.primaries as any) ?? [];
+  //   objectiveHierachyData[primaryIndex].secondaries[
+  //     secondaryIndex
+  //   ].attributes.map((json: any) => {
+  //     if (
+  //       !localPrimaries.secondaries[primaryIndex].secondary.includes(
+  //         json.secondary
+  //       ) ||
+  //       localPrimaries.secondaries[primaryIndex].secondary[secondaryIndex] ===
+  //         json.secondary
+  //     ) {
+  //       options.push(json.secondary);
+  //     }
+  //   });
 
-    // 2: afficher
+  //   // 2: afficher
 
-    return options?.map(
-      json =>
-        ({
-          value: `${json}`,
-          label: `${json}`,
-        } as FormSelectOptionModel)
-    );
-  };
+  //   return options?.map(
+  //     json =>
+  //       ({
+  //         value: `${json}`,
+  //         label: `${json}`,
+  //       } as FormSelectOptionModel)
+  //   );
+  // };
 
   /**
    * generateOptions:
@@ -422,9 +421,9 @@ function ObjectiveHierarchy({ t }: any) {
     // update options for secondary
     let newSecondaries = [...localPrimaries.secondaries];
     const newSecondariesOptions: string[] = [];
-    objectivesData?.mains[0]?.primaries?.map(json => {
-      if (json.primary == newPrimaryValue) {
-        json.secondaries.map(json => {
+    objectivesData?.mains[0]?.primaries?.forEach(json => {
+      if (json.primary === newPrimaryValue) {
+        json.secondaries.forEach(json => {
           newSecondariesOptions.push(json.secondary);
         });
       }

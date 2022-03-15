@@ -7,8 +7,8 @@ import {
   setLoading,
   studyAreaReceived,
 } from 'store/reducers/analysis';
-import Form from 'components/form/Form';
-import { Control, Button, Spacer } from 'components/form/form-components';
+import Form from 'components/forms/Form';
+import { Control, Button, Spacer } from 'components/forms/components';
 import { useEffectOnce } from 'hooks';
 import * as Utils from 'utils';
 import { call } from 'store/middlewares/ServerMiddleware';

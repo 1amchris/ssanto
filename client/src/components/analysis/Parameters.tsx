@@ -1,10 +1,10 @@
 import { capitalize } from 'lodash';
 import React, { createRef, RefObject } from 'react';
-import { Control, Spacer, Button } from 'components/form/form-components';
+import { Control, Spacer, Button } from 'components/forms/components';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectAnalysis, setError, setLoading } from 'store/reducers/analysis';
 import { withTranslation } from 'react-i18next';
-import Form from 'components/form/Form';
+import Form from 'components/forms/Form';
 import { useEffectOnce } from 'hooks';
 import { call, subscribe } from 'store/middlewares/ServerMiddleware';
 
@@ -23,20 +23,20 @@ function Parameters({ t }: any) {
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
   const controls = [
-    <Control
-      label="analysis name"
-      name="analysis_name"
-      defaultValue={properties.analysis_name}
-      required
-      tooltip={t('the analysis name will ...')}
-    />,
-    <Control
-      label="name of the modeler"
-      name="modeler_name"
-      defaultValue={properties.modeler_name}
-      required
-      tooltip={t("the modeler's name will ...")}
-    />,
+    // <Control
+    //   label="analysis name"
+    //   name="analysis_name"
+    //   defaultValue={properties.analysis_name}
+    //   required
+    //   tooltip={t('the analysis name will ...')}
+    // />,
+    // <Control
+    //   label="name of the modeler"
+    //   name="modeler_name"
+    //   defaultValue={properties.modeler_name}
+    //   required
+    //   tooltip={t("the modeler's name will ...")}
+    // />,
     <Control
       label="cell size"
       name="cell_size"
@@ -72,7 +72,7 @@ function Parameters({ t }: any) {
         dispatch(
           call({
             target: 'update',
-            args: [property, fields],
+            args: [property, { ...properties, ...fields }],
             successAction: setLoading,
             successData: property,
             failureAction: setError,

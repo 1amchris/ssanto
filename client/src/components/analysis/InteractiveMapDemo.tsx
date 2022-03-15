@@ -1,6 +1,6 @@
 import React from 'react';
 import { capitalize } from 'lodash';
-import { Control, Spacer, Button } from 'components/form/form-components';
+import { Control, Spacer, Button } from 'components/forms/components';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
   upsertLayer,
@@ -9,7 +9,7 @@ import {
   updateLocation,
 } from 'store/reducers/map';
 import { withTranslation } from 'react-i18next';
-import Form from 'components/form/Form';
+import Form from 'components/forms/Form';
 
 //Importation des données à effacer, juste pour démo
 import ev from 'data/espace_vert.json';
