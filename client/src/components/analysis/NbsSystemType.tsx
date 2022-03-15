@@ -18,7 +18,7 @@ function NbsSystem({ t }: any) {
   const isLoading = selector.properties['nbsSystemLoading'];
 
   useEffectOnce(() => {
-    dispatch(subscribe({subject: property}));
+    dispatch(subscribe({ subject: property }));
   });
 
   const controls = [
@@ -54,12 +54,17 @@ function NbsSystem({ t }: any) {
       errors={getErrors}
       disabled={isLoading}
       onSubmit={(fields: any) => {
-        dispatch(call({target: 'update', args: [property, fields],
-            successAction: setLoading, successData: property,
-            failureAction: setError, failureData: property}))
-      }
-        
-      }
+        dispatch(
+          call({
+            target: 'update',
+            args: [property, fields],
+            successAction: setLoading,
+            successData: property,
+            failureAction: setError,
+            failureData: property,
+          })
+        );
+      }}
     />
   );
 }

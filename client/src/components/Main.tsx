@@ -24,13 +24,13 @@ function App() {
             <Collapsible title={'analysis parameters'} collapsed>
               <Parameters />
             </Collapsible>
-            <Collapsible title={'study area'}>
+            <Collapsible title={'study area'} collapsed>
               <StudyArea />
             </Collapsible>
             <Collapsible title={'NBS system type'} collapsed>
               <NbsSystem />
             </Collapsible>
-            <Collapsible title={'data importation'} collapsed>
+            <Collapsible title={'data importation'}>
               <DataImportation />
             </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>

@@ -1,7 +1,12 @@
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectAnalysis, setError, setLoading, studyAreaReceived } from 'store/reducers/analysis';
+import {
+  selectAnalysis,
+  setError,
+  setLoading,
+  studyAreaReceived,
+} from 'store/reducers/analysis';
 import Form from 'components/form/Form';
 import { Control, Button, Spacer } from 'components/form/form-components';
 import { useEffectOnce } from 'hooks';
@@ -17,8 +22,7 @@ function StudyArea({ t }: any) {
   const getErrors = selector.properties['studyAreaError'];
   const isLoading = selector.properties['studyAreaLoading'];
 
-  useEffectOnce(() => {
-  });
+  useEffectOnce(() => {});
 
   const controls = [
     <Control
@@ -51,15 +55,24 @@ function StudyArea({ t }: any) {
       controls={controls}
       errors={getErrors}
       onSubmit={(fields: any) => {
-        Utils.extractContentFromFiles(Array.from(fields.files)).then(data => {
-        dispatch(call({target: 'study_area.files', args: [data],
-                         successAction: studyAreaReceived,
-                         failureAction: setError, failureData: property}));
+        Utils.extractContentFromFiles(Array.from(fields.files)).then(files => {
+          dispatch(
+            call({
+              target: 'study_area.files',
+              args: [
+                ...files.map(file => ({
+                  name: file.name,
+                  content: file.base64content,
+                })),
+              ],
+              successAction: studyAreaReceived,
+              failureAction: setError,
+              failureData: property,
+            })
+          );
         });
-        dispatch(setLoading({params: property, data: true}));
-      }
-        ///dispatch(sendProperties({ property, properties: fields }))
-      }
+        dispatch(setLoading({ params: property, data: true }));
+      }}
     />
   );
 }

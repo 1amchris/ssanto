@@ -1,21 +1,21 @@
+import shapefile
 from base64 import b64decode
 from geojson_rewind import rewind
-import shapefile
-
 from io import BytesIO
-from os.path import splitext
+
+from py.file import File
+from py.file_metadata import FileMetaData
 
 
 class FileParser:
     @staticmethod
-    def load(files_manager, full_name):
-        name, ext = splitext(full_name)
+    def load(files_manager, *ids):
+        files = sorted(files_manager.get_files_by_id(*ids), key=lambda file: file.extension)
 
-        if ext == '.shp':
-            shp = files_manager.get_file(name+'.shp')
-            shx = files_manager.get_file(name+'.shx')
-            return FileParser.__load_shp(shp, shx)
-        # elif ext == '.'
+        if files[0].extension == "shp" and len(files) == 2:
+            shp, shx = files
+            return FileParser.__load_shp(shp.content, shx.content)
+        # elif ext == '...'
 
         return None
 
@@ -26,32 +26,55 @@ class FileParser:
         features = []
         for shp in reader.shapes():
             feature = {
-                'type':'Feature',
-                'geometry': shp.__geo_interface__,
+                "type": "Feature",
+                "geometry": shp.__geo_interface__,
             }
             features.append(feature)
 
-        geojson = {
-            "type": "FeatureCollection",
-            "features": features
-        }
+        geojson = {"type": "FeatureCollection", "features": features}
         return rewind(geojson)
 
 
 class FilesManager:
-    def __init__(self):
-        self.files = {}
+    def __init__(self, subjects_manager):
+        self.subjects_manager = subjects_manager
+        self.files_content = dict()
+        self.files = self.subjects_manager.create("files", self.files_content)
 
-    def get_file(self, name):
-        return self.files[name]
+    def get_file(self, id):
+        return self.files[id]
 
-    def get_filenames(self):
-        return self.files.keys()
+    def get_files_by_id(self, *ids):
+        return list(filter(lambda file: file.id in ids, self.files_content.values()))
 
-    def remove_file(self, name):
-        self.files.pop(name)
+    def get_file_ids(self):
+        return self.files_content.keys()
 
-    def add_file(self, name, data):
-        self.files[name] = BytesIO(b64decode(data))
+    def remove_file(self, id):
+        popped = self.files_content.pop(id)
+        self.__notify_metadatas()
+        return popped
+
+    # files: { name: string; data: string (base64); }[]
+    def add_files(self, *files):
+        created = []
+
+        for file in files:
+            new_file = File(file["name"], BytesIO(b64decode(file["content"])))
+            self.files_content[new_file.id] = new_file
+            created.append(new_file)
+
+        self.__notify_metadatas()
+        return created
+
+    def __notify_metadatas(self):
+        self.files.notify(
+            list(
+                map(
+                    lambda file: FileMetaData(file.name, id=file.id),
+                    self.files_content.values(),
+                )
+            )
+        )
 
     # Add loaded file to the file manager?

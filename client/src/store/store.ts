@@ -12,8 +12,8 @@ import AnalysisMiddleware from 'store/middlewares/AnalysisMiddleware';
 export const store = configureStore({
   reducer: {
     analysis: analysisReducer,
-    map: mapReducer,
     guide: guideReducer,
+    map: mapReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

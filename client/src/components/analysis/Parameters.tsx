@@ -18,7 +18,7 @@ function Parameters({ t }: any) {
   const isLoading = selector.properties['parametersLoading'];
 
   useEffectOnce(() => {
-    dispatch(subscribe({subject: property}));
+    dispatch(subscribe({ subject: property }));
   });
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
@@ -69,10 +69,17 @@ function Parameters({ t }: any) {
       disabled={isLoading}
       errors={getErrors}
       onSubmit={(fields: any) => {
-          dispatch(call({target: 'update', args: [property, fields],
-                         successAction: setLoading, successData: property,
-                         failureAction: setError, failureData: property}));
-          dispatch(setLoading({params: property, data: true}));
+        dispatch(
+          call({
+            target: 'update',
+            args: [property, fields],
+            successAction: setLoading,
+            successData: property,
+            failureAction: setError,
+            failureData: property,
+          })
+        );
+        dispatch(setLoading({ params: property, data: true }));
       }}
     />
   );

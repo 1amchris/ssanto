@@ -1,11 +1,9 @@
-import { control } from 'leaflet';
 import { capitalize, uniqueId } from 'lodash';
 import PropsModel from 'models/PropsModel';
 import React, { ReactElement } from 'react';
 import { Button, ListGroup } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
-import { FiMinusCircle, FiPlus } from 'react-icons/fi';
-import { MdSubdirectoryArrowRight } from 'react-icons/md';
+import { FiMinusCircle } from 'react-icons/fi';
 import FormComponent from './FormComponent';
 
 export interface FactoryProps extends PropsModel {
@@ -42,10 +40,10 @@ class Row extends React.Component<{
     return (
       <ListGroup.Item
         key={this.key}
-        className="list-group-item mt-3 d-grid  "
+        className="d-grid"
         style={{
+          minHeight: 'calc(31px + 2px + 1rem)',
           gridTemplateColumns: '1.75rem auto',
-          gridTemplateRows: '1.75rem auto',
         }}
         onMouseEnter={() => this.setState({ isHovered: true })}
         onMouseLeave={() => this.setState({ isHovered: false })}
@@ -67,7 +65,12 @@ class Row extends React.Component<{
             <></>
           )}
         </Button>
-        <div key={`${parentId}/wrapper-${index}`}>{children}</div>
+        <div
+          key={`${parentId}/wrapper-${index}`}
+          className="w-100 h-100 position-relative"
+        >
+          {children}
+        </div>
       </ListGroup.Item>
     );
   };
@@ -115,15 +118,16 @@ class FormList extends FormComponent {
             this.hideLabel ? 'visually-hidden' : ''
           }`}
         >
-          {capitalize(t(label || name))}
+          {capitalize(t(label || name))}{' '}
+          <span>({this.state.controls.length || '0'})</span>
         </label>
 
         <ListGroup>
           {this.state.controls?.map((control: PropsModel, index: number) => (
             <Row
-              key={`${this.id}/row-${control.index}`}
+              key={`${this.id}/row-${index}`}
               parentId={this.id}
-              index={control.index}
+              index={index}
               onDeleteControl={this.onDeleteControl}
             >
               {this.factory({

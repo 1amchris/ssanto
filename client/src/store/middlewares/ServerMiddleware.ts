@@ -1,6 +1,10 @@
 import { createAction, Store } from '@reduxjs/toolkit';
 import ServerCom from 'apis/ServerCom';
-import { defaultCallError, defaultCallSuccess, receiveProperties } from 'store/reducers/analysis';
+import {
+  defaultCallError,
+  defaultCallSuccess,
+  receiveProperties,
+} from 'store/reducers/analysis';
 
 export interface CallModel {
   target: string;
@@ -36,28 +40,30 @@ const ServerComMiddleware = () => {
       case call.type: {
         const { target, args, successData, failureData } = action.payload;
         let { successAction, failureAction } = action.payload;
-        if (successAction == undefined)
-            successAction = defaultCallSuccess;
-        if (failureAction == undefined)
-            failureAction = defaultCallError;
-        return serverCom.call(target, args || [], (({ dispatch }: Store) => (isSuccess: boolean, data: any) => {
-            if (isSuccess)
-                dispatch(
-                    successAction({params: successData, data: data})
-                )
-            else
-                dispatch(
-                    failureAction({params: failureData, data: data})
-                )
-        }).call(null, store));
+        if (successAction === undefined) successAction = defaultCallSuccess;
+        if (failureAction === undefined) failureAction = defaultCallError;
+        return serverCom.call(
+          target,
+          args || [],
+          (({ dispatch }: Store) =>
+            (isSuccess: boolean, data: any) => {
+              if (isSuccess)
+                dispatch(successAction({ params: successData, data: data }));
+              else dispatch(failureAction({ params: failureData, data: data }));
+            }).call(null, store)
+        );
       }
 
       case subscribe.type: {
         const { subject } = action.payload;
-        return serverCom.subscribe(subject, (({ dispatch }: Store) => (data: any) =>
-            dispatch(
-            receiveProperties({property: subject, data: data })
-            )).call(null, store));
+        return serverCom.subscribe(
+          subject,
+          (({ dispatch }: Store) =>
+            (data: any) =>
+              dispatch(
+                receiveProperties({ property: subject, data: data })
+              )).call(null, store)
+        );
       }
 
       default:

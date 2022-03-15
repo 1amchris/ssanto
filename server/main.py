@@ -32,7 +32,7 @@ async def main():
     server_socket = ServerSocket("localhost", 6969)
 
     subjects_manager = SubjectsManager(server_socket)
-    files_manager = FilesManager()
+    files_manager = FilesManager(subjects_manager)
 
     server_socket.bind_command("subscribe", subjects_manager.subscribe)
     server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
@@ -46,15 +46,8 @@ async def main():
     analysis = Analysis(subjects_manager, files_manager)
     server_socket.bind_command("study_area.files", analysis.receive_study_area)
 
-    '''
-    geodatabase_manager = GeoDatabaseManager(files.notify)
-
-    server_socket.bind_command(
-        "new_geo_file.files/files", geodatabase_manager.receive_files)
-
-    server_socket.bind_command(
-        "delete_file.index", geodatabase_manager.deleteFile)
-    '''
+    server_socket.bind_command("file_manager.add_files", files_manager.add_files)
+    server_socket.bind_command("file_manager.remove_file", files_manager.remove_file)
 
     # Main loop
     loop = asyncio.get_running_loop()

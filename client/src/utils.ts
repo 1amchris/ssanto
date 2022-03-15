@@ -1,6 +1,5 @@
 import FileContentModel from 'models/FileContentModel';
-import { encode as base64encode } from 'base64-arraybuffer';
-
+import { encode } from 'base64-arraybuffer';
 
 // Extracts data from files and encodes it in base64
 export const extractContentFromFiles = async (files: File[]) =>
@@ -12,8 +11,8 @@ export const extractContentFromFiles = async (files: File[]) =>
     }))
   ).then((contents: FileContentModel[]) =>
     contents.map(({ name: fileName, size: fileSize, content }) => ({
-      fileName,
-      fileSize,
-      base64content: base64encode(content),
+      name: fileName,
+      size: fileSize,
+      base64content: encode(content),
     }))
   );

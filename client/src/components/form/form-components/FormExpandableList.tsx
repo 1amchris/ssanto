@@ -1,4 +1,3 @@
-import { control } from 'leaflet';
 import { capitalize, uniqueId } from 'lodash';
 import React, { ReactElement } from 'react';
 import { Button } from 'react-bootstrap';
@@ -87,8 +86,8 @@ class FormExpandableList extends FormComponent {
   state: { controls: PropsModel[] } = {
     controls: [],
   };
-  onAddControl: Function;
-  onRemoveControl: Function;
+  onAddControl: () => void;
+  onRemoveControl?: (index: number) => void;
 
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/expandable-list-'), key);
@@ -122,7 +121,7 @@ class FormExpandableList extends FormComponent {
               key={`${this.id}/row-${index}`}
               parentId={this.id}
               index={index}
-              onDeleteControl={this.removeControlAt}
+              onDeleteControl={this.onRemoveControl}
             >
               {this.factory({
                 ...control,
@@ -142,7 +141,7 @@ class FormExpandableList extends FormComponent {
               variant="outline-secondary"
               size="sm"
               className="w-100"
-              onClick={this.addControl}
+              onClick={this.onAddControl}
             >
               <FiPlus />
             </Button>
@@ -150,32 +149,6 @@ class FormExpandableList extends FormComponent {
         </ul>
       </React.Fragment>
     );
-  };
-
-  private addControl = () => {
-    /*
-    const controls = this.state.controls.concat({
-      ...this.template,
-      id: uniqueId(),
-    });
-    */
-    this.onAddControl();
-    /*
-    this.updateControls(controls);
-    */
-  };
-
-  private removeControlAt = (index: number) => {
-    //const controls = [...this.state.controls];
-    //controls.splice(index, 1);
-    //this.updateControls(controls);
-    this.onRemoveControl(index);
-  };
-
-  private updateControls = (controls: PropsModel[]) => {
-    this.setState({
-      controls,
-    });
   };
 }
 

@@ -1,4 +1,3 @@
-import L from 'leaflet';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
 import categories from 'data/categories';
