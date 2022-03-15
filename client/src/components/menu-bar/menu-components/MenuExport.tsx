@@ -3,8 +3,8 @@ import { withTranslation } from 'react-i18next';
 import { capitalize, uniqueId } from 'lodash';
 import { saveAs } from 'file-saver';
 import MenuComponent from './MenuComponent';
-import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
-import ReactPDF from '@react-pdf/renderer';
+//import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+//import ReactPDF from '@react-pdf/renderer';
 import { Dropdown } from "react-bootstrap"
 
 class MenuExport extends MenuComponent {
@@ -36,17 +36,17 @@ class MenuExport extends MenuComponent {
 export default withTranslation()(MenuExport);
 
 // Create styles
-const styles = StyleSheet.create({
-  page: {
-    flexDirection: 'row',
-    backgroundColor: '#E4E4E4'
-  },
-  section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1
-  }
-});
+// const styles = StyleSheet.create({
+//   page: {
+//     flexDirection: 'row',
+//     backgroundColor: '#E4E4E4'
+//   },
+//   section: {
+//     margin: 10,
+//     padding: 10,
+//     flexGrow: 1
+//   }
+// });
 
 // // Create Document Component
 // const MyDocument = () => (
