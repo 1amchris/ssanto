@@ -23,7 +23,7 @@ const FileRowFactory = ({
   >
     <div className="position-relative d-flex justify-content-between">
       <span className="d-block-inline text-truncate text-nowrap">
-        {file.name}
+        {file.stem}
       </span>
       <span className="d-inline-block">
         <Badge bg="primary" pill>
