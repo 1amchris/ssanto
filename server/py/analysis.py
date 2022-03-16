@@ -1,5 +1,7 @@
 from .file_manager import FileParser
 from .server_socket import CallException
+from datetime import datetime
+import json
 
 
 class Analysis:
@@ -61,3 +63,15 @@ class Analysis:
 
         geojson = FileParser.load(self.files_manager, shx.id, shp.id)
         return {"file_name": shx.name, "area": geojson}
+
+    def create_save_file(self):
+        saved_parameters = self.parameters
+        saved_nbs = self.nbs
+
+        filename = str(datetime.now()).replace(" ","_").replace(":","-").replace(".","-")
+        filename = "analysis_" + filename + ".ssanto"
+
+        save = {"parameters": saved_parameters, "nbs": saved_nbs}
+        file = open(filename, "w")
+        json.dump(save, file)
+        file.close()
