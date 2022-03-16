@@ -9,7 +9,6 @@ import {
 } from 'store/reducers/analysis';
 import Form from 'components/forms/Form';
 import { Control, Button, Spacer } from 'components/forms/components';
-import { useEffectOnce } from 'hooks';
 import * as Utils from 'utils';
 import { call } from 'store/middlewares/ServerMiddleware';
 
@@ -21,8 +20,6 @@ function StudyArea({ t }: any) {
 
   const getErrors = selector.properties['studyAreaError'];
   const isLoading = selector.properties['studyAreaLoading'];
-
-  useEffectOnce(() => {});
 
   const controls = [
     <Control
