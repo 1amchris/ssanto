@@ -30,14 +30,17 @@ export const analysisSlice = createSlice({
         main: 'Needs',
         primaries: {
           primary: ['Provisioning', 'Socio-Economic'],
+          weights: [0, 0],
 
           secondaries: [
             {
               secondary: ['Soil Type', 'Slope'],
+              weights: [0, 0],
 
               attributes: [
                 {
                   attribute: ['A', 'B'],
+                  weights: [0, 0],
                   datasets: [
                     { name: '', id: '0' },
                     { name: '', id: '0' },
@@ -45,6 +48,7 @@ export const analysisSlice = createSlice({
                 },
                 {
                   attribute: ['A', 'B'],
+                  weights: [0, 0],
                   datasets: [
                     { name: '', id: '0' },
                     { name: '', id: '0' },
@@ -54,9 +58,11 @@ export const analysisSlice = createSlice({
             },
             {
               secondary: ['Education Level', 'Test'],
+              weights: [0, 0],
               attributes: [
                 {
                   attribute: ['A', 'B'],
+                  weights: [0, 0],
                   datasets: [
                     { name: '', id: '0' },
                     { name: '', id: '0' },
@@ -64,6 +70,7 @@ export const analysisSlice = createSlice({
                 },
                 {
                   attribute: ['A', 'B'],
+                  weights: [0, 0],
                   datasets: [
                     { name: '', id: '0' },
                     { name: '', id: '0' },

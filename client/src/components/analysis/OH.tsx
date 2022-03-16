@@ -247,8 +247,8 @@ function ObjectiveHierarchy({ t }: any) {
         } as FormSelectOptionModel)
     );
   };
-  let defaultSecondaries = { secondary: [], attributes: [] };
-  let defaultAttributes = { attribute: [], datasets: [] };
+  let defaultSecondaries = { secondary: [], weights: [], attributes: [] };
+  let defaultAttributes = { attribute: [], weights: [], datasets: [] };
   let defaultDataset = { name: '', id: '0' };
 
   const onAddPrimary = () => () => {
@@ -258,6 +258,7 @@ function ObjectiveHierarchy({ t }: any) {
       let newObjectives = copyLocalObjective();
       newObjectives.primaries.primary.push(newDefault);
       newObjectives.primaries.secondaries.push(defaultSecondaries);
+      newObjectives.primaries.weights.push(0);
       newObjectives.update = !localObjectives.update;
       setLocalObjectives(newObjectives);
     }
@@ -274,6 +275,7 @@ function ObjectiveHierarchy({ t }: any) {
       newObjectives.primaries.secondaries[primaryIndex].attributes.push(
         defaultAttributes
       );
+      newObjectives.primaries.secondaries[primaryIndex].weights.push(0);
       newObjectives.update = !localObjectives.update;
       setLocalObjectives(newObjectives);
     }
@@ -291,6 +293,10 @@ function ObjectiveHierarchy({ t }: any) {
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets.push(defaultDataset);
+
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].weights.push(0);
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       }
@@ -300,6 +306,7 @@ function ObjectiveHierarchy({ t }: any) {
     let newObjectives = copyLocalObjective();
     newObjectives.primaries.primary.splice(primaryIndex, 1);
     newObjectives.primaries.secondaries.splice(primaryIndex, 1);
+    newObjectives.primaries.weights.splice(primaryIndex, 1);
     newObjectives.update = !localObjectives.update;
     setLocalObjectives(newObjectives);
   };
@@ -311,6 +318,10 @@ function ObjectiveHierarchy({ t }: any) {
         1
       );
       newObjectives.primaries.secondaries[primaryIndex].attributes.splice(
+        secondaryIndex,
+        1
+      );
+      newObjectives.primaries.secondaries[primaryIndex].weights.splice(
         secondaryIndex,
         1
       );
@@ -328,6 +339,9 @@ function ObjectiveHierarchy({ t }: any) {
       newObjectives.primaries.secondaries[primaryIndex].attributes[
         secondaryIndex
       ].datasets.splice(attributeIndex, 1);
+      newObjectives.primaries.secondaries[primaryIndex].attributes[
+        secondaryIndex
+      ].weights.splice(attributeIndex, 1);
       newObjectives.update = !localObjectives.update;
       setLocalObjectives(newObjectives);
     };

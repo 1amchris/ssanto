@@ -24,10 +24,15 @@ export interface SubscriptionModel {
   subject: string;
 }
 
+export interface AskDataModel {
+  dataType: string;
+}
+
 export const openConnection = createAction<string | undefined>('openSocket');
 export const call = createAction<CallModel>('call');
 export const sendFiles = createAction<SendFilesModel>('sendFiles');
 export const subscribe = createAction<SubscriptionModel>('subscribe');
+export const askData = createAction<AskDataModel>('askData');
 
 const ServerComMiddleware = () => {
   let serverCom = new ServerCom();

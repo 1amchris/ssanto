@@ -10,6 +10,7 @@ import {
   StudyArea,
   NbsSystem,
   ObjectiveHierarchy,
+  Weighting,
 } from 'components/analysis';
 
 function App() {
@@ -33,8 +34,11 @@ function App() {
             <Collapsible title={'data importation'} collapsed>
               <DataImportation />
             </Collapsible>
-            <Collapsible title={'objective hierarchy'}>
+            <Collapsible title={'objective hierarchy'} collapsed>
               <ObjectiveHierarchy />
+            </Collapsible>
+            <Collapsible title={'weighting'}>
+              <Weighting />
             </Collapsible>
           </FormsBar>
         </aside>
