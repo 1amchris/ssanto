@@ -541,7 +541,7 @@ function ObjectiveHierarchy({ t }: any) {
     />,
     <ExpandableList
       hideLabel
-      key={`primaries.0` + localObjectives.update}
+      key={`primaries.0` + localObjectives.update + isLoading}
       name={`primaries.0`}
       factory={primaryObjectivesFactory}
       label={'primary objectives'}
