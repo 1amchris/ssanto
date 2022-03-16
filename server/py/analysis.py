@@ -1,7 +1,8 @@
 from .file_manager import FileParser
 from .server_socket import CallException
 from datetime import datetime
-import json
+import pickle
+import b64encode from base64
 
 
 class Analysis:
@@ -65,13 +66,10 @@ class Analysis:
         return {"file_name": shx.name, "area": geojson}
 
     def create_save_file(self):
-        saved_parameters = self.parameters
-        saved_nbs = self.nbs
+        # Edit here to add data to save
+        save = {"parameters": self.parameters, "nbs": self.nbs, "file_manager": self.files_manager, "subjects_manager": self.subjects_manager}
 
-        filename = str(datetime.now()).replace(" ","_").replace(":","-").replace(".","-")
-        filename = "analysis_" + filename + ".ssanto"
-
-        save = {"parameters": saved_parameters, "nbs": saved_nbs}
-        file = open(filename, "w")
-        json.dump(save, file)
-        file.close()
+        saved_content = pickle.dumps(save)
+        timestamp = str(datetime.now()).replace(" ","_").replace(":","-")
+        filename = f"analysis_{timestamp}.ssanto"
+        return {"filename": filename, "content": b64encode(saved_content)}

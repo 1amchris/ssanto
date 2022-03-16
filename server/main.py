@@ -48,6 +48,8 @@ async def main():
     server_socket.bind_command("file_manager.add_files", files_manager.add_files)
     server_socket.bind_command("file_manager.remove_file", files_manager.remove_file)
 
+    server_socket.bind_command("analysis.create_save", analysis.create_save_file)
+
     # Main loop
     loop = asyncio.get_running_loop()
     stop = loop.create_future()
@@ -56,6 +58,8 @@ async def main():
 
     async with server_socket.serve():
         await stop  # run forever
+
+    
 
 
 if __name__ == "__main__":
