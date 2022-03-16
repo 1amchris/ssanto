@@ -2,6 +2,7 @@ from re import sub
 from .subject import Subject
 from .network_definitions import Field, SendType
 
+
 class SubjectsManager:
     def __init__(self, server_socket):
         self.subjects = {}

@@ -23,53 +23,56 @@ export const analysisSlice = createSlice({
       studyAreaError: '',
       filesLoading: false,
       filesError: '',
-    },
-    objectives: {
-      main: 'Needs',
-      primaries: {
-        primary: ['Provisioning', 'Socio-Economic'],
+      objectivesError: '',
+      objectivesLoading: false,
 
-        secondaries: [
-          {
-            secondary: ['Soil Type', 'Slope'],
+      objectives: {
+        main: 'Needs',
+        primaries: {
+          primary: ['Provisioning', 'Socio-Economic'],
 
-            attributes: [
-              {
-                attribute: ['A', 'B'],
-                datasets: [
-                  { name: '', id: '0' },
-                  { name: '', id: '0' },
-                ],
-              },
-              {
-                attribute: ['A', 'B'],
-                datasets: [
-                  { name: '', id: '0' },
-                  { name: '', id: '0' },
-                ],
-              },
-            ],
-          },
-          {
-            secondary: ['Education Level', 'Test'],
-            attributes: [
-              {
-                attribute: ['A', 'B'],
-                datasets: [
-                  { name: '', id: '0' },
-                  { name: '', id: '0' },
-                ],
-              },
-              {
-                attribute: ['A', 'B'],
-                datasets: [
-                  { name: '', id: '0' },
-                  { name: '', id: '0' },
-                ],
-              },
-            ],
-          },
-        ],
+          secondaries: [
+            {
+              secondary: ['Soil Type', 'Slope'],
+
+              attributes: [
+                {
+                  attribute: ['A', 'B'],
+                  datasets: [
+                    { name: '', id: '0' },
+                    { name: '', id: '0' },
+                  ],
+                },
+                {
+                  attribute: ['A', 'B'],
+                  datasets: [
+                    { name: '', id: '0' },
+                    { name: '', id: '0' },
+                  ],
+                },
+              ],
+            },
+            {
+              secondary: ['Education Level', 'Test'],
+              attributes: [
+                {
+                  attribute: ['A', 'B'],
+                  datasets: [
+                    { name: '', id: '0' },
+                    { name: '', id: '0' },
+                  ],
+                },
+                {
+                  attribute: ['A', 'B'],
+                  datasets: [
+                    { name: '', id: '0' },
+                    { name: '', id: '0' },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       },
     },
   },

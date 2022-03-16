@@ -26,6 +26,14 @@ class Analysis:
             },
         )
 
+        self.objectives = subjects_manager.create(
+            "objectives",
+            {
+                "objectives": {},
+                # ...
+            },
+        )
+
     def perform_analysis(self):
         # self.parameters.value().get('analysis_name')
         # ...

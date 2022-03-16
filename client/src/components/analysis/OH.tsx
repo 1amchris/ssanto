@@ -5,6 +5,7 @@ import FormSelectOptionModel from '../../models/form-models/FormSelectOptionMode
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Form from '../form/Form';
 import objectivesData from '../../data/objectives.json';
+import { call, subscribe } from 'store/middlewares/ServerMiddleware';
 
 import {
   Button,
@@ -14,26 +15,25 @@ import {
 } from '../form/form-components';
 import {
   selectAnalysis,
-  updateObjectives,
+  setLoading,
+  setError,
 } from '../../store/reducers/analysis';
 import { FactoryProps } from '../form/form-components/FormExpandableList';
-//import objectivesData from '../../data/objectives.json';
-import { stringify, StringifyOptions } from 'querystring';
-import { MdNextWeek } from 'react-icons/md';
-
-//TODO : ajout d'un objectif => options selon l'objectif parent
-//TODO : update d'un objectif => clear des objectifs enfants et updates de leurs options
+import { useEffectOnce } from 'hooks';
 
 function ObjectiveHierarchy({ t }: any) {
-  const dispatch = useAppDispatch();
-  //const { files } = useAppSelector(selectAnalysis);
-
-  const property = 'files';
+  const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
-  const files = selector.properties[property];
-  const objectives = selector.objectives;
-  //const { objectives: objectives } = useAppSelector(selectAnalysis);
+  const objectives = selector.properties.objectives;
+  const dispatch = useAppDispatch();
+  const files = selector.properties['files'];
 
+  const getErrors = selector.properties['objectivesError'];
+  const isLoading = selector.properties['objectivesLoading'];
+
+  useEffectOnce(() => {
+    dispatch(subscribe({ subject: property }));
+  });
   const [localObjectives, setLocalObjectives] = useState({
     ...objectives,
     update: true,
@@ -550,7 +550,21 @@ function ObjectiveHierarchy({ t }: any) {
   return (
     <Form
       controls={controls}
-      //onSubmit={(fields: any) => dispatch()}
+      errors={getErrors}
+      disabled={isLoading}
+      onSubmit={() => {
+        dispatch(
+          call({
+            target: 'update',
+            args: [property, localObjectives],
+            successAction: setLoading,
+            successData: property,
+            failureAction: setError,
+            failureData: property,
+          })
+        );
+        dispatch(setLoading({ params: property, data: true }));
+      }}
     />
   );
 }
