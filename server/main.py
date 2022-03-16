@@ -7,6 +7,8 @@ from py.server_socket import ServerSocket
 from py.file_manager import FilesManager
 from py.subjects_manager import SubjectsManager
 
+from py.analyser import Analyser
+
 from py.analysis import Analysis
 
 
@@ -33,6 +35,7 @@ async def main():
 
     subjects_manager = SubjectsManager(server_socket)
     files_manager = FilesManager(subjects_manager)
+    analyser = Analyser()
 
     server_socket.bind_command("subscribe", subjects_manager.subscribe)
     server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
@@ -43,11 +46,13 @@ async def main():
     # TODO: Implement call response (separate variable binding and call responses)
     server_socket.bind_command("update", subjects_manager.update)
 
-    analysis = Analysis(subjects_manager, files_manager)
+    analysis = Analysis(subjects_manager, files_manager, analyser)
     server_socket.bind_command("study_area.files", analysis.receive_study_area)
 
-    server_socket.bind_command("file_manager.add_files", files_manager.add_files)
-    server_socket.bind_command("file_manager.remove_file", files_manager.remove_file)
+    server_socket.bind_command(
+        "file_manager.add_files", files_manager.add_files)
+    server_socket.bind_command(
+        "file_manager.remove_file", files_manager.remove_file)
 
     # Main loop
     loop = asyncio.get_running_loop()

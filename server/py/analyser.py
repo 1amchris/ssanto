@@ -1,17 +1,20 @@
 
 
 import matplotlib.pyplot as plt
-from objective import *
+from py.objective import *
 
 
 class Analyser():
     def __init__(self, cellsize=200):
         self.objectives = {}
         self.cellsize = cellsize
+        self.study_area = None
 
     def add_objective(self, objective_name, weight):
         obj = Objective(cellsize=self.cellsize, weight=weight)
         self.objectives[objective_name] = obj
+        if(self.study_area != None):
+            self.add_study_area()
 
     def process_data(self):
         output_matrix = []
@@ -28,3 +31,11 @@ class Analyser():
         plt.imshow(output_matrix)
         plt.show()
         return output_matrix
+
+    def save_study_area(self, shp_id, shx_id):
+        self.study_area = (shp_id, shx_id)
+        print('save_study_area, Analyser', self.study_area)
+
+    def add_study_area(self):
+        for o in self.objectives:
+            o.add_study_area(self, path, output_tiff)

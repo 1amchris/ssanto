@@ -10,7 +10,8 @@ from py.file_metadata import FileMetaData
 class FileParser:
     @staticmethod
     def load(files_manager, *ids):
-        files = sorted(files_manager.get_files_by_id(*ids), key=lambda file: file.extension)
+        files = sorted(files_manager.get_files_by_id(
+            *ids), key=lambda file: file.extension)
 
         if files[0].extension == "shp" and len(files) == 2:
             shp, shx = files
@@ -55,13 +56,25 @@ class FilesManager:
         self.__notify_metadatas()
         return popped
 
-    # files: { name: string; data: string (base64); }[]
+    def save_files_locally(self, *ids):
+        files = sorted(self.get_files_by_id(
+            *ids), key=lambda file: file.extension)
+        path = []
+        for f in files:
+            temp_path = f.id + '.' + f.extension
+            with open(temp_path, 'wb') as out:
+                out.write(f.content.read())
+            path.append(temp_path)
+        return path
+
+    # files: { name: string; data: string (base64);  }[]
     def add_files(self, *files):
         created = []
 
         for file in files:
             new_file = File(file["name"], BytesIO(b64decode(file["content"])))
             self.files_content[new_file.id] = new_file
+            new_file.path = self.save_files_locally(new_file.id)
             created.append(new_file)
 
         self.__notify_metadatas()

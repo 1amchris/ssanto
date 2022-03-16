@@ -5,9 +5,10 @@ from os.path import splitext
 
 
 class Analysis:
-    def __init__(self, subjects_manager, files_manager):
+    def __init__(self, subjects_manager, files_manager, analyser):
         self.subjects_manager = subjects_manager
         self.files_manager = files_manager
+        self.analyser = analyser
 
         self.parameters = subjects_manager.create(
             "parameters",
@@ -68,6 +69,7 @@ class Analysis:
             raise CallException(
                 "No valid shapefiles uploaded. Make sure that both [.shx and .shp are uploaded, and both have the same name, then try again.]"
             )
+        self.analyser.save_study_area(shp.id, shx.id)
 
         geojson = FileParser.load(self.files_manager, shx.id, shp.id)
         return {"file_name": shx.name, "area": geojson}

@@ -8,4 +8,6 @@ class File(FileMetaData):
         self.content: BytesIO = content
 
     def __repr__(self):
-        return f"id: {self.id}, name: {self.name}, content: {self.content}"
+        return f"id: {self.id}, name: {self.name}, content: {self.content}, path:{self.path}"
+    
+    

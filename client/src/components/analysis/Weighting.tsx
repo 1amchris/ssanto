@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
@@ -104,7 +104,7 @@ function Weighting({ t }: any) {
       setLocalObjectives(newObjectives);
     };
 
-  const weigthAttributeFactory = ({
+  const weightAttributeFactory = ({
     name,
     key,
     orderIndex,
@@ -112,22 +112,28 @@ function Weighting({ t }: any) {
     secondaryIndex,
     defaultAttribute,
     defaultDataset,
-  }: FactoryProps): ReactElement | ReactElement[] => [
-    <Control
-      key={key('weight_attribute') + localObjectives.update}
-      label={defaultAttribute}
-      className="small position-relative d-flex"
-      name={name('attribute')}
-      defaultValue={defaultAttribute}
-      onChange={(e: any) => {
-        onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)(e);
-      }}
-      type="number"
-      //tooltip={t('the cell size is ...')}
-    />,
-  ];
+  }: FactoryProps): ReactElement | ReactElement[] => {
+    const weightRef: RefObject<HTMLSpanElement> = createRef();
+    return [
+      <Control
+        key={key('weight_attribute') + localObjectives.update}
+        label={defaultAttribute}
+        className="small position-relative d-flex"
+        name={name('attribute')}
+        defaultValue={defaultAttribute}
+        onChange={({ target: { value } }: { target: HTMLInputElement }) => {
+          if (weightRef.current?.textContent) {
+            weightRef.current.textContent = value;
+            onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)(value);
+          }
+        }}
+        type="number"
+        //tooltip={t('the cell size is ...')}
+      />,
+    ];
+  };
 
-  const weigthSecondaryFactory = ({
+  const weightSecondaryFactory = ({
     name,
     key,
     orderIndex,
@@ -136,37 +142,46 @@ function Weighting({ t }: any) {
 
     primaryIndex,
     childrenValues: attributes,
-  }: FactoryProps): ReactElement | ReactElement[] => [
-    <Control
-      key={key('weight_secondary') + localObjectives.update}
-      label={secondaryName(primaryIndex, orderIndex)}
-      className="small position-relative d-flex"
-      name="weight"
-      defaultValue={
-        localObjectives.primaries.secondaries[primaryIndex].weights[orderIndex]
-      }
-      onChange={(e: any) => {
-        onChangeSecondary(primaryIndex, orderIndex)(e);
-      }}
-      type="number"
-      //tooltip={t('the cell size is ...')}
-    />,
-    <SimpleList
-      key={key('weights-secondary') + localObjectives.update}
-      name={'weights'}
-      hideLabel
-      factory={weigthAttributeFactory}
-      controls={getAttribute(primaryIndex, secondaryIndex).map(
-        (defaultAttribute: string, index: number) => ({
-          defaultAttribute,
-          primaryIndex,
-          secondaryIndex,
-          attributeIndex: index,
-          attributeOptions: attributes.attributeOptions,
-        })
-      )}
-    />,
-  ];
+  }: FactoryProps): ReactElement | ReactElement[] => {
+    const weightRef: RefObject<HTMLSpanElement> = createRef();
+
+    return [
+      <Control
+        key={key('weight_secondary') + localObjectives.update}
+        label={secondaryName(primaryIndex, orderIndex)}
+        className="small position-relative d-flex"
+        name="weight"
+        defaultValue={
+          localObjectives.primaries.secondaries[primaryIndex].weights[
+            orderIndex
+          ]
+        }
+        onChange={({ target: { value } }: { target: HTMLInputElement }) => {
+          if (weightRef.current?.textContent) {
+            weightRef.current.textContent = value;
+            onChangeSecondary(primaryIndex, orderIndex)(value);
+          }
+        }}
+        type="number"
+        //tooltip={t('the cell size is ...')}
+      />,
+      <SimpleList
+        key={key('weights-secondary') + localObjectives.update}
+        name={'weights'}
+        hideLabel
+        factory={weightAttributeFactory}
+        controls={getAttribute(primaryIndex, secondaryIndex).map(
+          (defaultAttribute: string, index: number) => ({
+            defaultAttribute,
+            primaryIndex,
+            secondaryIndex,
+            attributeIndex: index,
+            attributeOptions: attributes.attributeOptions,
+          })
+        )}
+      />,
+    ];
+  };
 
   const weightPrimaryFactory = ({
     name,
@@ -176,7 +191,7 @@ function Weighting({ t }: any) {
     primary,
     childrenValues: secondaries,
   }: FactoryProps): ReactElement | ReactElement[] => {
-    //const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
+    const weightRef: RefObject<HTMLSpanElement> = createRef();
     return [
       <Control
         key={key('weight_primary') + localObjectives.update}
@@ -184,8 +199,11 @@ function Weighting({ t }: any) {
         className="small position-relative d-flex"
         name={name('weight_primary')}
         defaultValue={localObjectives.primaries.weights[orderIndex]}
-        onChange={(e: any) => {
-          onChangePrimary(orderIndex)(e);
+        onChange={({ target: { value } }: { target: HTMLInputElement }) => {
+          if (weightRef.current?.textContent) {
+            weightRef.current.textContent = value;
+            onChangePrimary(orderIndex)(value);
+          }
         }}
         type="number"
         //tooltip={t('the cell size is ...')}
@@ -194,7 +212,7 @@ function Weighting({ t }: any) {
         key={key('weights-secondary') + localObjectives.update}
         name={'weights'}
         hideLabel
-        factory={weigthSecondaryFactory}
+        factory={weightSecondaryFactory}
         controls={getSecondary(orderIndex).map(
           (defaultValueSecondary: string, index: number) => ({
             defaultValue: defaultValueSecondary,
