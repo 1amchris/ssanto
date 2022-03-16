@@ -14,6 +14,7 @@ import {
   ExpandableList,
   List,
   Control,
+  SimpleList,
 } from '../form/form-components';
 import {
   selectAnalysis,
@@ -150,10 +151,9 @@ function Weighting({ t }: any) {
       type="number"
       //tooltip={t('the cell size is ...')}
     />,
-    <List
+    <SimpleList
       key={key('weights-secondary') + localObjectives.update}
       name={'weights'}
-      variant="flush"
       hideLabel
       factory={weigthAttributeFactory}
       controls={getAttribute(primaryIndex, secondaryIndex).map(
@@ -168,57 +168,60 @@ function Weighting({ t }: any) {
     />,
   ];
 
-  const weigthPrimaryFactory = ({
+  const weightPrimaryFactory = ({
     name,
     key,
     primaryIndex,
     orderIndex,
     primary,
     childrenValues: secondaries,
-  }: FactoryProps): ReactElement | ReactElement[] => [
-    <Control
-      key={key('weight_primary') + localObjectives.update}
-      label={primaryName(orderIndex)}
-      className="small position-relative d-flex"
-      name={name('weight_primary')}
-      defaultValue={localObjectives.primaries.weights[orderIndex]}
-      onChange={(e: any) => {
-        onChangePrimary(orderIndex)(e);
-      }}
-      type="number"
-      //tooltip={t('the cell size is ...')}
-    />,
-    <List
-      key={key('weights-secondary') + localObjectives.update}
-      name={'weights'}
-      variant="flush"
-      hideLabel
-      factory={weigthSecondaryFactory}
-      controls={getSecondary(orderIndex).map(
-        (defaultValueSecondary: string, index: number) => ({
-          defaultValue: defaultValueSecondary,
-          primaryIndex,
-          secondaryIndex: index,
-          primary,
-          childrenValues: getAttribute(orderIndex, index),
-        })
-      )}
-    />,
-  ];
+  }: FactoryProps): ReactElement | ReactElement[] => {
+    //const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
+    return [
+      <Control
+        key={key('weight_primary') + localObjectives.update}
+        label={primaryName(orderIndex)}
+        className="small position-relative d-flex"
+        name={name('weight_primary')}
+        defaultValue={localObjectives.primaries.weights[orderIndex]}
+        onChange={(e: any) => {
+          onChangePrimary(orderIndex)(e);
+        }}
+        type="number"
+        //tooltip={t('the cell size is ...')}
+      />,
+      <SimpleList
+        key={key('weights-secondary') + localObjectives.update}
+        name={'weights'}
+        hideLabel
+        factory={weigthSecondaryFactory}
+        controls={getSecondary(orderIndex).map(
+          (defaultValueSecondary: string, index: number) => ({
+            defaultValue: defaultValueSecondary,
+            primaryIndex,
+            secondaryIndex: index,
+            primary,
+            childrenValues: getAttribute(orderIndex, index),
+          })
+        )}
+      />,
+    ];
+  };
 
   const mainControls = [
-    <List
-      key={'weights-primary' + isLoading}
-      name={'weights'}
-      hideLabel
-      variant="flush"
-      factory={weigthPrimaryFactory}
-      controls={getPrimary().map((primary: string, index: number) => ({
-        primary,
-        primaryIndex: index,
-        childrenValues: getSecondary(index),
-      }))}
-    />,
+    <div>
+      <SimpleList
+        key={'weights-primary' + isLoading}
+        name={'weights'}
+        hideLabel
+        factory={weightPrimaryFactory}
+        controls={getPrimary().map((primary: string, index: number) => ({
+          primary,
+          primaryIndex: index,
+          childrenValues: getSecondary(index),
+        }))}
+      />
+    </div>,
   ];
   const controls = [
     ...mainControls,
@@ -231,7 +234,7 @@ function Weighting({ t }: any) {
       controls={controls}
       errors={getErrors}
       disabled={isLoading}
-      key={'weight_form' + isLoading}
+      key={'weight_form'}
       onSubmit={() => {
         dispatch(
           call({

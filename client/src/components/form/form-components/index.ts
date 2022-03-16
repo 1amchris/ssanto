@@ -5,5 +5,15 @@ import Select from './FormSelect';
 import Spacer from './FormSpacer';
 import ExpandableList from './FormExpandableList';
 import List from './FormList';
+import SimpleList from './FormSimpleList';
 
-export { Alert, Button, Control, Select, Spacer, ExpandableList, List };
+export {
+  Alert,
+  Button,
+  Control,
+  Select,
+  Spacer,
+  ExpandableList,
+  List,
+  SimpleList,
+};

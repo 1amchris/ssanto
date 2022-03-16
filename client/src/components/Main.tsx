@@ -12,8 +12,13 @@ import {
   ObjectiveHierarchy,
   Weighting,
 } from 'components/analysis';
+import { useAppSelector } from 'store/hooks';
+import { selectAnalysis } from 'store/reducers/analysis';
 
 function App() {
+  const selector = useAppSelector(selectAnalysis);
+  const isLoading = selector.properties['objectivesLoading'];
+
   return (
     <div style={{ overflowY: 'clip' }}>
       <header>
@@ -35,10 +40,10 @@ function App() {
               <DataImportation />
             </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>
-              <ObjectiveHierarchy />
+              <ObjectiveHierarchy key={'oh' + isLoading} />
             </Collapsible>
             <Collapsible title={'weighting'}>
-              <Weighting />
+              <Weighting key={'weighting' + isLoading} />
             </Collapsible>
           </FormsBar>
         </aside>
