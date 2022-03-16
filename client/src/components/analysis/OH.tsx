@@ -1,10 +1,9 @@
-import React, { ReactElement, useState } from 'react';
-import { capitalize, filter } from 'lodash';
+import { ReactElement, useState } from 'react';
+import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Form from '../form/Form';
-import ObjectiveHierarchyModel from '../../models/ObjectiveHierarchyModel';
 import objectivesData from '../../data/objectives.json';
 
 import {
@@ -29,7 +28,11 @@ function ObjectiveHierarchy({ t }: any) {
   const dispatch = useAppDispatch();
   //const { files } = useAppSelector(selectAnalysis);
 
-  const { objectives: objectives } = useAppSelector(selectAnalysis);
+  const property = 'files';
+  const selector = useAppSelector(selectAnalysis);
+  const files = selector.properties[property];
+  const objectives = selector.objectives;
+  //const { objectives: objectives } = useAppSelector(selectAnalysis);
 
   const [localObjectives, setLocalObjectives] = useState({
     ...objectives,
@@ -110,7 +113,7 @@ function ObjectiveHierarchy({ t }: any) {
   };
 
   const getAllAttributesOptions = (primary: string, secondary: string) => {
-    var options: string[] = [];
+    let options: string[] = [];
     objectivesData?.mains[0]?.primaries?.map(json => {
       if (json.primary == primary) {
         json.secondaries.map(json => {
@@ -215,8 +218,38 @@ function ObjectiveHierarchy({ t }: any) {
     ];
     return formatOptions(options);
   };
+
+  const generateOptionsDataset = (
+    primaryIndex: number,
+    secondaryIndex: number,
+    attributeIndex: number
+  ) => {
+    let currentDatasetId =
+      localObjectives.primaries.secondaries[primaryIndex].attributes[
+        secondaryIndex
+      ].datasets[attributeIndex].id;
+    let options = [
+      localObjectives.primaries.secondaries[primaryIndex].attributes[
+        secondaryIndex
+      ].datasets[attributeIndex],
+    ];
+
+    if (files.length > 0) {
+      files.map((f: { name: string; id: string }) => {
+        if (f.id != currentDatasetId) options.push({ name: f.name, id: f.id });
+      });
+    }
+    return options.map(
+      f =>
+        ({
+          value: `${JSON.stringify({ id: f.id, name: f.name })}`,
+          label: `${f.name}`,
+        } as FormSelectOptionModel)
+    );
+  };
   let defaultSecondaries = { secondary: [], attributes: [] };
-  let defaultAttributes = { attribute: [], dataset: [] };
+  let defaultAttributes = { attribute: [], datasets: [] };
+  let defaultDataset = { name: '', id: '0' };
 
   const onAddPrimary = () => () => {
     let unused = getUnusedPrimary();
@@ -257,7 +290,7 @@ function ObjectiveHierarchy({ t }: any) {
         ].attribute.push(newDefault);
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
-        ].dataset.push('');
+        ].datasets.push(defaultDataset);
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       }
@@ -294,19 +327,57 @@ function ObjectiveHierarchy({ t }: any) {
       ].attribute.splice(attributeIndex, 1);
       newObjectives.primaries.secondaries[primaryIndex].attributes[
         secondaryIndex
-      ].dataset.splice(attributeIndex, 1);
+      ].datasets.splice(attributeIndex, 1);
       newObjectives.update = !localObjectives.update;
       setLocalObjectives(newObjectives);
     };
 
-  const onChangePrimary = (primaryIndex: any) => (e: any) => {
-    const newPrimaryValue = e.target.value;
+  const onChangePrimary = (primaryIndex: number) => (e: any) => {
+    let newPrimary = e.target.value;
     let newObjectives = copyLocalObjective();
-    newObjectives.primaries.primary[primaryIndex] = newPrimaryValue;
+    newObjectives.primaries.primary[primaryIndex] = newPrimary;
     newObjectives.primaries.secondaries[primaryIndex] = defaultSecondaries;
     newObjectives.update = !localObjectives.update;
     setLocalObjectives(newObjectives);
   };
+
+  const onChangeSecondary =
+    (primaryIndex: number, secondaryIndex: number) => (e: any) => {
+      let newSecondary = e.target.value;
+      let newObjectives = copyLocalObjective();
+      newObjectives.primaries.secondaries[primaryIndex].secondary[
+        secondaryIndex
+      ] = newSecondary;
+      newObjectives.primaries.secondaries[primaryIndex].attributes[
+        secondaryIndex
+      ] = defaultAttributes;
+      newObjectives.update = !localObjectives.update;
+      setLocalObjectives(newObjectives);
+    };
+
+  const onChangeAttribute =
+    (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+    (e: any) => {
+      let newAttribute = e.target.value;
+      let newObjectives = copyLocalObjective();
+      newObjectives.primaries.secondaries[primaryIndex].attributes[
+        secondaryIndex
+      ].attribute[attributeIndex] = newAttribute;
+      newObjectives.update = !localObjectives.update;
+      setLocalObjectives(newObjectives);
+    };
+  const onChangeDataset =
+    (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+    (e: any) => {
+      let newDatasetName = JSON.parse(e.target.value).name;
+      let newDatasetId = JSON.parse(e.target.value).id;
+      let newObjectives = copyLocalObjective();
+      newObjectives.primaries.secondaries[primaryIndex].attributes[
+        secondaryIndex
+      ].datasets[attributeIndex] = { name: newDatasetName, id: newDatasetId };
+      newObjectives.update = !localObjectives.update;
+      setLocalObjectives(newObjectives);
+    };
   /* Fin **************/
 
   /**
@@ -331,6 +402,9 @@ function ObjectiveHierarchy({ t }: any) {
       name={name('attribute')}
       defaultValue={defaultAttribute}
       label={`attribute ${orderIndex}`}
+      onChange={(e: any) => {
+        onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)(e);
+      }}
       options={generateOptionsAttribute(
         primaryIndex,
         secondaryIndex,
@@ -343,7 +417,10 @@ function ObjectiveHierarchy({ t }: any) {
       name={name('dataset')}
       defaultValue={defaultDataset}
       label={`dataset`}
-      options={generateOptions('dataset', 3)}
+      onChange={(e: any) => {
+        onChangeDataset(primaryIndex, secondaryIndex, orderIndex)(e);
+      }}
+      options={generateOptionsDataset(primaryIndex, secondaryIndex, orderIndex)}
     />,
   ];
 
@@ -371,7 +448,7 @@ function ObjectiveHierarchy({ t }: any) {
       name={name('secondary')}
       defaultValue={defaultValue}
       onChange={(e: any) => {
-        //onChangeSecondarySelect(secondaryObjIndex, primaryObjIndex)(e);
+        onChangeSecondary(primaryIndex, secondaryIndex)(e);
       }}
       options={generateOptionsSecondary(primaryIndex, orderIndex)}
     />,

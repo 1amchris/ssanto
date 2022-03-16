@@ -35,17 +35,18 @@ export const analysisSlice = createSlice({
 
             attributes: [
               {
-                attribute: ['a', 'b'],
-                dataset: ['', ''],
-
-                //dataset: ['file1', 'file2'],
-                //column: ['c1', 'c2'],
+                attribute: ['A', 'B'],
+                datasets: [
+                  { name: '', id: '0' },
+                  { name: '', id: '0' },
+                ],
               },
               {
-                attribute: ['a'],
-                dataset: [''],
-                //dataset: ['file1'],
-                //column: ['c1'],
+                attribute: ['A', 'B'],
+                datasets: [
+                  { name: '', id: '0' },
+                  { name: '', id: '0' },
+                ],
               },
             ],
           },
@@ -53,16 +54,18 @@ export const analysisSlice = createSlice({
             secondary: ['Education Level', 'Test'],
             attributes: [
               {
-                attribute: ['a', 'b'],
-                dataset: ['', ''],
-                //dataset: ['file1', 'file2'],
-                //column: ['c1', 'c2'],
+                attribute: ['A', 'B'],
+                datasets: [
+                  { name: '', id: '0' },
+                  { name: '', id: '0' },
+                ],
               },
               {
-                attribute: ['a', 'b'],
-                dataset: ['', ''],
-                //dataset: ['file1', 'file2'],
-                //column: ['c1', 'c2'],
+                attribute: ['A', 'B'],
+                datasets: [
+                  { name: '', id: '0' },
+                  { name: '', id: '0' },
+                ],
               },
             ],
           },
