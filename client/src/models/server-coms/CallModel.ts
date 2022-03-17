@@ -1,7 +1,5 @@
-import {
-  ActionCreatorWithPayloadBuilder,
-  InjectedActionCreatorWithPayloadBuilder,
-} from 'store/redux-toolkit-utils';
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
+import { InjectedActionCreatorWithPayload } from 'store/redux-toolkit-utils';
 
 export default interface CallModel<
   ArgsType = any,
@@ -13,9 +11,9 @@ export default interface CallModel<
   target: string;
   args?: ArgsType;
   onSuccessAction?:
-    | InjectedActionCreatorWithPayloadBuilder<InjectSuccessType, ReturnType>
-    | ActionCreatorWithPayloadBuilder<ReturnType>;
+    | InjectedActionCreatorWithPayload<InjectSuccessType, ReturnType>
+    | ActionCreatorWithPayload<ReturnType>;
   onErrorAction?:
-    | InjectedActionCreatorWithPayloadBuilder<InjectErrorType, ErrorType>
-    | ActionCreatorWithPayloadBuilder<ErrorType>;
+    | InjectedActionCreatorWithPayload<InjectErrorType, ErrorType>
+    | ActionCreatorWithPayload<ErrorType>;
 }

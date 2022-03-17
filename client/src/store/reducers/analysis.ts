@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
 import {
-  createActionWithInjectionBuilder,
-  createActionWithPayloadBuilder,
+  createActionCreatorSyringe,
   InjectedPayload,
 } from 'store/redux-toolkit-utils';
 import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
+import FileMetadataModel from 'models/FileMetadataModel';
 
 export const analysisSlice = createSlice({
   name: 'analysis',
@@ -18,7 +18,7 @@ export const analysisSlice = createSlice({
       },
       nbs_system: { system_type: '2' },
       studyArea: { fileName: '', area: undefined },
-      files: [],
+      files: [] as FileMetadataModel[],
 
       parametersLoading: false,
       parametersError: '',
@@ -111,10 +111,33 @@ export const analysisSlice = createSlice({
       }
     },
 
+    addFiles: (
+      state,
+      { payload: files }: PayloadAction<FileMetadataModel[]>
+    ) => {
+      state.properties.files = state.properties.files
+        .concat(files)
+        .filter(
+          (file: FileMetadataModel, index: number, self: FileMetadataModel[]) =>
+            self.findIndex(({ id }) => id === file.id) === index
+        );
+      state.properties.filesLoading = false;
+    },
+
+    deleteFile: (
+      state,
+      { payload: file }: PayloadAction<FileMetadataModel>
+    ) => {
+      state.properties.files = state.properties.files.filter(
+        ({ id }: FileMetadataModel) => id !== file.id
+      );
+      state.properties.filesLoading = false;
+    },
+
     studyAreaReceived: (state, { payload: data }: PayloadAction<any>) => {
-      state.properties['studyAreaLoading'] = false;
       state.properties.studyArea.fileName = data.file_name;
       state.properties.studyArea.area = data.area;
+      state.properties.studyAreaLoading = false;
     },
 
     updateObjectives: (
@@ -143,27 +166,29 @@ export const analysisSlice = createSlice({
         payload: { injected: property, payload: isLoading = false },
       }: PayloadAction<InjectedPayload<string, boolean>>
     ) => {
+      console.log('setLoading', property, isLoading);
       let temp: any = state.properties;
       temp[property + 'Loading'] = isLoading;
     },
   },
 });
 
-export const createSetErrorWithInjection = createActionWithInjectionBuilder<
-  string,
-  string
->(analysisSlice.actions.setError);
+export const injectSetErrorCreator = createActionCreatorSyringe<string, string>(
+  analysisSlice.actions.setError
+);
 
-export const createSetLoadingWithInjection = createActionWithInjectionBuilder<
+export const injectSetLoadingCreator = createActionCreatorSyringe<
   string,
   boolean
 >(analysisSlice.actions.setLoading);
 
-export const createStudyAreaReceivedWithPayload =
-  createActionWithPayloadBuilder<any>(analysisSlice.actions.studyAreaReceived);
-
-export const { receiveProperties, updateObjectives, studyAreaReceived } =
-  analysisSlice.actions;
+export const {
+  addFiles,
+  deleteFile,
+  receiveProperties,
+  updateObjectives,
+  studyAreaReceived,
+} = analysisSlice.actions;
 
 export const selectAnalysis = (state: RootState) => state.analysis;
 

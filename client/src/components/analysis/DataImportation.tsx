@@ -9,9 +9,11 @@ import { Badge } from 'react-bootstrap';
 import { call, subscribe } from 'store/reducers/server';
 import Utils from 'utils';
 import {
-  createSetLoadingWithInjection,
-  createSetErrorWithInjection,
+  injectSetLoadingCreator,
+  injectSetErrorCreator,
   selectAnalysis,
+  addFiles,
+  deleteFile,
 } from 'store/reducers/analysis';
 import { useEffectOnce } from 'hooks';
 import FileMetadataModel from 'models/FileMetadataModel';
@@ -80,10 +82,9 @@ function DataImportation({ t }: any) {
             call({
               target: ServerTargets.FileManagerRemoveFile,
               args: [(files[index] as FileMetadataModel).id],
-              // TODO: For some reason, DataImportation keeps loading after deleting element
-              onSuccessAction: createSetLoadingWithInjection(property),
-              onFailureAction: createSetErrorWithInjection(property),
-            } as CallModel<[string], boolean, string, string, string>)
+              onSuccessAction: deleteFile,
+              onFailureAction: injectSetErrorCreator(property),
+            } as CallModel<[string], FileMetadataModel, void, string, string>)
           );
         }}
         controls={files?.map((file: any) => ({
@@ -100,15 +101,15 @@ function DataImportation({ t }: any) {
       errors={getErrors}
       disabled={isLoading}
       onSubmit={(fields: any) => {
-        dispatch(createSetLoadingWithInjection(property)(true));
+        dispatch(injectSetLoadingCreator(property)(true));
         Utils.extractContentFromFiles(Array.from(fields.files)).then(files =>
           dispatch(
             call({
               target: ServerTargets.FileManagerAddFiles,
               args: [...files],
-              onSuccessAction: createSetLoadingWithInjection(property),
-              onFailureAction: createSetErrorWithInjection(property),
-            } as CallModel<FileContentModel<string>[], boolean, string, string, string>)
+              onSuccessAction: addFiles,
+              onFailureAction: injectSetErrorCreator(property),
+            } as CallModel<FileContentModel<string>[], FileMetadataModel[], void, string, string>)
           )
         );
       }}

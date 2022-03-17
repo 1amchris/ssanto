@@ -4,8 +4,8 @@ import { Control, Spacer, Button } from 'components/forms/components';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
   selectAnalysis,
-  createSetErrorWithInjection,
-  createSetLoadingWithInjection,
+  injectSetErrorCreator,
+  injectSetLoadingCreator,
 } from 'store/reducers/analysis';
 import { withTranslation } from 'react-i18next';
 import Form from 'components/forms/Form';
@@ -75,13 +75,13 @@ function Parameters({ t }: any) {
       disabled={isLoading}
       errors={getErrors}
       onSubmit={(fields: any) => {
-        dispatch(createSetLoadingWithInjection(property)(true));
+        dispatch(injectSetLoadingCreator(property)(true));
         dispatch(
           call({
             target: ServerTargets.Update,
             args: [property, { ...properties, ...fields }],
-            onSuccessAction: createSetLoadingWithInjection(property),
-            onFailureAction: createSetErrorWithInjection(property),
+            onSuccessAction: injectSetLoadingCreator(property),
+            onFailureAction: injectSetErrorCreator(property),
           } as CallModel<[string, Object], boolean, string, string, string>)
         );
       }}

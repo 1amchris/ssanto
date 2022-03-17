@@ -8,45 +8,32 @@ export interface InjectedPayload<InjectionType, PayloadType> {
   payload: PayloadType;
 }
 
-export type ActionCreatorWithInjection<InjectionType, PayloadType> =
+export type InjectableActionCreatorWithPayload<InjectionType, PayloadType> =
   ActionCreatorWithPayload<InjectedPayload<InjectionType, PayloadType>>;
 
 export type InjectedPayloadAction<InjectionType, PayloadType> = PayloadAction<
   InjectedPayload<InjectionType, PayloadType>
 >;
 
-export type InjectedActionCreatorWithPayloadBuilder<
-  InjectionType,
-  PayloadType
-> = (payload: PayloadType) => InjectedPayloadAction<InjectionType, PayloadType>;
+export type InjectedActionCreatorWithPayload<InjectionType, PayloadType> = (
+  payload: PayloadType
+) => InjectedPayloadAction<InjectionType, PayloadType>;
 
-export type ActionCreatorWithInjectionBuilder<InjectionType, PayloadType> = (
+export type ActionCreatorWithPayloadSyringe<InjectionType, PayloadType> = (
   injected: InjectionType
-) => InjectedActionCreatorWithPayloadBuilder<InjectionType, PayloadType>;
+) => InjectedActionCreatorWithPayload<InjectionType, PayloadType>;
 
 // Generates injectable callback-able actions (so they can be passed around)
-//  Injecting a function means it can be parameterised before passing it
-export function createActionWithInjectionBuilder<InjectionType, PayloadType>(
-  actionCreator: ActionCreatorWithInjection<InjectionType, PayloadType>
-): ActionCreatorWithInjectionBuilder<InjectionType, PayloadType> {
+//  Injecting a function means it can be parameterised before passing it (a kind of higher-order-action)
+export function createActionCreatorSyringe<InjectionType, PayloadType>(
+  actionCreator: InjectableActionCreatorWithPayload<InjectionType, PayloadType>
+): ActionCreatorWithPayloadSyringe<InjectionType, PayloadType> {
   return (
       injected: InjectionType
-    ): InjectedActionCreatorWithPayloadBuilder<InjectionType, PayloadType> =>
+    ): InjectedActionCreatorWithPayload<InjectionType, PayloadType> =>
     (payload: PayloadType): InjectedPayloadAction<InjectionType, PayloadType> =>
       actionCreator({
         injected,
         payload,
       });
-}
-
-export type ActionCreatorWithPayloadBuilder<PayloadType> = (
-  payload: PayloadType
-) => PayloadAction<PayloadType>;
-
-// Generates callback-able actions (so they can be passed around)
-export function createActionWithPayloadBuilder<PayloadType>(
-  actionCreator: ActionCreatorWithPayload<PayloadType>
-): ActionCreatorWithPayloadBuilder<PayloadType> {
-  return (payload: PayloadType): PayloadAction<PayloadType> =>
-    actionCreator(payload);
 }

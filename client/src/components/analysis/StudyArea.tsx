@@ -3,9 +3,9 @@ import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
   selectAnalysis,
-  createSetErrorWithInjection,
-  createSetLoadingWithInjection,
-  createStudyAreaReceivedWithPayload,
+  injectSetErrorCreator,
+  injectSetLoadingCreator,
+  studyAreaReceived,
 } from 'store/reducers/analysis';
 import Form from 'components/forms/Form';
 import { Control, Button, Spacer } from 'components/forms/components';
@@ -55,15 +55,15 @@ function StudyArea({ t }: any) {
       controls={controls}
       errors={getErrors}
       onSubmit={(fields: any) => {
-        dispatch(createSetLoadingWithInjection(property)(true));
+        dispatch(injectSetLoadingCreator(property)(true));
         Utils.extractContentFromFiles(Array.from(fields.files)).then(files => {
           dispatch(
             call({
               target: ServerTargets.UpdateStudyAreaFiles,
               args: [...files],
-              onSuccessAction: createStudyAreaReceivedWithPayload,
-              onFailureAction: createSetErrorWithInjection(property),
-            } as CallModel<FileContentModel<string>[], boolean, string, string, string>)
+              onSuccessAction: studyAreaReceived,
+              onFailureAction: injectSetErrorCreator(property),
+            } as CallModel<FileContentModel<string>[], boolean, void, string, string>)
           );
         });
       }}

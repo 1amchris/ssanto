@@ -5,8 +5,8 @@ import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
   selectAnalysis,
-  createSetErrorWithInjection,
-  createSetLoadingWithInjection,
+  injectSetErrorCreator,
+  injectSetLoadingCreator,
 } from 'store/reducers/analysis';
 import Form from 'components/forms/Form';
 import { Select, Button, Spacer } from 'components/forms/components';
@@ -60,13 +60,13 @@ function NbsSystem({ t }: any) {
       errors={getErrors}
       disabled={isLoading}
       onSubmit={(fields: any) => {
-        dispatch(createSetLoadingWithInjection(property)(true));
+        dispatch(injectSetLoadingCreator(property)(true));
         dispatch(
           call({
             target: ServerTargets.Update,
             args: [property, fields],
-            onSuccessAction: createSetLoadingWithInjection(property),
-            onFailureAction: createSetErrorWithInjection(property),
+            onSuccessAction: injectSetLoadingCreator(property),
+            onFailureAction: injectSetErrorCreator(property),
           } as CallModel<[string, Object], boolean, string, string, string>)
         );
       }}
