@@ -1,8 +1,7 @@
 import React from 'react';
-
 import { useEffectOnce } from 'hooks';
 import { useAppDispatch } from 'store/hooks';
-import * as server from 'store/middlewares/ServerMiddleware';
+import * as server from 'store/reducers/server';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Main from './Main';
 import Guide from './guide/Guide';

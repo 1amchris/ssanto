@@ -3,14 +3,17 @@ import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
   selectAnalysis,
-  setError,
-  setLoading,
-  studyAreaReceived,
+  createSetErrorWithInjection,
+  createSetLoadingWithInjection,
+  createStudyAreaReceivedWithPayload,
 } from 'store/reducers/analysis';
 import Form from 'components/forms/Form';
 import { Control, Button, Spacer } from 'components/forms/components';
-import * as Utils from 'utils';
-import { call } from 'store/middlewares/ServerMiddleware';
+import { call } from 'store/reducers/server';
+import ServerTargets from 'enums/ServerTargets';
+import CallModel from 'models/server-coms/CallModel';
+import FileContentModel from 'models/FileContentModel';
+import Utils from 'utils';
 
 function StudyArea({ t }: any) {
   const property = 'studyArea';
@@ -18,8 +21,8 @@ function StudyArea({ t }: any) {
   const properties = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = selector.properties['studyAreaError'];
-  const isLoading = selector.properties['studyAreaLoading'];
+  const getErrors = selector.properties.studyAreaError;
+  const isLoading = selector.properties.studyAreaLoading;
 
   const controls = [
     <Control
@@ -52,23 +55,17 @@ function StudyArea({ t }: any) {
       controls={controls}
       errors={getErrors}
       onSubmit={(fields: any) => {
+        dispatch(createSetLoadingWithInjection(property)(true));
         Utils.extractContentFromFiles(Array.from(fields.files)).then(files => {
           dispatch(
             call({
-              target: 'study_area.files',
-              args: [
-                ...files.map(file => ({
-                  name: file.name,
-                  content: file.base64content,
-                })),
-              ],
-              successAction: studyAreaReceived,
-              failureAction: setError,
-              failureData: property,
-            })
+              target: ServerTargets.UpdateStudyAreaFiles,
+              args: [...files],
+              onSuccessAction: createStudyAreaReceivedWithPayload,
+              onFailureAction: createSetErrorWithInjection(property),
+            } as CallModel<FileContentModel<string>[], boolean, string, string, string>)
           );
         });
-        dispatch(setLoading({ params: property, data: true }));
       }}
     />
   );

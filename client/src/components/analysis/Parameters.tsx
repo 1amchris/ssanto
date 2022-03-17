@@ -2,11 +2,17 @@ import { capitalize } from 'lodash';
 import React, { createRef, RefObject } from 'react';
 import { Control, Spacer, Button } from 'components/forms/components';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectAnalysis, setError, setLoading } from 'store/reducers/analysis';
+import {
+  selectAnalysis,
+  createSetErrorWithInjection,
+  createSetLoadingWithInjection,
+} from 'store/reducers/analysis';
 import { withTranslation } from 'react-i18next';
 import Form from 'components/forms/Form';
 import { useEffectOnce } from 'hooks';
-import { call, subscribe } from 'store/middlewares/ServerMiddleware';
+import { call, subscribe } from 'store/reducers/server';
+import ServerTargets from 'enums/ServerTargets';
+import CallModel from 'models/server-coms/CallModel';
 
 function Parameters({ t }: any) {
   const property = 'parameters';
@@ -14,8 +20,8 @@ function Parameters({ t }: any) {
   const properties = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = selector.properties['parametersError'];
-  const isLoading = selector.properties['parametersLoading'];
+  const getErrors = selector.properties.parametersError;
+  const isLoading = selector.properties.parametersLoading;
 
   useEffectOnce(() => {
     dispatch(subscribe({ subject: property }));
@@ -23,20 +29,20 @@ function Parameters({ t }: any) {
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
   const controls = [
-    // <Control
-    //   label="analysis name"
-    //   name="analysis_name"
-    //   defaultValue={properties.analysis_name}
-    //   required
-    //   tooltip={t('the analysis name will ...')}
-    // />,
-    // <Control
-    //   label="name of the modeler"
-    //   name="modeler_name"
-    //   defaultValue={properties.modeler_name}
-    //   required
-    //   tooltip={t("the modeler's name will ...")}
-    // />,
+    <Control
+      label="analysis name"
+      name="analysis_name"
+      defaultValue={properties.analysis_name}
+      required
+      tooltip={t('the analysis name will ...')}
+    />,
+    <Control
+      label="name of the modeler"
+      name="modeler_name"
+      defaultValue={properties.modeler_name}
+      required
+      tooltip={t("the modeler's name will ...")}
+    />,
     <Control
       label="cell size"
       name="cell_size"
@@ -69,17 +75,15 @@ function Parameters({ t }: any) {
       disabled={isLoading}
       errors={getErrors}
       onSubmit={(fields: any) => {
+        dispatch(createSetLoadingWithInjection(property)(true));
         dispatch(
           call({
-            target: 'update',
+            target: ServerTargets.Update,
             args: [property, { ...properties, ...fields }],
-            successAction: setLoading,
-            successData: property,
-            failureAction: setError,
-            failureData: property,
-          })
+            onSuccessAction: createSetLoadingWithInjection(property),
+            onFailureAction: createSetErrorWithInjection(property),
+          } as CallModel<[string, Object], boolean, string, string, string>)
         );
-        dispatch(setLoading({ params: property, data: true }));
       }}
     />
   );

@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
-import { AnalysisObjectives } from '../models/AnalysisObjectives';
+import {
+  createActionWithInjectionBuilder,
+  createActionWithPayloadBuilder,
+  InjectedPayload,
+} from 'store/redux-toolkit-utils';
+import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
 
 export const analysisSlice = createSlice({
   name: 'analysis',
@@ -106,44 +111,7 @@ export const analysisSlice = createSlice({
       }
     },
 
-    defaultCallSuccess: (
-      state,
-      { payload: { params, data } }: PayloadAction<{ params: any; data: any }>
-    ) => {
-      //console.log("defaultCallSuccess called with data:", data)
-    },
-    defaultCallError: (
-      state,
-      { payload: { params, data } }: PayloadAction<{ params: any; data: any }>
-    ) => {
-      //console.log("defaultCallError called with data:", data)
-    },
-
-    setError: (
-      state,
-      { payload: { params, data } }: PayloadAction<{ params: any; data: any }>
-    ) => {
-      //console.log("SetError")
-      let temp: any = state.properties;
-      temp[params + 'Error'] = data;
-      temp[params + 'Loading'] = false;
-    },
-
-    setLoading: (
-      state,
-      { payload: { params, data } }: PayloadAction<{ params: any; data: any }>
-    ) => {
-      //console.log("SetLoading")
-      if (data == null) data = false;
-
-      let temp: any = state.properties;
-      temp[params + 'Loading'] = data;
-    },
-
-    studyAreaReceived: (
-      state,
-      { payload: { params, data } }: PayloadAction<{ params: any; data: any }>
-    ) => {
+    studyAreaReceived: (state, { payload: data }: PayloadAction<any>) => {
       state.properties['studyAreaLoading'] = false;
       state.properties.studyArea.fileName = data.file_name;
       state.properties.studyArea.area = data.area;
@@ -151,24 +119,52 @@ export const analysisSlice = createSlice({
 
     updateObjectives: (
       state,
-      { payload }: PayloadAction<AnalysisObjectives>
+      { payload }: PayloadAction<AnalysisObjectivesModel>
     ) => {
       console.warn('No validation was performed on the objectives hierarchy');
       /* TODO: add additional validation here */
       //state.objectives = payload;
     },
+
+    setError: (
+      state,
+      {
+        payload: { injected: property, payload: error },
+      }: PayloadAction<InjectedPayload<string, string>>
+    ) => {
+      let temp: any = state.properties;
+      temp[property + 'Error'] = error;
+      temp[property + 'Loading'] = false;
+    },
+
+    setLoading: (
+      state,
+      {
+        payload: { injected: property, payload: isLoading = false },
+      }: PayloadAction<InjectedPayload<string, boolean>>
+    ) => {
+      let temp: any = state.properties;
+      temp[property + 'Loading'] = isLoading;
+    },
   },
 });
 
-export const {
-  receiveProperties,
-  updateObjectives,
-  defaultCallSuccess,
-  defaultCallError,
-  setError,
-  setLoading,
-  studyAreaReceived,
-} = analysisSlice.actions;
+export const createSetErrorWithInjection = createActionWithInjectionBuilder<
+  string,
+  string
+>(analysisSlice.actions.setError);
+
+export const createSetLoadingWithInjection = createActionWithInjectionBuilder<
+  string,
+  boolean
+>(analysisSlice.actions.setLoading);
+
+export const createStudyAreaReceivedWithPayload =
+  createActionWithPayloadBuilder<any>(analysisSlice.actions.studyAreaReceived);
+
+export const { receiveProperties, updateObjectives, studyAreaReceived } =
+  analysisSlice.actions;
+
 export const selectAnalysis = (state: RootState) => state.analysis;
 
 export default analysisSlice.reducer;

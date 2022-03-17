@@ -2,6 +2,7 @@ from re import sub
 from .subject import Subject
 from .network_definitions import Field, SendType
 
+
 class SubjectsManager:
     def __init__(self, server_socket):
         self.subjects = {}
@@ -15,10 +16,9 @@ class SubjectsManager:
         raise NotImplementedError("Not implemented yet!")
 
     def send(self, s):
-        self.server_socket.send(SendType.SUBJECT.value, {
-            Field.SUBJECT_ID.value: s.subject_id,
-            Field.DATA.value: s.value()
-        })
+        self.server_socket.send(
+            SendType.SUBJECT.value, {Field.SUBJECT_ID.value: s.subject_id, Field.DATA.value: s.value()}
+        )
 
     def subscribe(self, subject):
         # TODO: Handle sid unavailable

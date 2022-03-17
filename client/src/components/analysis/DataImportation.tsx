@@ -1,16 +1,23 @@
 import { capitalize } from 'lodash';
 import React, { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import Form from '../forms/Form';
-import { Control, Button, Spacer, List } from '../forms/components';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import Form from 'components/forms/Form';
+import { Control, Button, Spacer, List } from 'components/forms/components';
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import { Badge } from 'react-bootstrap';
-import { call, subscribe } from 'store/middlewares/ServerMiddleware';
-import * as Utils from 'utils';
-import { setLoading, setError, selectAnalysis } from 'store/reducers/analysis';
+import { call, subscribe } from 'store/reducers/server';
+import Utils from 'utils';
+import {
+  createSetLoadingWithInjection,
+  createSetErrorWithInjection,
+  selectAnalysis,
+} from 'store/reducers/analysis';
 import { useEffectOnce } from 'hooks';
 import FileMetadataModel from 'models/FileMetadataModel';
+import CallModel from 'models/server-coms/CallModel';
+import ServerTargets from 'enums/ServerTargets';
+import FileContentModel from 'models/FileContentModel';
 
 const FileRowFactory = ({
   file,
@@ -40,8 +47,8 @@ function DataImportation({ t }: any) {
   const files = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = selector.properties['filesError'];
-  const isLoading = selector.properties['filesLoading'];
+  const getErrors = selector.properties.filesError;
+  const isLoading = selector.properties.filesLoading;
 
   useEffectOnce(() => {
     dispatch(subscribe({ subject: property }));
@@ -68,18 +75,17 @@ function DataImportation({ t }: any) {
         name={'files'}
         label={'existing files'}
         factory={FileRowFactory}
-        onDeleteControl={(index: number) =>
+        onDeleteControl={(index: number) => {
           dispatch(
             call({
-              target: 'file_manager.remove_file',
+              target: ServerTargets.FileManagerRemoveFile,
               args: [(files[index] as FileMetadataModel).id],
-              successAction: setLoading,
-              successData: property,
-              failureAction: setError,
-              failureData: property,
-            })
-          )
-        }
+              // TODO: For some reason, DataImportation keeps loading after deleting element
+              onSuccessAction: createSetLoadingWithInjection(property),
+              onFailureAction: createSetErrorWithInjection(property),
+            } as CallModel<[string], boolean, string, string, string>)
+          );
+        }}
         controls={files?.map((file: any) => ({
           file,
           index: file.id,
@@ -94,24 +100,17 @@ function DataImportation({ t }: any) {
       errors={getErrors}
       disabled={isLoading}
       onSubmit={(fields: any) => {
+        dispatch(createSetLoadingWithInjection(property)(true));
         Utils.extractContentFromFiles(Array.from(fields.files)).then(files =>
           dispatch(
             call({
-              target: 'file_manager.add_files',
-              args: [
-                ...files.map(file => ({
-                  name: file.name,
-                  content: file.base64content,
-                })),
-              ],
-              successAction: setLoading,
-              successData: property,
-              failureAction: setError,
-              failureData: property,
-            })
+              target: ServerTargets.FileManagerAddFiles,
+              args: [...files],
+              onSuccessAction: createSetLoadingWithInjection(property),
+              onFailureAction: createSetErrorWithInjection(property),
+            } as CallModel<FileContentModel<string>[], boolean, string, string, string>)
           )
         );
-        dispatch(setLoading({ params: property, data: true }));
       }}
     />
   );

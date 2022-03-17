@@ -1,4 +1,4 @@
-export interface AnalysisObjectives {
+export default interface AnalysisObjectivesModel {
   main: string;
   primaries: {
     primary: string[];

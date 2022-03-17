@@ -1,5 +1,5 @@
-export default interface FileContentModel {
+export default interface FileContentModel<ContentType> {
   name: string;
   size: number;
-  content: ArrayBuffer;
+  content: ContentType;
 }

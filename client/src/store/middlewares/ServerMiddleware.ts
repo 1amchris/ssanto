@@ -1,75 +1,49 @@
-import { createAction, Store } from '@reduxjs/toolkit';
 import ServerCom from 'apis/ServerCom';
 import {
+  call,
   defaultCallError,
   defaultCallSuccess,
-  receiveProperties,
-} from 'store/reducers/analysis';
+  openConnection,
+  subscribe,
+} from 'store/reducers/server';
+import { Middleware, MiddlewareAPI, Dispatch } from 'redux';
+import { PayloadAction } from '@reduxjs/toolkit';
+import { receiveProperties } from 'store/reducers/analysis';
+import CallModel from 'models/server-coms/CallModel';
+import SubscriptionModel from 'models/SubscriptionModel';
 
-export interface CallModel {
-  target: string;
-  args?: any[];
-  successAction?: any;
-  successData?: any;
-  failureAction?: any;
-  failureData?: any;
-}
-
-export interface SendFilesModel {
-  files: FileList;
-  target: string;
-}
-
-export interface SubscriptionModel {
-  subject: string;
-}
-
-export const openConnection = createAction<string | undefined>('openSocket');
-export const call = createAction<CallModel>('call');
-export const sendFiles = createAction<SendFilesModel>('sendFiles');
-export const subscribe = createAction<SubscriptionModel>('subscribe');
-
-const ServerComMiddleware = () => {
+const ServerComMiddleware: () => Middleware = () => {
   let serverCom = new ServerCom();
-  return (store: any) => (next: any) => (action: any) => {
-    switch (action.type) {
-      case openConnection.type: {
-        return serverCom.open(action.payload);
-      }
+  return ({ dispatch }: MiddlewareAPI) =>
+    (next: Dispatch) =>
+    <A extends PayloadAction<any>>(action: A) => {
+      switch (action.type) {
+        case openConnection.type:
+          return serverCom.open(action.payload);
 
-      case call.type: {
-        const { target, args, successData, failureData } = action.payload;
-        let { successAction, failureAction } = action.payload;
-        if (successAction === undefined) successAction = defaultCallSuccess;
-        if (failureAction === undefined) failureAction = defaultCallError;
-        return serverCom.call(
-          target,
-          args || [],
-          (({ dispatch }: Store) =>
-            (isSuccess: boolean, data: any) => {
-              if (isSuccess)
-                dispatch(successAction({ params: successData, data: data }));
-              else dispatch(failureAction({ params: failureData, data: data }));
-            }).call(null, store)
-        );
-      }
+        case call.type:
+          const {
+            target,
+            args = [],
+            onSuccessAction = defaultCallSuccess,
+            onErrorAction = defaultCallError,
+          } = action.payload as CallModel;
 
-      case subscribe.type: {
-        const { subject } = action.payload;
-        return serverCom.subscribe(
-          subject,
-          (({ dispatch }: Store) =>
-            (data: any) =>
-              dispatch(
-                receiveProperties({ property: subject, data: data })
-              )).call(null, store)
-        );
-      }
+          return serverCom.call(target, args, (isSuccess: boolean, data: any) =>
+            dispatch(isSuccess ? onSuccessAction(data) : onErrorAction(data))
+          );
 
-      default:
-        return next(action);
-    }
-  };
+        case subscribe.type:
+          const { subject } = action.payload as SubscriptionModel;
+
+          return serverCom.subscribe(subject, (data: any) =>
+            dispatch(receiveProperties({ property: subject, data: data }))
+          );
+
+        default:
+          return next(action);
+      }
+    };
 };
 
 export default ServerComMiddleware();

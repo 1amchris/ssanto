@@ -1,29 +1,23 @@
 import React, { ReactElement, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import Form from '../forms/Form';
+import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import Form from 'components/forms/Form';
 import {
   Button,
   Spacer,
   Select,
   ExpandableList,
-} from '../forms/components';
-import {
-  selectAnalysis,
-  updateObjectives,
-} from '../../store/reducers/analysis';
-import { FactoryProps } from '../forms/components/FormExpandableList';
-import objectivesData from '../../data/objectives.json';
+} from 'components/forms/components';
+import { selectAnalysis, updateObjectives } from 'store/reducers/analysis';
+import { FactoryProps } from 'components/forms/components/FormExpandableList';
+import objectivesData from 'data/objectives.json';
 
 //TODO : ajout d'un objectif => options selon l'objectif parent
 //TODO : update d'un objectif => clear des objectifs enfants et updates de leurs options
 
 function ObjectiveHierarchy({ t }: any) {
-  // remove me to log stuff
-  console.log = () => {};
-
   const dispatch = useAppDispatch();
   const {
     objectives: {
@@ -66,7 +60,7 @@ function ObjectiveHierarchy({ t }: any) {
     localPrimaries.primary.forEach(primary => {
       primaryOptions.splice(primaryOptions.indexOf(primary), 1);
       var secondaryOptions: string[] = getAllSecondaryOptions(primary);
-      console.log('secondaryOptions', secondaryOptions);
+      // console.log('secondaryOptions', secondaryOptions);
       localPrimaries.secondaries[
         localPrimaries.primary.indexOf(primary)
       ].secondary.forEach(secondary => {
@@ -77,7 +71,7 @@ function ObjectiveHierarchy({ t }: any) {
         secondary: secondaryOptions,
       });
     });
-    console.log('computeOptions', secondariesOptions);
+    // console.log('computeOptions', secondariesOptions);
     return { primary: primaryOptions, secondaries: secondariesOptions };
   };
   const [localOptions, setLocalOptions] = useState(computeOptions());
@@ -259,10 +253,10 @@ function ObjectiveHierarchy({ t }: any) {
     secondaryIndex: number
   ) => {
     var primaryValue = localPrimaries.primary[primaryIndex];
-    console.log(
-      'generateOptionsSecondaries',
-      localPrimaries.secondaries[primaryIndex]
-    );
+    // console.log(
+    //   'generateOptionsSecondaries',
+    //   localPrimaries.secondaries[primaryIndex]
+    // );
     var secondaryValue =
       localPrimaries.secondaries[primaryIndex].secondary[secondaryIndex];
     var options: string[] = [];
@@ -272,16 +266,16 @@ function ObjectiveHierarchy({ t }: any) {
         options = value.secondary;
       }
     });
-    console.log(
-      'generateOptionsSecondaries',
-      primaryValue,
-      secondaryValue,
-      options
-    );
+    // console.log(
+    //   'generateOptionsSecondaries',
+    //   primaryValue,
+    //   secondaryValue,
+    //   options
+    // );
 
     options.splice(options.indexOf(secondaryValue), 1);
     options.unshift(secondaryValue);
-    console.log('generateOptionsSecondaries', options);
+    // console.log('generateOptionsSecondaries', options);
 
     /*
     var options: string[] = [];

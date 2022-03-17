@@ -3,10 +3,16 @@ import { withTranslation } from 'react-i18next';
 import { useEffectOnce } from 'hooks';
 import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectAnalysis, setError, setLoading } from 'store/reducers/analysis';
+import {
+  selectAnalysis,
+  createSetErrorWithInjection,
+  createSetLoadingWithInjection,
+} from 'store/reducers/analysis';
 import Form from 'components/forms/Form';
 import { Select, Button, Spacer } from 'components/forms/components';
-import { call, subscribe } from 'store/middlewares/ServerMiddleware';
+import { call, subscribe } from 'store/reducers/server';
+import ServerTargets from 'enums/ServerTargets';
+import CallModel from 'models/server-coms/CallModel';
 
 function NbsSystem({ t }: any) {
   const property = 'nbs_system';
@@ -54,15 +60,14 @@ function NbsSystem({ t }: any) {
       errors={getErrors}
       disabled={isLoading}
       onSubmit={(fields: any) => {
+        dispatch(createSetLoadingWithInjection(property)(true));
         dispatch(
           call({
-            target: 'update',
+            target: ServerTargets.Update,
             args: [property, fields],
-            successAction: setLoading,
-            successData: property,
-            failureAction: setError,
-            failureData: property,
-          })
+            onSuccessAction: createSetLoadingWithInjection(property),
+            onFailureAction: createSetErrorWithInjection(property),
+          } as CallModel<[string, Object], boolean, string, string, string>)
         );
       }}
     />
