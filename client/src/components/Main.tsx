@@ -17,6 +17,7 @@ import { selectAnalysis } from 'store/reducers/analysis';
 
 function App() {
   const selector = useAppSelector(selectAnalysis);
+  const objectives = selector.properties.objectives;
   const isLoading = selector.properties['objectivesLoading'];
 
   return (
@@ -40,10 +41,10 @@ function App() {
               <DataImportation />
             </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>
-              <ObjectiveHierarchy key={'oh' + isLoading} />
+              <ObjectiveHierarchy key={'oh' + JSON.stringify(objectives)} />
             </Collapsible>
             <Collapsible title={'weighting'}>
-              <Weighting key={'weighting' + isLoading} />
+              <Weighting key={'weighting' + JSON.stringify(objectives)} />
             </Collapsible>
           </FormsBar>
         </aside>

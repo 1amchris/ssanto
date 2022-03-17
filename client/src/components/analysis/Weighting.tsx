@@ -35,217 +35,229 @@ function Weighting({ t }: any) {
   const getErrors = selector.properties['objectivesError'];
   const isLoading = selector.properties['objectivesLoading'];
 
-  useEffectOnce(() => {
-    dispatch(subscribe({ subject: property }));
-  });
   const [localObjectives, setLocalObjectives] = useState({
     ...objectives,
     update: true,
   });
 
-  const getPrimary = () => {
-    return localObjectives.primaries.primary;
-  };
+  let controls = [];
+  if (
+    !(
+      localObjectives === undefined ||
+      localObjectives.primaries === undefined ||
+      localObjectives.primaries.primary === undefined
+    )
+  ) {
+    const getPrimary = () => {
+      return localObjectives.primaries.primary;
+    };
 
-  const getSecondary = (primaryIndex: number) => {
-    return localObjectives.primaries.secondaries[primaryIndex].secondary;
-  };
+    const getSecondary = (primaryIndex: number) => {
+      return localObjectives.primaries.secondaries[primaryIndex].secondary;
+    };
 
-  const getAttribute = (primaryIndex: number, secondaryIndex: number) => {
-    return localObjectives.primaries.secondaries[primaryIndex].attributes[
-      secondaryIndex
-    ].attribute;
-  };
+    const getAttribute = (primaryIndex: number, secondaryIndex: number) => {
+      return localObjectives.primaries.secondaries[primaryIndex].attributes[
+        secondaryIndex
+      ].attribute;
+    };
 
-  const primaryName = (index: number) => {
-    return localObjectives.primaries.primary[index];
-  };
+    const primaryName = (index: number) => {
+      return localObjectives.primaries.primary[index];
+    };
 
-  const secondaryName = (primaryIndex: number, secondaryIndex: number) => {
-    return localObjectives.primaries.secondaries[primaryIndex].secondary[
-      secondaryIndex
-    ];
-  };
-  const copyLocalObjective = () => {
-    return JSON.parse(
-      JSON.stringify(localObjectives)
-    ) as typeof localObjectives;
-  };
+    const secondaryName = (primaryIndex: number, secondaryIndex: number) => {
+      return localObjectives.primaries.secondaries[primaryIndex].secondary[
+        secondaryIndex
+      ];
+    };
+    const copyLocalObjective = () => {
+      return JSON.parse(
+        JSON.stringify(localObjectives)
+      ) as typeof localObjectives;
+    };
 
-  const onChangePrimary = (primaryIndex: number) => (e: any) => {
-    console.log(primaryIndex, e.target.value);
-    let newWeight = e.target.value;
-    let newObjectives = copyLocalObjective();
-    newObjectives.primaries.weights[primaryIndex] = newWeight;
-    newObjectives.update = !localObjectives.update;
-    setLocalObjectives(newObjectives);
-  };
-
-  const onChangeSecondary =
-    (primaryIndex: number, secondaryIndex: number) => (e: any) => {
+    const onChangePrimary = (primaryIndex: number) => (e: any) => {
+      console.log(primaryIndex, e.target.value);
       let newWeight = e.target.value;
       let newObjectives = copyLocalObjective();
-      newObjectives.primaries.secondaries[primaryIndex].weights[
-        secondaryIndex
-      ] = newWeight;
+      newObjectives.primaries.weights[primaryIndex] = newWeight;
       newObjectives.update = !localObjectives.update;
       setLocalObjectives(newObjectives);
     };
 
-  const onChangeAttribute =
-    (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
-    (e: any) => {
-      let newWeight = e.target.value;
-      let newObjectives = copyLocalObjective();
-      newObjectives.primaries.secondaries[primaryIndex].attributes[
-        secondaryIndex
-      ].weights[attributeIndex] = newWeight;
-      newObjectives.update = !localObjectives.update;
-      setLocalObjectives(newObjectives);
+    const onChangeSecondary =
+      (primaryIndex: number, secondaryIndex: number) => (e: any) => {
+        let newWeight = e.target.value;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].weights[
+          secondaryIndex
+        ] = newWeight;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
+    const onChangeAttribute =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (e: any) => {
+        let newWeight = e.target.value;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].weights[attributeIndex] = newWeight;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
+    const weightAttributeFactory = ({
+      name,
+      key,
+      orderIndex,
+      primaryIndex,
+      secondaryIndex,
+      defaultAttribute,
+      defaultDataset,
+    }: FactoryProps): ReactElement | ReactElement[] => {
+      const weightRef: RefObject<HTMLSpanElement> = createRef();
+      return [
+        <Control
+          key={key('weight_attribute') + localObjectives.update}
+          label={defaultAttribute}
+          className="small position-relative d-flex"
+          name={name('attribute')}
+          defaultValue={defaultAttribute}
+          onChange={({ target: { value } }: { target: HTMLInputElement }) => {
+            if (weightRef.current?.textContent) {
+              weightRef.current.textContent = value;
+              onChangeAttribute(
+                primaryIndex,
+                secondaryIndex,
+                orderIndex
+              )(value);
+            }
+          }}
+          type="number"
+          //tooltip={t('the cell size is ...')}
+        />,
+      ];
     };
 
-  const weightAttributeFactory = ({
-    name,
-    key,
-    orderIndex,
-    primaryIndex,
-    secondaryIndex,
-    defaultAttribute,
-    defaultDataset,
-  }: FactoryProps): ReactElement | ReactElement[] => {
-    const weightRef: RefObject<HTMLSpanElement> = createRef();
-    return [
-      <Control
-        key={key('weight_attribute') + localObjectives.update}
-        label={defaultAttribute}
-        className="small position-relative d-flex"
-        name={name('attribute')}
-        defaultValue={defaultAttribute}
-        onChange={({ target: { value } }: { target: HTMLInputElement }) => {
-          if (weightRef.current?.textContent) {
-            weightRef.current.textContent = value;
-            onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)(value);
+    const weightSecondaryFactory = ({
+      name,
+      key,
+      orderIndex,
+      defaultValue,
+      secondaryIndex,
+
+      primaryIndex,
+      childrenValues: attributes,
+    }: FactoryProps): ReactElement | ReactElement[] => {
+      const weightRef: RefObject<HTMLSpanElement> = createRef();
+
+      return [
+        <Control
+          key={key('weight_secondary') + localObjectives.update}
+          label={secondaryName(primaryIndex, orderIndex)}
+          className="small position-relative d-flex"
+          name="weight"
+          defaultValue={
+            localObjectives.primaries.secondaries[primaryIndex].weights[
+              orderIndex
+            ]
           }
-        }}
-        type="number"
-        //tooltip={t('the cell size is ...')}
-      />,
-    ];
-  };
+          onChange={({ target: { value } }: { target: HTMLInputElement }) => {
+            if (weightRef.current?.textContent) {
+              weightRef.current.textContent = value;
+              onChangeSecondary(primaryIndex, orderIndex)(value);
+            }
+          }}
+          type="number"
+          //tooltip={t('the cell size is ...')}
+        />,
+        <SimpleList
+          key={key('weights-secondary') + localObjectives.update}
+          name={'weights'}
+          hideLabel
+          factory={weightAttributeFactory}
+          controls={getAttribute(primaryIndex, secondaryIndex).map(
+            (defaultAttribute: string, index: number) => ({
+              defaultAttribute,
+              primaryIndex,
+              secondaryIndex,
+              attributeIndex: index,
+              attributeOptions: attributes.attributeOptions,
+            })
+          )}
+        />,
+      ];
+    };
 
-  const weightSecondaryFactory = ({
-    name,
-    key,
-    orderIndex,
-    defaultValue,
-    secondaryIndex,
+    const weightPrimaryFactory = ({
+      name,
+      key,
+      primaryIndex,
+      orderIndex,
+      primary,
+      childrenValues: secondaries,
+    }: FactoryProps): ReactElement | ReactElement[] => {
+      const weightRef: RefObject<HTMLSpanElement> = createRef();
+      return [
+        <Control
+          key={key('weight_primary') + localObjectives.update}
+          label={primaryName(orderIndex)}
+          className="small position-relative d-flex"
+          name={name('weight_primary')}
+          defaultValue={localObjectives.primaries.weights[orderIndex]}
+          onChange={({ target: { value } }: { target: HTMLInputElement }) => {
+            if (weightRef.current?.textContent) {
+              weightRef.current.textContent = value;
+              onChangePrimary(orderIndex)(value);
+            }
+          }}
+          type="number"
+          //tooltip={t('the cell size is ...')}
+        />,
+        <SimpleList
+          key={key('weights-secondary') + localObjectives.update}
+          name={'weights'}
+          hideLabel
+          factory={weightSecondaryFactory}
+          controls={getSecondary(orderIndex).map(
+            (defaultValueSecondary: string, index: number) => ({
+              defaultValue: defaultValueSecondary,
+              primaryIndex,
+              secondaryIndex: index,
+              primary,
+              childrenValues: getAttribute(orderIndex, index),
+            })
+          )}
+        />,
+      ];
+    };
 
-    primaryIndex,
-    childrenValues: attributes,
-  }: FactoryProps): ReactElement | ReactElement[] => {
-    const weightRef: RefObject<HTMLSpanElement> = createRef();
-
-    return [
-      <Control
-        key={key('weight_secondary') + localObjectives.update}
-        label={secondaryName(primaryIndex, orderIndex)}
-        className="small position-relative d-flex"
-        name="weight"
-        defaultValue={
-          localObjectives.primaries.secondaries[primaryIndex].weights[
-            orderIndex
-          ]
-        }
-        onChange={({ target: { value } }: { target: HTMLInputElement }) => {
-          if (weightRef.current?.textContent) {
-            weightRef.current.textContent = value;
-            onChangeSecondary(primaryIndex, orderIndex)(value);
-          }
-        }}
-        type="number"
-        //tooltip={t('the cell size is ...')}
-      />,
-      <SimpleList
-        key={key('weights-secondary') + localObjectives.update}
-        name={'weights'}
-        hideLabel
-        factory={weightAttributeFactory}
-        controls={getAttribute(primaryIndex, secondaryIndex).map(
-          (defaultAttribute: string, index: number) => ({
-            defaultAttribute,
-            primaryIndex,
-            secondaryIndex,
-            attributeIndex: index,
-            attributeOptions: attributes.attributeOptions,
-          })
-        )}
-      />,
-    ];
-  };
-
-  const weightPrimaryFactory = ({
-    name,
-    key,
-    primaryIndex,
-    orderIndex,
-    primary,
-    childrenValues: secondaries,
-  }: FactoryProps): ReactElement | ReactElement[] => {
-    const weightRef: RefObject<HTMLSpanElement> = createRef();
-    return [
-      <Control
-        key={key('weight_primary') + localObjectives.update}
-        label={primaryName(orderIndex)}
-        className="small position-relative d-flex"
-        name={name('weight_primary')}
-        defaultValue={localObjectives.primaries.weights[orderIndex]}
-        onChange={({ target: { value } }: { target: HTMLInputElement }) => {
-          if (weightRef.current?.textContent) {
-            weightRef.current.textContent = value;
-            onChangePrimary(orderIndex)(value);
-          }
-        }}
-        type="number"
-        //tooltip={t('the cell size is ...')}
-      />,
-      <SimpleList
-        key={key('weights-secondary') + localObjectives.update}
-        name={'weights'}
-        hideLabel
-        factory={weightSecondaryFactory}
-        controls={getSecondary(orderIndex).map(
-          (defaultValueSecondary: string, index: number) => ({
-            defaultValue: defaultValueSecondary,
-            primaryIndex,
-            secondaryIndex: index,
+    const mainControls = [
+      <div>
+        <SimpleList
+          key={'weights-primary' + isLoading}
+          name={'weights'}
+          hideLabel
+          factory={weightPrimaryFactory}
+          controls={getPrimary().map((primary: string, index: number) => ({
             primary,
-            childrenValues: getAttribute(orderIndex, index),
-          })
-        )}
-      />,
+            primaryIndex: index,
+            childrenValues: getSecondary(index),
+          }))}
+        />
+      </div>,
     ];
-  };
-
-  const mainControls = [
-    <div>
-      <SimpleList
-        key={'weights-primary' + isLoading}
-        name={'weights'}
-        hideLabel
-        factory={weightPrimaryFactory}
-        controls={getPrimary().map((primary: string, index: number) => ({
-          primary,
-          primaryIndex: index,
-          childrenValues: getSecondary(index),
-        }))}
-      />
-    </div>,
-  ];
-  const controls = [
-    ...mainControls,
-    <Spacer />,
-    <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
-  ];
+    controls = [
+      ...mainControls,
+      <Spacer />,
+      <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
+    ];
+  } else {
+    controls = [<></>];
+  }
 
   return (
     <Form

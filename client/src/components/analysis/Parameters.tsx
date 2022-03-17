@@ -20,6 +20,9 @@ function Parameters({ t }: any) {
   useEffectOnce(() => {
     dispatch(subscribe({ subject: property }));
   });
+  useEffectOnce(() => {
+    dispatch(subscribe({ subject: 'objectives' }));
+  });
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
   const controls = [
