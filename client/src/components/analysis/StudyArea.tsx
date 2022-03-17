@@ -13,6 +13,7 @@ import { call } from 'store/reducers/server';
 import ServerTargets from 'enums/ServerTargets';
 import CallModel from 'models/server-coms/CallModel';
 import FileContentModel from 'models/FileContentModel';
+import LoadingValue from 'models/LoadingValue';
 import Utils from 'utils';
 
 function StudyArea({ t }: any) {
@@ -55,7 +56,12 @@ function StudyArea({ t }: any) {
       controls={controls}
       errors={getErrors}
       onSubmit={(fields: any) => {
-        dispatch(injectSetLoadingCreator(property)(true));
+        dispatch(
+          injectSetLoadingCreator({
+            value: property,
+            isLoading: true,
+          } as LoadingValue<string>)()
+        );
         Utils.extractContentFromFiles(Array.from(fields.files)).then(files => {
           dispatch(
             call({
@@ -63,7 +69,7 @@ function StudyArea({ t }: any) {
               args: [...files],
               onSuccessAction: studyAreaReceived,
               onFailureAction: injectSetErrorCreator(property),
-            } as CallModel<FileContentModel<string>[], boolean, void, string, string>)
+            } as CallModel<FileContentModel<string>[], any, void, string, string>)
           );
         });
       }}

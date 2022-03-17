@@ -12,12 +12,11 @@ import {
   injectSetLoadingCreator,
   injectSetErrorCreator,
   selectAnalysis,
-  addFiles,
-  deleteFile,
 } from 'store/reducers/analysis';
 import { useEffectOnce } from 'hooks';
 import FileMetadataModel from 'models/FileMetadataModel';
 import CallModel from 'models/server-coms/CallModel';
+import LoadingValue from 'models/LoadingValue';
 import ServerTargets from 'enums/ServerTargets';
 import FileContentModel from 'models/FileContentModel';
 
@@ -79,12 +78,21 @@ function DataImportation({ t }: any) {
         factory={FileRowFactory}
         onDeleteControl={(index: number) => {
           dispatch(
+            injectSetLoadingCreator({
+              value: property,
+              isLoading: false,
+            } as LoadingValue<string>)()
+          );
+          dispatch(
             call({
               target: ServerTargets.FileManagerRemoveFile,
               args: [(files[index] as FileMetadataModel).id],
-              onSuccessAction: deleteFile,
+              onSuccessAction: injectSetLoadingCreator({
+                value: property,
+                isLoading: false,
+              } as LoadingValue<string>),
               onFailureAction: injectSetErrorCreator(property),
-            } as CallModel<[string], FileMetadataModel, void, string, string>)
+            } as CallModel<[string], void, LoadingValue<string>, string, string>)
           );
         }}
         controls={files?.map((file: any) => ({
@@ -101,15 +109,23 @@ function DataImportation({ t }: any) {
       errors={getErrors}
       disabled={isLoading}
       onSubmit={(fields: any) => {
-        dispatch(injectSetLoadingCreator(property)(true));
+        dispatch(
+          injectSetLoadingCreator({
+            value: property,
+            isLoading: true,
+          } as LoadingValue<string>)()
+        );
         Utils.extractContentFromFiles(Array.from(fields.files)).then(files =>
           dispatch(
             call({
               target: ServerTargets.FileManagerAddFiles,
               args: [...files],
-              onSuccessAction: addFiles,
+              onSuccessAction: injectSetLoadingCreator({
+                value: property,
+                isLoading: false,
+              } as LoadingValue<string>),
               onFailureAction: injectSetErrorCreator(property),
-            } as CallModel<FileContentModel<string>[], FileMetadataModel[], void, string, string>)
+            } as CallModel<FileContentModel<string>[], void, LoadingValue<string>, string, string>)
           )
         );
       }}

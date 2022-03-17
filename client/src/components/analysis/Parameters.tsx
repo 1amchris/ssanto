@@ -12,6 +12,7 @@ import Form from 'components/forms/Form';
 import { useEffectOnce } from 'hooks';
 import { call, subscribe } from 'store/reducers/server';
 import ServerTargets from 'enums/ServerTargets';
+import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
 function Parameters({ t }: any) {
@@ -75,14 +76,22 @@ function Parameters({ t }: any) {
       disabled={isLoading}
       errors={getErrors}
       onSubmit={(fields: any) => {
-        dispatch(injectSetLoadingCreator(property)(true));
+        dispatch(
+          injectSetLoadingCreator({
+            value: property,
+            isLoading: true,
+          } as LoadingValue<string>)()
+        );
         dispatch(
           call({
             target: ServerTargets.Update,
             args: [property, { ...properties, ...fields }],
-            onSuccessAction: injectSetLoadingCreator(property),
+            onSuccessAction: injectSetLoadingCreator({
+              value: property,
+              isLoading: false,
+            } as LoadingValue<string>),
             onFailureAction: injectSetErrorCreator(property),
-          } as CallModel<[string, Object], boolean, string, string, string>)
+          } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
         );
       }}
     />

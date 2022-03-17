@@ -12,6 +12,7 @@ import Form from 'components/forms/Form';
 import { Select, Button, Spacer } from 'components/forms/components';
 import { call, subscribe } from 'store/reducers/server';
 import ServerTargets from 'enums/ServerTargets';
+import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
 function NbsSystem({ t }: any) {
@@ -60,14 +61,22 @@ function NbsSystem({ t }: any) {
       errors={getErrors}
       disabled={isLoading}
       onSubmit={(fields: any) => {
-        dispatch(injectSetLoadingCreator(property)(true));
+        dispatch(
+          injectSetLoadingCreator({
+            value: property,
+            isLoading: true,
+          } as LoadingValue<string>)()
+        );
         dispatch(
           call({
             target: ServerTargets.Update,
             args: [property, fields],
-            onSuccessAction: injectSetLoadingCreator(property),
+            onSuccessAction: injectSetLoadingCreator({
+              value: property,
+              isLoading: false,
+            } as LoadingValue<string>),
             onFailureAction: injectSetErrorCreator(property),
-          } as CallModel<[string, Object], boolean, string, string, string>)
+          } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
         );
       }}
     />

@@ -6,6 +6,7 @@ import {
 } from 'store/redux-toolkit-utils';
 import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
 import FileMetadataModel from 'models/FileMetadataModel';
+import LoadingValue from 'models/LoadingValue';
 
 export const analysisSlice = createSlice({
   name: 'analysis',
@@ -111,29 +112,6 @@ export const analysisSlice = createSlice({
       }
     },
 
-    addFiles: (
-      state,
-      { payload: files }: PayloadAction<FileMetadataModel[]>
-    ) => {
-      state.properties.files = state.properties.files
-        .concat(files)
-        .filter(
-          (file: FileMetadataModel, index: number, self: FileMetadataModel[]) =>
-            self.findIndex(({ id }) => id === file.id) === index
-        );
-      state.properties.filesLoading = false;
-    },
-
-    deleteFile: (
-      state,
-      { payload: file }: PayloadAction<FileMetadataModel>
-    ) => {
-      state.properties.files = state.properties.files.filter(
-        ({ id }: FileMetadataModel) => id !== file.id
-      );
-      state.properties.filesLoading = false;
-    },
-
     studyAreaReceived: (state, { payload: data }: PayloadAction<any>) => {
       state.properties.studyArea.fileName = data.file_name;
       state.properties.studyArea.area = data.area;
@@ -163,10 +141,11 @@ export const analysisSlice = createSlice({
     setLoading: (
       state,
       {
-        payload: { injected: property, payload: isLoading = false },
-      }: PayloadAction<InjectedPayload<string, boolean>>
+        payload: {
+          injected: { value: property, isLoading },
+        },
+      }: PayloadAction<InjectedPayload<LoadingValue<string>, void>>
     ) => {
-      console.log('setLoading', property, isLoading);
       let temp: any = state.properties;
       temp[property + 'Loading'] = isLoading;
     },
@@ -178,17 +157,12 @@ export const injectSetErrorCreator = createActionCreatorSyringe<string, string>(
 );
 
 export const injectSetLoadingCreator = createActionCreatorSyringe<
-  string,
-  boolean
+  LoadingValue<string>,
+  void
 >(analysisSlice.actions.setLoading);
 
-export const {
-  addFiles,
-  deleteFile,
-  receiveProperties,
-  updateObjectives,
-  studyAreaReceived,
-} = analysisSlice.actions;
+export const { receiveProperties, updateObjectives, studyAreaReceived } =
+  analysisSlice.actions;
 
 export const selectAnalysis = (state: RootState) => state.analysis;
 
