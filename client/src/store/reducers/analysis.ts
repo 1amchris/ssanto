@@ -5,7 +5,7 @@ import {
   InjectedPayload,
 } from 'store/redux-toolkit-utils';
 import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
-import FileMetadataModel from 'models/FileMetadataModel';
+import FileMetadataModel from 'models/file-models/FileMetadataModel';
 import LoadingValue from 'models/LoadingValue';
 
 export const analysisSlice = createSlice({

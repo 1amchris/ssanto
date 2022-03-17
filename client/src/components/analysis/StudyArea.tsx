@@ -12,7 +12,7 @@ import { Control, Button, Spacer } from 'components/forms/components';
 import { call } from 'store/reducers/server';
 import ServerTargets from 'enums/ServerTargets';
 import CallModel from 'models/server-coms/CallModel';
-import FileContentModel from 'models/FileContentModel';
+import FileContentModel from 'models/file-models/FileContentModel';
 import LoadingValue from 'models/LoadingValue';
 import Utils from 'utils';
 

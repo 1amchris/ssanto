@@ -14,11 +14,11 @@ import {
   selectAnalysis,
 } from 'store/reducers/analysis';
 import { useEffectOnce } from 'hooks';
-import FileMetadataModel from 'models/FileMetadataModel';
+import FileMetadataModel from 'models/file-models/FileMetadataModel';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import ServerTargets from 'enums/ServerTargets';
-import FileContentModel from 'models/FileContentModel';
+import FileContentModel from 'models/file-models/FileContentModel';
 
 const FileRowFactory = ({
   file,
