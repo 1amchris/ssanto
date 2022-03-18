@@ -2,7 +2,7 @@ import React from 'react';
 import MenuBar from 'components/menu-bar/MenuBar';
 import FormsBar from 'components/forms/FormsBar';
 import Collapsible from 'components/Collapsible';
-import DataImportation from './analysis/DataImportation';
+import FileExplorer from './analysis/DataImportation';
 import InteractiveMapContainer from 'components/map/InteractiveMapContainer';
 import InformationCard from 'components/information-card/InformationCard';
 import {
@@ -12,7 +12,7 @@ import {
   ObjectiveHierarchy,
 } from 'components/analysis';
 
-function App() {
+function Main() {
   return (
     <div style={{ overflowY: 'clip' }}>
       <header>
@@ -21,17 +21,17 @@ function App() {
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
           <FormsBar>
+            <Collapsible title={'file explorer'}>
+              <FileExplorer />
+            </Collapsible>
             <Collapsible title={'analysis parameters'} collapsed>
               <Parameters />
             </Collapsible>
             <Collapsible title={'study area'} collapsed>
               <StudyArea />
             </Collapsible>
-            <Collapsible title={'NBS system type'} collapsed>
+            <Collapsible title={'nbs system type'} collapsed>
               <NbsSystem />
-            </Collapsible>
-            <Collapsible title={'data importation'}>
-              <DataImportation />
             </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>
               <ObjectiveHierarchy />
@@ -82,4 +82,4 @@ function App() {
   );
 }
 
-export default App;
+export default Main;

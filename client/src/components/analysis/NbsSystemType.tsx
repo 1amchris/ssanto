@@ -1,6 +1,5 @@
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { useEffectOnce } from 'hooks';
 import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
@@ -10,7 +9,7 @@ import {
 } from 'store/reducers/analysis';
 import Form from 'components/forms/Form';
 import { Select, Button, Spacer } from 'components/forms/components';
-import { call, subscribe } from 'store/reducers/server';
+import { call } from 'store/reducers/server';
 import ServerTargets from 'enums/ServerTargets';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
@@ -21,12 +20,8 @@ function NbsSystem({ t }: any) {
   const properties = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = selector.properties['nbsSystemError'];
-  const isLoading = selector.properties['nbsSystemLoading'];
-
-  useEffectOnce(() => {
-    dispatch(subscribe({ subject: property }));
-  });
+  const getErrors = selector.properties.nbsSystemError;
+  const isLoading = selector.properties.nbsSystemLoading;
 
   const controls = [
     <Select

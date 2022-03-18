@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import CallModel from 'models/server-coms/CallModel';
-import SubscriptionModel from 'models/SubscriptionModel';
+import SubscriptionModel from 'models/server-coms/SubscriptionModel';
 
 export const serverSlice = createSlice({
   name: 'server',

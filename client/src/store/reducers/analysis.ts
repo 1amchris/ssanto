@@ -103,8 +103,8 @@ export const analysisSlice = createSlice({
     receiveProperties: (
       state,
       {
-        payload: { property, data },
-      }: PayloadAction<{ property: string; data: any }>
+        payload: { injected: property, payload: data },
+      }: PayloadAction<InjectedPayload<string, any>>
     ) => {
       if (state.properties.hasOwnProperty(property)) {
         let d: any = state.properties; // kinda hacky :/
@@ -116,6 +116,37 @@ export const analysisSlice = createSlice({
       state.properties.studyArea.fileName = data.file_name;
       state.properties.studyArea.area = data.area;
       state.properties.studyAreaLoading = false;
+    },
+
+    getFiles: (
+      state,
+      { payload: files }: PayloadAction<FileMetadataModel[]>
+    ) => {
+      state.properties.files = files || [];
+      state.properties.filesLoading = false;
+    },
+
+    addFiles: (
+      state,
+      { payload: addedFiles }: PayloadAction<FileMetadataModel[]>
+    ) => {
+      state.properties.files = state.properties.files
+        .concat(addedFiles)
+        .filter(
+          (file: FileMetadataModel, index: number, self: FileMetadataModel[]) =>
+            self.findIndex(({ id }) => id === file.id) === index
+        );
+      state.properties.filesLoading = false;
+    },
+
+    deleteFile: (
+      state,
+      { payload: deletedFile }: PayloadAction<FileMetadataModel>
+    ) => {
+      state.properties.files = state.properties.files.filter(
+        ({ id }: FileMetadataModel) => id !== deletedFile.id
+      );
+      state.properties.filesLoading = false;
     },
 
     updateObjectives: (
@@ -161,8 +192,18 @@ export const injectSetLoadingCreator = createActionCreatorSyringe<
   void
 >(analysisSlice.actions.setLoading);
 
-export const { receiveProperties, updateObjectives, studyAreaReceived } =
-  analysisSlice.actions;
+export const injectReceivePropertiesCreator = createActionCreatorSyringe<
+  string,
+  any
+>(analysisSlice.actions.receiveProperties);
+
+export const {
+  updateObjectives,
+  studyAreaReceived,
+  deleteFile,
+  getFiles,
+  addFiles,
+} = analysisSlice.actions;
 
 export const selectAnalysis = (state: RootState) => state.analysis;
 

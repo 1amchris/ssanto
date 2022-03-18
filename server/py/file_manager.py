@@ -44,6 +44,14 @@ class FilesManager:
     def get_file(self, id):
         return self.files[id]
 
+    def get_files_metadatas(self):
+        return list(
+            map(
+                lambda file: FileMetaData(file.name, id=file.id),
+                self.files_content.values(),
+            )
+        )
+
     def get_files_by_id(self, *ids):
         return list(filter(lambda file: file.id in ids, self.files_content.values()))
 
@@ -55,7 +63,7 @@ class FilesManager:
         self.__notify_metadatas()
         return popped
 
-    # files: { name: string; data: string (base64); }[]
+    # files: { name: string; size: number; content: string (base64); }[]
     def add_files(self, *files):
         created = []
 
@@ -68,13 +76,6 @@ class FilesManager:
         return created
 
     def __notify_metadatas(self):
-        self.files.notify(
-            list(
-                map(
-                    lambda file: FileMetaData(file.name, id=file.id),
-                    self.files_content.values(),
-                )
-            )
-        )
+        self.files.notify(self.get_files_metadatas())
 
     # Add loaded file to the file manager?

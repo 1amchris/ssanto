@@ -9,8 +9,7 @@ import {
 } from 'store/reducers/analysis';
 import { withTranslation } from 'react-i18next';
 import Form from 'components/forms/Form';
-import { useEffectOnce } from 'hooks';
-import { call, subscribe } from 'store/reducers/server';
+import { call } from 'store/reducers/server';
 import ServerTargets from 'enums/ServerTargets';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
@@ -23,10 +22,6 @@ function Parameters({ t }: any) {
 
   const getErrors = selector.properties.parametersError;
   const isLoading = selector.properties.parametersLoading;
-
-  useEffectOnce(() => {
-    dispatch(subscribe({ subject: property }));
-  });
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
   const controls = [

@@ -16,8 +16,8 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [
-          subscribe.type, // contains a callback function
-          call.type, // May contain uploaded files
+          subscribe.type, // May contain a callback function
+          call.type, // May contain a callback function
         ],
       },
     }).concat([ServerMiddleware, AnalysisMiddleware]),

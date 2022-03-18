@@ -66,7 +66,7 @@ function StudyArea({ t }: any) {
           dispatch(
             call({
               target: ServerTargets.UpdateStudyAreaFiles,
-              args: [...files],
+              args: files,
               onSuccessAction: studyAreaReceived,
               onFailureAction: injectSetErrorCreator(property),
             } as CallModel<FileContentModel<string>[], any, void, string, string>)

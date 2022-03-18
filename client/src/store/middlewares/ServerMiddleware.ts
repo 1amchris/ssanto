@@ -8,9 +8,8 @@ import {
 } from 'store/reducers/server';
 import { Middleware, MiddlewareAPI, Dispatch } from 'redux';
 import { PayloadAction } from '@reduxjs/toolkit';
-import { receiveProperties } from 'store/reducers/analysis';
 import CallModel from 'models/server-coms/CallModel';
-import SubscriptionModel from 'models/SubscriptionModel';
+import SubscriptionModel from 'models/server-coms/SubscriptionModel';
 
 const ServerComMiddleware: () => Middleware = () => {
   let serverCom = new ServerCom();
@@ -34,11 +33,9 @@ const ServerComMiddleware: () => Middleware = () => {
           );
 
         case subscribe.type:
-          const { subject } = action.payload as SubscriptionModel;
+          const { subject, onAction } = action.payload as SubscriptionModel;
 
-          return serverCom.subscribe(subject, (data: any) =>
-            dispatch(receiveProperties({ property: subject, data: data }))
-          );
+          return serverCom.subscribe(subject, data => dispatch(onAction(data)));
 
         default:
           return next(action);
