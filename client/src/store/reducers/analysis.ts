@@ -29,56 +29,10 @@ export const analysisSlice = createSlice({
       objectives: {
         main: 'Needs',
         primaries: {
-          primary: ['Provisioning', 'Socio-Economic'],
-          weights: [0, 0],
+          primary: [],
+          weights: [],
 
-          secondaries: [
-            {
-              secondary: ['Soil Type', 'Slope'],
-              weights: [0, 0],
-
-              attributes: [
-                {
-                  attribute: ['A', 'B'],
-                  weights: [0, 0],
-                  datasets: [
-                    { name: '', id: '0' },
-                    { name: '', id: '0' },
-                  ],
-                },
-                {
-                  attribute: ['A', 'B'],
-                  weights: [0, 0],
-                  datasets: [
-                    { name: '', id: '0' },
-                    { name: '', id: '0' },
-                  ],
-                },
-              ],
-            },
-            {
-              secondary: ['Education Level', 'Test'],
-              weights: [0, 0],
-              attributes: [
-                {
-                  attribute: ['A', 'B'],
-                  weights: [0, 0],
-                  datasets: [
-                    { name: '', id: '0' },
-                    { name: '', id: '0' },
-                  ],
-                },
-                {
-                  attribute: ['A', 'B'],
-                  weights: [0, 0],
-                  datasets: [
-                    { name: '', id: '0' },
-                    { name: '', id: '0' },
-                  ],
-                },
-              ],
-            },
-          ],
+          secondaries: [],
         },
       },
     },

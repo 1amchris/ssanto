@@ -41,10 +41,10 @@ function App() {
               <DataImportation />
             </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>
-              <ObjectiveHierarchy key={'oh' + JSON.stringify(objectives)} />
+              <ObjectiveHierarchy key={'oh' + isLoading} />
             </Collapsible>
             <Collapsible title={'weighting'}>
-              <Weighting key={'weighting' + JSON.stringify(objectives)} />
+              <Weighting key={'weighting' + isLoading} />
             </Collapsible>
           </FormsBar>
         </aside>

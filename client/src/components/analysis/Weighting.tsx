@@ -38,15 +38,12 @@ function Weighting({ t }: any) {
   const [localObjectives, setLocalObjectives] = useState({
     ...objectives,
     update: true,
-  });
+  } as { main: string; update: boolean; primaries: { primary: string[]; weights: number[]; secondaries: { secondary: string[]; weights: number[]; attributes: { attribute: string[]; weights: number[]; datasets: { name: string; id: string }[] }[] }[] } });
 
   let controls = [];
   if (
-    !(
-      localObjectives === undefined ||
-      localObjectives.primaries === undefined ||
-      localObjectives.primaries.primary === undefined
-    )
+    localObjectives !== undefined &&
+    localObjectives.primaries !== undefined
   ) {
     const getPrimary = () => {
       return localObjectives.primaries.primary;

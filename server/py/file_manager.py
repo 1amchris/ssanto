@@ -66,7 +66,7 @@ class FilesManager:
                 out.write(f.content.read())
             path.append(temp_path)
         return path
-
+ 
     # files: { name: string; data: string (base64);  }[]
     def add_files(self, *files):
         created = []

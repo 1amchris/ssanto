@@ -30,7 +30,25 @@ class Analysis:
         self.objectives = subjects_manager.create(
             "objectives",
             {
-                "objectives": {},
+                "objectives": {
+                    "main": "Needs",
+                    "primaries": {
+                        "primary": [],
+                        "weights": [],
+                        "secondaries": []
+                    }
+
+
+
+
+
+
+
+
+
+
+
+                },
                 # ...
             },
         )

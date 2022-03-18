@@ -38,3 +38,4 @@ class SubjectsManager:
         if (subject == "objectives"):
             print()
             # notify ???
+ 
