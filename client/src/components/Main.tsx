@@ -2,7 +2,7 @@ import React from 'react';
 import MenuBar from 'components/menu-bar/MenuBar';
 import FormsBar from 'components/forms/FormsBar';
 import Collapsible from 'components/Collapsible';
-import FileExplorer from './analysis/DataImportation';
+import FileExplorer from './analysis/FileExplorer';
 import InteractiveMapContainer from 'components/map/InteractiveMapContainer';
 import InformationCard from 'components/information-card/InformationCard';
 import {

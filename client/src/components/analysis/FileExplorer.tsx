@@ -45,7 +45,7 @@ const FileRowFactory = ({
   </div>
 );
 
-function DataImportation({ t }: any) {
+function FileExplorer({ t }: any) {
   const property = 'files';
   const selector = useAppSelector(selectAnalysis);
   const files = selector.properties[property];
@@ -135,4 +135,4 @@ function DataImportation({ t }: any) {
   );
 }
 
-export default withTranslation()(DataImportation);
+export default withTranslation()(FileExplorer);
