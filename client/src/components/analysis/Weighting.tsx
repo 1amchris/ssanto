@@ -74,12 +74,11 @@ function Weighting({ t }: any) {
       ) as typeof localObjectives;
     };
 
-    const onChangePrimary = (primaryIndex: number) => (e: any) => {
-      console.log(primaryIndex, e.target.value);
-      let newWeight = e.target.value;
+    const onChangePrimary = (primaryIndex: number) => (value: any) => {
+      let newWeight = value;
       let newObjectives = copyLocalObjective();
       newObjectives.primaries.weights[primaryIndex] = newWeight;
-      newObjectives.update = !localObjectives.update;
+      //newObjectives.update = !localObjectives.update;
       setLocalObjectives(newObjectives);
     };
 
@@ -102,7 +101,7 @@ function Weighting({ t }: any) {
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].weights[attributeIndex] = newWeight;
-        newObjectives.update = !localObjectives.update;
+        //newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
 
@@ -204,11 +203,18 @@ function Weighting({ t }: any) {
           label={primaryName(orderIndex)}
           className="small position-relative d-flex"
           name={name('weight_primary')}
+          suffix={
+            <React.Fragment>
+              <span ref={weightRef}>
+                {localObjectives.primaries.weights[orderIndex]}
+              </span>
+            </React.Fragment>
+          }
           defaultValue={localObjectives.primaries.weights[orderIndex]}
           onChange={({ target: { value } }: { target: HTMLInputElement }) => {
             if (weightRef.current?.textContent) {
               weightRef.current.textContent = value;
-              onChangePrimary(orderIndex)(value);
+              onChangePrimary(orderIndex)(+value);
             }
           }}
           type="number"
