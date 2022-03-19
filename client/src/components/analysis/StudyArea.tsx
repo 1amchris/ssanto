@@ -35,7 +35,7 @@ function StudyArea({ t }: any) {
       label="select study area"
       name="files"
       type="file"
-      accept=".shp, .shx"
+      accept=".shp, .shx, .cpg, .dbf, .prj, .dbs"
       multiple
       required
       tooltip={t('the selected files will ...')}

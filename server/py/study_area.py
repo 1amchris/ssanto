@@ -12,8 +12,8 @@ class Study_area():
 
     def update_path(self, path, output_tiff):
         self.path = path
-        #self.path = "//wsl.localhost/Ubuntu/home/frroye/projet-bichai/server/temp/3be22201-0885-4c55-afa3-7031ebc0004d.shp"
-        print("update_path", path)
+        #self.path = "C:/Users/frede/OneDrive/Bureau/files_ssanto/terre/terre/terre_shp.shp"
+        print("update_path", self.path)
         self.output_tiff = output_tiff
         self.update()
 

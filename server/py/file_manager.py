@@ -1,3 +1,4 @@
+from uuid import uuid4
 import shapefile
 from base64 import b64decode
 from geojson_rewind import rewind
@@ -56,12 +57,12 @@ class FilesManager:
         self.__notify_metadatas()
         return popped
 
-    def save_files_locally(self, temp_dir, *ids):
+    def save_files_locally(self, temp_dir, file_name, *ids):
         files = sorted(self.get_files_by_id(
             *ids), key=lambda file: file.extension)
         path = []
         for f in files:
-            temp_path = temp_dir + f.id + '.' + f.extension
+            temp_path = temp_dir + file_name + '.' + f.extension
             with open(temp_path, 'wb') as out:
                 out.write(f.content.read())
             path.append(temp_path)
@@ -70,21 +71,18 @@ class FilesManager:
     # files: { name: string; data: string (base64);  }[]
     def add_files(self, temp_dir, *files):
         created = []
+        shapefile_id = str(uuid4())
         for file in files:
             new_file = File(file["name"], BytesIO(b64decode(file["content"])))
+            new_file.shapefile_id = shapefile_id
             self.files_content[new_file.id] = new_file
-            #new_file.path = self.save_files_locally(temp_dir, new_file.id)
+            new_file.path = self.save_files_locally(
+                temp_dir, shapefile_id, new_file.id)
+            print("add_files", new_file.path)
+
             created.append(new_file)
 
-        # à réécrire
-        shp_id = 0
-        for file in created:
-            if file.extension == "shp":
-                shp_id = file.id
-        for file in created:
-            if file.extension == "shx":
-                file.id = shp_id
-            file.path = self.save_files_locally(temp_dir, file.id)
+        # creer un object shapefile (différents fichiers, path/noms sont conformes)
 
         self.__notify_metadatas()
         return created

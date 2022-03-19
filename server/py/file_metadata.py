@@ -7,6 +7,7 @@ class FileMetaData:
         self.id: string = str(uuid4()) if id is None else id
         self.name: string = name
         self.path: string = None
+        self.shapefile_id = None
 
         last_period_index = self.name.rindex(".")
         self.stem = self.name[:last_period_index] if last_period_index > 0 else self.name
