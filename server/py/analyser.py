@@ -1,22 +1,34 @@
 
 
 import matplotlib.pyplot as plt
-from py.objective import *
+from py.study_area import Study_area
+import py.objective
+from osgeo import gdal, ogr
+from py.transformation import Transformation
+import numpy as np
 
 
 class Analyser():
-    def __init__(self, cellsize=200):
+    def __init__(self, cellsize=200, crs="epsg:32188"):
+        self.transformation = Transformation(cellsize, crs)
         self.objectives = {}
-        self.cellsize = cellsize
-        self.study_area = None
+        self.study_area = Study_area("", "", self.transformation)
+
+    def add_study_area(self, path, output_tiff):
+        self.study_area.update_path(path, output_tiff)
 
     def add_objective(self, objective_name, weight):
-        obj = Objective(cellsize=self.cellsize, weight=weight)
+        obj = py.objective.Objective(
+            weight=weight, transformation=self.transformation, study_area=self.study_area)
         self.objectives[objective_name] = obj
-        if(self.study_area != None):
-            self.add_study_area()
+
+    def update_transformation(self, cellsize=200, crs="epsg:32188"):
+        self.transformation.cellsize = cellsize
+        self.transformation.crs = crs
+        self.study_area.update()
 
     def process_data(self):
+
         output_matrix = []
         total_weight = 0
         for obj in self.objectives:
@@ -31,11 +43,3 @@ class Analyser():
         plt.imshow(output_matrix)
         plt.show()
         return output_matrix
-
-    def save_study_area(self, shp_id, shx_id):
-        self.study_area = (shp_id, shx_id)
-        print('save_study_area, Analyser', self.study_area)
-
-    def add_study_area(self):
-        for o in self.objectives:
-            o.add_study_area(self, path, output_tiff)
