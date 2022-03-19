@@ -12,7 +12,6 @@ class Study_area():
 
     def update_path(self, path, output_tiff):
         self.path = path
-        #self.path = "C:/Users/frede/OneDrive/Bureau/files_ssanto/terre/terre/terre_shp.shp"
         print("update_path", self.path)
         self.output_tiff = output_tiff
         self.update()

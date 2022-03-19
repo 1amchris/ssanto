@@ -107,7 +107,7 @@ class Analysis:
                 "No valid shapefiles uploaded. Make sure that both [.shx and .shp are uploaded, and both have the same name, then try again.]"
             )
         print("receive_study_area", shps[0].path)
-        self.study_area_path = "../" + shps[0].path[0]
+        self.study_area_path = shps[0].path[0]
 
         geojson = FileParser.load(self.files_manager, shx.id, shp.id)
         return {"file_name": shx.name, "area": geojson}
