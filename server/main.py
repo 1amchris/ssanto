@@ -43,11 +43,10 @@ async def main():
     server_socket.bind_command("a_class.method", AClass().method)
     server_socket.bind_command("function", function)
 
-    # TODO: Implement call response (separate variable binding and call responses)
-    server_socket.bind_command("update", subjects_manager.update)
-
     analysis = Analysis(subjects_manager, files_manager, analyser)
     server_socket.bind_command("study_area.files", analysis.receive_study_area)
+    # TODO: Implement call response (separate variable binding and call responses)
+    server_socket.bind_command("update", analysis.update)
 
     server_socket.bind_command(
         "file_manager.add_files", files_manager.add_files)

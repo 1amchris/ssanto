@@ -33,9 +33,5 @@ class SubjectsManager:
         subject.unwatch()
 
     def update(self, subject, data):
-        print('update', subject, data)
         self.subjects[subject].notify(data)
-        if (subject == "objectives"):
-            print()
-            # notify ???
- 
+        # notify ???

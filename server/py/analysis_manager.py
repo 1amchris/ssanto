@@ -9,7 +9,7 @@ class AnalysisManager:
     defaultValues = {"modeler_name": "", "analysis_name": "",
                      "cell_size": 20, "study_area": {"fileName": ""},
                      "geo_database": {"fileName"}}
-
+ 
     def __init__(self, subjects_manager: SubjectsManager, socket: ServerSocket):
         """
         The analysis properties will look like this:

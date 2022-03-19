@@ -1,3 +1,4 @@
+from .analyser import Analyser
 from .file_manager import FileParser
 from .server_socket import CallException
 
@@ -9,6 +10,7 @@ class Analysis:
         self.subjects_manager = subjects_manager
         self.files_manager = files_manager
         self.analyser = analyser
+        self.study_area_path = ""
 
         self.parameters = subjects_manager.create(
             "parameters",
@@ -61,8 +63,20 @@ class Analysis:
         # self.parameters.update()
         pass
 
+    def update(self, subject, data):
+        self.subjects_manager.update(subject, data)
+        if (subject == "objectives" and len(self.study_area_path) > 0):
+            analyser = Analyser()
+            print(subject, type(data))
+
+            print("update", self.study_area_path)
+            analyser.add_study_area(self.study_area_path, "output.tiff")
+
+            # self.analyser.add_objective()
+
     def receive_study_area(self, *files):
-        created = self.files_manager.add_files(*files)
+        temp_dir = "temp/"
+        created = self.files_manager.add_files(temp_dir, *files)
         shps = [file for file in created if file.extension == "shp"]
         shxs = [file for file in created if file.extension == "shx"]
 
@@ -87,7 +101,7 @@ class Analysis:
             raise CallException(
                 "No valid shapefiles uploaded. Make sure that both [.shx and .shp are uploaded, and both have the same name, then try again.]"
             )
-        self.analyser.save_study_area(shp.id, shx.id)
+        self.study_area_path = "../" + shps[0].path[0]
 
         geojson = FileParser.load(self.files_manager, shx.id, shp.id)
         return {"file_name": shx.name, "area": geojson}
