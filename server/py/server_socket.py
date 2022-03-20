@@ -43,7 +43,9 @@ class ServerSocket:
     # Type can be 0: subject update, 1: call return, -1: error (use SendType enum)
     def send(self, type, data):
         send_data = {"type": type, "data": data}
-        asyncio.create_task(self.conn.send(json.dumps(send_data, default=lambda o: o.__dict__)))
+        json_data = json.dumps(send_data, default=lambda o: o.__dict__)
+        task = self.conn.send(json_data)
+        asyncio.create_task(task)
 
     async def handler(self, websocket):
         print("Connection from", websocket.remote_address[0])

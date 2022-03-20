@@ -1,13 +1,12 @@
 import React from 'react';
 import FileContentModel from 'models/file-models/FileContentModel';
-import { encode } from 'base64-arraybuffer';
 import { useAppDispatch } from 'store/hooks';
 import { saveProject } from 'store/reducers/export';
-import { Action, Divider, Export, Import, Link } from './components';
+import { Action, Divider, Import, Link } from './components';
+import { call } from 'store/reducers/server';
 import Menu from './Menu';
 import ServerTargets from 'enums/ServerTargets';
 import CallModel from 'models/server-coms/CallModel';
-import { call } from 'store/reducers/server';
 
 function MenuBar() {
   const dispatch = useAppDispatch();
@@ -23,7 +22,7 @@ function MenuBar() {
         onFileImported={(file: File) => console.log('/file/open project', file)}
       />
       <Divider />
-      <Export
+      <Action
         label="save project"
         onClick={() =>
           dispatch(
@@ -32,10 +31,6 @@ function MenuBar() {
               onSuccessAction: saveProject,
               // TODO: There should probably be an "onErrorAction"
             } as CallModel<void, FileContentModel<string>, void, string, string>)
-            // saveProject({
-            //   name: 'test_save.ssanto',
-            //   content: 'c29tZV9leHBlY3RlZF9iYXNlNjRfY29udGVudA==',
-            // } as FileContentModel<string>)
           )
         }
       />

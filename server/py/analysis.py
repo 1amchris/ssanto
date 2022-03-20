@@ -1,9 +1,17 @@
-import json
+from .file import File
 from .file_manager import FileParser
 from .server_socket import CallException
-from datetime import datetime
 from base64 import b64encode
 import pickle
+
+
+class StudyArea:
+    def __init__(self, name, area):
+        self.name = name
+        self.area = area
+
+    def __dict__(self) -> dict:
+        return {"file_name": self.name, "area": self.area}
 
 
 class Analysis:
@@ -14,11 +22,13 @@ class Analysis:
         self.parameters = subjects_manager.create(
             "parameters",
             {
-                "analysis_name": "allo",
-                "modeler_name": "",
-                "cell_size": 20,
+                "analysis_name": "Dummy analysis",
+                "modeler_name": "chris",
+                "cell_size": 18,
             },
         )
+
+        self.study_area = subjects_manager.create("analysis.study_area", None)
 
         self.nbs = subjects_manager.create(
             "nbs_system",
@@ -28,8 +38,19 @@ class Analysis:
             },
         )
 
-    def __dict__(self):
-        return {"parameters": self.parameters.value(), "nbs": self.nbs.value()}
+    def __repr__(self) -> str:
+        return str(self.__dict__())
+
+    def __dict__(self) -> dict:
+        study_area = self.study_area.value()
+        return {
+            "analysis": {
+                "parameters": self.parameters.value(),
+                "study_area": study_area.__dict__() if study_area else None,
+                "nbs": self.nbs.value(),
+            },
+            "files": self.files_manager.__dict__(),
+        }
 
     def perform_analysis(self):
         # self.parameters.value().get('analysis_name')
@@ -50,16 +71,14 @@ class Analysis:
             raise CallException("No shapefiles received [shx].")
 
         # find a matching pair
-        shp = shx = None
-
-        def is_matching_pair():
+        def is_matching_pair(shp: File, shx: File):
             return shp != None and shx != None and shp.stem == shx.stem
 
         for shp in shps:
             for shx in shxs:
-                if is_matching_pair():
+                if is_matching_pair(shp, shx):
                     break
-            if is_matching_pair():
+            if is_matching_pair(shp, shx):
                 break
         else:
             raise CallException(
@@ -67,23 +86,15 @@ class Analysis:
             )
 
         geojson = FileParser.load(self.files_manager, shx.id, shp.id)
-        return {"file_name": shx.name, "area": geojson}
+        self.study_area.notify(StudyArea(shp.name, geojson))
+        return self.study_area.value().__dict__()
 
     def create_save_file(self):
-        # Edit here to add data to save
-        save = {
-            "analysis": self.__dict__(),
-            # "file_manager": self.files_manager,
-            # "subjects_manager": self.subjects_manager,
+        # by default, the name is "analysis.ssanto", unless a name was specified by the user
+        parameters = self.parameters.value()
+        filename = parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
+
+        return {
+            "name": f"{filename}.ssanto",
+            "content": b64encode(pickle.dumps(self.__repr__())).decode("utf-8"),
         }
-
-        ## The following creates the actual file data + metadata
-        timestamp = str(datetime.now()).replace(" ", "_").replace(":", "-")
-        filename = f"analysis_{timestamp}.ssanto"
-
-        # file content encoding
-        saved_bytes = pickle.dumps(save)
-        b64_bytes = b64encode(saved_bytes)
-
-        # the bytes are converted into a string (bytes can't be converted to dict)
-        return {"name": filename, "content": b64_bytes.decode("utf-8")}

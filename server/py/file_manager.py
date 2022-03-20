@@ -14,7 +14,7 @@ class FileParser:
 
         if files[0].extension == "shp" and len(files) == 2:
             shp, shx = files
-            return FileParser.__load_shp(shp.content, shx.content)
+            return FileParser.__load_shp(shp.get_file_descriptor(), shx.get_file_descriptor())
         # elif ext == '...'
 
         return None
@@ -39,7 +39,10 @@ class FilesManager:
     def __init__(self, subjects_manager):
         self.subjects_manager = subjects_manager
         self.files_content = dict()
-        self.files = self.subjects_manager.create("files", self.files_content)
+        self.files = self.subjects_manager.create("file_manager.files", dict())
+
+    def __dict__(self) -> dict:
+        return {key: file.__dict__() for key, file in self.files_content.items()}
 
     def get_file(self, id):
         return self.files[id]
@@ -68,7 +71,7 @@ class FilesManager:
         created = []
 
         for file in files:
-            new_file = File(file["name"], BytesIO(b64decode(file["content"])))
+            new_file = File(file["name"], b64decode(file["content"]))
             self.files_content[new_file.id] = new_file
             created.append(new_file)
 
@@ -76,6 +79,9 @@ class FilesManager:
         return created
 
     def __notify_metadatas(self):
-        self.files.notify(self.get_files_metadatas())
+        metadatas = self.get_files_metadatas()
+        # we need to manually call __dict__ for some unknown reason.
+        # It doesn't seem to play nice otherwise
+        self.files.notify([metadata.__dict__() for metadata in metadatas])
 
     # Add loaded file to the file manager?

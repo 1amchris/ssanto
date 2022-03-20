@@ -9,23 +9,6 @@ from py.subjects_manager import SubjectsManager
 
 from py.analysis import Analysis
 
-# For test purposes
-
-
-class AClass:
-    def __init__(self):
-        self.attribute = "myString"
-
-    def method(self):
-        print("This method was called from javascript and contain", self.attribute)
-
-
-def function():
-    print("This function was called from javascript")
-
-
-###
-
 
 async def main():
     server_socket = ServerSocket("localhost", 6969)

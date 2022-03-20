@@ -118,37 +118,6 @@ export const analysisSlice = createSlice({
       state.properties.studyAreaLoading = false;
     },
 
-    getFiles: (
-      state,
-      { payload: files }: PayloadAction<FileMetadataModel[]>
-    ) => {
-      state.properties.files = files || [];
-      state.properties.filesLoading = false;
-    },
-
-    addFiles: (
-      state,
-      { payload: addedFiles }: PayloadAction<FileMetadataModel[]>
-    ) => {
-      state.properties.files = state.properties.files
-        .concat(addedFiles)
-        .filter(
-          (file: FileMetadataModel, index: number, self: FileMetadataModel[]) =>
-            self.findIndex(({ id }) => id === file.id) === index
-        );
-      state.properties.filesLoading = false;
-    },
-
-    deleteFile: (
-      state,
-      { payload: deletedFile }: PayloadAction<FileMetadataModel>
-    ) => {
-      state.properties.files = state.properties.files.filter(
-        ({ id }: FileMetadataModel) => id !== deletedFile.id
-      );
-      state.properties.filesLoading = false;
-    },
-
     updateObjectives: (
       state,
       { payload }: PayloadAction<AnalysisObjectivesModel>
@@ -197,13 +166,7 @@ export const injectReceivePropertiesCreator = createActionCreatorSyringe<
   any
 >(analysisSlice.actions.receiveProperties);
 
-export const {
-  updateObjectives,
-  studyAreaReceived,
-  deleteFile,
-  getFiles,
-  addFiles,
-} = analysisSlice.actions;
+export const { updateObjectives, studyAreaReceived } = analysisSlice.actions;
 
 export const selectAnalysis = (state: RootState) => state.analysis;
 

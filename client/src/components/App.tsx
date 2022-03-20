@@ -14,6 +14,12 @@ function App() {
     dispatch(openConnection());
     dispatch(
       subscribe({
+        subject: 'file_manager.files',
+        onAction: injectReceivePropertiesCreator('files'),
+      } as SubscriptionModel<string, any>)
+    );
+    dispatch(
+      subscribe({
         subject: 'parameters',
         onAction: injectReceivePropertiesCreator('parameters'),
       } as SubscriptionModel<string, any>)

@@ -11,5 +11,5 @@ class FileMetaData:
         self.stem = self.name[:last_period_index] if last_period_index > 0 else self.name
         self.extension = self.name[last_period_index + 1 :] if last_period_index > 0 else ""
 
-    def __repr__(self):
-        return f"id: {self.id}, name: {self.name}"
+    def __dict__(self):
+        return {"id": self.id, "name": self.name, "stem": self.stem, "extension": self.extension}
