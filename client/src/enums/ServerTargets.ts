@@ -1,5 +1,6 @@
 enum ServerTargets {
-  Update = 'update',
+  Update = 'analysis.update',
+  SaveProject = 'analysis.save_project',
   UpdateStudyAreaFiles = 'study_area.files',
   FileManagerGetFiles = 'file_manager.get_files',
   FileManagerAddFiles = 'file_manager.add_files',

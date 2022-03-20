@@ -1,32 +1,30 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from 'store/store';
-import categories from 'data/categories';
-import CategoryModel from 'models/guide-models/CategoryModel';
+import { decode } from 'base64-arraybuffer';
+import { saveAs } from 'file-saver';
+import FileContentModel from 'models/file-models/FileContentModel';
 
-export const guideSlice = createSlice({
-  name: 'guide',
-  initialState: { categories: categories || [] },
+export const exportSlice = createSlice({
+  name: 'export',
+  initialState: {},
   reducers: {
-    exportPDF: (
+    saveProject: (
       state,
-      { payload: categories }: PayloadAction<CategoryModel[]>
+      { payload: { name, content } }: PayloadAction<FileContentModel<any>>
     ) => {
-      console.warn('No PDF has been exported.');
-      state.categories = categories;
+      const file: File = new File([decode(content) as BlobPart], name);
+      saveAs(file, name);
     },
-    exportJPEG: (
-      state,
-      { payload: categories }: PayloadAction<CategoryModel[]>
-    ) => {
+
+    exportPDF: (state, { payload }: PayloadAction<any>) => {
       console.warn('No PDF has been exported.');
-      state.categories = categories;
+    },
+
+    exportJPEG: (state, { payload }: PayloadAction<any>) => {
+      console.warn('No PDF has been exported.');
     },
   },
 });
 
-export const { exportPDF } = guideSlice.actions;
-export const { exportJPEG } = guideSlice.actions;
+export const { saveProject, exportPDF, exportJPEG } = exportSlice.actions;
 
-export const selectGuide = (state: RootState) => state.guide;
-
-export default guideSlice.reducer;
+export default exportSlice.reducer;

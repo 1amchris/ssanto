@@ -1,3 +1,4 @@
+import json
 from .file_manager import FileParser
 from .server_socket import CallException
 from datetime import datetime
@@ -26,6 +27,9 @@ class Analysis:
                 # ...
             },
         )
+
+    def __dict__(self):
+        return {"parameters": self.parameters.value(), "nbs": self.nbs.value()}
 
     def perform_analysis(self):
         # self.parameters.value().get('analysis_name')
@@ -68,13 +72,18 @@ class Analysis:
     def create_save_file(self):
         # Edit here to add data to save
         save = {
-            "parameters": self.parameters,
-            "nbs": self.nbs,
-            "file_manager": self.files_manager,
-            "subjects_manager": self.subjects_manager,
+            "analysis": self.__dict__(),
+            # "file_manager": self.files_manager,
+            # "subjects_manager": self.subjects_manager,
         }
 
-        saved_content = pickle.dumps(save)
+        ## The following creates the actual file data + metadata
         timestamp = str(datetime.now()).replace(" ", "_").replace(":", "-")
         filename = f"analysis_{timestamp}.ssanto"
-        return {"filename": filename, "content": b64encode(saved_content)}
+
+        # file content encoding
+        saved_bytes = pickle.dumps(save)
+        b64_bytes = b64encode(saved_bytes)
+
+        # the bytes are converted into a string (bytes can't be converted to dict)
+        return {"name": filename, "content": b64_bytes.decode("utf-8")}

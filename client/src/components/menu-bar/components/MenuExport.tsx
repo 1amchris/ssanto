@@ -1,11 +1,8 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize, uniqueId } from 'lodash';
-import { saveAs } from 'file-saver';
 import MenuComponent from './MenuComponent';
-//import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
-//import ReactPDF from '@react-pdf/renderer';
-import { Dropdown } from "react-bootstrap"
+import { Dropdown } from 'react-bootstrap';
 
 class MenuExport extends MenuComponent {
   constructor(props: any, key?: string) {
@@ -13,17 +10,12 @@ class MenuExport extends MenuComponent {
   }
 
   render = () => {
-    const { t, i18n, tReady, className, label, getExportedFile, ...rest } =
-      this.props;
+    const { t, i18n, tReady, className, label, ...rest } = this.props;
 
     return (
       <Dropdown.Item
         as="button"
         className={`small dropdown-item ${className ? className : ''}`}
-        onClick={() => {
-          const file: File = getExportedFile();
-          saveAs(file, file.name);
-        }}
         key={this.key}
         {...rest}
       >
@@ -64,7 +56,6 @@ export default withTranslation()(MenuExport);
 
 // ReactPDF.render(<MyDocument />, `${__dirname}/example.pdf`);
 
-
 // SAVE TXT FILE:
 
 // import React, { useEffect, useState } from 'react'
@@ -75,8 +66,8 @@ export default withTranslation()(MenuExport);
 
 //   // function for generating file and set download link
 //   const makeTextFile = () => {
-//     // This creates the file. 
-//     // In my case, I have an array, and each item in 
+//     // This creates the file.
+//     // In my case, I have an array, and each item in
 //     // the array should be on a new line, which is why
 //     // I use .join('\n') here.
 //     const data = new Blob([list.join('\n')], { type: 'text/plain' })
@@ -106,6 +97,3 @@ export default withTranslation()(MenuExport);
 // }
 
 // export default SaveList
-
-
-
