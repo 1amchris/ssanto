@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
@@ -12,6 +12,7 @@ import {
   Spacer,
   Select,
   ExpandableList,
+  Control,
 } from '../form/form-components';
 import {
   selectAnalysis,
@@ -20,9 +21,54 @@ import {
 } from '../../store/reducers/analysis';
 import { FactoryProps } from '../form/form-components/FormExpandableList';
 import { useEffectOnce } from 'hooks';
+import React from 'react';
 
 function isShp(file: { extension: string }, index: any, array: any) {
   return file.extension == 'shp';
+}
+
+function isValidOH(objectiveHierarchy: {
+  main: string;
+  update: boolean;
+  primaries: {
+    primary: string[];
+    weights: number[];
+    secondaries: {
+      secondary: string[];
+      weights: number[];
+      attributes: {
+        attribute: string[];
+        weights: number[];
+        datasets: { name: string; id: string }[];
+      }[];
+    }[];
+  };
+}) {
+  let primaryHasSecondary = true;
+  let secondaryHasAttribute = true;
+  let attributeHasName = true;
+  let datasetsAreSelected = true;
+  objectiveHierarchy.primaries.secondaries.map(json => {
+    primaryHasSecondary = primaryHasSecondary && json.secondary.length > 0;
+    json.attributes.map(json => {
+      secondaryHasAttribute =
+        secondaryHasAttribute && json.attribute.length > 0;
+      json.attribute.map(
+        attributeName =>
+          (attributeHasName = attributeHasName && attributeName.length > 0)
+      );
+      json.datasets.map(
+        dataset =>
+          (datasetsAreSelected = datasetsAreSelected && dataset.id != '0')
+      );
+    });
+  });
+  return (
+    primaryHasSecondary &&
+    secondaryHasAttribute &&
+    attributeHasName &&
+    datasetsAreSelected
+  );
 }
 
 function ObjectiveHierarchy({ t }: any) {
@@ -205,20 +251,6 @@ function ObjectiveHierarchy({ t }: any) {
       return formatOptions(options);
     };
 
-    const generateOptionsAttribute = (
-      primaryIndex: number,
-      secondaryIndex: number,
-      attributeIndex: number
-    ) => {
-      let options = [
-        localObjectives.primaries.secondaries[primaryIndex].attributes[
-          secondaryIndex
-        ].attribute[attributeIndex],
-        ...getUnusedAttribute(primaryIndex, secondaryIndex),
-      ];
-      return formatOptions(options);
-    };
-
     const generateOptionsDataset = (
       primaryIndex: number,
       secondaryIndex: number,
@@ -284,13 +316,19 @@ function ObjectiveHierarchy({ t }: any) {
 
     const onAddAttribute =
       (primaryIndex: number, secondaryIndex: number) => () => {
-        let unused = getUnusedAttribute(primaryIndex, secondaryIndex);
-        let newDefault = unused.length > 0 ? unused[0] : undefined;
-        if (newDefault !== undefined) {
+        //let unused = getUnusedAttribute(primaryIndex, secondaryIndex);
+        //let newDefault = unused.length > 0 ? unused[0] : undefined;
+
+        if (
+          localObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].attribute.length == 0
+        ) {
           let newObjectives = copyLocalObjective();
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
-          ].attribute.push(newDefault);
+          ].attribute.push('');
+
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
           ].datasets.push(defaultDataset);
@@ -372,8 +410,25 @@ function ObjectiveHierarchy({ t }: any) {
 
     const onChangeAttribute =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
-      (e: any) => {
-        let newAttribute = e.target.value;
+      (value: any) => {
+        console.log('onChangeAttribute', value);
+        let newAttribute = value;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].attribute[attributeIndex] = newAttribute;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
+    const onChangeAttribute2 =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (event: any) => {
+        event.persist();
+        let value = event.target.value;
+        console.log(value);
+
+        let newAttribute = value;
         let newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
@@ -410,38 +465,45 @@ function ObjectiveHierarchy({ t }: any) {
       secondaryIndex,
       defaultAttribute,
       defaultDataset,
-    }: FactoryProps): ReactElement | ReactElement[] => [
-      <Select
-        hideLabel
-        key={key('attribute') + localObjectives.update}
-        name={name('attribute')}
-        defaultValue={defaultAttribute}
-        label={`attribute ${orderIndex}`}
-        onChange={(e: any) => {
-          onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)(e);
-        }}
-        options={generateOptionsAttribute(
-          primaryIndex,
-          secondaryIndex,
-          orderIndex
-        )}
-      />,
-      <Select
-        hideLabel
-        key={key('dataset') + localObjectives.update}
-        name={name('dataset')}
-        defaultValue={defaultDataset}
-        label={`dataset`}
-        onChange={(e: any) => {
-          onChangeDataset(primaryIndex, secondaryIndex, orderIndex)(e);
-        }}
-        options={generateOptionsDataset(
-          primaryIndex,
-          secondaryIndex,
-          orderIndex
-        )}
-      />,
-    ];
+    }: FactoryProps): ReactElement | ReactElement[] => {
+      const attributeNameRef: RefObject<HTMLSpanElement> = createRef();
+
+      return [
+        <Control
+          label="attribute"
+          key={key('attribute_') + localObjectives.update}
+          name="attribute"
+          defaultValue={
+            localObjectives.primaries.secondaries[primaryIndex].attributes[
+              secondaryIndex
+            ].attribute[orderIndex]
+          }
+          required
+          suffix={<React.Fragment></React.Fragment>}
+          onChange={onChangeAttribute2(
+            primaryIndex,
+            secondaryIndex,
+            orderIndex
+          )}
+          //tooltip={t("the modeler's name will ...")}
+        />,
+        <Select
+          hideLabel
+          key={key('dataset') + localObjectives.update}
+          name={name('dataset')}
+          defaultValue={defaultDataset}
+          label={`dataset`}
+          onChange={(e: any) => {
+            onChangeDataset(primaryIndex, secondaryIndex, orderIndex)(e);
+          }}
+          options={generateOptionsDataset(
+            primaryIndex,
+            secondaryIndex,
+            orderIndex
+          )}
+        />,
+      ];
+    };
 
     /**
      * A factory that generates the secondary objective inputs on demand
@@ -574,17 +636,21 @@ function ObjectiveHierarchy({ t }: any) {
       errors={getErrors}
       disabled={isLoading}
       onSubmit={() => {
-        dispatch(
-          call({
-            target: 'update',
-            args: [property, localObjectives],
-            successAction: setLoading,
-            successData: property,
-            failureAction: setError,
-            failureData: property,
-          })
-        );
-        dispatch(setLoading({ params: property, data: true }));
+        if (isValidOH(localObjectives)) {
+          dispatch(
+            call({
+              target: 'update',
+              args: [property, localObjectives],
+              successAction: setLoading,
+              successData: property,
+              failureAction: setError,
+              failureData: property,
+            })
+          );
+          dispatch(setLoading({ params: property, data: true }));
+        } else {
+          console.warn('Invalid objective hierarchy');
+        }
       }}
     />
   );

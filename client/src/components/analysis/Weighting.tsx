@@ -75,33 +75,30 @@ function Weighting({ t }: any) {
     };
 
     const onChangePrimary = (primaryIndex: number) => (value: any) => {
-      let newWeight = value;
       let newObjectives = copyLocalObjective();
-      newObjectives.primaries.weights[primaryIndex] = newWeight;
-      //newObjectives.update = !localObjectives.update;
+      newObjectives.primaries.weights[primaryIndex] = value;
+      newObjectives.update = !localObjectives.update;
       setLocalObjectives(newObjectives);
     };
 
     const onChangeSecondary =
-      (primaryIndex: number, secondaryIndex: number) => (e: any) => {
-        let newWeight = e.target.value;
+      (primaryIndex: number, secondaryIndex: number) => (value: any) => {
         let newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].weights[
           secondaryIndex
-        ] = newWeight;
+        ] = value;
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
 
     const onChangeAttribute =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
-      (e: any) => {
-        let newWeight = e.target.value;
+      (value: any) => {
         let newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
-        ].weights[attributeIndex] = newWeight;
-        //newObjectives.update = !localObjectives.update;
+        ].weights[attributeIndex] = value;
+        newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
 
@@ -121,7 +118,21 @@ function Weighting({ t }: any) {
           label={defaultAttribute}
           className="small position-relative d-flex"
           name={name('attribute')}
-          defaultValue={defaultAttribute}
+          suffix={
+            <React.Fragment>
+              <span ref={weightRef}>
+                {
+                  localObjectives.primaries.secondaries[primaryIndex]
+                    .attributes[secondaryIndex].weights[orderIndex]
+                }
+              </span>
+            </React.Fragment>
+          }
+          defaultValue={
+            localObjectives.primaries.secondaries[primaryIndex].attributes[
+              secondaryIndex
+            ].weights[orderIndex]
+          }
           onChange={({ target: { value } }: { target: HTMLInputElement }) => {
             if (weightRef.current?.textContent) {
               weightRef.current.textContent = value;
@@ -156,6 +167,17 @@ function Weighting({ t }: any) {
           label={secondaryName(primaryIndex, orderIndex)}
           className="small position-relative d-flex"
           name="weight"
+          suffix={
+            <React.Fragment>
+              <span ref={weightRef}>
+                {
+                  localObjectives.primaries.secondaries[primaryIndex].weights[
+                    orderIndex
+                  ]
+                }
+              </span>
+            </React.Fragment>
+          }
           defaultValue={
             localObjectives.primaries.secondaries[primaryIndex].weights[
               orderIndex
