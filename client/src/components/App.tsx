@@ -1,16 +1,35 @@
 import React from 'react';
-
 import { useEffectOnce } from 'hooks';
 import { useAppDispatch } from 'store/hooks';
-import * as server from 'store/middlewares/ServerMiddleware';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Main from './Main';
 import Guide from './guide/Guide';
+import { subscribe, openConnection } from 'store/reducers/server';
+import { injectReceivePropertiesCreator } from 'store/reducers/analysis';
+import SubscriptionModel from 'models/server-coms/SubscriptionModel';
 
 function App() {
   const dispatch = useAppDispatch();
   useEffectOnce(() => {
-    dispatch(server.openConnection());
+    dispatch(openConnection());
+    dispatch(
+      subscribe({
+        subject: 'parameters',
+        onAction: injectReceivePropertiesCreator('parameters'),
+      } as SubscriptionModel<string, any>)
+    );
+    dispatch(
+      subscribe({
+        subject: 'studyArea',
+        onAction: injectReceivePropertiesCreator('studyArea'),
+      } as SubscriptionModel<string, any>)
+    );
+    dispatch(
+      subscribe({
+        subject: 'nbs_system',
+        onAction: injectReceivePropertiesCreator('nbs_system'),
+      } as SubscriptionModel<string, any>)
+    );
   });
 
   return (

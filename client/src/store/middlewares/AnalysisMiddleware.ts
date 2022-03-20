@@ -1,28 +1,41 @@
-import { studyAreaReceived } from 'store/reducers/analysis';
+import { PayloadAction } from '@reduxjs/toolkit';
+import ServerTargets from 'enums/ServerTargets';
+import FileMetadataModel from 'models/file-models/FileMetadataModel';
+import CallModel from 'models/server-coms/CallModel';
+import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
+import {
+  getFiles,
+  injectSetErrorCreator,
+  studyAreaReceived,
+} from 'store/reducers/analysis';
 import { Layer, upsertLayer } from 'store/reducers/map';
+import { call } from 'store/reducers/server';
 
-// TODO: Remove properties from model when forwarding action after dispatching server call
-const AnalysisMiddleware = () => {
-  return ({ dispatch }: any) =>
-    (next: any) =>
-    (action: any) => {
-      switch (action.type) {
-        case studyAreaReceived.type:
-          const { data } = action.payload;
-          console.log(data);
-          dispatch(
-            upsertLayer({
-              name: data.file_name,
-              data: data.area,
-            } as Layer)
-          );
-          return next(action);
-          break;
+const AnalysisMiddleware: Middleware =
+  ({ dispatch }: MiddlewareAPI) =>
+  (next: Dispatch) =>
+  <A extends PayloadAction<any>>(action: A) => {
+    switch (action.type) {
+      case studyAreaReceived.type:
+        const { file_name, area } = action.payload;
+        dispatch(
+          upsertLayer({
+            name: file_name,
+            data: area,
+          } as Layer)
+        );
+        dispatch(
+          call({
+            target: ServerTargets.FileManagerGetFiles,
+            onSuccessAction: getFiles,
+            onErrorAction: injectSetErrorCreator('files'),
+          } as CallModel<void, FileMetadataModel[], void, string, string>)
+        );
+        return next(action);
 
-        default:
-          return next(action);
-      }
-    };
-};
+      default:
+        return next(action);
+    }
+  };
 
-export default AnalysisMiddleware();
+export default AnalysisMiddleware;

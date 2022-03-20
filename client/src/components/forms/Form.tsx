@@ -1,7 +1,7 @@
 import React from 'react';
 import { uniqueId } from 'lodash';
 import { unflatten } from 'flattenizer';
-import { Alert } from './form-components';
+import { Alert } from './components';
 
 /**
  * Form

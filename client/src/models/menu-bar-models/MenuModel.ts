@@ -1,4 +1,4 @@
-import MenuItem from './menu-item-models';
+import MenuItem from '.';
 
 export default interface MenuModel {
   name: string;

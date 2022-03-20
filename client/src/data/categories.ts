@@ -1,4 +1,4 @@
-import CategoryModel from '../models/guide/CategoryModel';
+import CategoryModel from '../models/guide-models/CategoryModel';
 
 const categories: CategoryModel[] = [
   {

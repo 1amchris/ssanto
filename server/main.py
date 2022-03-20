@@ -42,13 +42,12 @@ async def main():
     # TODO: Implement call response (separate variable binding and call responses)
     server_socket.bind_command("update", subjects_manager.update)
 
-    analysis = Analysis(subjects_manager, files_manager)
-    server_socket.bind_command("study_area.files", analysis.receive_study_area)
-
+    server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
     server_socket.bind_command("file_manager.add_files", files_manager.add_files)
     server_socket.bind_command("file_manager.remove_file", files_manager.remove_file)
 
-    server_socket.bind_command("analysis.create_save", analysis.create_save_file)
+    analysis = Analysis(subjects_manager, files_manager)
+    server_socket.bind_command("study_area.files", analysis.receive_study_area)
 
     # Main loop
     loop = asyncio.get_running_loop()
@@ -58,8 +57,6 @@ async def main():
 
     async with server_socket.serve():
         await stop  # run forever
-
-    
 
 
 if __name__ == "__main__":

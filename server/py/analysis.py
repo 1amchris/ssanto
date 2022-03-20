@@ -1,8 +1,8 @@
 from .file_manager import FileParser
 from .server_socket import CallException
 from datetime import datetime
+from base64 import b64encode
 import pickle
-import b64encode from base64
 
 
 class Analysis:
@@ -67,9 +67,14 @@ class Analysis:
 
     def create_save_file(self):
         # Edit here to add data to save
-        save = {"parameters": self.parameters, "nbs": self.nbs, "file_manager": self.files_manager, "subjects_manager": self.subjects_manager}
+        save = {
+            "parameters": self.parameters,
+            "nbs": self.nbs,
+            "file_manager": self.files_manager,
+            "subjects_manager": self.subjects_manager,
+        }
 
         saved_content = pickle.dumps(save)
-        timestamp = str(datetime.now()).replace(" ","_").replace(":","-")
+        timestamp = str(datetime.now()).replace(" ", "_").replace(":", "-")
         filename = f"analysis_{timestamp}.ssanto"
         return {"filename": filename, "content": b64encode(saved_content)}

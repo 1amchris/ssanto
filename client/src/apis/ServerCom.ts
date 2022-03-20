@@ -1,13 +1,5 @@
-enum SendType {
-  SUBJECT = 0,
-  CALL = 1,
-  ERROR = -1,
-}
-
-interface ReceiveData {
-  type: SendType;
-  data: any;
-}
+import ReceiveData from '../models/server-coms/ReceiveData';
+import SendType from '../enums/SendType';
 
 export default class ServerCom {
   client?: WebSocket;
@@ -45,7 +37,7 @@ export default class ServerCom {
     this.isOpen = false;
 
     this.client!.onopen = () => this.onOpen();
-    this.client!.onmessage = (msg: MessageEvent) => this.onMessage(msg);
+    this.client!.onmessage = (message: MessageEvent) => this.onMessage(message);
     this.client!.onclose = () => this.onClose();
   }
 
@@ -59,20 +51,30 @@ export default class ServerCom {
     this.messageBuffer = [];
   }
 
-  private onMessage(msg: MessageEvent) {
-    let obj: ReceiveData = this.convertEventToObject(msg);
+  private onMessage(message: MessageEvent) {
+    let received: ReceiveData = this.convertEventToObject(message);
 
-    //console.log("onMessage obj",obj)
+    // console.log('onMessage subject', received);
 
-    if (obj.type == SendType.SUBJECT) {
-      this.subjectListeners.get(obj.data.subject)?.call(null, obj.data.data);
-    } else if (obj.type == SendType.CALL) {
-      this.callListeners.get(obj.data.call)?.call(null, true, obj.data.data);
-      this.callListeners.delete(obj.data.call);
-    } else if (obj.type == SendType.ERROR) {
-      this.callListeners.get(obj.data.call)?.call(null, false, obj.data.data);
-      this.callListeners.delete(obj.data.call);
-    } else console.log('Unknown type receive from server.');
+    if (received.type === SendType.SUBJECT) {
+      this.subjectListeners
+        .get(received.data.subject)
+        ?.call(null, received.data.data);
+    } else if (received.type === SendType.CALL) {
+      this.callListeners
+        .get(received.data.call)
+        ?.call(null, true, received.data.data);
+      this.callListeners.delete(received.data.call);
+    } else if (received.type === SendType.ERROR) {
+      this.callListeners
+        .get(received.data.call)
+        ?.call(null, false, received.data.data);
+      this.callListeners.delete(received.data.call);
+    } else {
+      console.warn(
+        'ServerCom received a message with an unknown type from server.'
+      );
+    }
   }
 
   private onClose() {
@@ -112,7 +114,7 @@ export default class ServerCom {
     const currentCallId = this.callIdCounter++;
     this.send(currentCallId, target, args);
 
-    if (callback) this.callListeners.set(currentCallId, callback);
+    if (callback !== undefined) this.callListeners.set(currentCallId, callback);
   }
 
   private send(callId: number, target: string, args: any[]) {
