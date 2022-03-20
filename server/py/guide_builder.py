@@ -3,7 +3,8 @@ import os
 class Topic:
     def __init__(self, path, label):
         self.name = 'topic_' + str(GuideBuilder.next_topic_id())
-        self.label = label
+        name_without_ext = os.path.splitext(label)[0]
+        self.label = name_without_ext.split('.', 1)[1]
         path = os.path.join(path, label)
         with open(path) as t:
             self.content = t.read()
@@ -11,10 +12,10 @@ class Topic:
 class Category:
     def __init__(self, path, label):
         self.name = 'category_' + str(GuideBuilder.next_category_id())
-        self.label = label
+        self.label = label.split('.', 1)[1]
         self.topics = []
         path = os.path.join(path, label)
-        for topic in os.listdir(path):
+        for topic in sorted(os.listdir(path)):
             self.topics.append(Topic(path, topic))
 
 class GuideBuilder:
@@ -28,7 +29,7 @@ class GuideBuilder:
             print("Path '{}' doesn't exit. The guide will be empty.".format(path))
             return
 
-        for category in os.listdir(path):
+        for category in sorted(os.listdir(path)):
             self.categories.append(Category(path, category))
     
     @staticmethod
