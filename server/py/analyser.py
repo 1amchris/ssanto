@@ -6,6 +6,7 @@ import py.objective
 from osgeo import gdal, ogr
 from py.transformation import Transformation
 import numpy as np
+from osgeo.gdalconst import *
 
 
 class Analyser():
@@ -27,6 +28,23 @@ class Analyser():
         self.transformation.crs = crs
         self.study_area.update()
 
+    def matrix_to_raster(self, matrix):
+        inDs = gdal.Open("temp/output_study_area.tiff")
+        driver = inDs.GetDriver()
+        outDs = driver.Create(
+            "temp/output.tif", len(matrix[0]), len(matrix), 1, GDT_Int32)
+        # write the data
+        outBand = outDs.GetRasterBand(1)
+        outBand.WriteArray(matrix, 0, 0)
+
+        # flush data to disk, set the NoData value and calculate stats
+        outBand.FlushCache()
+        outBand.SetNoDataValue(-99)
+
+        # georeference the image and set the projection
+        outDs.SetGeoTransform(inDs.GetGeoTransform())
+        outDs.SetProjection(inDs.GetProjection())
+
     def process_data(self):
 
         output_matrix = []
@@ -44,4 +62,5 @@ class Analyser():
         plt.show()
         plt.savefig('test_map.png')
         print(output_matrix)
+        self.matrix_to_raster(output_matrix)
         return output_matrix

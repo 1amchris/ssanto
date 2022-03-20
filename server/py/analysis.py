@@ -70,7 +70,8 @@ class Analysis:
 
         if (subject == "objectives" and len(self.study_area_path) > 0):
             analyser = Analyser()
-            analyser.add_study_area(self.study_area_path, "output.tiff")
+            analyser.add_study_area(
+                self.study_area_path, "temp/output_study_area.tiff")
             for (primary, weight_primary, secondaries) in zip(data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]):
                 analyser.add_objective(primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(zip(secondaries["secondary"], secondaries["weights"], secondaries["attributes"])):
