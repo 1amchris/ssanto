@@ -42,4 +42,6 @@ class Analyser():
         plt.figure()
         plt.imshow(output_matrix)
         plt.show()
+        plt.savefig('test_map.png')
+        print(output_matrix)
         return output_matrix

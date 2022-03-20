@@ -34,10 +34,17 @@ const FileRowFactory = ({
   </div>
 );
 
+function isShp(file: { extension: string }, index: any, array: any) {
+  return file.extension == 'shp';
+}
+
 function DataImportation({ t }: any) {
   const property = 'files';
   const selector = useAppSelector(selectAnalysis);
-  const files = selector.properties[property];
+  const files =
+    selector.properties[property].length > 0
+      ? selector.properties[property].filter(isShp)
+      : [];
   const dispatch = useAppDispatch();
 
   const getErrors = selector.properties['filesError'];

@@ -21,13 +21,19 @@ import {
 import { FactoryProps } from '../form/form-components/FormExpandableList';
 import { useEffectOnce } from 'hooks';
 
+function isShp(file: { extension: string }, index: any, array: any) {
+  return file.extension == 'shp';
+}
+
 function ObjectiveHierarchy({ t }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
   const dispatch = useAppDispatch();
-  const files = selector.properties['files'];
-
+  const files =
+    selector.properties['files'].length > 0
+      ? selector.properties['files'].filter(isShp)
+      : [];
   const getErrors = selector.properties['objectivesError'];
   const isLoading = selector.properties['objectivesLoading'];
 
@@ -253,7 +259,7 @@ function ObjectiveHierarchy({ t }: any) {
         let newObjectives = copyLocalObjective();
         newObjectives.primaries.primary.push(newDefault);
         newObjectives.primaries.secondaries.push(defaultSecondaries);
-        newObjectives.primaries.weights.push(0);
+        newObjectives.primaries.weights.push(1);
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       }
@@ -270,7 +276,7 @@ function ObjectiveHierarchy({ t }: any) {
         newObjectives.primaries.secondaries[primaryIndex].attributes.push(
           defaultAttributes
         );
-        newObjectives.primaries.secondaries[primaryIndex].weights.push(0);
+        newObjectives.primaries.secondaries[primaryIndex].weights.push(1);
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       }
@@ -291,7 +297,7 @@ function ObjectiveHierarchy({ t }: any) {
 
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
-          ].weights.push(0);
+          ].weights.push(1);
           newObjectives.update = !localObjectives.update;
           setLocalObjectives(newObjectives);
         }
