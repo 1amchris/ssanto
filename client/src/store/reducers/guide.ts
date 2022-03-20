@@ -9,10 +9,10 @@ export const guideSlice = createSlice({
   reducers: {
     updateCategories: (
       state,
-      { payload: {params, data} }: PayloadAction<{params: any, data: CategoryModel[]}>
+      { payload: categories }: PayloadAction<CategoryModel[]>
     ) => {
       console.warn('No validation has been made on the categories.');
-      state.categories = data;
+      state.categories = categories;
     },
   },
 });
