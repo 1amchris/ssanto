@@ -1,7 +1,7 @@
 import React from 'react';
 import FileContentModel from 'models/file-models/FileContentModel';
 import { useAppDispatch } from 'store/hooks';
-import { saveProject } from 'store/reducers/export';
+import { exportData } from 'store/reducers/export';
 import { Action, Divider, Import, Link } from './components';
 import { call } from 'store/reducers/server';
 import Menu from './Menu';
@@ -28,7 +28,7 @@ function MenuBar() {
           dispatch(
             call({
               target: ServerTargets.SaveProject,
-              onSuccessAction: saveProject,
+              onSuccessAction: exportData,
               // TODO: There should probably be an "onErrorAction"
             } as CallModel<void, FileContentModel<string>, void, string, string>)
           )

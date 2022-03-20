@@ -7,7 +7,7 @@ export const exportSlice = createSlice({
   name: 'export',
   initialState: {},
   reducers: {
-    saveProject: (
+    exportData: (
       state,
       { payload: { name, content } }: PayloadAction<FileContentModel<any>>
     ) => {
@@ -25,6 +25,6 @@ export const exportSlice = createSlice({
   },
 });
 
-export const { saveProject, exportPDF, exportJPEG } = exportSlice.actions;
+export const { exportData, exportPDF, exportJPEG } = exportSlice.actions;
 
 export default exportSlice.reducer;
