@@ -26,12 +26,6 @@ function App() {
     );
     dispatch(
       subscribe({
-        subject: 'studyArea',
-        onAction: injectReceivePropertiesCreator('studyArea'),
-      } as SubscriptionModel<string, any>)
-    );
-    dispatch(
-      subscribe({
         subject: 'nbs_system',
         onAction: injectReceivePropertiesCreator('nbs_system'),
       } as SubscriptionModel<string, any>)
