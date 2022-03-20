@@ -1,42 +1,48 @@
-from unicodedata import category
-
+import os
 
 class Topic:
-    def __init__(self, name, label):
-        self.name = name
+    def __init__(self, path, label):
+        self.name = 'topic_' + str(GuideBuilder.next_topic_id())
         self.label = label
-        self.content = ""
-
-    def set_content(self, content):
-        self.content = content
-        return self
+        path = os.path.join(path, label)
+        with open(path) as t:
+            self.content = t.read()
 
 class Category:
-    def __init__(self, name, label):
-        self.name = name
+    def __init__(self, path, label):
+        self.name = 'category_' + str(GuideBuilder.next_category_id())
         self.label = label
         self.topics = []
-
-    def add_topic(self, name, label):
-        t = Topic(name, label)
-        self.topics.append(t)
-        return t
+        path = os.path.join(path, label)
+        for topic in os.listdir(path):
+            self.topics.append(Topic(path, topic))
 
 class GuideBuilder:
+    topic_counter = 0
+    category_counter = 0
+
     def __init__(self):
         self.categories = []
-        self.add_categories('category_1', 'category 1') \
-            .add_topic('topic_1', 'topic 1') \
-            .set_content('This is a text in *mark*__down__')
+        path = os.path.join(os.getcwd(), 'guide')
+        if not os.path.exists(path):
+            print("Path '{}' doesn't exit. The guide will be empty.".format(path))
+            return
 
-        self.add_categories('category_2', 'category 2') \
-            .add_topic('topic_1', 'topic 1') \
-            .set_content('This is a text in *mark*__down__')
+        for category in os.listdir(path):
+            self.categories.append(Category(path, category))
+    
+    @staticmethod
+    def next_topic_id():
+        id = GuideBuilder.topic_counter
+        GuideBuilder.topic_counter += 1
+        return id
 
-    def add_categories(self, name, label):
-        c = Category(name, label)
-        self.categories.append(c)
-        return c
+    @staticmethod
+    def next_category_id():
+        id = GuideBuilder.category_counter
+        GuideBuilder.category_counter += 1
+        return id
 
+    # WARN: Maybe we would want to reload the files from disk everytime ?
     def generate_guide_data(self):
         return self.categories
