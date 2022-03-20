@@ -84,7 +84,9 @@ class FilesManager:
             new_file.path = self.save_files_locally(
                 self.temp_dir, shapefile_id, new_file.id)
             print("add_files", new_file.path)
-
+            if new_file.path[0].endswith("shp"):
+                new_file.set_column()
+                new_file.set_head()
             created.append(new_file)
 
         # creer un object shapefile (différents fichiers, path/noms sont conformes)
