@@ -67,20 +67,19 @@ class Analysis:
     def update(self, subject, data):
         self.subjects_manager.update(subject, data)
         self.study_area_path = "temp/terre_shp.shp"
-        default_dataset = "temp/Espace_Vert.shp"
 
         if (subject == "objectives" and len(self.study_area_path) > 0):
             analyser = Analyser()
             analyser.add_study_area(self.study_area_path, "output.tiff")
             for (primary, weight_primary, secondaries) in zip(data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]):
-                analyser.add_objective(primary, weight_primary)
+                analyser.add_objective(primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(zip(secondaries["secondary"], secondaries["weights"], secondaries["attributes"])):
                     #print(index, secondary, weight_secondary)
                     print("UPDATE", attributes["datasets"][0]["id"])
                     path = "temp/" + attributes["datasets"][0]["id"] + ".shp"
                     print("PATH", path)
                     analyser.objectives[primary].add_file(
-                        index, path, "output.tiff", weight_secondary)
+                        index, path, "output.tiff", int(weight_secondary))
             analyser.process_data()
 
     def receive_study_area(self, *files):
