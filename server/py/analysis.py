@@ -15,6 +15,13 @@ class StudyArea:
 
 
 class Analysis:
+    @staticmethod
+    def __export(filename, content):
+        return {
+            "name": filename,
+            "content": b64encode(pickle.dumps(content)).decode("utf-8"),
+        }
+
     def __init__(self, subjects_manager, files_manager):
         self.subjects_manager = subjects_manager
         self.files_manager = files_manager
@@ -51,6 +58,11 @@ class Analysis:
             },
             "files": self.files_manager.__dict__(),
         }
+
+    def __get_project_name(self):
+        # by default, the name is "analysis.ssanto", unless a name was specified by the user
+        parameters = self.parameters.value()
+        return parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
 
     def perform_analysis(self):
         # self.parameters.value().get('analysis_name')
@@ -89,12 +101,13 @@ class Analysis:
         self.study_area.notify(StudyArea(shp.name, geojson))
         return self.study_area.value().__dict__()
 
-    def create_save_file(self):
-        # by default, the name is "analysis.ssanto", unless a name was specified by the user
-        parameters = self.parameters.value()
-        filename = parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
+    def export_project_save(self):
+        return Analysis.__export(f"{self.__get_project_name()}.sproj", self.__repr__())
 
-        return {
-            "name": f"{filename}.ssanto",
-            "content": b64encode(pickle.dumps(self.__repr__())).decode("utf-8"),
-        }
+    def export_weights(self):
+        # TODO: get weights
+        return Analysis.__export(f"{self.__get_project_name()}.swghts", {"weights": "todo"})
+
+    def export_objective_hierarchy(self):
+        # TODO: get objective hierarchy
+        return Analysis.__export(f"{self.__get_project_name()}.soh", {"objective_hierarchy": "todo"})
