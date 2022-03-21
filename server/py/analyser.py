@@ -35,12 +35,9 @@ class Analyser():
 
     def matrix_to_raster(self, matrix):
         matrix = np.int16(matrix)
-
         print("matrix_to_raster", type(matrix),
               type(matrix[0]), type(matrix[0][0]))
-
-        # bizarre ?????? ça vient de ou
-        #study_area_path = "temp/output_study_area.tiff"
+             
         study_area_path = self.study_area.output_tiff
         output_path = "temp/output.tif"
         inDs = gdal.Open(study_area_path)
