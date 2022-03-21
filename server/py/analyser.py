@@ -68,7 +68,7 @@ class Analyser():
             image = src.read()  # first band
             image = np.int16(image)
             results = (
-                {'properties': {'NDVI': v}, 'geometry': s}
+                {'properties': {'sutability': v}, 'geometry': s}
                 for i, (s, v)
                 in enumerate(
                     shapes(image, mask=mask, transform=data['transform'])))
