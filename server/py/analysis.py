@@ -136,23 +136,12 @@ class Analysis:
         return Analysis.__export(f"{self.__get_project_name()}.soh", {"objective_hierarchy": "todo"})
 
     def compute_suitability(self):
-        #self.study_area_path = "temp2/terre_shp.shp"
-        print("study_area_path", self.study_area_path)
         if len(self.study_area_path) > 0:
-            #data = self.objectives.value()
-            #print("DATA OBJECTIVES", data)
-            print("compute_suitability", self.study_area_path)
+            data = self.objectives.value()
             analyser = Analyser()
             analyser.add_study_area(
                 self.study_area_path, "temp/output_study_area.tiff")
-            analyser.add_objective("test", 2)
-            path = "temp2/Espace_Vert.shp"
-            analyser.objectives["test"].add_file(
-                1, path, "output.tiff", 1)
-            path = "temp2/IndexPlaineInondable.shp"
-            analyser.objectives["test"].add_file(
-                2, path, "output.tiff", 1)
-            """   
+
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]
             ):
@@ -161,14 +150,12 @@ class Analysis:
                     zip(secondaries["secondary"],
                         secondaries["weights"], secondaries["attributes"])
                 ):
-                    # print(index, secondary, weight_secondary)
-                    print("UPDATE", attributes["datasets"][0]["id"])
-                    path = "temp/" + attributes["datasets"][0]["id"] + ".shp"
-                    print("PATH", path)
-                    path = "temp2/Espace_Vert.shp"
+                    file_id = attributes["datasets"][0]["id"]
+                    file = self.files_manager.get_files_by_id(file_id)
+                    path = "temp/" + file[0].group_id + ".shp"
                     analyser.objectives[primary].add_file(
                         index, path, "output.tiff", int(weight_secondary))
-            """
+
             geo_json = analyser.process_data()
 
             return {"file_name": "current analysis", "area": geo_json}
