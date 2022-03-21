@@ -1,39 +1,33 @@
 import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import Form from '../form/Form';
-import objectivesData from '../../data/objectives.json';
-import { call, subscribe } from 'store/middlewares/ServerMiddleware';
-
+import Form from 'components/forms/Form';
+import { call } from 'store/reducers/server';
 import {
   Button,
   Spacer,
-  Select,
-  ExpandableList,
-  List,
   Control,
   SimpleList,
-} from '../form/form-components';
+} from 'components/forms/components';
 import {
   selectAnalysis,
-  setLoading,
-  setError,
-} from '../../store/reducers/analysis';
-import { FactoryProps } from '../form/form-components/FormExpandableList';
-import { useEffectOnce } from 'hooks';
+  injectSetLoadingCreator,
+  injectSetErrorCreator,
+} from 'store/reducers/analysis';
+import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import React from 'react';
+import LoadingValue from 'models/LoadingValue';
+import CallModel from 'models/server-coms/CallModel';
 
 function Weighting({ t }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
   const dispatch = useAppDispatch();
-  const files = selector.properties['files'];
 
-  const getErrors = selector.properties['objectivesError'];
-  const isLoading = selector.properties['objectivesLoading'];
+  const getErrors = selector.properties.objectivesError;
+  const isLoading = selector.properties.objectivesLoading;
 
   const [localObjectives, setLocalObjectives] = useState({
     ...objectives,
@@ -292,16 +286,22 @@ function Weighting({ t }: any) {
       key={'weight_form'}
       onSubmit={() => {
         dispatch(
+          injectSetLoadingCreator({
+            value: property,
+            isLoading: true,
+          } as LoadingValue<string>)()
+        );
+        dispatch(
           call({
             target: 'update',
             args: [property, localObjectives],
-            successAction: setLoading,
-            successData: property,
-            failureAction: setError,
-            failureData: property,
-          })
+            onSuccessAction: injectSetLoadingCreator({
+              value: property,
+              isLoading: false,
+            } as LoadingValue<string>),
+            failureAction: injectSetErrorCreator(property),
+          } as CallModel<[string, any], void, LoadingValue<string>, string, string>)
         );
-        dispatch(setLoading({ params: property, data: true }));
       }}
     />
   );

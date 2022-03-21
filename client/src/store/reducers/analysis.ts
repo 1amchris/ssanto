@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
-import { AnalysisObjectives } from '../models/AnalysisObjectives';
+import {
+  createActionCreatorSyringe,
+  InjectedPayload,
+} from 'store/redux-toolkit-utils';
+import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
+import FileMetadataModel from 'models/file-models/FileMetadataModel';
+import LoadingValue from 'models/LoadingValue';
 
 export const analysisSlice = createSlice({
   name: 'analysis',
@@ -13,7 +19,7 @@ export const analysisSlice = createSlice({
       },
       nbs_system: { system_type: '2' },
       studyArea: { fileName: '', area: undefined },
-      files: [],
+      files: [] as FileMetadataModel[],
 
       parametersLoading: false,
       parametersError: '',
@@ -41,8 +47,8 @@ export const analysisSlice = createSlice({
     receiveProperties: (
       state,
       {
-        payload: { property, data },
-      }: PayloadAction<{ property: string; data: any }>
+        payload: { injected: property, payload: data },
+      }: PayloadAction<InjectedPayload<string, any>>
     ) => {
       if (state.properties.hasOwnProperty(property)) {
         let d: any = state.properties; // kinda hacky :/
@@ -50,76 +56,70 @@ export const analysisSlice = createSlice({
       }
     },
 
-    defaultCallSuccess: (
-      state,
-      { payload: { params, data } }: PayloadAction<{ params: any; data: any }>
-    ) => {
-      //console.log("defaultCallSuccess called with data:", data)
-    },
-    defaultCallError: (
-      state,
-      { payload: { params, data } }: PayloadAction<{ params: any; data: any }>
-    ) => {
-      //console.log("defaultCallError called with data:", data)
-    },
-
-    setError: (
-      state,
-      { payload: { params, data } }: PayloadAction<{ params: any; data: any }>
-    ) => {
-      //console.log("SetError")
-      let temp: any = state.properties;
-      temp[params + 'Error'] = data;
-      temp[params + 'Loading'] = false;
-    },
-
-    setLoading: (
-      state,
-      { payload: { params, data } }: PayloadAction<{ params: any; data: any }>
-    ) => {
-      //console.log("SetLoading")
-      if (data == null) data = false;
-
-      let temp: any = state.properties;
-      temp[params + 'Loading'] = data;
-    },
-
-    studyAreaReceived: (
-      state,
-      { payload: { params, data } }: PayloadAction<{ params: any; data: any }>
-    ) => {
-      state.properties['studyAreaLoading'] = false;
+    studyAreaReceived: (state, { payload: data }: PayloadAction<any>) => {
       state.properties.studyArea.fileName = data.file_name;
       state.properties.studyArea.area = data.area;
+      state.properties.studyAreaLoading = false;
     },
 
     updateObjectives: (
       state,
-      { payload }: PayloadAction<AnalysisObjectives>
+      { payload }: PayloadAction<AnalysisObjectivesModel>
     ) => {
       console.warn('No validation was performed on the objectives hierarchy');
       /* TODO: add additional validation here */
       //state.objectives = payload;
     },
 
-    analysisReturn: (state, { payload }: PayloadAction<AnalysisObjectives>) => {
-      console.warn('No validation was performed on the objectives hierarchy');
-      /* TODO: add additional validation here */
-      //state.objectives = payload;
+    setError: (
+      state,
+      {
+        payload: { injected: property, payload: error },
+      }: PayloadAction<InjectedPayload<string, string>>
+    ) => {
+      let temp: any = state.properties;
+      temp[property + 'Error'] = error;
+      temp[property + 'Loading'] = false;
+    },
+
+    setLoading: (
+      state,
+      {
+        payload: {
+          injected: { value: property, isLoading },
+        },
+      }: PayloadAction<InjectedPayload<LoadingValue<string>, void>>
+    ) => {
+      let temp: any = state.properties;
+      temp[property + 'Loading'] = isLoading;
+    },
+
+    analysisReturn: (state, { payload }: PayloadAction<any>) => {
+      console.warn(
+        'No validation was performed on the analysis return',
+        payload
+      );
     },
   },
 });
 
-export const {
-  receiveProperties,
-  updateObjectives,
-  defaultCallSuccess,
-  defaultCallError,
-  setError,
-  setLoading,
-  studyAreaReceived,
-  analysisReturn,
-} = analysisSlice.actions;
+export const injectSetErrorCreator = createActionCreatorSyringe<string, string>(
+  analysisSlice.actions.setError
+);
+
+export const injectSetLoadingCreator = createActionCreatorSyringe<
+  LoadingValue<string>,
+  void
+>(analysisSlice.actions.setLoading);
+
+export const injectReceivePropertiesCreator = createActionCreatorSyringe<
+  string,
+  any
+>(analysisSlice.actions.receiveProperties);
+
+export const { updateObjectives, studyAreaReceived, analysisReturn } =
+  analysisSlice.actions;
+
 export const selectAnalysis = (state: RootState) => state.analysis;
 
 export default analysisSlice.reducer;

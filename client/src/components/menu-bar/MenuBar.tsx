@@ -1,8 +1,16 @@
 import React from 'react';
-import { Action, Divider, Export, Import, Link } from './menu-components';
-import Menu from './menu/Menu';
+import FileContentModel from 'models/file-models/FileContentModel';
+import { useAppDispatch } from 'store/hooks';
+import { exportData } from 'store/reducers/export';
+import { Action, Divider, Import, Link } from './components';
+import { call } from 'store/reducers/server';
+import Menu from './Menu';
+import ServerTargets from 'enums/ServerTargets';
+import CallModel from 'models/server-coms/CallModel';
 
 function MenuBar() {
+  const dispatch = useAppDispatch();
+
   const getMenus = () => [
     <Menu label="project">
       <Action
@@ -14,12 +22,53 @@ function MenuBar() {
         onFileImported={(file: File) => console.log('/file/open project', file)}
       />
       <Divider />
-      <Export
+      <Action
         label="save project"
-        getExportedFile={() =>
-          new File(['Hello, world!'], 'hello world.txt', {
-            type: 'text/plain;charset=utf-8',
-          })
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerTargets.SaveProject,
+              onSuccessAction: exportData,
+              // TODO: There should probably be an "onErrorAction"
+            } as CallModel<void, FileContentModel<string>, void, string, string>)
+          )
+        }
+      />
+      <Action
+        label="save project as"
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerTargets.SaveProject,
+              onSuccessAction: exportData,
+              // TODO: There should probably be an "onErrorAction"
+            } as CallModel<void, FileContentModel<string>, void, string, string>)
+          )
+        }
+      />
+      <Divider />
+      <Action
+        label="save weights"
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerTargets.SaveWeights,
+              onSuccessAction: exportData,
+              // TODO: There should probably be an "onErrorAction"
+            } as CallModel<void, FileContentModel<string>, void, string, string>)
+          )
+        }
+      />
+      <Action
+        label="save objectives hierarchy"
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerTargets.SaveObjectiveHierarchy,
+              onSuccessAction: exportData,
+              // TODO: There should probably be an "onErrorAction"
+            } as CallModel<void, FileContentModel<string>, void, string, string>)
+          )
         }
       />
     </Menu>,

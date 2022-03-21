@@ -1,4 +1,3 @@
-
 # TODO: Make abstract, maybe
 class Subject:
     def __init__(self, subjects_manager, subject_id, data):

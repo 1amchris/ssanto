@@ -1,10 +1,12 @@
 import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { Button } from 'components/form/form-components';
-import { call, subscribe } from 'store/middlewares/ServerMiddleware';
+import { call } from 'store/reducers/server';
 import { useAppDispatch } from 'store/hooks';
 import { analysisReturn } from 'store/reducers/analysis';
+import { Button } from 'components/forms/components';
+import CallModel from 'models/server-coms/CallModel';
+import ServerTargets from 'enums/ServerTargets';
 
 function FormsBar({ children, className, t }: any, key?: string) {
   const closeOverlay = () => document.body.click();
@@ -50,10 +52,9 @@ function FormsBar({ children, className, t }: any, key?: string) {
                   onClick={() => {
                     dispatch(
                       call({
-                        target: 'compute_suitability',
-                        args: [],
-                        successAction: analysisReturn,
-                      })
+                        target: ServerTargets.ComputeSuitability,
+                        onSuccessAction: analysisReturn,
+                      } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
                     );
                   }}
                 >

@@ -1,12 +1,18 @@
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { useEffectOnce } from 'hooks';
 import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectAnalysis, setError, setLoading } from 'store/reducers/analysis';
-import Form from 'components/form/Form';
-import { Select, Button, Spacer } from 'components/form/form-components';
-import { call, subscribe } from 'store/middlewares/ServerMiddleware';
+import {
+  selectAnalysis,
+  injectSetErrorCreator,
+  injectSetLoadingCreator,
+} from 'store/reducers/analysis';
+import Form from 'components/forms/Form';
+import { Select, Button, Spacer } from 'components/forms/components';
+import { call } from 'store/reducers/server';
+import ServerTargets from 'enums/ServerTargets';
+import LoadingValue from 'models/LoadingValue';
+import CallModel from 'models/server-coms/CallModel';
 
 function NbsSystem({ t }: any) {
   const property = 'nbs_system';
@@ -14,12 +20,8 @@ function NbsSystem({ t }: any) {
   const properties = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = selector.properties['nbsSystemError'];
-  const isLoading = selector.properties['nbsSystemLoading'];
-
-  useEffectOnce(() => {
-    dispatch(subscribe({ subject: property }));
-  });
+  const getErrors = selector.properties.nbsSystemError;
+  const isLoading = selector.properties.nbsSystemLoading;
 
   const controls = [
     <Select
@@ -55,14 +57,21 @@ function NbsSystem({ t }: any) {
       disabled={isLoading}
       onSubmit={(fields: any) => {
         dispatch(
+          injectSetLoadingCreator({
+            value: property,
+            isLoading: true,
+          } as LoadingValue<string>)()
+        );
+        dispatch(
           call({
-            target: 'update',
+            target: ServerTargets.Update,
             args: [property, fields],
-            successAction: setLoading,
-            successData: property,
-            failureAction: setError,
-            failureData: property,
-          })
+            onSuccessAction: injectSetLoadingCreator({
+              value: property,
+              isLoading: false,
+            } as LoadingValue<string>),
+            onFailureAction: injectSetErrorCreator(property),
+          } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
         );
       }}
     />

@@ -3,14 +3,28 @@ import { withTranslation } from 'react-i18next';
 import { FcPrevious } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { capitalize } from 'lodash';
-import { useAppSelector } from 'store/hooks';
-import { selectGuide } from 'store/reducers/guide';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { selectGuide, updateCategories } from 'store/reducers/guide';
 import MenuBar from 'components/menu-bar/MenuBar';
 import Categories from 'components/guide/Categories';
 import CategoryLinks from 'components/guide/CategoryLinks';
+import { call } from 'store/reducers/server';
+import { useEffectOnce } from 'hooks';
+import CallModel from 'models/server-coms/CallModel';
+import ServerTargets from 'enums/ServerTargets';
 
 function Guide({ t }: any) {
   const categories = useAppSelector(selectGuide).categories;
+  const dispatch = useAppDispatch();
+
+  useEffectOnce(() => {
+    dispatch(
+      call({
+        target: ServerTargets.GuideGet,
+        onSuccessAction: updateCategories,
+      } as CallModel)
+    );
+  });
 
   return (
     <div className="Guide">

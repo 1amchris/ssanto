@@ -1,8 +1,8 @@
 import React from 'react';
 import MenuBar from 'components/menu-bar/MenuBar';
-import FormsBar from 'components/forms-bar/FormsBar';
-import Collapsible from 'components/collapsible/Collapsible';
-import DataImportation from './analysis/DataImportation';
+import FormsBar from 'components/forms/FormsBar';
+import Collapsible from 'components/Collapsible';
+import FileExplorer from './analysis/FileExplorer';
 import InteractiveMapContainer from 'components/map/InteractiveMapContainer';
 import InformationCard from 'components/information-card/InformationCard';
 import {
@@ -15,10 +15,9 @@ import {
 import { useAppSelector } from 'store/hooks';
 import { selectAnalysis } from 'store/reducers/analysis';
 
-function App() {
+function Main() {
   const selector = useAppSelector(selectAnalysis);
-  const objectives = selector.properties.objectives;
-  const isLoading = selector.properties['objectivesLoading'];
+  const ohIsLoading = selector.properties.objectivesLoading;
 
   return (
     <div style={{ overflowY: 'clip' }}>
@@ -28,23 +27,23 @@ function App() {
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
           <FormsBar>
+            <Collapsible title={'file explorer'}>
+              <FileExplorer />
+            </Collapsible>
             <Collapsible title={'analysis parameters'} collapsed>
               <Parameters />
             </Collapsible>
             <Collapsible title={'study area'} collapsed>
               <StudyArea />
             </Collapsible>
-            <Collapsible title={'NBS system type'} collapsed>
+            <Collapsible title={'nbs system type'} collapsed>
               <NbsSystem />
             </Collapsible>
-            <Collapsible title={'data importation'} collapsed>
-              <DataImportation />
-            </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>
-              <ObjectiveHierarchy key={'oh' + isLoading} />
+              <ObjectiveHierarchy key={'oh' + ohIsLoading} />
             </Collapsible>
             <Collapsible title={'weighting'}>
-              <Weighting key={'weighting' + isLoading} />
+              <Weighting key={'weighting' + ohIsLoading} />
             </Collapsible>
           </FormsBar>
         </aside>
@@ -92,4 +91,4 @@ function App() {
   );
 }
 
-export default App;
+export default Main;

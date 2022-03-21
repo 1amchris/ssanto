@@ -13,6 +13,7 @@
   "author": "",
   "license": "AGPL",
   "dependencies": {
+    "@react-pdf/renderer": "^2.1.1",
     "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",
     "electron": "^16.0.7",

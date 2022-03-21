@@ -3,22 +3,9 @@ import { withTranslation } from 'react-i18next';
 import { TileLayer, LayersControl, GeoJSON } from 'react-leaflet';
 import { Layer, selectMap } from 'store/reducers/map';
 import { useAppSelector } from 'store/hooks';
-import { selectAnalysis } from 'store/reducers/analysis';
-
-const defaultData: GeoJSON.Feature = {
-  type: 'Feature',
-  geometry: {
-    type: 'Point',
-    coordinates: [],
-  },
-  properties: {},
-};
 
 const Layers = ({ t }: any) => {
   const { layers } = useAppSelector(selectMap);
-  /*const {
-    geodatabase: { files },
-  } = useAppSelector(selectAnalysis);*/
 
   const perc2color = (perc: number) => {
     var r,
@@ -37,7 +24,7 @@ const Layers = ({ t }: any) => {
 
   const style = (feature: any) => {
     console.log('STYLE', feature, feature.properties);
-    if (feature.properties != undefined && feature.properties.sutability > 0) {
+    if (feature.properties !== undefined && feature.properties.sutability > 0) {
       let color = perc2color(feature.properties.sutability);
       return {
         color: color,
@@ -77,21 +64,6 @@ const Layers = ({ t }: any) => {
           <GeoJSON data={data} style={style} />
         </LayersControl.Overlay>
       ))}
-      {/*
-      
-      files
-        ?.filter((file: GeoFile, index: number) => file.data != undefined)
-        .map((file: GeoFile, index: number) => (
-          <LayersControl.Overlay
-            key={index}
-            name={capitalize(t(file.name))}
-            checked
-          >
-            <GeoJSON data={file.data ? file.data : defaultData} />
-          </LayersControl.Overlay>
-        ))
-      
-        */}
     </LayersControl>
   );
 };

@@ -1,12 +1,29 @@
 from attr import attributes
 from .analyser import Analyser
+from .file import File
 from .file_manager import FileParser
 from .server_socket import CallException
+from base64 import b64encode
+import pickle
 
-from os.path import splitext
+
+class StudyArea:
+    def __init__(self, name, area):
+        self.name = name
+        self.area = area
+
+    def __dict__(self) -> dict:
+        return {"file_name": self.name, "area": self.area}
 
 
 class Analysis:
+    @staticmethod
+    def __export(filename, content):
+        return {
+            "name": filename,
+            "content": b64encode(pickle.dumps(content)).decode("utf-8"),
+        }
+
     def __init__(self, subjects_manager, files_manager, analyser):
         self.subjects_manager = subjects_manager
         self.files_manager = files_manager
@@ -16,11 +33,13 @@ class Analysis:
         self.parameters = subjects_manager.create(
             "parameters",
             {
-                "analysis_name": "allo",
-                "modeler_name": "",
-                "cell_size": 20,
+                "analysis_name": "Dummy analysis",
+                "modeler_name": "chris",
+                "cell_size": 18,
             },
         )
+
+        self.study_area = subjects_manager.create("analysis.study_area", None)
 
         self.nbs = subjects_manager.create(
             "nbs_system",
@@ -33,25 +52,8 @@ class Analysis:
         self.objectives = subjects_manager.create(
             "objectives",
             {
-
                 "main": "Needs",
-                "primaries": {
-                        "primary": [],
-                        "weights": [],
-                        "secondaries": []
-                }
-
-
-
-
-
-
-
-
-
-
-
-
+                "primaries": {"primary": [], "weights": [], "secondaries": []}
                 # ...
             },
         )
@@ -82,17 +84,15 @@ class Analysis:
             raise CallException("No shapefiles received [dbf].")
 
         # find a matching pair
-        shp = shx = None
-
-        def is_matching_pair():
+        def is_matching_pair(shp: File, shx: File):
             return shp != None and shx != None and shp.stem == shx.stem
 
         # Lever des erreurs si plusieurs fichier shp
         for shp in shps:
             for shx in shxs:
-                if is_matching_pair():
+                if is_matching_pair(shp, shx):
                     break
-            if is_matching_pair():
+            if is_matching_pair(shp, shx):
                 break
         else:
             raise CallException(
@@ -102,25 +102,39 @@ class Analysis:
         self.study_area_path = shps[0].path[0]
 
         geojson = FileParser.load(self.files_manager, shx.id, shp.id)
-        return {"file_name": shx.name, "area": geojson}
+        self.study_area.notify(StudyArea(shp.name, geojson))
+        return self.study_area.value().__dict__()
+
+    def export_project_save(self):
+        return Analysis.__export(f"{self.__get_project_name()}.sproj", self.__repr__())
+
+    def export_weights(self):
+        # TODO: get weights
+        return Analysis.__export(f"{self.__get_project_name()}.swghts", {"weights": "todo"})
+
+    def export_objective_hierarchy(self):
+        # TODO: get objective hierarchy
+        return Analysis.__export(f"{self.__get_project_name()}.soh", {"objective_hierarchy": "todo"})
 
     def compute_suitability(self):
         self.study_area_path = "temp/terre_shp.shp"
-        if (len(self.study_area_path) > 0):
+        if len(self.study_area_path) > 0:
             data = self.objectives.value()
             print("DATA OBJECTIVES", data)
             analyser = Analyser()
-            analyser.add_study_area(
-                self.study_area_path, "temp/output_study_area.tiff")
-            for (primary, weight_primary, secondaries) in zip(data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]):
+            analyser.add_study_area(self.study_area_path, "temp/output_study_area.tiff")
+            for (primary, weight_primary, secondaries) in zip(
+                data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]
+            ):
                 analyser.add_objective(primary, int(weight_primary))
-                for (index, (secondary, weight_secondary, attributes)) in enumerate(zip(secondaries["secondary"], secondaries["weights"], secondaries["attributes"])):
-                    #print(index, secondary, weight_secondary)
+                for (index, (secondary, weight_secondary, attributes)) in enumerate(
+                    zip(secondaries["secondary"], secondaries["weights"], secondaries["attributes"])
+                ):
+                    # print(index, secondary, weight_secondary)
                     print("UPDATE", attributes["datasets"][0]["id"])
                     path = "temp/" + attributes["datasets"][0]["id"] + ".shp"
                     print("PATH", path)
                     path = "temp/Espace_Vert.shp"
-                    analyser.objectives[primary].add_file(
-                        index, path, "output.tiff", int(weight_secondary))
+                    analyser.objectives[primary].add_file(index, path, "output.tiff", int(weight_secondary))
             geo_json = analyser.process_data()
             return {"file_name": "current analysis", "area": geo_json}

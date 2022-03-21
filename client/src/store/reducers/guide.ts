@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
-import categories from 'data/categories';
-import CategoryModel from 'models/guide/CategoryModel';
+import CategoryModel from 'models/guide-models/CategoryModel';
 
 export const guideSlice = createSlice({
   name: 'guide',
-  initialState: { categories: categories || [] },
+  initialState: { categories: [] as CategoryModel[] },
   reducers: {
     updateCategories: (
       state,

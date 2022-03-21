@@ -26,7 +26,7 @@ class Logger:
             return string
         part_2 = max_length // 2 - 3
         part_1 = max_length - part_2 - 3
-        return '{0}...{1}'.format(string[:part_1], string[-part_2:])
+        return "{0}...{1}".format(string[:part_1], string[-part_2:])
 
     def flush(self):
         self.stdout.flush()

@@ -1,8 +1,6 @@
 import { capitalize, uniqueId } from 'lodash';
 import React, { ReactElement } from 'react';
-import { Button } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
-import { FiMinusCircle, FiPlus } from 'react-icons/fi';
 import { MdSubdirectoryArrowRight } from 'react-icons/md';
 import PropsModel from 'models/PropsModel';
 import FormComponent from './FormComponent';
@@ -17,14 +15,11 @@ export interface FactoryProps extends PropsModel {
  * Row
  * @param parentId the id of the calling parent
  * @param index the index at which the row is placed in a list
- * @param onDeleteControl [optional] Specifies what happens when the 'delete' button is clicked
- *                        Leave undefined to prevent the user from deleting the entry
  * @returns a row entry for the expandable list
  */
 class Row extends React.Component<{
   parentId: string;
   index: number;
-  onDeleteControl?: (index: number) => void;
 }> {
   key?: string;
   state = {
@@ -37,7 +32,7 @@ class Row extends React.Component<{
   }
 
   render = () => {
-    const { parentId, index, children, onDeleteControl } = this.props;
+    const { parentId, index, children } = this.props;
     return (
       <li
         key={this.key}
@@ -59,12 +54,10 @@ class Row extends React.Component<{
  * TODO: [optional] add the ability to reorder the elements in the list
  * FormExpandableList
  * @param props .factory is a generator function that, provided with a few props will return a ReactElement or a list of em
- *              .template is used to generate a new control object when the user asks to
  *              .controls is the existing controls upon generating the expandable list
  * @returns a list with variable length, to which the user can add elements and remove elements
  */
 class FormExpandableList extends FormComponent {
-  private readonly template: PropsModel;
   private readonly factory: (
     props: FactoryProps
   ) => ReactElement | ReactElement[];
@@ -80,7 +73,6 @@ class FormExpandableList extends FormComponent {
     this.factory = this.props.factory;
     this.onAddControl = this.props.onAddControl;
     this.onRemoveControl = this.props.onRemoveControl;
-    this.template = this.props.template;
     this.state.controls =
       this.props.controls?.map((control: PropsModel) => ({
         ...control,
@@ -107,7 +99,6 @@ class FormExpandableList extends FormComponent {
               key={`${this.id}/row-${index}`}
               parentId={this.id}
               index={index}
-              onDeleteControl={this.onRemoveControl}
             >
               {this.factory({
                 ...control,

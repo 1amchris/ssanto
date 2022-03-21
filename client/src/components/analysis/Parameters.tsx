@@ -1,12 +1,18 @@
 import { capitalize } from 'lodash';
 import React, { createRef, RefObject } from 'react';
-import { Control, Spacer, Button } from 'components/form/form-components';
+import { Control, Spacer, Button } from 'components/forms/components';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectAnalysis, setError, setLoading } from 'store/reducers/analysis';
+import {
+  selectAnalysis,
+  injectSetErrorCreator,
+  injectSetLoadingCreator,
+} from 'store/reducers/analysis';
 import { withTranslation } from 'react-i18next';
-import Form from 'components/form/Form';
-import { useEffectOnce } from 'hooks';
-import { call, subscribe } from 'store/middlewares/ServerMiddleware';
+import Form from 'components/forms/Form';
+import { call } from 'store/reducers/server';
+import ServerTargets from 'enums/ServerTargets';
+import LoadingValue from 'models/LoadingValue';
+import CallModel from 'models/server-coms/CallModel';
 
 function Parameters({ t }: any) {
   const property = 'parameters';
@@ -14,15 +20,8 @@ function Parameters({ t }: any) {
   const properties = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = selector.properties['parametersError'];
-  const isLoading = selector.properties['parametersLoading'];
-
-  useEffectOnce(() => {
-    dispatch(subscribe({ subject: property }));
-  });
-  useEffectOnce(() => {
-    dispatch(subscribe({ subject: 'objectives' }));
-  });
+  const getErrors = selector.properties.parametersError;
+  const isLoading = selector.properties.parametersLoading;
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
   const controls = [
@@ -73,16 +72,22 @@ function Parameters({ t }: any) {
       errors={getErrors}
       onSubmit={(fields: any) => {
         dispatch(
-          call({
-            target: 'update',
-            args: [property, fields],
-            successAction: setLoading,
-            successData: property,
-            failureAction: setError,
-            failureData: property,
-          })
+          injectSetLoadingCreator({
+            value: property,
+            isLoading: true,
+          } as LoadingValue<string>)()
         );
-        dispatch(setLoading({ params: property, data: true }));
+        dispatch(
+          call({
+            target: ServerTargets.Update,
+            args: [property, { ...properties, ...fields }],
+            onSuccessAction: injectSetLoadingCreator({
+              value: property,
+              isLoading: false,
+            } as LoadingValue<string>),
+            onFailureAction: injectSetErrorCreator(property),
+          } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
+        );
       }}
     />
   );

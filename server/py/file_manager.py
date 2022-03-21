@@ -1,8 +1,7 @@
 from uuid import uuid4
-import shapefile
 from base64 import b64decode
 from geojson_rewind import rewind
-from io import BytesIO
+import shapefile
 
 from py.file import File
 from py.file_metadata import FileMetaData
@@ -11,12 +10,11 @@ from py.file_metadata import FileMetaData
 class FileParser:
     @staticmethod
     def load(files_manager, *ids):
-        files = sorted(files_manager.get_files_by_id(
-            *ids), key=lambda file: file.extension)
+        files = sorted(files_manager.get_files_by_id(*ids), key=lambda file: file.extension)
 
         if files[0].extension == "shp" and len(files) == 2:
             shp, shx = files
-            return FileParser.__load_shp(shp.content, shx.content)
+            return FileParser.__load_shp(shp.get_file_descriptor(), shx.get_file_descriptor())
         # elif ext == '...'
 
         return None
@@ -41,11 +39,22 @@ class FilesManager:
     def __init__(self, subjects_manager):
         self.subjects_manager = subjects_manager
         self.files_content = dict()
-        self.files = self.subjects_manager.create("files", self.files_content)
         self.temp_dir = "temp/"
+        self.files = self.subjects_manager.create("file_manager.files", dict())
+
+    def __dict__(self) -> dict:
+        return {key: file.__dict__() for key, file in self.files_content.items()}
 
     def get_file(self, id):
         return self.files[id]
+
+    def get_files_metadatas(self):
+        return list(
+            map(
+                lambda file: FileMetaData(file.name, id=file.id),
+                self.files_content.values(),
+            )
+        )
 
     def get_files_by_id(self, *ids):
         return list(filter(lambda file: file.id in ids, self.files_content.values()))
@@ -61,28 +70,26 @@ class FilesManager:
     def save_files_locally(self, temp_dir, file_name, *ids):
         print("add_files", temp_dir)
 
-        files = sorted(self.get_files_by_id(
-            *ids), key=lambda file: file.extension)
+        files = sorted(self.get_files_by_id(*ids), key=lambda file: file.extension)
         path = []
         for f in files:
             print("save_files_locally", temp_dir, file_name, f.extension)
-            temp_path = temp_dir + file_name + '.' + f.extension
-            with open(temp_path, 'wb') as out:
+            temp_path = temp_dir + file_name + "." + f.extension
+            with open(temp_path, "wb") as out:
                 out.write(f.content.read())
             path.append(temp_path)
         return path
 
-    # files: { name: string; data: string (base64);  }[]
+    # files: { name: string; size: number; content: string (base64); }[]
     def add_files(self, *files):
         created = []
         print("add_files", self.temp_dir)
-        shapefile_id = str(uuid4())
+        group_id = str(uuid4())
         for file in files:
-            new_file = File(file["name"], BytesIO(b64decode(file["content"])))
-            new_file.shapefile_id = shapefile_id
+            new_file = File(file["name"], b64decode(file["content"]))
+            new_file.shapefile_id = group_id
             self.files_content[new_file.id] = new_file
-            new_file.path = self.save_files_locally(
-                self.temp_dir, shapefile_id, new_file.id)
+            new_file.path = self.save_files_locally(self.temp_dir, group_id, new_file.id)
             print("add_files", new_file.path)
             if new_file.path[0].endswith("shp"):
                 new_file.set_column()
@@ -95,13 +102,9 @@ class FilesManager:
         return created
 
     def __notify_metadatas(self):
-        self.files.notify(
-            list(
-                map(
-                    lambda file: FileMetaData(file.name, id=file.shapefile_id),
-                    self.files_content.values(),
-                )
-            )
-        )
+        metadatas = self.get_files_metadatas()
+        # we need to manually call __dict__ for some unknown reason.
+        # It doesn't seem to play nice otherwise
+        self.files.notify([metadata.__dict__() for metadata in metadatas])
 
     # Add loaded file to the file manager?

@@ -1,40 +1,39 @@
 import { studyAreaReceived, analysisReturn } from 'store/reducers/analysis';
 import { Layer, upsertLayer } from 'store/reducers/map';
+import { PayloadAction } from '@reduxjs/toolkit';
+import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
 
-// TODO: Remove properties from model when forwarding action after dispatching server call
-const AnalysisMiddleware = () => {
-  return ({ dispatch }: any) =>
-    (next: any) =>
-    (action: any) => {
-      switch (action.type) {
-        case studyAreaReceived.type:
-          const { data } = action.payload;
-          console.log(data);
-          dispatch(
-            upsertLayer({
-              name: data.file_name,
-              data: data.area,
-            } as Layer)
-          );
-          return next(action);
-          break;
-
-        case analysisReturn.type:
-          const analysis_data = action.payload.data;
-          console.log(analysis_data);
-          dispatch(
-            upsertLayer({
-              name: analysis_data.file_name,
-              data: JSON.parse(analysis_data.area),
-            } as Layer)
-          );
-          return next(action);
-          break;
-
-        default:
-          return next(action);
+const AnalysisMiddleware: Middleware =
+  ({ dispatch }: MiddlewareAPI) =>
+  (next: Dispatch) =>
+  <A extends PayloadAction<any>>(action: A) => {
+    switch (action.type) {
+      case studyAreaReceived.type: {
+        const { file_name, area } = action.payload;
+        dispatch(
+          upsertLayer({
+            name: file_name,
+            data: area,
+          } as Layer)
+        );
+        return next(action);
       }
-    };
-};
 
-export default AnalysisMiddleware();
+      case analysisReturn.type: {
+        const { file_name, analysis_data: area } = action.payload;
+        console.log(action.payload);
+        dispatch(
+          upsertLayer({
+            name: file_name,
+            data: JSON.parse(area),
+          } as Layer)
+        );
+        return next(action);
+      }
+
+      default:
+        return next(action);
+    }
+  };
+
+export default AnalysisMiddleware;
