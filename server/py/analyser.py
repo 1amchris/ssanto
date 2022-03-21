@@ -15,7 +15,7 @@ import pandas as pd
 
 
 class Analyser():
-    def __init__(self, cellsize=200, crs="epsg:3857"):
+    def __init__(self, cellsize=200, crs="epsg:32188"):
         self.transformation = Transformation(cellsize, crs)
         self.objectives = {}
         self.study_area = Study_area("", "", self.transformation)
