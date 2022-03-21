@@ -33,7 +33,7 @@ async def main():
     server_socket.bind_command("analysis.save_objective_hierarchy", analysis.export_objective_hierarchy)
 
     guide_builder = GuideBuilder()
-    server_socket.bind_command("get_guide", guide_builder.generate_guide_data)
+    server_socket.bind_command("guide.get", guide_builder.generate_guide_data)
 
     # Main loop
     loop = asyncio.get_running_loop()
