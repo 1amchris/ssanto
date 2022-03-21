@@ -30,6 +30,12 @@ function App() {
         onAction: injectReceivePropertiesCreator('nbs_system'),
       } as SubscriptionModel<string, any>)
     );
+    dispatch(
+      subscribe({
+        subject: 'objectives',
+        onAction: injectReceivePropertiesCreator('objectives'),
+      } as SubscriptionModel<string, any>)
+    );
   });
 
   return (

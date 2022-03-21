@@ -68,7 +68,7 @@ class FilesManager:
         return popped
 
     def save_files_locally(self, temp_dir, file_name, *ids):
-        print("add_files", temp_dir)
+        # print("add_files", temp_dir)
 
         files = sorted(self.get_files_by_id(*ids), key=lambda file: file.extension)
         path = []
@@ -76,24 +76,23 @@ class FilesManager:
             print("save_files_locally", temp_dir, file_name, f.extension)
             temp_path = temp_dir + file_name + "." + f.extension
             with open(temp_path, "wb") as out:
-                out.write(f.content.read())
+                out.write(f.get_file_descriptor().read())
             path.append(temp_path)
         return path
 
     # files: { name: string; size: number; content: string (base64); }[]
     def add_files(self, *files):
         created = []
-        print("add_files", self.temp_dir)
+        # print("add_files", self.temp_dir)
         group_id = str(uuid4())
         for file in files:
-            new_file = File(file["name"], b64decode(file["content"]))
-            new_file.shapefile_id = group_id
+            new_file = File(file["name"], b64decode(file["content"]), group_id=group_id)
             self.files_content[new_file.id] = new_file
             new_file.path = self.save_files_locally(self.temp_dir, group_id, new_file.id)
-            print("add_files", new_file.path)
-            if new_file.path[0].endswith("shp"):
-                new_file.set_column()
-                new_file.set_head()
+            # print("add_files", new_file.path)
+            # if new_file.extension == "shp":
+            #     new_file.set_column()
+            #     new_file.set_head()
             created.append(new_file)
 
         # creer un object shapefile (différents fichiers, path/noms sont conformes)

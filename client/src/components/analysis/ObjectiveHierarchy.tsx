@@ -1,8 +1,9 @@
-import { ReactElement, useState } from 'react';
+import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
+import Form from 'components/forms/Form';
 import objectivesData from 'data/objectives.json';
 import { call } from 'store/reducers/server';
 
@@ -23,10 +24,9 @@ import React from 'react';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import ServerTargets from 'enums/ServerTargets';
-import Form from 'components/forms/Form';
 
 function isShp(file: { extension: string }, index: any, array: any) {
-  return file.extension === 'shp';
+  return file.extension == 'shp';
 }
 
 function isValidOH(objectiveHierarchy: {
@@ -50,18 +50,18 @@ function isValidOH(objectiveHierarchy: {
   let secondaryHasAttribute = true;
   let attributeHasName = true;
   let datasetsAreSelected = true;
-  objectiveHierarchy.primaries.secondaries.forEach(json => {
+  objectiveHierarchy.primaries.secondaries.map(json => {
     primaryHasSecondary = primaryHasSecondary && json.secondary.length > 0;
-    json.attributes.forEach(json => {
+    json.attributes.map(json => {
       secondaryHasAttribute =
         secondaryHasAttribute && json.attribute.length > 0;
-      json.attribute.forEach(
+      json.attribute.map(
         attributeName =>
           (attributeHasName = attributeHasName && attributeName.length > 0)
       );
-      json.datasets.forEach(
+      json.datasets.map(
         dataset =>
-          (datasetsAreSelected = datasetsAreSelected && dataset.id !== '0')
+          (datasetsAreSelected = datasetsAreSelected && dataset.id != '0')
       );
     });
   });
@@ -99,6 +99,12 @@ function ObjectiveHierarchy({ t }: any) {
       return localObjectives.primaries.primary[index];
     };
 
+    const secondaryName = (primaryIndex: number, secondaryIndex: number) => {
+      return localObjectives.primaries.secondaries[primaryIndex].secondary[
+        secondaryIndex
+      ];
+    };
+
     const getPrimary = () => {
       return localObjectives.primaries.primary;
     };
@@ -114,37 +120,51 @@ function ObjectiveHierarchy({ t }: any) {
     };
 
     const getAllMainOptions = () => {
-      let options: string[] = objectivesData?.mains.map(
-        (json: { main: string }) => json.main
-      );
+      let options: string[] = [];
+      objectivesData?.mains.map((json: { main: string }) => {
+        options.push(json.main);
+      });
       return options;
     };
 
     const getAllPrimaryOptions = (main: string) => {
       let options: string[] = [];
 
-      objectivesData.mains
-        .filter(json => json.main === main)
-        .forEach(json => {
-          json.primaries?.forEach(json => {
+      objectivesData.mains.map(json => {
+        if (json.main == main) {
+          json.primaries?.map(json => {
             options.push(json.primary);
           });
-        });
-
+        }
+      });
       return options;
     };
 
     const getAllSecondaryOptions = (primary: string) => {
       let options: string[] = [];
-
-      objectivesData?.mains[0]?.primaries
-        ?.filter(json => json.primary === primary)
-        .forEach(json => {
-          json.secondaries.forEach(json => {
+      objectivesData?.mains[0]?.primaries?.map(json => {
+        if (json.primary == primary) {
+          json.secondaries.map(json => {
             options.push(json.secondary);
           });
-        });
+        }
+      });
+      return options;
+    };
 
+    const getAllAttributesOptions = (primary: string, secondary: string) => {
+      let options: string[] = [];
+      objectivesData?.mains[0]?.primaries?.map(json => {
+        if (json.primary == primary) {
+          json.secondaries.map(json => {
+            if (json.secondary == secondary) {
+              json.attributes.map(json => {
+                options.push(json.attribute);
+              });
+            }
+          });
+        }
+      });
       return options;
     };
 
@@ -159,32 +179,50 @@ function ObjectiveHierarchy({ t }: any) {
     };
 
     const generateOptionsMain = () => {
-      let options = [
-        localObjectives.main,
-        ...getAllMainOptions().filter(main => main !== localObjectives.main),
-      ];
-
+      let options = [localObjectives.main];
+      getAllMainOptions().map(main => {
+        if (main != localObjectives.main) options.push(main);
+      });
       return formatOptions(options);
     };
 
     const getUnusedPrimary = () => {
-      let unused: string[] = getAllPrimaryOptions(localObjectives.main).filter(
-        primary => !localObjectives.primaries.primary.includes(primary)
-      );
-
+      let unused: string[] = [];
+      getAllPrimaryOptions(localObjectives.main).map(primary => {
+        if (!localObjectives.primaries.primary.includes(primary))
+          unused.push(primary);
+      });
       return unused;
     };
-
     const getUnusedSecondary = (primaryIndex: number) => {
-      let unused: string[] = getAllSecondaryOptions(
-        primaryName(primaryIndex)
-      ).filter(
-        secondary =>
+      let unused: string[] = [];
+      getAllSecondaryOptions(primaryName(primaryIndex)).map(secondary => {
+        if (
           !localObjectives.primaries.secondaries[
             primaryIndex
           ].secondary.includes(secondary)
-      );
+        )
+          unused.push(secondary);
+      });
+      return unused;
+    };
 
+    const getUnusedAttribute = (
+      primaryIndex: number,
+      secondaryIndex: number
+    ) => {
+      let unused: string[] = [];
+      getAllAttributesOptions(
+        primaryName(primaryIndex),
+        secondaryName(primaryIndex, secondaryIndex)
+      ).map(attribute => {
+        if (
+          !localObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].attribute.includes(attribute)
+        )
+          unused.push(attribute);
+      });
       return unused;
     };
 
@@ -226,17 +264,16 @@ function ObjectiveHierarchy({ t }: any) {
       ];
 
       if (files.length > 0) {
-        options = options.concat(
-          files
-            .filter(({ id }) => id !== currentDatasetId)
-            .map(({ name, id }) => ({ name, id }))
-        );
+        files.map((f: { name: string; id: string }) => {
+          if (f.id != currentDatasetId)
+            options.push({ name: f.name, id: f.id });
+        });
       }
       return options.map(
-        file =>
+        f =>
           ({
-            value: `${JSON.stringify({ id: file.id, name: file.name })}`,
-            label: `${file.name}`,
+            value: `${JSON.stringify({ id: f.id, name: f.name })}`,
+            label: `${f.name}`,
           } as FormSelectOptionModel)
       );
     };
@@ -282,7 +319,7 @@ function ObjectiveHierarchy({ t }: any) {
         if (
           localObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
-          ].attribute.length === 0
+          ].attribute.length == 0
         ) {
           let newObjectives = copyLocalObjective();
           newObjectives.primaries.secondaries[primaryIndex].attributes[
@@ -370,6 +407,19 @@ function ObjectiveHierarchy({ t }: any) {
 
     const onChangeAttribute =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (value: any) => {
+        console.log('onChangeAttribute', value);
+        let newAttribute = value;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].attribute[attributeIndex] = newAttribute;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
+    const onChangeAttribute2 =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (event: any) => {
         event.persist();
         let value = event.target.value;
@@ -383,7 +433,6 @@ function ObjectiveHierarchy({ t }: any) {
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
-
     const onChangeDataset =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
@@ -414,8 +463,7 @@ function ObjectiveHierarchy({ t }: any) {
       defaultAttribute,
       defaultDataset,
     }: FactoryProps): ReactElement | ReactElement[] => {
-      // TODO: Link with Control to prevent lose-focus bug when typing in field
-      // const attributeNameRef: RefObject<HTMLSpanElement> = createRef();
+      const attributeNameRef: RefObject<HTMLSpanElement> = createRef();
 
       return [
         <Control
@@ -429,7 +477,11 @@ function ObjectiveHierarchy({ t }: any) {
           }
           required
           suffix={<React.Fragment></React.Fragment>}
-          onChange={onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)}
+          onChange={onChangeAttribute2(
+            primaryIndex,
+            secondaryIndex,
+            orderIndex
+          )}
           //tooltip={t("the modeler's name will ...")}
         />,
         <Select
@@ -592,12 +644,12 @@ function ObjectiveHierarchy({ t }: any) {
             call({
               target: ServerTargets.Update,
               args: [property, localObjectives],
-              onSuccessAction: injectSetLoadingCreator({
+              successAction: injectSetLoadingCreator({
                 value: property,
                 isLoading: false,
               } as LoadingValue<string>),
-              onErrorAction: injectSetErrorCreator(property),
-            } as CallModel<[string, any], void, LoadingValue<string>, string, string>)
+              failureAction: injectSetErrorCreator(property),
+            } as CallModel)
           );
         } else {
           console.warn('Invalid objective hierarchy');

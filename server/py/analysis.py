@@ -58,6 +58,25 @@ class Analysis:
             },
         )
 
+    def __repr__(self) -> str:
+        return str(self.__dict__())
+
+    def __dict__(self) -> dict:
+        study_area = self.study_area.value()
+        return {
+            "analysis": {
+                "parameters": self.parameters.value(),
+                "study_area": study_area.__dict__() if study_area else None,
+                "nbs": self.nbs.value(),
+            },
+            "files": self.files_manager.__dict__(),
+        }
+
+    def __get_project_name(self):
+        # by default, the name is "analysis.ssanto", unless a name was specified by the user
+        parameters = self.parameters.value()
+        return parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
+
     def perform_analysis(self):
         # self.parameters.value().get('analysis_name')
         # ...

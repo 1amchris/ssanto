@@ -1,12 +1,17 @@
 import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
 import { call } from 'store/reducers/server';
+
 import {
   Button,
   Spacer,
+  Select,
+  ExpandableList,
+  List,
   Control,
   SimpleList,
 } from 'components/forms/components';
@@ -19,15 +24,17 @@ import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import React from 'react';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
+import ServerTargets from 'enums/ServerTargets';
 
 function Weighting({ t }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
   const dispatch = useAppDispatch();
+  const files = selector.properties['files'];
 
-  const getErrors = selector.properties.objectivesError;
-  const isLoading = selector.properties.objectivesLoading;
+  const getErrors = selector.properties['objectivesError'];
+  const isLoading = selector.properties['objectivesLoading'];
 
   const [localObjectives, setLocalObjectives] = useState({
     ...objectives,
@@ -293,14 +300,14 @@ function Weighting({ t }: any) {
         );
         dispatch(
           call({
-            target: 'update',
+            target: ServerTargets.Update,
             args: [property, localObjectives],
             onSuccessAction: injectSetLoadingCreator({
               value: property,
               isLoading: false,
             } as LoadingValue<string>),
-            failureAction: injectSetErrorCreator(property),
-          } as CallModel<[string, any], void, LoadingValue<string>, string, string>)
+            onErrorAction: injectSetErrorCreator(property),
+          } as CallModel)
         );
       }}
     />

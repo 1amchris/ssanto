@@ -32,4 +32,4 @@ class SubjectsManager:
 
     def update(self, subject, data):
         self.subjects[subject].notify(data)
-        # notify ???
+        print(subject, "value:", self.subjects[subject].value())
