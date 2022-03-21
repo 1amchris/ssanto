@@ -27,7 +27,8 @@ export interface LatLong {
 export const mapSlice = createSlice({
   name: 'map',
   initialState: {
-    location: { lat: 45.509, long: -73.553 },
+    //location: { lat: 45.509, long: -73.553 },
+    location: { lat: 5701794.647478, long: -8196189.668963 },
     zoom: 10,
     coordinateSystem: `${L.CRS.EPSG3857}`,
     layers: [],

@@ -2,9 +2,13 @@ import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { Button } from 'components/form/form-components';
+import { call, subscribe } from 'store/middlewares/ServerMiddleware';
+import { useAppDispatch } from 'store/hooks';
+import { analysisReturn } from 'store/reducers/analysis';
 
 function FormsBar({ children, className, t }: any, key?: string) {
   const closeOverlay = () => document.body.click();
+  const dispatch = useAppDispatch();
 
   return (
     <div
@@ -43,7 +47,15 @@ function FormsBar({ children, className, t }: any, key?: string) {
                 <Button
                   variant="outline-primary"
                   className="mb-2"
-                  onClick={() => console.log('Confirmed!')}
+                  onClick={() => {
+                    dispatch(
+                      call({
+                        target: 'compute_suitability',
+                        args: [],
+                        successAction: analysisReturn,
+                      })
+                    );
+                  }}
                 >
                   Proceed
                 </Button>

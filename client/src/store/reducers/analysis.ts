@@ -101,6 +101,12 @@ export const analysisSlice = createSlice({
       /* TODO: add additional validation here */
       //state.objectives = payload;
     },
+
+    analysisReturn: (state, { payload }: PayloadAction<AnalysisObjectives>) => {
+      console.warn('No validation was performed on the objectives hierarchy');
+      /* TODO: add additional validation here */
+      //state.objectives = payload;
+    },
   },
 });
 
@@ -112,6 +118,7 @@ export const {
   setError,
   setLoading,
   studyAreaReceived,
+  analysisReturn,
 } = analysisSlice.actions;
 export const selectAnalysis = (state: RootState) => state.analysis;
 

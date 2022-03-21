@@ -53,6 +53,9 @@ async def main():
     server_socket.bind_command(
         "file_manager.remove_file", files_manager.remove_file)
 
+    server_socket.bind_command(
+        "compute_suitability", analysis.compute_suitability)
+
     # Main loop
     loop = asyncio.get_running_loop()
     stop = loop.create_future()

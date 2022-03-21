@@ -63,12 +63,7 @@ function isValidOH(objectiveHierarchy: {
       );
     });
   });
-  return (
-    primaryHasSecondary &&
-    secondaryHasAttribute &&
-    attributeHasName &&
-    datasetsAreSelected
-  );
+  return primaryHasSecondary && secondaryHasAttribute && attributeHasName;
 }
 
 function ObjectiveHierarchy({ t }: any) {
