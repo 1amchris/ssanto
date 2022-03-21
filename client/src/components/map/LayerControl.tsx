@@ -40,6 +40,11 @@ const Layers = ({ t }: any) => {
         //dashArray: '3',
         //fillOpacity: 0.5,
       };
+    } else if (
+      feature.properties !== undefined &&
+      feature.properties.sutability == 0
+    ) {
+      return { color: '#00000000', fillOpacity: 0 };
     } else {
       return { color: '#0000ff', fillOpacity: 0 };
     }
