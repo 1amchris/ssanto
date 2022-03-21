@@ -308,3 +308,6 @@ thumb
 sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/python,react,node
+
+# We assume the content of any folder called temp/ should be ignored
+temp/**
