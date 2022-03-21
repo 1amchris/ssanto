@@ -9,9 +9,6 @@ import { call } from 'store/reducers/server';
 import {
   Button,
   Spacer,
-  Select,
-  ExpandableList,
-  List,
   Control,
   SimpleList,
 } from 'components/forms/components';
@@ -31,10 +28,9 @@ function Weighting({ t }: any) {
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
   const dispatch = useAppDispatch();
-  const files = selector.properties['files'];
 
-  const getErrors = selector.properties['objectivesError'];
-  const isLoading = selector.properties['objectivesLoading'];
+  const getErrors = selector.properties.objectivesError;
+  const isLoading = selector.properties.objectivesLoading;
 
   const [localObjectives, setLocalObjectives] = useState({
     ...objectives,
