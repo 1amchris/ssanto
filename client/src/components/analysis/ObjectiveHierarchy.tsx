@@ -644,11 +644,11 @@ function ObjectiveHierarchy({ t }: any) {
             call({
               target: ServerTargets.Update,
               args: [property, localObjectives],
-              successAction: injectSetLoadingCreator({
+              onSuccessAction: injectSetLoadingCreator({
                 value: property,
                 isLoading: false,
               } as LoadingValue<string>),
-              failureAction: injectSetErrorCreator(property),
+              onErrorAction: injectSetErrorCreator(property),
             } as CallModel)
           );
         } else {
