@@ -79,7 +79,7 @@ class Analyser():
             #gpd_polygonized_raster.to_file('temp/dataframe.geojson', driver='GeoJSON')
 
             # cs convertion
-            gpd_polygonized_raster = gpd_polygonized_raster.to_crs(3857)
+            gpd_polygonized_raster = gpd_polygonized_raster.to_crs(4326)
             gpd_polygonized_raster.to_file("temp/analysis.geojson")
             return(gpd_polygonized_raster.to_json())
 
