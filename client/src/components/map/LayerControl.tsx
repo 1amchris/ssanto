@@ -37,7 +37,7 @@ const Layers = ({ t }: any) => {
 
   const style = (feature: any) => {
     console.log('STYLE', feature, feature.properties);
-    if (feature.properties.sutability > 0) {
+    if (feature.properties != undefined && feature.properties.sutability > 0) {
       let color = perc2color(feature.properties.sutability);
       return {
         color: color,
