@@ -147,6 +147,9 @@ class Analysis:
             path = "temp2/Espace_Vert.shp"
             analyser.objectives["test"].add_file(
                 1, path, "output.tiff", 1)
+            path = "temp2/IndexPlaineInondable.shp"
+            analyser.objectives["test"].add_file(
+                2, path, "output.tiff", 1)
             """   
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]
