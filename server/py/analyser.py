@@ -21,7 +21,6 @@ class Analyser():
         self.study_area = Study_area("", "", self.transformation)
 
     def add_study_area(self, path, output_tiff):
-        print("")
         self.study_area.update_path(path, output_tiff)
 
     def add_objective(self, objective_name, weight):
@@ -40,8 +39,10 @@ class Analyser():
         print("matrix_to_raster", type(matrix),
               type(matrix[0]), type(matrix[0][0]))
 
-        study_area_path = "temp2/output_study_area.tiff"
-        output_path = "temp2/output.tif"
+        # bizarre ?????? ça vient de ou
+        #study_area_path = "temp/output_study_area.tiff"
+        study_area_path = self.study_area.output_tiff
+        output_path = "temp/output.tif"
         inDs = gdal.Open(study_area_path)
         driver = inDs.GetDriver()
         outDs = driver.Create(
@@ -81,7 +82,7 @@ class Analyser():
 
             # cs convertion
             gpd_polygonized_raster = gpd_polygonized_raster.to_crs(4326)
-            gpd_polygonized_raster.to_file("temp2/analysis.geojson")
+            gpd_polygonized_raster.to_file("temp/analysis.geojson")
             return(gpd_polygonized_raster.to_json())
 
     def process_data(self):

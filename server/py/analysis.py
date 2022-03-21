@@ -94,7 +94,7 @@ class Analysis:
         shxs = [file for file in created if file.extension == "shx"]
         dbfs = [file for file in created if file.extension == "dbf"]
 
-        print("shps", shps, "shxs", shxs)
+        #print("shps", shps, "shxs", shxs)
         if len(shps) == 0:
             raise CallException("No shapefiles received [shp].")
         if len(shxs) == 0:
@@ -117,7 +117,7 @@ class Analysis:
             raise CallException(
                 "No valid shapefiles uploaded. Make sure that both [.shx and .shp are uploaded, and both have the same name, then try again.]"
             )
-        print("receive_study_area", shps[0].path)
+        print("receive_study_area", shps[0].path[0])
         self.study_area_path = shps[0].path[0]
 
         geojson = FileParser.load(self.files_manager, shx.id, shp.id)
@@ -136,13 +136,15 @@ class Analysis:
         return Analysis.__export(f"{self.__get_project_name()}.soh", {"objective_hierarchy": "todo"})
 
     def compute_suitability(self):
-        self.study_area_path = "temp2/terre_shp.shp"
+        #self.study_area_path = "temp2/terre_shp.shp"
+        print("study_area_path", self.study_area_path)
         if len(self.study_area_path) > 0:
             #data = self.objectives.value()
             #print("DATA OBJECTIVES", data)
+            print("compute_suitability", self.study_area_path)
             analyser = Analyser()
             analyser.add_study_area(
-                self.study_area_path, "temp2/output_study_area.tiff")
+                self.study_area_path, "temp/output_study_area.tiff")
             analyser.add_objective("test", 2)
             path = "temp2/Espace_Vert.shp"
             analyser.objectives["test"].add_file(
@@ -170,3 +172,5 @@ class Analysis:
             geo_json = analyser.process_data()
 
             return {"file_name": "current analysis", "area": geo_json}
+        else:
+            return {"file_name": "current analysis", "area": {}}
