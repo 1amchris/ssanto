@@ -138,7 +138,7 @@ class Analysis:
     def compute_suitability(self):
         if len(self.study_area_path) > 0:
             data = self.objectives.value()
-            analyser = Analyser()
+            analyser = Analyser(self.parameters.value().get("cell_size"))
             analyser.add_study_area(
                 self.study_area_path, "temp/output_study_area.tiff")
 

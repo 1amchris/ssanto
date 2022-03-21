@@ -10,6 +10,7 @@ const AnalysisMiddleware: Middleware =
     switch (action.type) {
       case studyAreaReceived.type: {
         const { file_name, area } = action.payload;
+        console.log('STUDY AREA', file_name, area);
         dispatch(
           upsertLayer({
             name: file_name,

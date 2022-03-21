@@ -15,7 +15,7 @@ import pandas as pd
 
 
 class Analyser():
-    def __init__(self, cellsize=200, crs="epsg:32188"):
+    def __init__(self, cellsize=20, crs="epsg:32188"):
         self.transformation = Transformation(cellsize, crs)
         self.objectives = {}
         self.study_area = Study_area("", "", self.transformation)
@@ -37,7 +37,7 @@ class Analyser():
         matrix = np.int16(matrix)
         print("matrix_to_raster", type(matrix),
               type(matrix[0]), type(matrix[0][0]))
-             
+
         study_area_path = self.study_area.output_tiff
         output_path = "temp/output.tif"
         inDs = gdal.Open(study_area_path)
