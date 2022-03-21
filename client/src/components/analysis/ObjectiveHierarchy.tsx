@@ -476,7 +476,6 @@ function ObjectiveHierarchy({ t }: any) {
             ].attribute[orderIndex]
           }
           required
-          suffix={<React.Fragment></React.Fragment>}
           onChange={onChangeAttribute2(
             primaryIndex,
             secondaryIndex,
