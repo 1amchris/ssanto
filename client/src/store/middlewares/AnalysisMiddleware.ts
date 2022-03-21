@@ -20,8 +20,9 @@ const AnalysisMiddleware: Middleware =
       }
 
       case analysisReturn.type: {
-        const { file_name, analysis_data: area } = action.payload;
-        console.log(action.payload);
+        const { file_name, area } = action.payload;
+        console.log();
+        console.log(file_name, area);
         dispatch(
           upsertLayer({
             name: file_name,
