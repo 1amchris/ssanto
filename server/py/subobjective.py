@@ -3,26 +3,50 @@ import matplotlib.pyplot as plt
 import numpy as np
 from osgeo import gdal, ogr
 from py.raster_transform import *
-import os
+import math
 from py.study_area import Study_area
 
 from py.transformation import Transformation
 
 
-class Subobjective():
-    def __init__(self, path, output_tiff, transformation: Transformation, study_area: Study_area):
+math_op = {
+    "log": math.log,
+    "ln": math.log,
+    "sin": math.sin,
+    "cos": math.cos,
+    "tan": math.tan,
+    "arcsin": math.asin,
+    "arccos": math.acos,
+    "arctan": math.atan,
+    "sqrt": math.sqrt,
+    "pow": math.pow,
+    "floor": math.floor,
+    "ceil": math.ceil,
+    "degrees": math.degrees,
+    "radian": math.radians,
+    'factorial': math.factorial,
+    "pi": math.pi,
+    "e": math.e,
+}
+
+
+class Feature():
+    def __init__(self, path, output_tiff, weight, transformation: Transformation, study_area: Study_area, scaling_function):
         self.path = path
         self.output_tiff = output_tiff
         self.transformation = transformation
         self.study_area = study_area
-
-
-class Continuous_subobjective(Subobjective):
-
-    def __init__(self, path, output_tiff, weight, transformation: Transformation, study_area: Study_area, field_name=False):
-        super().__init__(path, output_tiff, transformation, study_area)
         self.weight = weight
+
+
+class Continuous_Feature(Feature):
+
+    def __init__(self, path, output_tiff, weight, transformation: Transformation, study_area: Study_area, scaling_function, field_name=False):
+        super().__init__(path, output_tiff, weight,
+                         transformation, study_area, scaling_function)
+
         self.field_name = field_name
+        self.scaling_function = "x"
         # if study_area != None:
         #     self.update_study_area(study_area)
 
@@ -35,8 +59,16 @@ class Continuous_subobjective(Subobjective):
         file_band = self.as_raster.GetRasterBand(1)
         file_array = file_band.ReadAsArray()
         file_array = self.clip_matrix(file_array)
+        file_array = self.apply_value_scaling(file_array)
         file_array = self.default_normalize_matrix(file_array)
+        return file_array
 
+    def apply_value_scaling(self, file_array):
+        equation = compile(self.scaling_function, "", 'eval')
+        for i in range(len(file_array)):
+            for j in range(len(file_array[1])):
+                x = file_array[i, j]
+                file_array[i, j] = eval(equation, math_op, {"x": x})
         return file_array
 
     def clip_matrix(self, file):
@@ -68,13 +100,18 @@ class Continuous_subobjective(Subobjective):
         plt.imshow(self.as_array)
         plt.show()
 
+    def process_value_matrix(self):
+        self.update()
+        return self.as_array
+
     def get_value_matrix(self):
         return self.as_array
 
 
-class Distance_subobjective(Continuous_subobjective):
-    def __init__(self, path, output_tiff, weight, max_distance, transformation: Transformation, study_area: Study_area, field_name=False, maximize_distance=True, centroid=True, granularity=None, threshold=0.8):
-        super().__init__(path, output_tiff, weight, transformation, study_area, field_name)
+class Distance_feature(Continuous_Feature):
+    def __init__(self, path, output_tiff, weight, max_distance, transformation: Transformation, study_area: Study_area, scaling_function,  field_name=False, maximize_distance=True, centroid=True, granularity=None, threshold=0.8):
+        super().__init__(path, output_tiff, weight, transformation,
+                         study_area, scaling_function, field_name)
         self.max_distance = max_distance/self.transformation.cellsize
         self.granularity = granularity
         self.threshold = threshold

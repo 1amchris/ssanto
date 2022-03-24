@@ -144,6 +144,7 @@ class Analysis:
         if len(self.study_area_path) > 0:
             data = self.objectives.value()
             analyser = Analyser(self.parameters.value().get("cell_size"))
+            scaling_function = "x"  # self.parameters.value().get("scaling_function")
             analyser.add_study_area(
                 self.study_area_path, "temp/output_study_area.tiff")
 
@@ -159,7 +160,7 @@ class Analysis:
                     file = self.files_manager.get_files_by_id(file_id)
                     path = "temp/" + file[0].group_id + ".shp"
                     analyser.objectives[primary].add_file(
-                        index, path, "output.tiff", int(weight_secondary))
+                        index, path, "output.tiff", int(weight_secondary), scaling_function)
 
             geo_json = analyser.process_data()
 

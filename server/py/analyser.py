@@ -86,7 +86,7 @@ class Analyser():
         output_matrix = []
         total_weight = 0
         for obj in self.objectives:
-            data = self.objectives[obj].process_data()
+            data = self.objectives[obj].process_value_matrix()
             objective_weight = self.objectives[obj].weight
             if len(output_matrix) == 0:
                 output_matrix = np.zeros(data.shape)
