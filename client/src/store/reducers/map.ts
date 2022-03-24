@@ -9,7 +9,6 @@ export interface MapState {
   zoom: number;
   coordinateSystem: string;
   layers: Layer[];
-  clickedCoord: LatLong;
 }
 
 export interface Layer {
@@ -31,7 +30,6 @@ export const mapSlice = createSlice({
     zoom: 10,
     coordinateSystem: `${L.CRS.EPSG3857}`,
     layers: [],
-    clickedCoord: { lat: NaN, long: NaN },
   } as MapState,
   reducers: {
     updateLocation: (state, { payload: location }: PayloadAction<LatLong>) => {
@@ -67,22 +65,11 @@ export const mapSlice = createSlice({
         state.layers.splice(index);
       }
     },
-    updateClickedCoord: (
-      state,
-      { payload: location }: PayloadAction<LatLong>
-    ) => {
-      state.clickedCoord = location;
-    },
   },
 });
 
-export const {
-  updateLocation,
-  updateZoom,
-  upsertLayer,
-  removeLayer,
-  updateClickedCoord,
-} = mapSlice.actions;
+export const { updateLocation, updateZoom, upsertLayer, removeLayer } =
+  mapSlice.actions;
 
 export const selectMap = (state: RootState) => state.map;
 

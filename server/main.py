@@ -22,15 +22,25 @@ async def main():
 
     server_socket.bind_command("update", subjects_manager.update)
 
-    server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
-    server_socket.bind_command("file_manager.add_files", files_manager.add_files)
-    server_socket.bind_command("file_manager.remove_file", files_manager.remove_file)
+    server_socket.bind_command(
+        "file_manager.get_files", files_manager.get_files_metadatas)
+    server_socket.bind_command(
+        "file_manager.add_files", files_manager.add_files)
+    server_socket.bind_command(
+        "file_manager.remove_file", files_manager.remove_file)
 
     analysis = Analysis(subjects_manager, files_manager)
-    server_socket.bind_command("analysis.set_study_area", analysis.receive_study_area)
-    server_socket.bind_command("analysis.save_project", analysis.export_project_save)
-    server_socket.bind_command("analysis.save_weights", analysis.export_weights)
-    server_socket.bind_command("analysis.save_objective_hierarchy", analysis.export_objective_hierarchy)
+    server_socket.bind_command(
+        "analysis.set_study_area", analysis.receive_study_area)
+    server_socket.bind_command(
+        "analysis.save_project", analysis.export_project_save)
+    server_socket.bind_command(
+        "analysis.save_weights", analysis.export_weights)
+    server_socket.bind_command(
+        "analysis.save_objective_hierarchy", analysis.export_objective_hierarchy)
+
+    server_socket.bind_command(
+        "get_cell_suitability", analysis.get_cell_suitability)
 
     guide_builder = GuideBuilder()
     server_socket.bind_command("guide.get", guide_builder.generate_guide_data)

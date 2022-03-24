@@ -111,3 +111,9 @@ class Analysis:
     def export_objective_hierarchy(self):
         # TODO: get objective hierarchy
         return Analysis.__export(f"{self.__get_project_name()}.soh", {"objective_hierarchy": "todo"})
+
+    def get_cell_suitability(self, location):
+        print(location)
+        # get suitability at location
+        suitability = 1
+        return suitability

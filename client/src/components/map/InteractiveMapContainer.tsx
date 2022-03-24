@@ -2,8 +2,13 @@ import React from 'react';
 import L from 'leaflet';
 import { MapContainer, useMapEvents } from 'react-leaflet';
 import { useAppSelector, useAppDispatch } from 'store/hooks';
-import { selectMap, updateClickedCoord } from 'store/reducers/map';
+import { selectMap } from 'store/reducers/map';
 import Layers from './LayerControl';
+import { call } from 'store/reducers/server';
+import ServerTargets from 'enums/ServerTargets';
+import { injectSetLoadingCreator } from 'store/reducers/analysis';
+import CallModel from 'models/server-coms/CallModel';
+import LoadingValue from 'models/LoadingValue';
 
 function InteractiveMapContainer({ className, style }: any) {
   const { location, zoom } = useAppSelector(selectMap);
@@ -12,7 +17,12 @@ function InteractiveMapContainer({ className, style }: any) {
   const MapEvents = () => {
     useMapEvents({
       click(e) {
-        dispatch(updateClickedCoord({ lat: e.latlng.lat, long: e.latlng.lng }));
+        dispatch(
+          call({
+            target: ServerTargets.GetCellSuitability,
+            args: [{ lat: e.latlng.lat, long: e.latlng.lng }],
+          } as CallModel<[Object], void, LoadingValue<string>, string, string>)
+        );
       },
     });
     return null;
