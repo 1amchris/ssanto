@@ -36,6 +36,12 @@ function App() {
         onAction: injectReceivePropertiesCreator('objectives'),
       } as SubscriptionModel<string, any>)
     );
+    dispatch(
+      subscribe({
+        subject: 'value_scaling',
+        onAction: injectReceivePropertiesCreator('value_scaling'),
+      } as SubscriptionModel<string, any>)
+    );
   });
 
   return (

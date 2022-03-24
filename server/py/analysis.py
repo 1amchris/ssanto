@@ -58,6 +58,11 @@ class Analysis:
             },
         )
 
+        self.value_scaling = subjects_manager.create(
+            "value_scaling",
+            [],
+        )
+
     def __repr__(self) -> str:
         return str(self.__dict__())
 

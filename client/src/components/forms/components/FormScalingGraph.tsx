@@ -23,7 +23,7 @@ function FormScalingGraph(props: any) {
     null
   );
   const value_scaling_function = parseFunction(props.value_scaling_function);
-
+  const index = props.index;
   const width = 150;
   const height = 150;
 
@@ -95,6 +95,7 @@ function FormScalingGraph(props: any) {
     >
       <canvas
         id="canvas"
+        key={index}
         ref={canvasRef}
         width={width}
         height={height}

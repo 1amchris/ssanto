@@ -1,5 +1,5 @@
 import { createRef, Factory, ReactElement, RefObject, useState } from 'react';
-import { capitalize } from 'lodash';
+import { capitalize, keyBy } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -31,9 +31,9 @@ function ValueScaling({ t }: any) {
   const isLoading = selector.properties.valueScalingLoading;
 
   const [localValueScaling, setLocalValueScaling] = useState(valueScaling);
-
+  console.log('VALUE SCALING', localValueScaling);
   let controls = [];
-  if (!(valueScaling === undefined)) {
+  if (!(valueScaling === undefined) && valueScaling.length > 0) {
     const continuousScalingBox = ({
       key,
       attributeIndex,
@@ -41,9 +41,9 @@ function ValueScaling({ t }: any) {
       max,
     }: FactoryProps) => [
       <Control
-        key={key('value_scaling_function')}
+        key={key('continuous')}
         label="value scaling function"
-        name="value_scaling_function"
+        name="continuous"
         defaultValue={valueScaling[attributeIndex].properties.function}
         required
         prefix={
@@ -54,6 +54,8 @@ function ValueScaling({ t }: any) {
         tooltip={t('')}
       />,
       <ScalingGraph
+        key={key('scaling_graph')}
+        index={attributeIndex}
         min={min}
         max={max}
         value_scaling_function={
@@ -73,7 +75,7 @@ function ValueScaling({ t }: any) {
       const valueRef: RefObject<HTMLSpanElement> = createRef();
       return [
         <Control
-          key={key('weight_primary')}
+          key={key('categorical_row')}
           label={category}
           className="small position-relative d-flex"
           defaultValue={value}
@@ -94,7 +96,7 @@ function ValueScaling({ t }: any) {
       values,
     }: FactoryProps) => (
       <SimpleList
-        key={key('weights-primary')}
+        key={key('categorical')}
         name={'weights'}
         hideLabel
         factory={categoricalRowFactory}
@@ -121,22 +123,23 @@ function ValueScaling({ t }: any) {
       </Collapsible>
     );
 
-    const mainControls = [
-      <div>
-        <SimpleList
-          key={'weights-primary' + isLoading}
-          name={'weights'}
-          hideLabel
-          factory={ScalingBoxFactory}
-          controls={localValueScaling.map((value: any, index: number) => ({
-            attribute: value.attribute,
-            type: value.type,
-            properties: value.properties,
-            attributeIndex: index,
-          }))}
-        />
-      </div>,
-    ];
+    const mainControls =
+      localValueScaling.length > 0
+        ? [
+            <SimpleList
+              key={'attributes_vs' + isLoading}
+              name={'attributes_vs'}
+              hideLabel
+              factory={ScalingBoxFactory}
+              controls={localValueScaling.map((value: any, index: number) => ({
+                attribute: value.attribute,
+                type: value.type,
+                properties: value.properties,
+                attributeIndex: index,
+              }))}
+            />,
+          ]
+        : [];
     controls = [
       ...mainControls,
       <Spacer />,

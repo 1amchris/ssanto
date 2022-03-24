@@ -44,11 +44,11 @@ function Main() {
             <Collapsible title={'objective hierarchy'} collapsed>
               <ObjectiveHierarchy key={'oh' + ohIsLoading} />
             </Collapsible>
-            <Collapsible title={'value scaling'}>
-              <ValueScaling key={'value scaling' + valueScalingIsLoading} />
-            </Collapsible>
             <Collapsible title={'weighting'}>
-              <Weighting key={'weighting' + ohIsLoading} />
+              <Weighting key={'weighting' + ohIsLoading} collapsed />
+            </Collapsible>
+            <Collapsible title={'value scaling'}>
+              <ValueScaling key={'value_scaling' + valueScalingIsLoading} />
             </Collapsible>
           </FormsBar>
         </aside>
