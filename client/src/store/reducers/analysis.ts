@@ -4,9 +4,9 @@ import {
   createActionCreatorSyringe,
   InjectedPayload,
 } from 'store/redux-toolkit-utils';
-import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
 import FileMetadataModel from 'models/file-models/FileMetadataModel';
 import LoadingValue from 'models/LoadingValue';
+import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
 
 export const analysisSlice = createSlice({
   name: 'analysis',
@@ -31,6 +31,8 @@ export const analysisSlice = createSlice({
       filesError: '',
       objectivesError: '',
       objectivesLoading: false,
+      valueScalingError: '',
+      valueScalingLoading: false,
 
       objectives: {
         main: 'Needs',
@@ -41,6 +43,26 @@ export const analysisSlice = createSlice({
           secondaries: [],
         },
       },
+      value_scaling: [
+        {
+          attribute: 'A',
+          dataset: { name: 'Test1', id: '1' },
+          type: 'Continuous',
+          properties: { min: 0, max: 100, function: 'x' },
+        },
+        {
+          attribute: 'B',
+          dataset: { name: 'Test2', id: '2' },
+          type: 'Boolean',
+          properties: { categories: ['true', 'false'], values: [0, 0] },
+        },
+        {
+          attribute: 'C',
+          dataset: { name: 'Test3', id: '3' },
+          type: 'Continuous',
+          properties: { min: -180, max: 180, function: 'x' },
+        },
+      ],
     },
   },
   reducers: {

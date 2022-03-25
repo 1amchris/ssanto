@@ -11,6 +11,7 @@ import {
   NbsSystem,
   ObjectiveHierarchy,
   Weighting,
+  ValueScaling,
 } from 'components/analysis';
 import { useAppSelector } from 'store/hooks';
 import { selectAnalysis } from 'store/reducers/analysis';
@@ -18,6 +19,7 @@ import { selectAnalysis } from 'store/reducers/analysis';
 function Main() {
   const selector = useAppSelector(selectAnalysis);
   const ohIsLoading = selector.properties.objectivesLoading;
+  const valueScalingIsLoading = selector.properties.valueScalingLoading;
 
   return (
     <div style={{ overflowY: 'clip' }}>
@@ -43,7 +45,10 @@ function Main() {
               <ObjectiveHierarchy key={'oh' + ohIsLoading} />
             </Collapsible>
             <Collapsible title={'weighting'}>
-              <Weighting key={'weighting' + ohIsLoading} />
+              <Weighting key={'weighting' + ohIsLoading} collapsed />
+            </Collapsible>
+            <Collapsible title={'value scaling'}>
+              <ValueScaling key={'value_scaling' + valueScalingIsLoading} />
             </Collapsible>
           </FormsBar>
         </aside>

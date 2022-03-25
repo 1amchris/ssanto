@@ -6,6 +6,7 @@ import Spacer from './FormSpacer';
 import ExpandableList from './FormExpandableList';
 import List from './FormList';
 import SimpleList from './FormSimpleList';
+import ScalingGraph from './FormScalingGraph';
 
 export {
   Alert,
@@ -16,4 +17,5 @@ export {
   ExpandableList,
   List,
   SimpleList,
+  ScalingGraph,
 };
