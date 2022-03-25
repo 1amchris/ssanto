@@ -32,13 +32,13 @@ function Main() {
             <Collapsible title={'file explorer'}>
               <FileExplorer />
             </Collapsible>
-            <Collapsible title={'analysis parameters'} collapsed>
+            <Collapsible title={'parameters'} collapsed>
               <Parameters />
             </Collapsible>
             <Collapsible title={'study area'} collapsed>
               <StudyArea />
             </Collapsible>
-            <Collapsible title={'nbs system type'} collapsed>
+            <Collapsible title={'system type'} collapsed>
               <NbsSystem />
             </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>

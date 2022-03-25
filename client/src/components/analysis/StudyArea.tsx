@@ -45,9 +45,6 @@ function StudyArea({ t }: any) {
     <Button variant="outline-primary" type="submit" loading={isLoading}>
       {capitalize(t('apply'))}
     </Button>,
-    <Button variant="outline-danger" type="reset">
-      {capitalize(t('reset'))}
-    </Button>,
   ];
 
   return (
