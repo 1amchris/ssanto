@@ -132,14 +132,6 @@ class Analysis:
     def export_project_save(self):
         return Analysis.__export(f"{self.__get_project_name()}.sproj", self.__repr__())
 
-    def export_weights(self):
-        # TODO: get weights
-        return Analysis.__export(f"{self.__get_project_name()}.swghts", {"weights": "todo"})
-
-    def export_objective_hierarchy(self):
-        # TODO: get objective hierarchy
-        return Analysis.__export(f"{self.__get_project_name()}.soh", {"objective_hierarchy": "todo"})
-
     def compute_suitability(self):
         if len(self.study_area_path) > 0:
             data = self.objectives.value()

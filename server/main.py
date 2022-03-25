@@ -31,8 +31,6 @@ async def main():
 
     server_socket.bind_command("analysis.set_study_area", analysis.receive_study_area)
     server_socket.bind_command("analysis.save_project", analysis.export_project_save)
-    server_socket.bind_command("analysis.save_weights", analysis.export_weights)
-    server_socket.bind_command("analysis.save_objective_hierarchy", analysis.export_objective_hierarchy)
 
     guide_builder = GuideBuilder()
     server_socket.bind_command("guide.get", guide_builder.generate_guide_data)
