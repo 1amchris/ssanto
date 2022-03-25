@@ -1,10 +1,16 @@
 import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
+import { call } from 'store/reducers/server';
+import { useAppDispatch } from 'store/hooks';
+import { analysisReturn } from 'store/reducers/analysis';
 import { Button } from 'components/forms/components';
+import CallModel from 'models/server-coms/CallModel';
+import ServerTargets from 'enums/ServerTargets';
 
 function FormsBar({ children, className, t }: any, key?: string) {
   const closeOverlay = () => document.body.click();
+  const dispatch = useAppDispatch();
 
   return (
     <div
@@ -43,7 +49,14 @@ function FormsBar({ children, className, t }: any, key?: string) {
                 <Button
                   variant="outline-primary"
                   className="mb-2"
-                  onClick={() => console.log('Confirmed!')}
+                  onClick={() => {
+                    dispatch(
+                      call({
+                        target: ServerTargets.ComputeSuitability,
+                        onSuccessAction: analysisReturn,
+                      } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
+                    );
+                  }}
                 >
                   Proceed
                 </Button>

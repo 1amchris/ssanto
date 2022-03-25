@@ -28,7 +28,7 @@ export const mapSlice = createSlice({
   initialState: {
     location: { lat: 45.509, long: -73.553 },
     zoom: 10,
-    coordinateSystem: `${L.CRS.EPSG3857}`,
+    coordinateSystem: `${L.CRS.EPSG4326}`,
     layers: [],
   } as MapState,
   reducers: {

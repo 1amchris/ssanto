@@ -10,9 +10,17 @@ import {
   StudyArea,
   NbsSystem,
   ObjectiveHierarchy,
+  Weighting,
+  ValueScaling,
 } from 'components/analysis';
+import { useAppSelector } from 'store/hooks';
+import { selectAnalysis } from 'store/reducers/analysis';
 
 function Main() {
+  const selector = useAppSelector(selectAnalysis);
+  const ohIsLoading = selector.properties.objectivesLoading;
+  const valueScalingIsLoading = selector.properties.valueScalingLoading;
+
   return (
     <div style={{ overflowY: 'clip' }}>
       <header>
@@ -24,17 +32,23 @@ function Main() {
             <Collapsible title={'file explorer'}>
               <FileExplorer />
             </Collapsible>
-            <Collapsible title={'analysis parameters'} collapsed>
+            <Collapsible title={'parameters'} collapsed>
               <Parameters />
             </Collapsible>
             <Collapsible title={'study area'} collapsed>
               <StudyArea />
             </Collapsible>
-            <Collapsible title={'nbs system type'} collapsed>
+            <Collapsible title={'system type'} collapsed>
               <NbsSystem />
             </Collapsible>
             <Collapsible title={'objective hierarchy'} collapsed>
-              <ObjectiveHierarchy />
+              <ObjectiveHierarchy key={'oh' + ohIsLoading} />
+            </Collapsible>
+            <Collapsible title={'weighting'}>
+              <Weighting key={'weighting' + ohIsLoading} collapsed />
+            </Collapsible>
+            <Collapsible title={'value scaling'}>
+              <ValueScaling key={'value_scaling' + valueScalingIsLoading} />
             </Collapsible>
           </FormsBar>
         </aside>

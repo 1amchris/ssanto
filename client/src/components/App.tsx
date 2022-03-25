@@ -30,6 +30,18 @@ function App() {
         onAction: injectReceivePropertiesCreator('nbs_system'),
       } as SubscriptionModel<string, any>)
     );
+    dispatch(
+      subscribe({
+        subject: 'objectives',
+        onAction: injectReceivePropertiesCreator('objectives'),
+      } as SubscriptionModel<string, any>)
+    );
+    dispatch(
+      subscribe({
+        subject: 'value_scaling',
+        onAction: injectReceivePropertiesCreator('value_scaling'),
+      } as SubscriptionModel<string, any>)
+    );
   });
 
   return (

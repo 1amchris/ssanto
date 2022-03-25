@@ -46,31 +46,6 @@ function MenuBar() {
           )
         }
       />
-      <Divider />
-      <Action
-        label="save weights"
-        onClick={() =>
-          dispatch(
-            call({
-              target: ServerTargets.SaveWeights,
-              onSuccessAction: exportData,
-              // TODO: There should probably be an "onErrorAction"
-            } as CallModel<void, FileContentModel<string>, void, string, string>)
-          )
-        }
-      />
-      <Action
-        label="save objectives hierarchy"
-        onClick={() =>
-          dispatch(
-            call({
-              target: ServerTargets.SaveObjectiveHierarchy,
-              onSuccessAction: exportData,
-              // TODO: There should probably be an "onErrorAction"
-            } as CallModel<void, FileContentModel<string>, void, string, string>)
-          )
-        }
-      />
     </Menu>,
     <Menu label="edit">
       <Action

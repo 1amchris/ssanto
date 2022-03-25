@@ -4,9 +4,9 @@ import {
   createActionCreatorSyringe,
   InjectedPayload,
 } from 'store/redux-toolkit-utils';
-import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
 import FileMetadataModel from 'models/file-models/FileMetadataModel';
 import LoadingValue from 'models/LoadingValue';
+import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
 
 export const analysisSlice = createSlice({
   name: 'analysis',
@@ -29,72 +29,38 @@ export const analysisSlice = createSlice({
       studyAreaError: '',
       filesLoading: false,
       filesError: '',
-    },
-    objectives: {
-      main: '0',
-      options: ['needs', 'oportunities'],
-      primaries: [
+      objectivesError: '',
+      objectivesLoading: false,
+      valueScalingError: '',
+      valueScalingLoading: false,
+
+      objectives: {
+        main: 'Needs',
+        primaries: {
+          primary: [],
+          weights: [],
+
+          secondaries: [],
+        },
+      },
+      value_scaling: [
         {
-          primary: ['Provisioning', 'Socio-Economic'],
-          options: [
-            'Provisioning',
-            'Socio-Economic',
-            'Urban Form',
-            'Biophysical',
-          ],
-          secondaries: [
-            {
-              secondary: ['Soil Type', 'Slope'],
-              options: [
-                'Soil Type',
-                'Slope',
-                'Irrigation Demand Distance',
-                'test',
-              ],
-              attributes: [
-                {
-                  attribute: ['a', 'b'],
-                  attributeOptions: ['a', 'b', 'c', 'd'],
-                  //dataset: ['file1', 'file2'],
-                  //column: ['c1', 'c2'],
-                },
-                {
-                  attribute: ['a'],
-                  attributeOptions: ['a', 'b'],
-                  //dataset: ['file1'],
-                  //column: ['c1'],
-                },
-              ],
-            },
-            {
-              secondary: ['Education Level', 'Test'],
-              options: ['Test', 'Education Level', 'a', 'b', 'c', 'd'],
-              attributes: [
-                {
-                  attribute: ['a', 'b'],
-                  attributeOptions: [
-                    'average house price',
-                    'house price index',
-                    'capital value',
-                    'rental value',
-                  ],
-                  //dataset: ['file1', 'file2'],
-                  //column: ['c1', 'c2'],
-                },
-                {
-                  attribute: ['a', 'b'],
-                  attributeOptions: [
-                    'average house price',
-                    'house price index',
-                    'capital value',
-                    'rental value',
-                  ],
-                  //dataset: ['file1', 'file2'],
-                  //column: ['c1', 'c2'],
-                },
-              ],
-            },
-          ],
+          attribute: 'A',
+          dataset: { name: 'Test1', id: '1' },
+          type: 'Continuous',
+          properties: { min: 0, max: 100, function: 'x' },
+        },
+        {
+          attribute: 'B',
+          dataset: { name: 'Test2', id: '2' },
+          type: 'Boolean',
+          properties: { categories: ['true', 'false'], values: [0, 0] },
+        },
+        {
+          attribute: 'C',
+          dataset: { name: 'Test3', id: '3' },
+          type: 'Continuous',
+          properties: { min: -180, max: 180, function: 'x' },
         },
       ],
     },
@@ -149,6 +115,13 @@ export const analysisSlice = createSlice({
       let temp: any = state.properties;
       temp[property + 'Loading'] = isLoading;
     },
+
+    analysisReturn: (state, { payload }: PayloadAction<any>) => {
+      console.warn(
+        'No validation was performed on the analysis return',
+        payload
+      );
+    },
   },
 });
 
@@ -166,7 +139,8 @@ export const injectReceivePropertiesCreator = createActionCreatorSyringe<
   any
 >(analysisSlice.actions.receiveProperties);
 
-export const { updateObjectives, studyAreaReceived } = analysisSlice.actions;
+export const { updateObjectives, studyAreaReceived, analysisReturn } =
+  analysisSlice.actions;
 
 export const selectAnalysis = (state: RootState) => state.analysis;
 
