@@ -33,9 +33,9 @@ class Analysis:
         self.parameters = subjects_manager.create(
             "parameters",
             {
-                "analysis_name": "Dummy analysis",
-                "modeler_name": "chris",
-                "cell_size": 18,
+                "analysis_name": "",
+                "modeler_name": "",
+                "cell_size": 20,
             },
         )
 
@@ -99,7 +99,7 @@ class Analysis:
         shxs = [file for file in created if file.extension == "shx"]
         dbfs = [file for file in created if file.extension == "dbf"]
 
-        #print("shps", shps, "shxs", shxs)
+        # print("shps", shps, "shxs", shxs)
         if len(shps) == 0:
             raise CallException("No shapefiles received [shp].")
         if len(shxs) == 0:
@@ -145,22 +145,21 @@ class Analysis:
             data = self.objectives.value()
             analyser = Analyser(self.parameters.value().get("cell_size"))
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
-            analyser.add_study_area(
-                self.study_area_path, "temp/output_study_area.tiff")
+            analyser.add_study_area(self.study_area_path, "temp/output_study_area.tiff")
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]
             ):
                 analyser.add_objective(primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(
-                    zip(secondaries["secondary"],
-                        secondaries["weights"], secondaries["attributes"])
+                    zip(secondaries["secondary"], secondaries["weights"], secondaries["attributes"])
                 ):
                     file_id = attributes["datasets"][0]["id"]
                     file = self.files_manager.get_files_by_id(file_id)
                     path = "temp/" + file[0].group_id + ".shp"
                     analyser.objectives[primary].add_file(
-                        index, path, "output.tiff", int(weight_secondary), scaling_function)
+                        index, path, "output.tiff", int(weight_secondary), scaling_function
+                    )
 
             geo_json = analyser.process_data()
 
