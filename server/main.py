@@ -23,7 +23,7 @@ async def main():
     server_socket.bind_command("update", subjects_manager.update)
 
     server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
-    server_socket.bind_command("file_manager.add_files", files_manager.add_files)
+    server_socket.bind_command("file_manager.add_files", files_manager.add_files, False)
     server_socket.bind_command("file_manager.remove_file", files_manager.remove_file)
 
     analysis = Analysis(subjects_manager, files_manager)

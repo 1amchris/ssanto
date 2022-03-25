@@ -2,6 +2,8 @@ import websockets
 import asyncio
 import json
 
+from .serializable import Serializable
+
 from .network_definitions import Field, SendType
 import traceback
 
@@ -16,14 +18,16 @@ class ServerSocket:
     REQUEST_FAILED = -1
 
     class CommandFunctor:
-        def __init__(self, callable):
+        def __init__(self, callable, allow_return):
             self.callable = callable
+            self.allow_return = allow_return
 
         def __call__(self, arguments):
             code = ServerSocket.REQUEST_SUCCEEDED
             return_data = None
             try:
                 return_data = self.callable(*arguments)
+                return_data = return_data if self.allow_return else None
             except CallException as e:
                 code = ServerSocket.REQUEST_FAILED
                 return_data = str(e)
@@ -37,13 +41,14 @@ class ServerSocket:
 
         self.commands_handlers = {}
 
-    def bind_command(self, command_name, callable):
-        self.commands_handlers[command_name] = self.CommandFunctor(callable)
+    def bind_command(self, command_name, callable, allow_return = True):
+        self.commands_handlers[command_name] = self.CommandFunctor(callable, allow_return)
 
     # Type can be 0: subject update, 1: call return, -1: error (use SendType enum)
-    def send(self, type, data):
-        send_data = {"type": type, "data": data}
-        json_data = json.dumps(send_data, default=lambda o: o.__dict__)
+    def send(self, send_type, data):
+        send_data = {"type": send_type, "data": data}
+        print("DATA",data)
+        json_data = json.dumps(send_data, default=lambda o: o.serialize() if issubclass(type(o), Serializable) else o.__dict__)
         task = self.conn.send(json_data)
         asyncio.create_task(task)
 

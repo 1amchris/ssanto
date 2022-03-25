@@ -1,3 +1,4 @@
+from .serializable import Serializable
 from .file import File
 from .file_manager import FileParser
 from .server_socket import CallException
@@ -5,16 +6,16 @@ from base64 import b64encode
 import pickle
 
 
-class StudyArea:
+class StudyArea(Serializable):
     def __init__(self, name, area):
         self.name = name
         self.area = area
 
-    def __dict__(self) -> dict:
+    def serialize(self) -> dict:
         return {"file_name": self.name, "area": self.area}
 
 
-class Analysis:
+class Analysis(Serializable):
     @staticmethod
     def __export(filename, content):
         return {
@@ -46,17 +47,17 @@ class Analysis:
         )
 
     def __repr__(self) -> str:
-        return str(self.__dict__())
+        return str(self.serialize())
 
-    def __dict__(self) -> dict:
+    def serialize(self) -> dict:
         study_area = self.study_area.value()
         return {
             "analysis": {
                 "parameters": self.parameters.value(),
-                "study_area": study_area.__dict__() if study_area else None,
+                "study_area": study_area.serialize() if study_area else None,
                 "nbs": self.nbs.value(),
             },
-            "files": self.files_manager.__dict__(),
+            "files": self.files_manager.serialize(),
         }
 
     def __get_project_name(self):
@@ -99,7 +100,7 @@ class Analysis:
 
         geojson = FileParser.load(self.files_manager, shx.id, shp.id)
         self.study_area.notify(StudyArea(shp.name, geojson))
-        return self.study_area.value().__dict__()
+        return self.study_area.value().serialize()
 
     def export_project_save(self):
         return Analysis.__export(f"{self.__get_project_name()}.sproj", self.__repr__())

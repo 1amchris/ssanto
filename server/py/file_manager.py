@@ -2,9 +2,11 @@ from base64 import b64decode
 from geojson_rewind import rewind
 import shapefile
 from io import BytesIO
+import json
 
 from py.file import File
 from py.file_metadata import FileMetaData
+from py.serializable import Serializable
 
 
 class FileParser:
@@ -41,8 +43,8 @@ class FilesManager:
         self.files_content = dict()
         self.files = self.subjects_manager.create("file_manager.files", dict())
 
-    def __dict__(self) -> dict:
-        return {key: file.__dict__() for key, file in self.files_content.items()}
+    def serialize(self) -> dict:
+        return {key: file.serialize() for key, file in self.files_content.items()}
 
     def get_file(self, id):
         return self.files[id]
@@ -80,8 +82,6 @@ class FilesManager:
 
     def __notify_metadatas(self):
         metadatas = self.get_files_metadatas()
-        # we need to manually call __dict__ for some unknown reason.
-        # It doesn't seem to play nice otherwise
-        self.files.notify([metadata.__dict__() for metadata in metadatas])
+        self.files.notify(metadatas)
 
     # Add loaded file to the file manager?

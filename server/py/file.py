@@ -9,9 +9,12 @@ class File(FileMetaData):
         super().__init__(name)
         self.content = content
 
-    def __dict__(self):
-        base = super().__dict__()
-        base.update({"content": self.read_content()})
+    def get_metadata(self):
+        return super().serialize()
+
+    def serialize(self):
+        base = super().serialize()
+        base.update({"content": b64encode(self.read_content()).decode('ascii')})
         return base
 
     def get_file_descriptor(self):
