@@ -16,9 +16,11 @@ import {
 import { useAppSelector } from 'store/hooks';
 import { selectAnalysis } from 'store/reducers/analysis';
 import MapCursorInformation from './aside-informations/MapCursorInformation';
+import { selectMap } from 'store/reducers/map';
 
 function Main() {
   const selector = useAppSelector(selectAnalysis);
+  const { cursor } = useAppSelector(selectMap);
   const ohIsLoading = selector.properties.objectivesLoading;
   const valueScalingIsLoading = selector.properties.valueScalingLoading;
 
@@ -68,11 +70,13 @@ function Main() {
             className="position-absolute top-0 end-0 mh-100 py-3 pe-3 overflow-scroll"
             style={{ width: '270px' }}
           >
-            <InformationCard>
-              <Collapsible title={'Map informations'}>
-                <MapCursorInformation />
-              </Collapsible>
-            </InformationCard>
+            {cursor && (
+              <InformationCard>
+                <Collapsible title={'Map informations'}>
+                  <MapCursorInformation />
+                </Collapsible>
+              </InformationCard>
+            )}
             {[
               'Interpolation chart',
               'World population',

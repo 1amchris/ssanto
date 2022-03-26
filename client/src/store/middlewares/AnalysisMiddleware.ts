@@ -1,5 +1,5 @@
 import { studyAreaReceived, analysisReturn } from 'store/reducers/analysis';
-import { Layer, upsertLayer } from 'store/reducers/map';
+import { InsertLayerModel, Layer, upsertLayer } from 'store/reducers/map';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
 
@@ -9,26 +9,26 @@ const AnalysisMiddleware: Middleware =
   <A extends PayloadAction<any>>(action: A) => {
     switch (action.type) {
       case studyAreaReceived.type: {
-        const { file_name, area } = action.payload;
-        console.log('STUDY AREA', file_name, area);
+        const { area } = action.payload;
         dispatch(
           upsertLayer({
-            name: file_name,
-            data: area,
-          } as Layer)
+            group: 'study area',
+            label: 'study area',
+            name: 'study area',
+            geojson: area,
+          } as InsertLayerModel)
         );
         return next(action);
       }
 
       case analysisReturn.type: {
         const { file_name, area } = action.payload;
-        console.log();
-        console.log(file_name, area);
         dispatch(
           upsertLayer({
+            group: 'analysis',
             name: file_name,
-            data: JSON.parse(area),
-          } as Layer)
+            geojson: JSON.parse(area),
+          } as InsertLayerModel)
         );
         return next(action);
       }

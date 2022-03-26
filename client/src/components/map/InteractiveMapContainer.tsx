@@ -3,7 +3,7 @@ import { MapContainer, Marker, useMapEvents } from 'react-leaflet';
 import { useAppSelector, useAppDispatch } from 'store/hooks';
 import { selectMap } from 'store/reducers/map';
 import { call } from 'store/reducers/server';
-import Layers from 'components/map/LayerControl';
+import LayersGroups from 'components/map/LayersGroups';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
@@ -41,17 +41,9 @@ function InteractiveMapContainer({ className, style }: any) {
       className={className}
       style={{ ...style }}
     >
-      <Layers />
       <MapEvents />
-      {cursor && (
-        <Marker position={new LatLng(cursor.lat, cursor.long)} />
-        //   <Popup>
-        //     <span>
-        //       A pretty CSS3 popup. <br /> Easily customizable.
-        //     </span>
-        //   </Popup>
-        // </Marker>
-      )}
+      <LayersGroups />
+      {cursor && <Marker position={new LatLng(cursor.lat, cursor.long)} />}
     </MapContainer>
   );
 }
