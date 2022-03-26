@@ -90,8 +90,38 @@ class Analysis:
         # self.parameters.update()
         pass
 
+    def value_scaling_update(self):
+        newValueScaling = []
+        print("value_scaling_update")
+        # garder les anciens attributes, ajoutez les nouveaux
+        data = self.objectives.value()
+        for (primary, secondaries) in zip(
+            data["primaries"]["primary"], data["primaries"]["secondaries"]
+        ):
+            for (index, (secondary, attributes)) in enumerate(zip(secondaries["secondary"], secondaries["attributes"])):
+                for (attribute, dataset) in zip(attributes['attribute'], attributes['datasets']):
+                    # type continuous or categorical according to dataset
+                    # validation si l'attribut existe déjà
+                    newAttribute = {
+                        "attribute": attribute,
+                        "dataset": dataset,
+                        "type": 'Continuous',
+                        "properties": {"min": 0, "max": 100, "vs_function": 'x',
+                                       "distribution": [0, 20, 40, 60, 80, 100], "distribution_value": [0, 20, 40, 60, 80, 100],
+                                       },
+                        "primary": primary,
+                        "secondary": secondary,
+                    }
+
+                    newValueScaling.append(newAttribute)
+                # update value_scaling
+        print("newValueScaling", newValueScaling)
+        self.subjects_manager.update("value_scaling", newValueScaling)
+
     def update(self, subject, data):
         self.subjects_manager.update(subject, data)
+        if(subject == 'objectives'):
+            self.value_scaling_update()
 
     def receive_study_area(self, *files):
         created = self.files_manager.add_files(*files)
@@ -137,20 +167,23 @@ class Analysis:
             data = self.objectives.value()
             analyser = Analyser(self.parameters.value().get("cell_size"))
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
-            analyser.add_study_area(self.study_area_path, "temp/output_study_area.tiff")
+            analyser.add_study_area(
+                self.study_area_path, "temp/output_study_area.tiff")
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]
             ):
                 analyser.add_objective(primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(
-                    zip(secondaries["secondary"], secondaries["weights"], secondaries["attributes"])
+                    zip(secondaries["secondary"],
+                        secondaries["weights"], secondaries["attributes"])
                 ):
                     file_id = attributes["datasets"][0]["id"]
                     file = self.files_manager.get_files_by_id(file_id)
                     path = "temp/" + file[0].group_id + ".shp"
                     analyser.objectives[primary].add_file(
-                        index, path, "output.tiff", int(weight_secondary), scaling_function
+                        index, path, "output.tiff", int(
+                            weight_secondary), scaling_function
                     )
 
             geo_json = analyser.process_data()

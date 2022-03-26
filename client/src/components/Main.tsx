@@ -15,6 +15,7 @@ import {
 } from 'components/analysis';
 import { useAppSelector } from 'store/hooks';
 import { selectAnalysis } from 'store/reducers/analysis';
+//import ValueScaling from './analysis/ValueScaling';
 
 function Main() {
   const selector = useAppSelector(selectAnalysis);
@@ -48,7 +49,9 @@ function Main() {
               <Weighting key={'weighting' + ohIsLoading} collapsed />
             </Collapsible>
             <Collapsible title={'value scaling'}>
-              <ValueScaling key={'value_scaling' + valueScalingIsLoading} />
+              <ValueScaling
+                key={'value_scaling' + valueScalingIsLoading + ohIsLoading}
+              />
             </Collapsible>
           </FormsBar>
         </aside>

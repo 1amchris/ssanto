@@ -7,6 +7,7 @@ import {
 import FileMetadataModel from 'models/file-models/FileMetadataModel';
 import LoadingValue from 'models/LoadingValue';
 import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
+import ValueScalingModel from 'models/ValueScalingModel';
 
 export const analysisSlice = createSlice({
   name: 'analysis',
@@ -44,6 +45,7 @@ export const analysisSlice = createSlice({
         },
       },
       value_scaling: [
+        /*
         {
           attribute: 'A',
           dataset: { name: 'Test1', id: '1' },
@@ -62,7 +64,8 @@ export const analysisSlice = createSlice({
           type: 'Continuous',
           properties: { min: -180, max: 180, function: 'x' },
         },
-      ],
+      */
+      ] as ValueScalingModel[],
     },
   },
   reducers: {

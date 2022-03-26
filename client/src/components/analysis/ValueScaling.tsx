@@ -1,17 +1,13 @@
-import { createRef, Factory, ReactElement, RefObject, useState } from 'react';
-import { capitalize, keyBy } from 'lodash';
+import { createRef, ReactElement, RefObject, useState } from 'react';
+import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from '../../models/form-models/FormSelectOptionModel';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import objectivesData from '../../data/objectives.json';
+import { useAppSelector } from '../../store/hooks';
 
 import { selectAnalysis } from '../../store/reducers/analysis';
 import React from 'react';
-import { findByDisplayValue } from '@testing-library/react';
 import {
   Button,
   Control,
-  List,
   ScalingGraph,
   SimpleList,
   Spacer,
@@ -19,32 +15,34 @@ import {
 import { FactoryProps } from 'components/forms/components/FormList';
 import Collapsible from 'components/Collapsible';
 import Form from 'components/forms/Form';
+import ValueScalingModel from 'models/ValueScalingModel';
 
 function ValueScaling({ t }: any) {
   const property = 'value_scaling';
   const selector = useAppSelector(selectAnalysis);
-  const valueScaling = selector.properties.value_scaling;
-  const dispatch = useAppDispatch();
-  const files = selector.properties['files'];
+  const valueScaling = selector.properties[property] as ValueScalingModel[];
 
   const getErrors = selector.properties.valueScalingError;
   const isLoading = selector.properties.valueScalingLoading;
 
   const [localValueScaling, setLocalValueScaling] = useState(valueScaling);
+
   console.log('VALUE SCALING', localValueScaling);
   let controls = [];
-  if (!(valueScaling === undefined) && valueScaling.length > 0) {
+  if (!(localValueScaling === undefined) && localValueScaling.length > 0) {
     const continuousScalingBox = ({
       key,
       attributeIndex,
       min,
       max,
+      distribution,
+      distribution_value,
     }: FactoryProps) => [
       <Control
         key={key('continuous')}
         label="value scaling function"
         name="continuous"
-        defaultValue={valueScaling[attributeIndex].properties.function}
+        defaultValue={localValueScaling[attributeIndex].properties.vs_function}
         required
         prefix={
           <React.Fragment>
@@ -53,23 +51,11 @@ function ValueScaling({ t }: any) {
         }
         tooltip={t('')}
       />,
-      <ScalingGraph
-        key={key('scaling_graph')}
-        index={attributeIndex}
-        min={min}
-        max={max}
-        value_scaling_function={
-          //valueScaling[attributeIndex].properties.function
-          'x'
-        }
-      />,
     ];
 
     const categoricalRowFactory = ({
       key,
-      attributeIndex,
       category,
-      categoryIndex,
       value,
     }: FactoryProps): ReactElement | ReactElement[] => {
       const valueRef: RefObject<HTMLSpanElement> = createRef();
@@ -92,7 +78,7 @@ function ValueScaling({ t }: any) {
     const categoricalScalingBox = ({
       key,
       attributeIndex,
-      categories,
+      distribution,
       values,
     }: FactoryProps) => (
       <SimpleList
@@ -100,7 +86,7 @@ function ValueScaling({ t }: any) {
         name={'weights'}
         hideLabel
         factory={categoricalRowFactory}
-        controls={categories.map((category: any, index: number) => ({
+        controls={distribution.map((category: any, index: number) => ({
           category,
           value: values[index],
           categoryIndex: index,
@@ -116,7 +102,12 @@ function ValueScaling({ t }: any) {
       attributeIndex,
       key,
     }: FactoryProps): ReactElement | ReactElement[] => (
-      <Collapsible key={key('scalingBox')} title={attribute} collapsed>
+      <Collapsible
+        style={{ height: '200px' }}
+        key={key('scalingBox')}
+        title={attribute}
+        collapsed
+      >
         {type == 'Continuous'
           ? continuousScalingBox({ key, attributeIndex, ...properties })
           : categoricalScalingBox({ key, attributeIndex, ...properties })}
