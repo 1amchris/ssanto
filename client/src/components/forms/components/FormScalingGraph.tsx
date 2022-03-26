@@ -27,6 +27,7 @@ ChartJS.register(
 
 export const options = {
   maintainAspectRatio: false,
+
   //responsive: true,
   plugins: {
     legend: {
@@ -39,26 +40,18 @@ export const options = {
   },
 };
 
-export const data = {
-  labels: ['0', '20', '40', '60', '80', '100'],
-  datasets: [
-    {
-      label: 'suitability',
-      data: [0, 10, 20, 30, 40, 50],
-      backgroundColor: '#0D6EFD',
-    },
-  ],
-};
-
 const generateData = (distribution: number[], distribution_value: number[]) => {
-  const data = [];
-  for (
-    let i = 0;
-    i < Math.min(distribution.length, distribution_value.length);
-    i += 1
-  ) {
-    data.push({ name: distribution[i], suitability: distribution_value[i] });
-  }
+  const data = {
+    labels: distribution.map(d => d.toString()),
+    datasets: [
+      {
+        label: 'suitability',
+        data: distribution_value,
+        backgroundColor: '#0D6EFD',
+        tension: 0.4,
+      },
+    ],
+  };
   return data;
 };
 
@@ -70,6 +63,8 @@ const generateData = (distribution: number[], distribution_value: number[]) => {
 class FormScalingGraph extends FormComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/control-'), key);
+    const distribution = props.distribution;
+    const distribution_value = props.distribution_value;
   }
 
   render = () => {
@@ -102,10 +97,13 @@ class FormScalingGraph extends FormComponent {
         <this.Overlay>
           {true ? (
             <div style={{ width: 200, height: 200 }}>
-              <Line key={this.key} options={options} data={data} />
+              <Line
+                key={this.key}
+                options={options}
+                data={generateData(distribution, distribution_value)}
+              />
             </div>
           ) : (
-            //</ResponsiveContainer>
             <></>
           )}
         </this.Overlay>

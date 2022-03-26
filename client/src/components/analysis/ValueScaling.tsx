@@ -74,7 +74,13 @@ function ValueScaling({ t }: any) {
         onChange={onChangeValueScalingFunction(attributeIndex)}
         tooltip={t('')}
       />,
-      <ScalingGraph style={{ height: '100px' }} />,
+      <ScalingGraph
+        distribution={localValueScaling[attributeIndex].properties.distribution}
+        distribution_value={
+          localValueScaling[attributeIndex].properties.distribution_value
+        }
+        style={{ height: '100px' }}
+      />,
     ];
 
     const categoricalRowFactory = ({
