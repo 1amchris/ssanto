@@ -4,7 +4,7 @@ import {
   createActionCreatorSyringe,
   InjectedPayload,
 } from 'store/redux-toolkit-utils';
-import FileMetadataModel from 'models/file-models/FileMetadataModel';
+import FileMetadataModel from 'models/file/FileMetadataModel';
 import LoadingValue from 'models/LoadingValue';
 import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
 

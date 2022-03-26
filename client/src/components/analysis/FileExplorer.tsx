@@ -13,11 +13,11 @@ import {
   injectSetErrorCreator,
   selectAnalysis,
 } from 'store/reducers/analysis';
-import FileMetadataModel from 'models/file-models/FileMetadataModel';
+import FileMetadataModel from 'models/file/FileMetadataModel';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import ServerCallTargets from 'enums/ServerCallTargets';
-import FileContentModel from 'models/file-models/FileContentModel';
+import FileContentModel from 'models/file/FileContentModel';
 
 const FileRowFactory = ({
   file,

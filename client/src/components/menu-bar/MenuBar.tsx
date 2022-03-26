@@ -1,5 +1,5 @@
 import React from 'react';
-import FileContentModel from 'models/file-models/FileContentModel';
+import FileContentModel from 'models/file/FileContentModel';
 import { useAppDispatch } from 'store/hooks';
 import { exportData } from 'store/reducers/export';
 import { Action, Divider, Import, Link } from './components';

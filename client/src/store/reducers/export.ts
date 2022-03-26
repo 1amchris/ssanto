@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { decode } from 'base64-arraybuffer';
 import { saveAs } from 'file-saver';
-import FileContentModel from 'models/file-models/FileContentModel';
+import FileContentModel from 'models/file/FileContentModel';
 
 export const exportSlice = createSlice({
   name: 'export',

@@ -1,4 +1,4 @@
-import FileContentModel from 'models/file-models/FileContentModel';
+import FileContentModel from 'models/file/FileContentModel';
 import { encode } from 'base64-arraybuffer';
 
 namespace FilesUtils {

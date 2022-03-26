@@ -1,7 +1,7 @@
 import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
+import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
 import objectivesData from 'data/objectives.json';
