@@ -116,7 +116,7 @@ class Analysis:
                         newAttribute = {
                             "attribute": attribute,
                             "dataset": dataset,
-                            "type": 'Categorical',
+                            "type": 'Continuous',
                             "properties": {"min": 0, "max": 100, "vs_function": 'x',
                                            "distribution": [20, 40, 60, 80, 100], "distribution_value": [20, 40, 30, 80, 100],
                                            },

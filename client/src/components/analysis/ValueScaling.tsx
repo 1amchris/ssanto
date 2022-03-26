@@ -52,6 +52,18 @@ function ValueScaling({ t }: any) {
         newValueScaling[attributeIndex].properties.vs_function = newFunction;
         setLocalValueScaling(newValueScaling);
       };
+    const onChangeCategoryValue =
+      (attributeIndex: number, categoryIndex: number) => (e: any) => {
+        e.persist();
+        let newCategoryValue = e.target.value;
+        let newValueScaling = JSON.parse(
+          JSON.stringify(localValueScaling)
+        ) as typeof localValueScaling;
+        newValueScaling[attributeIndex].properties.distribution_value[
+          categoryIndex
+        ] = newCategoryValue;
+        setLocalValueScaling(newValueScaling);
+      };
     const continuousScalingBox = ({
       key,
       attributeIndex,
@@ -79,20 +91,20 @@ function ValueScaling({ t }: any) {
     const categoricalRowFactory = ({
       key,
       category,
-      value,
+      categoryIndex,
+      attributeIndex,
     }: FactoryProps): ReactElement | ReactElement[] => {
-      const valueRef: RefObject<HTMLSpanElement> = createRef();
       return [
         <Control
           key={key('categorical_row')}
           label={category}
           className="small position-relative d-flex"
-          defaultValue={value}
-          onChange={({ target: { value } }: { target: HTMLInputElement }) => {
-            if (valueRef.current?.textContent) {
-              valueRef.current.textContent = value;
-            }
-          }}
+          defaultValue={
+            localValueScaling[attributeIndex].properties.distribution_value[
+              categoryIndex
+            ]
+          }
+          onChange={onChangeCategoryValue(attributeIndex, categoryIndex)}
           type="number"
         />,
       ];
@@ -111,7 +123,6 @@ function ValueScaling({ t }: any) {
         factory={categoricalRowFactory}
         controls={distribution.map((category: any, index: number) => ({
           category,
-          value: distribution_value[index],
           categoryIndex: index,
           attributeIndex,
         }))}
