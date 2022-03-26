@@ -47,7 +47,6 @@ class ServerSocket:
     # Type can be 0: subject update, 1: call return, -1: error (use SendType enum)
     def send(self, send_type, data):
         send_data = {"type": send_type, "data": data}
-        print("DATA",data)
         json_data = json.dumps(send_data, default=lambda o: o.serialize() if issubclass(type(o), Serializable) else o.__dict__)
         task = self.conn.send(json_data)
         asyncio.create_task(task)
