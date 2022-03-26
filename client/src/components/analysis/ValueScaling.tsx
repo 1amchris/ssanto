@@ -1,9 +1,13 @@
 import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
-import { selectAnalysis } from '../../store/reducers/analysis';
+import {
+  injectSetErrorCreator,
+  injectSetLoadingCreator,
+  selectAnalysis,
+} from '../../store/reducers/analysis';
 import React from 'react';
 import {
   Button,
@@ -16,11 +20,17 @@ import { FactoryProps } from 'components/forms/components/FormList';
 import Collapsible from 'components/Collapsible';
 import Form from 'components/forms/Form';
 import ValueScalingModel from 'models/ValueScalingModel';
+import LoadingValue from 'models/LoadingValue';
+import { call } from 'store/reducers/server';
+import ServerTargets from 'enums/ServerTargets';
+import CallModel from 'models/server-coms/CallModel';
 
 function ValueScaling({ t }: any) {
   const property = 'value_scaling';
   const selector = useAppSelector(selectAnalysis);
   const valueScaling = selector.properties[property] as ValueScalingModel[];
+
+  const dispatch = useAppDispatch();
 
   const getErrors = selector.properties.valueScalingError;
   const isLoading = selector.properties.valueScalingLoading;
@@ -30,6 +40,18 @@ function ValueScaling({ t }: any) {
   console.log('VALUE SCALING', localValueScaling);
   let controls = [];
   if (!(localValueScaling === undefined) && localValueScaling.length > 0) {
+    const onChangeValueScalingFunction =
+      (attributeIndex: number) => (e: any) => {
+        e.persist();
+        let newFunction = e.target.value;
+        console.log(newFunction);
+
+        let newValueScaling = JSON.parse(
+          JSON.stringify(localValueScaling)
+        ) as typeof localValueScaling;
+        newValueScaling[attributeIndex].properties.vs_function = newFunction;
+        setLocalValueScaling(newValueScaling);
+      };
     const continuousScalingBox = ({
       key,
       attributeIndex,
@@ -49,6 +71,7 @@ function ValueScaling({ t }: any) {
             <small className="me-1">y =</small>
           </React.Fragment>
         }
+        onChange={onChangeValueScalingFunction(attributeIndex)}
         tooltip={t('')}
       />,
     ];
@@ -106,7 +129,6 @@ function ValueScaling({ t }: any) {
         style={{ height: '200px' }}
         key={key('scalingBox')}
         title={attribute}
-        collapsed
       >
         {type == 'Continuous'
           ? continuousScalingBox({ key, attributeIndex, ...properties })
@@ -146,7 +168,26 @@ function ValueScaling({ t }: any) {
       errors={getErrors}
       disabled={isLoading}
       key={'weight_form'}
-      onSubmit={() => {}}
+      onSubmit={(fields: any) => {
+        console.log('ON SUBMIT', fields);
+        dispatch(
+          injectSetLoadingCreator({
+            value: property,
+            isLoading: true,
+          } as LoadingValue<string>)()
+        );
+        dispatch(
+          call({
+            target: ServerTargets.Update,
+            args: [property, localValueScaling],
+            onSuccessAction: injectSetLoadingCreator({
+              value: property,
+              isLoading: false,
+            } as LoadingValue<string>),
+            onErrorAction: injectSetErrorCreator(property),
+          } as CallModel)
+        );
+      }}
     />
   );
 }
