@@ -8,6 +8,7 @@ class File(FileMetaData):
     def __init__(self, name: string, content: bytes, id=None, group_id=None):
         super().__init__(name, id=id, group_id=group_id)
         self.content = content
+        ''' Not used?
         self.columns = []
         self.head = []
 
@@ -20,6 +21,7 @@ class File(FileMetaData):
         df = geopandas.read_file(self.path[0])
         self.columns = [s for s in df.columns if s != "geometry"]
         print(self.columns)
+        '''
 
     def __dict__(self):
         base = super().__dict__()

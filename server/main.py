@@ -7,8 +7,6 @@ from py.server_socket import ServerSocket
 from py.file_manager import FilesManager
 from py.subjects_manager import SubjectsManager
 
-from py.analyser import Analyser
-
 from py.analysis import Analysis
 from py.guide_builder import GuideBuilder
 
@@ -25,7 +23,7 @@ async def main():
     server_socket.bind_command("file_manager.add_files", files_manager.add_files)
     server_socket.bind_command("file_manager.remove_file", files_manager.remove_file)
 
-    analysis = Analysis(subjects_manager, files_manager, Analyser())
+    analysis = Analysis(subjects_manager, files_manager)
     server_socket.bind_command("update", analysis.update)
     server_socket.bind_command("compute_suitability", analysis.compute_suitability)
 
