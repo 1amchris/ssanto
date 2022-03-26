@@ -90,32 +90,40 @@ class Analysis:
         # self.parameters.update()
         pass
 
+    def existingAttribute(self, primary, secondary, attribute, dataset):
+        value_scaling_data = self.value_scaling.value()
+        for existing_attribute in value_scaling_data:
+            if(attribute == existing_attribute['attribute']
+               and existing_attribute["primary"] == primary
+               and existing_attribute["secondary"] == secondary
+               and existing_attribute["dataset"]["id"] == dataset["id"]):
+                return existing_attribute
+        return None
+
     def value_scaling_update(self):
         newValueScaling = []
-        print("value_scaling_update")
-        # garder les anciens attributes, ajoutez les nouveaux
-        data = self.objectives.value()
+        objectives_data = self.objectives.value()
         for (primary, secondaries) in zip(
-            data["primaries"]["primary"], data["primaries"]["secondaries"]
+            objectives_data["primaries"]["primary"], objectives_data["primaries"]["secondaries"]
         ):
             for (index, (secondary, attributes)) in enumerate(zip(secondaries["secondary"], secondaries["attributes"])):
                 for (attribute, dataset) in zip(attributes['attribute'], attributes['datasets']):
                     # type continuous or categorical according to dataset
                     # validation si l'attribut existe déjà
-                    newAttribute = {
-                        "attribute": attribute,
-                        "dataset": dataset,
-                        "type": 'Continuous',
-                        "properties": {"min": 0, "max": 100, "vs_function": 'x',
-                                       "distribution": [0, 20, 40, 60, 80, 100], "distribution_value": [0, 20, 40, 60, 80, 100],
-                                       },
-                        "primary": primary,
-                        "secondary": secondary,
-                    }
-
+                    newAttribute = self.existingAttribute(
+                        primary, secondary, attribute, dataset)
+                    if (newAttribute == None):
+                        newAttribute = {
+                            "attribute": attribute,
+                            "dataset": dataset,
+                            "type": 'Continuous',
+                            "properties": {"min": 0, "max": 100, "vs_function": 'x',
+                                           "distribution": [0, 20, 40, 60, 80, 100], "distribution_value": [0, 20, 40, 60, 80, 100],
+                                           },
+                            "primary": primary,
+                            "secondary": secondary,
+                        }
                     newValueScaling.append(newAttribute)
-                # update value_scaling
-        print("newValueScaling", newValueScaling)
         self.subjects_manager.update("value_scaling", newValueScaling)
 
     def update(self, subject, data):
