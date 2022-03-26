@@ -74,6 +74,7 @@ function ValueScaling({ t }: any) {
         onChange={onChangeValueScalingFunction(attributeIndex)}
         tooltip={t('')}
       />,
+      <ScalingGraph style={{ height: '100px' }} />,
     ];
 
     const categoricalRowFactory = ({
@@ -125,11 +126,7 @@ function ValueScaling({ t }: any) {
       attributeIndex,
       key,
     }: FactoryProps): ReactElement | ReactElement[] => (
-      <Collapsible
-        style={{ height: '200px' }}
-        key={key('scalingBox')}
-        title={attribute}
-      >
+      <Collapsible key={key('scalingBox')} title={attribute}>
         {type == 'Continuous'
           ? continuousScalingBox({ key, attributeIndex, ...properties })
           : categoricalScalingBox({ key, attributeIndex, ...properties })}
