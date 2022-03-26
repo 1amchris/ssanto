@@ -14,7 +14,7 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import FileContentModel from 'models/file-models/FileContentModel';
 import LoadingValue from 'models/LoadingValue';
-import Utils from 'utils';
+import FilesUtils from 'utils/files-utils';
 
 function StudyArea({ t }: any) {
   const property = 'studyArea';
@@ -59,7 +59,7 @@ function StudyArea({ t }: any) {
             isLoading: true,
           } as LoadingValue<string>)()
         );
-        Utils.extractContentFromFiles(Array.from(fields.files)).then(files => {
+        FilesUtils.extractContentFromFiles(Array.from(fields.files)).then(files => {
           dispatch(
             call({
               target: ServerCallTargets.UpdateStudyAreaFiles,

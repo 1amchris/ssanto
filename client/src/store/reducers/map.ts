@@ -1,100 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
-import { uniqueId } from 'lodash';
-import { GeoJSON } from 'geojson';
-
-export interface Layer {
-  identifier: string;
-  label: string;
-  name: string;
-  geojson: GeoJSON;
-}
-
-export interface Layers {
-  [name: string]: Layer;
-}
-
-export interface LayersGroups {
-  [name: string]: Layers;
-}
-
-export interface InsertLayerModel {
-  group?: string;
-  label?: string;
-  name: string;
-  geojson: GeoJSON;
-}
-
-export interface RemoveLayerModel {
-  group?: string;
-  name: string;
-}
-export class LayersGroupsUtils {
-  static DEFAULT_GROUP = 'default';
-
-  static add(
-    layersGroups: LayersGroups,
-    layer: InsertLayerModel
-  ): LayersGroups {
-    const group = layer.group || LayersGroupsUtils.DEFAULT_GROUP;
-
-    const newLayer = {
-      identifier: uniqueId('layer-'),
-      name: layer.name,
-      label: layer.label || layer.name,
-      geojson: layer.geojson,
-    } as Layer;
-
-    if (!layersGroups.hasOwnProperty(group)) {
-      layersGroups[group] = {} as Layers;
-    }
-
-    layersGroups[group][newLayer.name] = newLayer;
-    return layersGroups;
-  }
-
-  static remove(
-    layersGroups: LayersGroups,
-    layer: RemoveLayerModel
-  ): LayersGroups {
-    const { name, group } = {
-      group: LayersGroupsUtils.DEFAULT_GROUP,
-      ...layer,
-    };
-
-    if (
-      layersGroups.hasOwnProperty(group) &&
-      layersGroups[group].hasOwnProperty(name)
-    ) {
-      delete layersGroups[group][name];
-
-      if (Object.keys(layersGroups[group]).length) {
-        delete layersGroups[group];
-      }
-    }
-
-    return layersGroups;
-  }
-}
-
-export interface MapState {
-  location: LatLong; // the map location
-  zoom: number;
-  layers: LayersGroups;
-  cursor?: LatLong; // the last registered position of the cursor on the map
-  cursorInformations?: MapCursorInformations; // the information about the map at the cursor's location
-}
-
-export interface LatLong {
-  lat: number;
-  long: number;
-}
-
-export interface MapCursorInformations {
-  placeholder: string;
-  // the placeholder is for dev purposes, and should be
-  //  replaced by the actual information displayed.
-}
+import { LayersGroups } from 'models/map/Layers';
+import { LatLong } from 'models/map/LatLong';
+import { MapCursorInformationsModel } from 'models/map/MapCursorInformationsModel';
+import { MapStateModel } from 'models/map/MapStateModel';
+import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
+import { InsertLayerModel } from 'models/map/InsertLayerModel';
+import LayersUtils from 'utils/layers-utils';
 
 export const mapSlice = createSlice({
   name: 'map',
@@ -102,7 +14,7 @@ export const mapSlice = createSlice({
     location: { lat: 45.509, long: -73.553 }, // defaults to mtl.qc.ca
     layers: {} as LayersGroups,
     zoom: 10, // arbitrary, is big enough to fit the island of mtl
-  } as MapState,
+  } as MapStateModel,
   reducers: {
     updateLocation: (state, { payload: location }: PayloadAction<LatLong>) => {
       if (isNaN(location?.lat) || isNaN(location?.long))
@@ -117,7 +29,7 @@ export const mapSlice = createSlice({
     },
     updateCursorInformations: (
       state,
-      { payload }: PayloadAction<MapCursorInformations>
+      { payload }: PayloadAction<MapCursorInformationsModel>
     ) => {
       // if any validation is required, add it here
       state.cursorInformations = payload;
@@ -135,13 +47,13 @@ export const mapSlice = createSlice({
       state,
       { payload: layer }: PayloadAction<InsertLayerModel>
     ) => {
-      state.layers = LayersGroupsUtils.add(state.layers, layer);
+      state.layers = LayersUtils.add(state.layers, layer);
     },
     removeLayer: (
       state,
       { payload: layer }: PayloadAction<RemoveLayerModel>
     ) => {
-      state.layers = LayersGroupsUtils.remove(state.layers, layer);
+      state.layers = LayersUtils.remove(state.layers, layer);
     },
   },
 });

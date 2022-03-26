@@ -7,11 +7,11 @@ import { subscribe, openConnection } from 'store/reducers/server';
 import { injectReceivePropertiesCreator } from 'store/reducers/analysis';
 import SubscriptionModel from 'models/server-coms/SubscriptionModel';
 import {
-  LatLong,
-  MapCursorInformations,
   updateCursor,
   updateCursorInformations,
 } from 'store/reducers/map';
+import { MapCursorInformationsModel } from "models/map/MapCursorInformationsModel";
+import { LatLong } from "models/map/LatLong";
 import ServerSubscriptionTargets from 'enums/ServerSubscriptionTargets';
 
 function App() {
@@ -34,7 +34,7 @@ function App() {
       subscribe({
         subject: ServerSubscriptionTargets.MapCursorInformations,
         onAction: updateCursorInformations,
-      } as SubscriptionModel<MapCursorInformations, void>)
+      } as SubscriptionModel<MapCursorInformationsModel, void>)
     );
     dispatch(
       subscribe({

@@ -1,7 +1,8 @@
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { TileLayer, LayersControl, GeoJSON, LayerGroup } from 'react-leaflet';
-import { Layer, Layers, selectMap } from 'store/reducers/map';
+import { selectMap } from 'store/reducers/map';
+import { Layer, Layers } from 'models/map/Layers';
 import { useAppSelector } from 'store/hooks';
 
 const LayersGroups = ({ t }: any) => {
@@ -77,18 +78,6 @@ const LayersGroups = ({ t }: any) => {
           ))}
         </LayerGroup>
       ))}
-
-      {/* {layers.map(
-        ({ identifier, label, name, geojson: data }: Layer) => (
-          <LayersControl.Overlay
-            key={identifier}
-            name={capitalize(t(label || name))}
-            checked
-          >
-            <GeoJSON data={data} style={style} />
-          </LayersControl.Overlay>
-        )
-      )} */}
     </LayersControl>
   );
 };

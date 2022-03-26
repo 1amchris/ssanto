@@ -7,7 +7,7 @@ import { Control, Button, Spacer, List } from 'components/forms/components';
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import { Badge } from 'react-bootstrap';
 import { call } from 'store/reducers/server';
-import Utils from 'utils';
+import FilesUtils from 'utils/files-utils';
 import {
   injectSetLoadingCreator,
   injectSetErrorCreator,
@@ -109,7 +109,7 @@ function FileExplorer({ t }: any) {
             isLoading: true,
           } as LoadingValue<string>)()
         );
-        Utils.extractContentFromFiles(Array.from(fields.files)).then(files =>
+        FilesUtils.extractContentFromFiles(Array.from(fields.files)).then(files =>
           dispatch(
             call({
               target: ServerCallTargets.FileManagerAddFiles,
