@@ -1,7 +1,7 @@
 import { uniqueId } from 'lodash';
-import { Layer, Layers, LayersGroups } from '../models/map/Layers';
-import { InsertLayerModel } from '../models/map/InsertLayerModel';
-import { RemoveLayerModel } from '../models/map/RemoveLayerModel';
+import { Layer, Layers, LayersGroups } from 'models/map/Layers';
+import { InsertLayerModel } from 'models/map/InsertLayerModel';
+import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
 
 namespace LayersUtils {
   const DEFAULT_GROUP = 'default';
