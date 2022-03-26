@@ -1,7 +1,7 @@
-from attr import attributes
 from .analyser import Analyser
 from .file import File
 from .file_manager import FileParser
+from .map import LatLng, MapCursorInformations
 from .server_socket import CallException
 from base64 import b64encode
 import pickle
@@ -89,6 +89,13 @@ class Analysis:
         # ...
         # self.parameters.update()
         pass
+
+    # TODO: replace with the map informations at the cursor's position
+    def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
+        base = MapCursorInformations()
+        if cursor is not None:
+            base.placeholder += f". lat: {cursor.lat:.3f}, lng: {cursor.long:.3f}"
+        return base
 
     def update(self, subject, data):
         self.subjects_manager.update(subject, data)

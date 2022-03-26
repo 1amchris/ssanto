@@ -15,9 +15,19 @@ import * as fr from 'locales/fr.json';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Leaflet
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet/dist/leaflet.js';
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+L.Marker.prototype.options.icon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [24, 36],
+  iconAnchor: [12, 36],
+});
 
+// i18n
 i18n.use(initReactI18next).init({
   resources: { en, fr },
   lng: 'en', // if you're using a language detector, do not define the lng option

@@ -2,15 +2,16 @@ import signal
 
 import asyncio
 
-from py.logger import *
 from py.server_socket import ServerSocket
-from py.file_manager import FilesManager
 from py.subjects_manager import SubjectsManager
 
-from py.analyser import Analyser
+from py.logger import *
 
+from py.analyser import Analyser
 from py.analysis import Analysis
+from py.file_manager import FilesManager
 from py.guide_builder import GuideBuilder
+from py.map import Map
 
 
 async def main():
@@ -31,6 +32,9 @@ async def main():
 
     server_socket.bind_command("analysis.set_study_area", analysis.receive_study_area)
     server_socket.bind_command("analysis.save_project", analysis.export_project_save)
+
+    map = Map(subjects_manager, analysis.get_informations_at_position)
+    server_socket.bind_command("map.set_cursor", map.set_cursor)
 
     guide_builder = GuideBuilder()
     server_socket.bind_command("guide.get", guide_builder.generate_guide_data)

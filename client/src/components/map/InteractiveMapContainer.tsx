@@ -1,17 +1,15 @@
-import React from 'react';
-import L from 'leaflet';
-import { MapContainer, useMapEvents } from 'react-leaflet';
+import L, { LatLng } from 'leaflet';
+import { MapContainer, Marker, useMapEvents } from 'react-leaflet';
 import { useAppSelector, useAppDispatch } from 'store/hooks';
 import { selectMap } from 'store/reducers/map';
-import Layers from './LayerControl';
 import { call } from 'store/reducers/server';
-import ServerTargets from 'enums/ServerTargets';
-import { injectSetLoadingCreator } from 'store/reducers/analysis';
+import Layers from 'components/map/LayerControl';
+import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 
 function InteractiveMapContainer({ className, style }: any) {
-  const { location, zoom } = useAppSelector(selectMap);
+  const { location, zoom, cursor } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();
 
   const MapEvents = () => {
@@ -19,9 +17,15 @@ function InteractiveMapContainer({ className, style }: any) {
       click(e) {
         dispatch(
           call({
-            target: ServerTargets.GetCellSuitability,
+            target: ServerCallTargets.GetCellSuitability,
             args: [{ lat: e.latlng.lat, long: e.latlng.lng }],
           } as CallModel<[Object], void, LoadingValue<string>, string, string>)
+        );
+        dispatch(
+          call({
+            target: ServerCallTargets.MapSetCursor,
+            args: [e.latlng.lat, e.latlng.lng],
+          } as CallModel<[number, number], void, void, string, string>)
         );
       },
     });
@@ -39,6 +43,15 @@ function InteractiveMapContainer({ className, style }: any) {
     >
       <Layers />
       <MapEvents />
+      {cursor && (
+        <Marker position={new LatLng(cursor.lat, cursor.long)} />
+        //   <Popup>
+        //     <span>
+        //       A pretty CSS3 popup. <br /> Easily customizable.
+        //     </span>
+        //   </Popup>
+        // </Marker>
+      )}
     </MapContainer>
   );
 }

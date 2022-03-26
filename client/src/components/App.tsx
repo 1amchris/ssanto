@@ -1,12 +1,18 @@
-import React from 'react';
 import { useEffectOnce } from 'hooks';
 import { useAppDispatch } from 'store/hooks';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Main from './Main';
-import Guide from './guide/Guide';
+import Main from 'components/Main';
+import Guide from 'components/guide/Guide';
 import { subscribe, openConnection } from 'store/reducers/server';
 import { injectReceivePropertiesCreator } from 'store/reducers/analysis';
 import SubscriptionModel from 'models/server-coms/SubscriptionModel';
+import {
+  LatLong,
+  MapCursorInformations,
+  updateCursor,
+  updateCursorInformations,
+} from 'store/reducers/map';
+import ServerSubscriptionTargets from 'enums/ServerSubscriptionTargets';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -14,31 +20,43 @@ function App() {
     dispatch(openConnection());
     dispatch(
       subscribe({
-        subject: 'file_manager.files',
+        subject: ServerSubscriptionTargets.FileManagerFiles,
         onAction: injectReceivePropertiesCreator('files'),
       } as SubscriptionModel<string, any>)
     );
     dispatch(
       subscribe({
-        subject: 'parameters',
+        subject: ServerSubscriptionTargets.MapCursor,
+        onAction: updateCursor,
+      } as SubscriptionModel<LatLong, void>)
+    );
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTargets.MapCursorInformations,
+        onAction: updateCursorInformations,
+      } as SubscriptionModel<MapCursorInformations, void>)
+    );
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTargets.AnalysisParameters,
         onAction: injectReceivePropertiesCreator('parameters'),
       } as SubscriptionModel<string, any>)
     );
     dispatch(
       subscribe({
-        subject: 'nbs_system',
+        subject: ServerSubscriptionTargets.AnalysisNbsSystem,
         onAction: injectReceivePropertiesCreator('nbs_system'),
       } as SubscriptionModel<string, any>)
     );
     dispatch(
       subscribe({
-        subject: 'objectives',
+        subject: ServerSubscriptionTargets.AnalysisObjectives,
         onAction: injectReceivePropertiesCreator('objectives'),
       } as SubscriptionModel<string, any>)
     );
     dispatch(
       subscribe({
-        subject: 'value_scaling',
+        subject: ServerSubscriptionTargets.AnalysisValueScaling,
         onAction: injectReceivePropertiesCreator('value_scaling'),
       } as SubscriptionModel<string, any>)
     );

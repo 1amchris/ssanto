@@ -10,7 +10,7 @@ import {
 import Form from 'components/forms/Form';
 import { Select, Button, Spacer } from 'components/forms/components';
 import { call } from 'store/reducers/server';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
@@ -64,7 +64,7 @@ function NbsSystem({ t }: any) {
         );
         dispatch(
           call({
-            target: ServerTargets.Update,
+            target: ServerCallTargets.Update,
             args: [property, fields],
             onSuccessAction: injectSetLoadingCreator({
               value: property,

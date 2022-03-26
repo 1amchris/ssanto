@@ -10,7 +10,7 @@ import {
 import Form from 'components/forms/Form';
 import { Control, Button, Spacer } from 'components/forms/components';
 import { call } from 'store/reducers/server';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import FileContentModel from 'models/file-models/FileContentModel';
 import LoadingValue from 'models/LoadingValue';
@@ -62,7 +62,7 @@ function StudyArea({ t }: any) {
         Utils.extractContentFromFiles(Array.from(fields.files)).then(files => {
           dispatch(
             call({
-              target: ServerTargets.UpdateStudyAreaFiles,
+              target: ServerCallTargets.UpdateStudyAreaFiles,
               args: files,
               onSuccessAction: studyAreaReceived,
               onFailureAction: injectSetErrorCreator(property),

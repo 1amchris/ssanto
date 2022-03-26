@@ -1,5 +1,5 @@
 import { capitalize } from 'lodash';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
@@ -16,7 +16,7 @@ import {
 import FileMetadataModel from 'models/file-models/FileMetadataModel';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 import FileContentModel from 'models/file-models/FileContentModel';
 
 const FileRowFactory = ({
@@ -80,7 +80,7 @@ function FileExplorer({ t }: any) {
           );
           dispatch(
             call({
-              target: ServerTargets.FileManagerRemoveFile,
+              target: ServerCallTargets.FileManagerRemoveFile,
               args: [(files[index] as FileMetadataModel).id],
               onSuccessAction: injectSetLoadingCreator({
                 value: property,
@@ -112,7 +112,7 @@ function FileExplorer({ t }: any) {
         Utils.extractContentFromFiles(Array.from(fields.files)).then(files =>
           dispatch(
             call({
-              target: ServerTargets.FileManagerAddFiles,
+              target: ServerCallTargets.FileManagerAddFiles,
               args: files,
               onSuccessAction: injectSetLoadingCreator({
                 value: property,
