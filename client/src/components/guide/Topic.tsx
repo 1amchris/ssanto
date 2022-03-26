@@ -3,6 +3,9 @@ import { withTranslation } from 'react-i18next';
 import { capitalize } from 'lodash';
 import ReactMarkdown from 'react-markdown';
 
+
+const generateId = (name: string) => name.toLowerCase().replaceAll(' ', '-').replaceAll('\'', '')
+
 const markdownOptions = {
   components: {
     code: ({ children }: any) => (
@@ -10,6 +13,9 @@ const markdownOptions = {
         {children}
       </code>
     ),
+    h2: ({children}:any) => (<h2 id={generateId(children[0])}>{children}</h2>),
+    h3: ({children}:any) => (<h3 id={generateId(children[0])}>{children}</h3>),
+    h4: ({children}:any) => (<h4 id={generateId(children[0])}>{children}</h4>),
   },
 };
 

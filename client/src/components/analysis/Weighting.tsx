@@ -1,7 +1,6 @@
 import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
 import { call } from 'store/reducers/server';
@@ -111,7 +110,7 @@ function Weighting({ t }: any) {
       const weightRef: RefObject<HTMLSpanElement> = createRef();
       return [
         <Control
-          key={key('weight_attribute') + localObjectives.update}
+          key={key('attribute') + localObjectives.update}
           label={defaultAttribute}
           className="small position-relative d-flex"
           name={name('attribute')}
@@ -152,7 +151,6 @@ function Weighting({ t }: any) {
       orderIndex,
       defaultValue,
       secondaryIndex,
-
       primaryIndex,
       childrenValues: attributes,
     }: FactoryProps): ReactElement | ReactElement[] => {
@@ -160,10 +158,10 @@ function Weighting({ t }: any) {
 
       return [
         <Control
-          key={key('weight_secondary') + localObjectives.update}
+          key={key('secondary') + localObjectives.update}
           label={secondaryName(primaryIndex, orderIndex)}
           className="small position-relative d-flex"
-          name="weight"
+          name={name('secondary')}
           suffix={
             <React.Fragment>
               <span ref={weightRef}>
@@ -190,9 +188,9 @@ function Weighting({ t }: any) {
           //tooltip={t('the cell size is ...')}
         />,
         <SimpleList
-          key={key('weights-secondary') + localObjectives.update}
-          name={'weights'}
           hideLabel
+          key={key('secondaries') + localObjectives.update}
+          name={name('secondaries')}
           factory={weightAttributeFactory}
           controls={getAttribute(primaryIndex, secondaryIndex).map(
             (defaultAttribute: string, index: number) => ({
@@ -218,10 +216,10 @@ function Weighting({ t }: any) {
       const weightRef: RefObject<HTMLSpanElement> = createRef();
       return [
         <Control
-          key={key('weight_primary') + localObjectives.update}
           label={primaryName(orderIndex)}
+          key={key('primary') + localObjectives.update}
+          name={name('primary')}
           className="small position-relative d-flex"
-          name={name('weight_primary')}
           suffix={
             <React.Fragment>
               <span ref={weightRef}>
@@ -240,9 +238,9 @@ function Weighting({ t }: any) {
           //tooltip={t('the cell size is ...')}
         />,
         <SimpleList
-          key={key('weights-secondary') + localObjectives.update}
-          name={'weights'}
           hideLabel
+          name={name('primaries')}
+          key={key('primaries') + localObjectives.update}
           factory={weightSecondaryFactory}
           controls={getSecondary(orderIndex).map(
             (defaultValueSecondary: string, index: number) => ({

@@ -42,7 +42,7 @@ const Layers = ({ t }: any) => {
       };
     } else if (
       feature.properties !== undefined &&
-      feature.properties.sutability == 0
+      feature.properties.sutability === 0
     ) {
       return { color: '#00000000', fillOpacity: 0 };
     } else {
