@@ -1,30 +1,26 @@
 
+import os
 import matplotlib.pyplot as plt
-import py.raster_transform
-from py.transformation import Transformation
+from py.raster_transform import process_raster
 
 
-class Study_area():
-    def __init__(self, path, output_tiff, transformation: Transformation):
-        self.path = path
-        self.output_tiff = output_tiff
-        self.transformation = transformation
+class StudyArea():
+    OUTPUT_NAME = "output_study_area.tiff"
 
-    def update_path(self, path, output_tiff):
-        self.path = path
-        self.output_tiff = output_tiff
-        self.update()
+    def __init__(self, input_file_name):
+        self.input = input_file_name
 
     def process_raster_as_array(self):
         file_band = self.as_raster.GetRasterBand(1)
         return file_band.ReadAsArray()
 
-    def update(self):
-        self.as_raster = py.raster_transform.process_raster(
-            self.transformation, self.path, self.output_tiff)
+    def update(self, path, cell_size, crs):
+        input_path = os.path.join(path, self.input)
+        output_path = os.path.join(path, StudyArea.OUTPUT_NAME)
+        
+        self.as_raster = process_raster(cell_size, crs, input_path, output_path)
         self.as_array = self.process_raster_as_array()
-        self.origin = (self.as_raster.GetGeoTransform()[
-            0], self.as_raster.GetGeoTransform()[3])
+        self.origin = (self.as_raster.GetGeoTransform()[0], self.as_raster.GetGeoTransform()[3])
 
     def display_array(self):
         plt.figure()

@@ -4,9 +4,7 @@ import numpy as np
 from osgeo import gdal, ogr
 from py.raster_transform import *
 import math
-from py.study_area import Study_area
-
-from py.transformation import Transformation
+from py.study_area import StudyArea
 
 
 math_op = {
@@ -31,19 +29,20 @@ math_op = {
 
 
 class Feature():
-    def __init__(self, path, output_tiff, weight, transformation: Transformation, study_area: Study_area, scaling_function):
+    def __init__(self, path, output_tiff, weight, cell_size, crs, study_area: StudyArea, scaling_function):
         self.path = path
         self.output_tiff = output_tiff
-        self.transformation = transformation
+        self.cell_size = cell_size
+        self.crs = crs
         self.study_area = study_area
         self.weight = weight
 
 
-class Continuous_Feature(Feature):
+class ContinuousFeature(Feature):
 
-    def __init__(self, path, output_tiff, weight, transformation: Transformation, study_area: Study_area, scaling_function, field_name=False):
+    def __init__(self, path, output_tiff, weight, cell_size, crs, study_area: StudyArea, scaling_function, field_name=False):
         super().__init__(path, output_tiff, weight,
-                         transformation, study_area, scaling_function)
+                         cell_size, crs, study_area, scaling_function)
 
         self.field_name = field_name
         self.scaling_function = "x"
@@ -52,7 +51,7 @@ class Continuous_Feature(Feature):
 
     def update(self):
         self.as_raster = process_raster(
-            self.transformation, self.path, self.output_tiff, field_name=self.field_name)
+            self.cell_size, self.crs, self.path, self.output_tiff, field_name=self.field_name)
         self.as_array = self.process_raster_as_array()
 
     def process_raster_as_array(self):
@@ -75,8 +74,8 @@ class Continuous_Feature(Feature):
         origin_file = (self.as_raster.GetGeoTransform()[
             0], self.as_raster.GetGeoTransform()[3])
 
-        offset = offset = (-int((origin_file[1] - self.study_area.origin[1]) // self.transformation.cellsize), int(
-            (origin_file[0] - self.study_area.origin[0]) // self.transformation.cellsize))
+        offset = offset = (-int((origin_file[1] - self.study_area.origin[1]) // self.cell_size), int(
+            (origin_file[0] - self.study_area.origin[0]) // self.cell_size))
         return self.balance_matrix(file, self.study_area.as_array, offset)
 
     def balance_matrix(self, input_matrix, study_area, offset):
@@ -108,11 +107,11 @@ class Continuous_Feature(Feature):
         return self.as_array
 
 
-class Distance_feature(Continuous_Feature):
-    def __init__(self, path, output_tiff, weight, max_distance, transformation: Transformation, study_area: Study_area, scaling_function,  field_name=False, maximize_distance=True, centroid=True, granularity=None, threshold=0.8):
-        super().__init__(path, output_tiff, weight, transformation,
+class DistanceFeature(ContinuousFeature):
+    def __init__(self, path, output_tiff, weight, max_distance, cell_size, crs, study_area: StudyArea, scaling_function,  field_name=False, maximize_distance=True, centroid=True, granularity=None, threshold=0.8):
+        super().__init__(path, output_tiff, weight, cell_size, crs,
                          study_area, scaling_function, field_name)
-        self.max_distance = max_distance/self.transformation.cellsize
+        self.max_distance = max_distance / self.cellsize
         self.granularity = granularity
         self.threshold = threshold
         self.maximise_distance = maximize_distance

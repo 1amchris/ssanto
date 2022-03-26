@@ -85,7 +85,7 @@ function Parameters({ t }: any) {
               value: property,
               isLoading: false,
             } as LoadingValue<string>),
-            onFailureAction: injectSetErrorCreator(property),
+            onErrorAction: injectSetErrorCreator(property),
           } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
         );
       }}

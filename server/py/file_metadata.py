@@ -8,7 +8,7 @@ class FileMetaData(Serializable):
     def __init__(self, name, id=None, group_id=None):
         self.id: string = str(uuid4()) if id is None else id
         self.name: string = name
-        self.path: string = None
+        #self.path: string = None
         self.group_id = group_id
 
         last_period_index = self.name.rindex(".")
