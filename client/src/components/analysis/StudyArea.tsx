@@ -36,7 +36,7 @@ function StudyArea({ t }: any) {
       label="select study area"
       name="files"
       type="file"
-      accept=".shp, .shx"
+      accept=".shp, .shx, .cpg, .dbf, .prj, .dbs"
       multiple
       required
       tooltip={t('the selected files will ...')}
@@ -44,9 +44,6 @@ function StudyArea({ t }: any) {
     <Spacer />,
     <Button variant="outline-primary" type="submit" loading={isLoading}>
       {capitalize(t('apply'))}
-    </Button>,
-    <Button variant="outline-danger" type="reset">
-      {capitalize(t('reset'))}
     </Button>,
   ];
 

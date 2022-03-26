@@ -7,30 +7,30 @@ from py.server_socket import ServerSocket
 from py.file_manager import FilesManager
 from py.subjects_manager import SubjectsManager
 
+from py.analyser import Analyser
+
 from py.analysis import Analysis
 from py.guide_builder import GuideBuilder
 
 
 async def main():
     server_socket = ServerSocket("localhost", 6969)
-
     subjects_manager = SubjectsManager(server_socket)
     files_manager = FilesManager(subjects_manager)
 
     server_socket.bind_command("subscribe", subjects_manager.subscribe)
     server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
 
-    server_socket.bind_command("update", subjects_manager.update)
-
     server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
     server_socket.bind_command("file_manager.add_files", files_manager.add_files, False)
     server_socket.bind_command("file_manager.remove_file", files_manager.remove_file)
 
-    analysis = Analysis(subjects_manager, files_manager)
+    analysis = Analysis(subjects_manager, files_manager, Analyser())
+    server_socket.bind_command("update", analysis.update)
+    server_socket.bind_command("compute_suitability", analysis.compute_suitability)
+
     server_socket.bind_command("analysis.set_study_area", analysis.receive_study_area)
     server_socket.bind_command("analysis.save_project", analysis.export_project_save)
-    server_socket.bind_command("analysis.save_weights", analysis.export_weights)
-    server_socket.bind_command("analysis.save_objective_hierarchy", analysis.export_objective_hierarchy)
 
     guide_builder = GuideBuilder()
     server_socket.bind_command("guide.get", guide_builder.generate_guide_data)

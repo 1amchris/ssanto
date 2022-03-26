@@ -4,6 +4,7 @@ enum ServerTargets {
   SaveWeights = 'analysis.save_weights',
   SaveObjectiveHierarchy = 'analysis.save_objective_hierarchy',
   UpdateStudyAreaFiles = 'analysis.set_study_area',
+  ComputeSuitability = 'compute_suitability',
 
   FileManagerGetFiles = 'file_manager.get_files',
   FileManagerAddFiles = 'file_manager.add_files',

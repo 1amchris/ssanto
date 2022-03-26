@@ -1,608 +1,659 @@
-import React, { ReactElement, useState } from 'react';
+import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
+import objectivesData from 'data/objectives.json';
+import { call } from 'store/reducers/server';
+
 import {
   Button,
   Spacer,
   Select,
   ExpandableList,
+  Control,
 } from 'components/forms/components';
-import { selectAnalysis, updateObjectives } from 'store/reducers/analysis';
+import {
+  selectAnalysis,
+  injectSetLoadingCreator,
+  injectSetErrorCreator,
+} from 'store/reducers/analysis';
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
-import objectivesData from 'data/objectives.json';
+import React from 'react';
+import CallModel from 'models/server-coms/CallModel';
+import LoadingValue from 'models/LoadingValue';
+import ServerTargets from 'enums/ServerTargets';
 
-//TODO : ajout d'un objectif => options selon l'objectif parent
-//TODO : update d'un objectif => clear des objectifs enfants et updates de leurs options
+function isShp(file: { extension: string }, index: any, array: any) {
+  return file.extension == 'shp';
+}
+
+function isValidOH(objectiveHierarchy: {
+  main: string;
+  update: boolean;
+  primaries: {
+    primary: string[];
+    weights: number[];
+    secondaries: {
+      secondary: string[];
+      weights: number[];
+      attributes: {
+        attribute: string[];
+        weights: number[];
+        datasets: { name: string; id: string }[];
+      }[];
+    }[];
+  };
+}) {
+  let primaryHasSecondary = true;
+  let secondaryHasAttribute = true;
+  let attributeHasName = true;
+  let datasetsAreSelected = true;
+  objectiveHierarchy.primaries.secondaries.map(json => {
+    primaryHasSecondary = primaryHasSecondary && json.secondary.length > 0;
+    json.attributes.map(json => {
+      secondaryHasAttribute =
+        secondaryHasAttribute && json.attribute.length > 0;
+      json.attribute.map(
+        attributeName =>
+          (attributeHasName = attributeHasName && attributeName.length > 0)
+      );
+      json.datasets.map(
+        dataset =>
+          (datasetsAreSelected = datasetsAreSelected && dataset.id != '0')
+      );
+    });
+  });
+  return primaryHasSecondary && secondaryHasAttribute && attributeHasName;
+}
 
 function ObjectiveHierarchy({ t }: any) {
+  const property = 'objectives';
+  const selector = useAppSelector(selectAnalysis);
+  const objectives = selector.properties.objectives;
   const dispatch = useAppDispatch();
-  const {
-    objectives: {
-      main: mainValue,
-      // options: mainValueOptions,
-      primaries: [primaries],
-    },
-  } = useAppSelector(selectAnalysis);
+  const files =
+    selector.properties['files'].length > 0
+      ? selector.properties['files'].filter(isShp)
+      : [];
+  const getErrors = selector.properties['objectivesError'];
+  const isLoading = selector.properties['objectivesLoading'];
 
-  const [localPrimaries, setLocalPrimaries] = useState(
-    JSON.parse(JSON.stringify(primaries)) as typeof primaries
-  );
+  const [localObjectives, setLocalObjectives] = useState({
+    ...objectives,
+    update: true,
+  } as { main: string; update: boolean; primaries: { primary: string[]; weights: number[]; secondaries: { secondary: string[]; weights: number[]; attributes: { attribute: string[]; weights: number[]; datasets: { name: string; id: string }[] }[] }[] } });
 
-  const getAllPrimaryOptions = () => {
-    var options: string[] = [];
-    var objectiveHierachyData =
-      (objectivesData?.mains[0]?.primaries as any) ?? [];
-    objectiveHierachyData.forEach((json: { primary: string }) => {
-      options.push(json.primary);
-    });
-    return options;
-  };
-
-  const getAllSecondaryOptions = (primary: string) => {
-    var options: string[] = [];
-    objectivesData?.mains[0]?.primaries?.forEach(json => {
-      if (json.primary === primary) {
-        json.secondaries.forEach(json => {
-          options.push(json.secondary);
-        });
-      }
-    });
-    return options;
-  };
-
-  const computeOptions = () => {
-    var primaryOptions: string[] = getAllPrimaryOptions();
-
-    let secondariesOptions: { primary: string; secondary: string[] }[] = [];
-    localPrimaries.primary.forEach(primary => {
-      primaryOptions.splice(primaryOptions.indexOf(primary), 1);
-      var secondaryOptions: string[] = getAllSecondaryOptions(primary);
-      // console.log('secondaryOptions', secondaryOptions);
-      localPrimaries.secondaries[
-        localPrimaries.primary.indexOf(primary)
-      ].secondary.forEach(secondary => {
-        secondaryOptions.splice(secondaryOptions.indexOf(secondary));
-      });
-      secondariesOptions.push({
-        primary: primary,
-        secondary: secondaryOptions,
-      });
-    });
-    // console.log('computeOptions', secondariesOptions);
-    return { primary: primaryOptions, secondaries: secondariesOptions };
-  };
-  const [localOptions, setLocalOptions] = useState(computeOptions());
-
-  const adjustOptions = () => {
-    setLocalOptions(computeOptions());
-  };
-
-  //adjust options
-
-  //ajouter des options à localPrimaries
-
-  var localMainValue = JSON.parse(
-    JSON.stringify(mainValue)
-  ) as typeof mainValue;
-
-  // var localMainValueOptions = JSON.parse(
-  //   JSON.stringify(mainValueOptions)
-  // ) as typeof mainValueOptions;
-
-  //Add
-
-  const onAddPrimary = () => () => {
-    if (localPrimaries.options.length > 0) {
-      let newPrimary = [...localPrimaries.primary];
-      let newOptions = [...localPrimaries.options];
-      newPrimary.push(localPrimaries.options[0]);
-      newOptions.splice(0, 1);
-      //console.log(newOptions);
-      //console.log('newPrimary', newPrimary, 'newOptions', newOptions);
-      let newSecondaries = [...localPrimaries.secondaries];
-      let secondariesOptions: string[] = ['z', 'x', 'y'];
-      newSecondaries.push({
-        secondary: [],
-        options: secondariesOptions,
-        attributes: [],
-      });
-      setLocalPrimaries({
-        primary: newPrimary,
-        secondaries: newSecondaries,
-        //todo
-        options: newOptions,
-      });
-      //console.log('onAddPrimary', localPrimaries);
-      adjustOptions();
-    }
-  };
-
-  const onAddSecondary = (primaryIndex: number) => () => {
-    var newSecondaries = [...localPrimaries.secondaries];
-    var objectiveHierachyData =
-      (objectivesData?.mains[0]?.primaries as any) ?? [];
-    var newSecondaryDefault = objectiveHierachyData[
-      primaryIndex
-    ].secondaries.some(function (json: { secondary: string }) {
-      if (
-        !localPrimaries.secondaries[primaryIndex].secondary.includes(
-          json.secondary
-        )
-      )
-        return json.secondary;
-      else return undefined;
-    });
-    if (newSecondaryDefault) {
-      newSecondaries[primaryIndex].secondary.push(newSecondaryDefault);
-      newSecondaries[primaryIndex].attributes.push({
-        attribute: [],
-        attributeOptions: [],
-      });
-      setLocalPrimaries({
-        primary: localPrimaries.primary,
-        secondaries: newSecondaries,
-        options: localPrimaries.options,
-      });
-      //console.log(localPrimaries);
-    }
-    adjustOptions();
-  };
-
-  const onAddAttribute =
-    (primaryIndex: number, secondaryIndex: number) => () => {
-      var newSecondaries = [...localPrimaries.secondaries];
-      newSecondaries[primaryIndex].attributes[secondaryIndex].attribute.push(
-        ''
-      );
-      setLocalPrimaries({
-        primary: localPrimaries.primary,
-        secondaries: newSecondaries,
-        options: localPrimaries.options,
-      });
+  /* Début refactor ***************/
+  let controls = [];
+  if (
+    !(localObjectives === undefined || localObjectives.primaries === undefined)
+  ) {
+    const copyLocalObjective = () => {
+      return JSON.parse(
+        JSON.stringify(localObjectives)
+      ) as typeof localObjectives;
+    };
+    const primaryName = (index: number) => {
+      return localObjectives.primaries.primary[index];
     };
 
-  //remove
-
-  const onRemovePrimary = () => (primaryIndex: number) => {
-    var newPrimary = [...localPrimaries.primary];
-    var newOptions = [...localPrimaries.options];
-    newPrimary.splice(primaryIndex, 1);
-    newOptions.push(localPrimaries.primary[primaryIndex]);
-    var newSecondaries = [...localPrimaries.secondaries];
-    newSecondaries.splice(primaryIndex, 1);
-    setLocalPrimaries({
-      primary: newPrimary,
-      secondaries: newSecondaries,
-      options: newOptions,
-    });
-    adjustOptions();
-  };
-
-  const onRemoveSecondary =
-    (primaryIndex: number) => (secondaryIndex: number) => {
-      var newSecondaries = [...localPrimaries.secondaries];
-      newSecondaries[primaryIndex].secondary.splice(secondaryIndex, 1);
-      newSecondaries[primaryIndex].attributes.splice(secondaryIndex, 1);
-      setLocalPrimaries({
-        primary: localPrimaries.primary,
-        secondaries: newSecondaries,
-        options: localPrimaries.options,
-      });
-      adjustOptions();
+    const secondaryName = (primaryIndex: number, secondaryIndex: number) => {
+      return localObjectives.primaries.secondaries[primaryIndex].secondary[
+        secondaryIndex
+      ];
     };
 
-  const onRemoveAttribute =
-    (primaryIndex: number, secondaryIndex: number) =>
-    (attributeIndex: number) => {
-      var newSecondaries = [...localPrimaries.secondaries];
-      newSecondaries[primaryIndex].attributes[secondaryIndex].attribute.splice(
-        attributeIndex,
-        1
-      );
-      setLocalPrimaries({
-        primary: localPrimaries.primary,
-        secondaries: newSecondaries,
-        options: localPrimaries.options,
-      });
-      adjustOptions();
+    const getPrimary = () => {
+      return localObjectives.primaries.primary;
     };
 
-  //Options
+    const getSecondary = (primaryIndex: number) => {
+      return localObjectives.primaries.secondaries[primaryIndex].secondary;
+    };
 
-  const generateOptionsMain = () => {
-    return objectivesData?.mains.map(
-      json =>
-        ({
-          value: `${json?.main}`,
-          label: `${json?.main}`,
-        } as FormSelectOptionModel)
-    );
-  };
+    const getAttribute = (primaryIndex: number, secondaryIndex: number) => {
+      return localObjectives.primaries.secondaries[primaryIndex].attributes[
+        secondaryIndex
+      ].attribute;
+    };
 
-  const generateOptionsPrimaries = (primaryIndex: number) => {
-    /*
-    var options: string[] = [];
-    objectivesData?.mains[0]?.primaries?.map(json => {
-      if (
-        !localPrimaries.primary.includes(json.primary) ||
-        localPrimaries.primary[primaryIndex] === json.primary
-      ) {
-        options.push(json.primary);
-      }
-    });
-    */
+    const getAllMainOptions = () => {
+      let options: string[] = [];
+      objectivesData?.mains.map((json: { main: string }) => {
+        options.push(json.main);
+      });
+      return options;
+    };
 
-    var primaryValue = localPrimaries.primary[primaryIndex];
-    var options: string[] = [...localOptions.primary];
-    options.splice(options.indexOf(primaryValue), 1);
-    options.unshift(primaryValue);
-    return options.map(
-      json =>
-        ({
-          value: `${json}`,
-          label: `${json}`,
-        } as FormSelectOptionModel)
-    );
-  };
+    const getAllPrimaryOptions = (main: string) => {
+      let options: string[] = [];
 
-  const generateOptionsSecondaries = (
-    primaryIndex: number,
-    secondaryIndex: number
-  ) => {
-    var primaryValue = localPrimaries.primary[primaryIndex];
-    // console.log(
-    //   'generateOptionsSecondaries',
-    //   localPrimaries.secondaries[primaryIndex]
-    // );
-    var secondaryValue =
-      localPrimaries.secondaries[primaryIndex].secondary[secondaryIndex];
-    var options: string[] = [];
-
-    localOptions.secondaries.forEach(value => {
-      if (value.primary === primaryValue) {
-        options = value.secondary;
-      }
-    });
-    // console.log(
-    //   'generateOptionsSecondaries',
-    //   primaryValue,
-    //   secondaryValue,
-    //   options
-    // );
-
-    options.splice(options.indexOf(secondaryValue), 1);
-    options.unshift(secondaryValue);
-    // console.log('generateOptionsSecondaries', options);
-
-    /*
-    var options: string[] = [];
-    var objectiveHierachyData =
-      (objectivesData?.mains[0]?.primaries as any) ?? [];
-    objectiveHierachyData[primaryIndex].secondaries.map(
-      (json: { secondary: string }) => {
-        if (
-          !localPrimaries.secondaries[primaryIndex].secondary.includes(
-            json.secondary
-          ) ||
-          localPrimaries.secondaries[primaryIndex].secondary[secondaryIndex] ===
-            json.secondary
-        ) {
-          options.push(json.secondary);
+      objectivesData.mains.map(json => {
+        if (json.main == main) {
+          json.primaries?.map(json => {
+            options.push(json.primary);
+          });
         }
-      }
-    );
-    */
-
-    // 2: afficher
-
-    return options?.map(
-      json =>
-        ({
-          value: `${json}`,
-          label: `${json}`,
-        } as FormSelectOptionModel)
-    );
-  };
-
-  // const generateOptionsAttributes = (
-  //   primaryIndex: number,
-  //   secondaryIndex: number,
-  //   attributeIndex: number
-  // ) => {
-  //   var options: string[] = [];
-  //   var objectiveHierachyData =
-  //     (objectivesData?.mains[0]?.primaries as any) ?? [];
-  //   objectiveHierachyData[primaryIndex].secondaries[
-  //     secondaryIndex
-  //   ].attributes.map((json: any) => {
-  //     if (
-  //       !localPrimaries.secondaries[primaryIndex].secondary.includes(
-  //         json.secondary
-  //       ) ||
-  //       localPrimaries.secondaries[primaryIndex].secondary[secondaryIndex] ===
-  //         json.secondary
-  //     ) {
-  //       options.push(json.secondary);
-  //     }
-  //   });
-
-  //   // 2: afficher
-
-  //   return options?.map(
-  //     json =>
-  //       ({
-  //         value: `${json}`,
-  //         label: `${json}`,
-  //       } as FormSelectOptionModel)
-  //   );
-  // };
-
-  /**
-   * generateOptions:
-   * Generates placeholder options
-   * Remove once computed options are added
-   */
-  const generateOptions = (text: string, n: number) =>
-    Array.from(Array(n).keys()).map(
-      (value: number) =>
-        ({
-          value: `${value}`,
-          label: `${text} ${value} `,
-        } as FormSelectOptionModel)
-    );
-
-  const onChangeSecondarySelect =
-    (index: number, primaryIndex: number) => (e: any) => {
-      // index: index du secondary objective qui a été modifié
-      // primaryIndex: index de son primary objective associé
-
-      //console.log('onChangeSecondarySelect', index, primaryIndex);
-      //console.log(localPrimaries);
-
-      // valeur du nouveau secondary objective
-      const newSecondaryObj = e.target.value;
-
-      // update la valeur du secondary objective dans le new array
-      //console.log('debug', primaryIndex, localPrimaries.secondaries);
-      let newSecondaryObjectifArray = [
-        ...localPrimaries.secondaries[primaryIndex].secondary,
-      ];
-      newSecondaryObjectifArray[index] = newSecondaryObj;
-
-      //update la valeur des attributes du secondary objective modifié
-      let newAttributesObjectifArray = [
-        ...localPrimaries.secondaries[primaryIndex].attributes,
-      ];
-      //console.log(localPrimaries);
-
-      // update options for attributes
-      let newAttributesOptions: string[] = ['a', 'b', 'c', 'd'];
-      newAttributesObjectifArray[index] = {
-        attribute: [],
-        attributeOptions: newAttributesOptions,
-      };
-      let newSecondariesObjectifArray = [...localPrimaries.secondaries];
-      newSecondariesObjectifArray[primaryIndex].secondary =
-        newSecondaryObjectifArray;
-      newSecondariesObjectifArray[primaryIndex].attributes =
-        newAttributesObjectifArray;
-
-      //filter options for primary
-      setLocalPrimaries({
-        primary: localPrimaries.primary,
-        secondaries: newSecondariesObjectifArray,
-        //todo
-        options: [...localPrimaries.options],
       });
-      adjustOptions();
+      return options;
     };
 
-  const onChangePrimarySelect = (index: any) => (e: any) => {
-    const newPrimaryValue = e.target.value;
-    const lastPrimaryValue = localPrimaries.primary[index];
+    const getAllSecondaryOptions = (primary: string) => {
+      let options: string[] = [];
+      objectivesData?.mains[0]?.primaries?.map(json => {
+        if (json.primary == primary) {
+          json.secondaries.map(json => {
+            options.push(json.secondary);
+          });
+        }
+      });
+      return options;
+    };
 
-    let newPrimary = [...localPrimaries.primary];
-    let newOptions = [...localPrimaries.options];
+    const getAllAttributesOptions = (primary: string, secondary: string) => {
+      let options: string[] = [];
+      objectivesData?.mains[0]?.primaries?.map(json => {
+        if (json.primary == primary) {
+          json.secondaries.map(json => {
+            if (json.secondary == secondary) {
+              json.attributes.map(json => {
+                options.push(json.attribute);
+              });
+            }
+          });
+        }
+      });
+      return options;
+    };
 
-    //Update primary list and primary options
-    newPrimary[index] = newPrimaryValue;
-    newOptions.splice(localPrimaries.options.indexOf(newPrimaryValue));
-    newOptions.push(lastPrimaryValue);
+    const formatOptions = (options: string[]) => {
+      return options.map(
+        main =>
+          ({
+            value: `${main}`,
+            label: `${main}`,
+          } as FormSelectOptionModel)
+      );
+    };
 
-    // update options for secondary
-    let newSecondaries = [...localPrimaries.secondaries];
-    const newSecondariesOptions: string[] = [];
-    objectivesData?.mains[0]?.primaries?.forEach(json => {
-      if (json.primary === newPrimaryValue) {
-        json.secondaries.forEach(json => {
-          newSecondariesOptions.push(json.secondary);
+    const generateOptionsMain = () => {
+      let options = [localObjectives.main];
+      getAllMainOptions().map(main => {
+        if (main != localObjectives.main) options.push(main);
+      });
+      return formatOptions(options);
+    };
+
+    const getUnusedPrimary = () => {
+      let unused: string[] = [];
+      getAllPrimaryOptions(localObjectives.main).map(primary => {
+        if (!localObjectives.primaries.primary.includes(primary))
+          unused.push(primary);
+      });
+      return unused;
+    };
+    const getUnusedSecondary = (primaryIndex: number) => {
+      let unused: string[] = [];
+      getAllSecondaryOptions(primaryName(primaryIndex)).map(secondary => {
+        if (
+          !localObjectives.primaries.secondaries[
+            primaryIndex
+          ].secondary.includes(secondary)
+        )
+          unused.push(secondary);
+      });
+      return unused;
+    };
+
+    const getUnusedAttribute = (
+      primaryIndex: number,
+      secondaryIndex: number
+    ) => {
+      let unused: string[] = [];
+      getAllAttributesOptions(
+        primaryName(primaryIndex),
+        secondaryName(primaryIndex, secondaryIndex)
+      ).map(attribute => {
+        if (
+          !localObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].attribute.includes(attribute)
+        )
+          unused.push(attribute);
+      });
+      return unused;
+    };
+
+    const generateOptionsPrimary = (primaryIndex: number) => {
+      let options = [
+        localObjectives.primaries.primary[primaryIndex],
+        ...getUnusedPrimary(),
+      ];
+      return formatOptions(options);
+    };
+
+    const generateOptionsSecondary = (
+      primaryIndex: number,
+      secondaryIndex: number
+    ) => {
+      let options = [
+        localObjectives.primaries.secondaries[primaryIndex].secondary[
+          secondaryIndex
+        ],
+        ...getUnusedSecondary(primaryIndex),
+      ];
+
+      return formatOptions(options);
+    };
+
+    const generateOptionsDataset = (
+      primaryIndex: number,
+      secondaryIndex: number,
+      attributeIndex: number
+    ) => {
+      let currentDatasetId =
+        localObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].id;
+      let options = [
+        localObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex],
+      ];
+
+      if (files.length > 0) {
+        files.map((f: { name: string; id: string }) => {
+          if (f.id != currentDatasetId)
+            options.push({ name: f.name, id: f.id });
         });
       }
-    });
-    newSecondaries[index] = {
-      secondary: [],
-      attributes: [],
-      options: newSecondariesOptions,
+      return options.map(
+        f =>
+          ({
+            value: `${JSON.stringify({ id: f.id, name: f.name })}`,
+            label: `${f.name}`,
+          } as FormSelectOptionModel)
+      );
+    };
+    let defaultSecondaries = { secondary: [], weights: [], attributes: [] };
+    let defaultAttributes = { attribute: [], weights: [], datasets: [] };
+    let defaultDataset = { name: '', id: '0' };
+
+    const onAddPrimary = () => () => {
+      let unused = getUnusedPrimary();
+      let newDefault = unused.length > 0 ? unused[0] : undefined;
+      if (newDefault !== undefined) {
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.primary.push(newDefault);
+        newObjectives.primaries.secondaries.push(defaultSecondaries);
+        newObjectives.primaries.weights.push(1);
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      }
     };
 
-    //filter options for primary
-    setLocalPrimaries({
-      primary: newPrimary,
-      secondaries: newSecondaries,
-      //todo
-      options: newOptions,
-    });
-    adjustOptions();
-  };
+    const onAddSecondary = (primaryIndex: number) => () => {
+      let unused = getUnusedSecondary(primaryIndex);
+      let newDefault = unused.length > 0 ? unused[0] : undefined;
+      if (newDefault !== undefined) {
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].secondary.push(
+          newDefault
+        );
+        newObjectives.primaries.secondaries[primaryIndex].attributes.push(
+          defaultAttributes
+        );
+        newObjectives.primaries.secondaries[primaryIndex].weights.push(1);
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      }
+    };
 
-  /**
-   * A factory that generates the attributes inputs on demand
-   * @param props: name and key are generators, which require a string to generate the name and keys of the elements,
-   *               orderIndex is the index at which it will be placed in the list
-   *               any other parameters are parameters given in the "controls" field
-   * @returns A second order objective ReactElement
-   */
-  const attributesFactory = ({
-    name,
-    key,
-    orderIndex,
-    defaultAttribute,
-    defaultDataset,
-  }: FactoryProps): ReactElement | ReactElement[] => [
-    <Select
-      hideLabel
-      key={key('attribute')}
-      name={name('attribute')}
-      defaultValue={defaultAttribute}
-      label={`attribute ${orderIndex}`}
-      options={generateOptions('attribute', 3)}
-    />,
-    <Select
-      hideLabel
-      key={key('dataset')}
-      name={name('dataset')}
-      defaultValue={defaultDataset}
-      label={`dataset`}
-      options={generateOptions('Dataset', 3)}
-    />,
-  ];
+    const onAddAttribute =
+      (primaryIndex: number, secondaryIndex: number) => () => {
+        //let unused = getUnusedAttribute(primaryIndex, secondaryIndex);
+        //let newDefault = unused.length > 0 ? unused[0] : undefined;
 
-  /**
-   * A factory that generates the secondary objective inputs on demand
-   * @param props: name and key are generators, which require a string to generate the name and keys of the elements,
-   *               orderIndex is the index at which it will be placed in the list
-   *               any other parameters are parameters given in the "controls" field
-   * @returns A second order objective ReactElement
-   */
+        if (
+          localObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].attribute.length == 0
+        ) {
+          let newObjectives = copyLocalObjective();
+          newObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].attribute.push('');
 
-  const secondaryObjectivesFactory = ({
-    name,
-    key,
-    orderIndex,
-    defaultValue,
-    primaryObjIndex,
-    secondaryObjIndex,
-    childrenValues: attributes,
-  }: FactoryProps): ReactElement | ReactElement[] => [
-    <Select
-      hideLabel
-      label={`secondary objective ${orderIndex}`}
-      key={key('secondary')}
-      name={name('secondary')}
-      defaultValue={defaultValue}
-      onChange={(e: any) => {
-        onChangeSecondarySelect(secondaryObjIndex, primaryObjIndex)(e);
-      }}
-      options={generateOptionsSecondaries(primaryObjIndex, orderIndex)}
-    />,
-    <ExpandableList
-      hideLabel
-      key={key('attributes')}
-      name={name('attributes')}
-      factory={attributesFactory}
-      label="attributes"
-      controls={attributes?.attribute?.map((defaultAttribute: string) => ({
-        defaultAttribute,
-        attributeOptions: attributes.attributeOptions,
-      }))}
-      onAddControl={onAddAttribute(primaryObjIndex, secondaryObjIndex)}
-      onRemoveControl={onRemoveAttribute(primaryObjIndex, secondaryObjIndex)}
-    />,
-  ];
-  /**
-   * A factory that generates the primary objective inputs on demand
-   * @param props: name and key are generators, which require a string to generate the name and keys of the elements,
-   *               orderIndex is the index at which it will be placed in the list
-   *               any other parameters are parameters given in the "controls" field
-   * @returns A first order objective ReactElement
-   */
-  const primaryObjectivesFactory = ({
-    name,
-    key,
-    primaryObjIndex,
-    orderIndex,
-    primary,
-    childrenValues: secondaries,
-  }: FactoryProps): ReactElement | ReactElement[] => [
-    <Select
-      hideLabel
-      label={`primary objective ${orderIndex}`}
-      key={key('primary')}
-      name={name('primary')}
-      defaultValue={primary}
-      onChange={(e: any) => {
-        onChangePrimarySelect(orderIndex)(e);
-      }}
-      options={generateOptionsPrimaries(orderIndex)}
-    />,
-    <ExpandableList
-      hideLabel
-      key={key('secondaries')}
-      name={name('secondaries')}
-      factory={secondaryObjectivesFactory}
-      label="secondary objectives"
-      controls={localPrimaries.secondaries[orderIndex].secondary?.map(
-        (defaultValueSecondary: string, index: number) => ({
-          defaultValue: defaultValueSecondary,
-          primaryObjIndex,
-          secondaryObjIndex: index,
+          newObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].datasets.push(defaultDataset);
+
+          newObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].weights.push(1);
+          newObjectives.update = !localObjectives.update;
+          setLocalObjectives(newObjectives);
+        }
+      };
+
+    const onRemovePrimary = () => (primaryIndex: number) => {
+      let newObjectives = copyLocalObjective();
+      newObjectives.primaries.primary.splice(primaryIndex, 1);
+      newObjectives.primaries.secondaries.splice(primaryIndex, 1);
+      newObjectives.primaries.weights.splice(primaryIndex, 1);
+      newObjectives.update = !localObjectives.update;
+      setLocalObjectives(newObjectives);
+    };
+    const onRemoveSecondary =
+      (primaryIndex: number) => (secondaryIndex: number) => {
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].secondary.splice(
+          secondaryIndex,
+          1
+        );
+        newObjectives.primaries.secondaries[primaryIndex].attributes.splice(
+          secondaryIndex,
+          1
+        );
+        newObjectives.primaries.secondaries[primaryIndex].weights.splice(
+          secondaryIndex,
+          1
+        );
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
+    const onRemoveAttribute =
+      (primaryIndex: number, secondaryIndex: number) =>
+      (attributeIndex: number) => {
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].attribute.splice(attributeIndex, 1);
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets.splice(attributeIndex, 1);
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].weights.splice(attributeIndex, 1);
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
+    const onChangePrimary = (primaryIndex: number) => (e: any) => {
+      let newPrimary = e.target.value;
+      let newObjectives = copyLocalObjective();
+      newObjectives.primaries.primary[primaryIndex] = newPrimary;
+      newObjectives.primaries.secondaries[primaryIndex] = defaultSecondaries;
+      newObjectives.update = !localObjectives.update;
+      setLocalObjectives(newObjectives);
+    };
+
+    const onChangeSecondary =
+      (primaryIndex: number, secondaryIndex: number) => (e: any) => {
+        let newSecondary = e.target.value;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].secondary[
+          secondaryIndex
+        ] = newSecondary;
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ] = defaultAttributes;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
+    const onChangeAttribute =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (value: any) => {
+        console.log('onChangeAttribute', value);
+        let newAttribute = value;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].attribute[attributeIndex] = newAttribute;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
+    const onChangeAttribute2 =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (event: any) => {
+        event.persist();
+        let value = event.target.value;
+        console.log(value);
+
+        let newAttribute = value;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].attribute[attributeIndex] = newAttribute;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+    const onChangeDataset =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (e: any) => {
+        let newDatasetName = JSON.parse(e.target.value).name;
+        let newDatasetId = JSON.parse(e.target.value).id;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex] = { name: newDatasetName, id: newDatasetId };
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+    /* Fin **************/
+
+    /**
+     * A factory that generates the attributes inputs on demand
+     * @param props: name and key are generators, which require a string to generate the name and keys of the elements,
+     *               orderIndex is the index at which it will be placed in the list
+     *               any other parameters are parameters given in the "controls" field
+     * @returns A second order objective ReactElement
+     */
+    const attributesFactory = ({
+      name,
+      key,
+      orderIndex,
+      primaryIndex,
+      secondaryIndex,
+      defaultAttribute,
+      defaultDataset,
+    }: FactoryProps): ReactElement | ReactElement[] => {
+      const attributeNameRef: RefObject<HTMLSpanElement> = createRef();
+
+      return [
+        <Control
+          label="attribute"
+          key={key('attribute_') + localObjectives.update}
+          name="attribute"
+          defaultValue={
+            localObjectives.primaries.secondaries[primaryIndex].attributes[
+              secondaryIndex
+            ].attribute[orderIndex]
+          }
+          required
+          onChange={onChangeAttribute2(
+            primaryIndex,
+            secondaryIndex,
+            orderIndex
+          )}
+          //tooltip={t("the modeler's name will ...")}
+        />,
+        <Select
+          hideLabel
+          key={key('dataset') + localObjectives.update}
+          name={name('dataset')}
+          defaultValue={defaultDataset}
+          label={`dataset`}
+          onChange={(e: any) => {
+            onChangeDataset(primaryIndex, secondaryIndex, orderIndex)(e);
+          }}
+          options={generateOptionsDataset(
+            primaryIndex,
+            secondaryIndex,
+            orderIndex
+          )}
+        />,
+      ];
+    };
+
+    /**
+     * A factory that generates the secondary objective inputs on demand
+     * @param props: name and key are generators, which require a string to generate the name and keys of the elements,
+     *               orderIndex is the index at which it will be placed in the list
+     *               any other parameters are parameters given in the "controls" field
+     * @returns A second order objective ReactElement
+     */
+
+    const secondaryObjectivesFactory = ({
+      name,
+      key,
+      orderIndex,
+      defaultValue,
+      primaryIndex,
+      secondaryIndex,
+      childrenValues: attributes,
+    }: FactoryProps): ReactElement | ReactElement[] => [
+      <Select
+        hideLabel
+        label={`secondary objective ${orderIndex}`}
+        key={key('secondary') + localObjectives.update}
+        name={name('secondary')}
+        defaultValue={defaultValue}
+        onChange={(e: any) => {
+          onChangeSecondary(primaryIndex, secondaryIndex)(e);
+        }}
+        options={generateOptionsSecondary(primaryIndex, orderIndex)}
+      />,
+      <ExpandableList
+        hideLabel
+        key={key('attributes') + localObjectives.update}
+        name={name('attributes')}
+        factory={attributesFactory}
+        label="attributes"
+        controls={getAttribute(primaryIndex, secondaryIndex).map(
+          (defaultAttribute: string, index: number) => ({
+            defaultAttribute,
+            primaryIndex,
+            secondaryIndex,
+            attributeIndex: index,
+            attributeOptions: attributes.attributeOptions,
+          })
+        )}
+        onAddControl={onAddAttribute(primaryIndex, secondaryIndex)}
+        onRemoveControl={onRemoveAttribute(primaryIndex, secondaryIndex)}
+      />,
+    ];
+    /**
+     * A factory that generates the primary objective inputs on demand
+     * @param props: name and key are generators, which require a string to generate the name and keys of the elements,
+     *               orderIndex is the index at which it will be placed in the list
+     *               any other parameters are parameters given in the "controls" field
+     * @returns A first order objective ReactElement
+     */
+    const primaryObjectivesFactory = ({
+      name,
+      key,
+      primaryIndex,
+      orderIndex,
+      primary,
+      childrenValues: secondaries,
+    }: FactoryProps): ReactElement | ReactElement[] => [
+      <Select
+        hideLabel
+        label={`primary objective ${orderIndex}`}
+        key={key('primary') + localObjectives.update}
+        name={name('primary')}
+        defaultValue={primary}
+        onChange={(e: any) => {
+          onChangePrimary(orderIndex)(e);
+        }}
+        options={generateOptionsPrimary(orderIndex)}
+      />,
+      <ExpandableList
+        hideLabel
+        key={key('secondaries') + localObjectives.update}
+        name={name('secondaries')}
+        factory={secondaryObjectivesFactory}
+        label="secondary objectives"
+        controls={getSecondary(orderIndex).map(
+          (defaultValueSecondary: string, index: number) => ({
+            defaultValue: defaultValueSecondary,
+            primaryIndex,
+            secondaryIndex: index,
+            primary,
+            childrenValues: getAttribute(orderIndex, index),
+          })
+        )}
+        onAddControl={onAddSecondary(primaryIndex)}
+        onRemoveControl={onRemoveSecondary(primaryIndex)}
+      />,
+    ];
+
+    const mainControls = [
+      <Select
+        key="main"
+        name="main"
+        label={'Objectives'}
+        //defaultValue={'h'}
+        options={generateOptionsMain()}
+      />,
+      <ExpandableList
+        hideLabel
+        key={`primaries.0` + localObjectives.update + isLoading}
+        name={`primaries.0`}
+        factory={primaryObjectivesFactory}
+        label={'primary objectives'}
+        controls={getPrimary().map((primary: string, index: number) => ({
           primary,
-          childrenValues:
-            localPrimaries.secondaries[orderIndex].attributes[index],
-        })
-      )}
-      onAddControl={onAddSecondary(primaryObjIndex)}
-      onRemoveControl={onRemoveSecondary(primaryObjIndex)}
+          primaryIndex: index,
+          childrenValues: getSecondary(index),
+        }))}
+        onAddControl={onAddPrimary()}
+        onRemoveControl={onRemovePrimary()}
+      />,
+    ];
 
-      //controls={secondaries?.secondary?.map(
-      //  (defaultValueSecondary: string, index: number) => ({
-      //    defaultValue: defaultValueSecondary,
-      //    primary: defaultValue,
-      //    childrenValues: secondaries?.attributes[index],
-      //  })
-      // )}
-    />,
-  ];
-
-  const mainControls = [
-    <Select
-      key="main"
-      name="main"
-      label={'Objectives'}
-      defaultValue={localMainValue}
-      options={generateOptionsMain()}
-    />,
-    <ExpandableList
-      hideLabel
-      key={`primaries.0`}
-      name={`primaries.0`}
-      factory={primaryObjectivesFactory}
-      label={'primary objectives'}
-      controls={localPrimaries?.primary?.map(
-        (primary: string, index: number) => ({
-          primary,
-          primaryObjIndex: index,
-          childrenValues: localPrimaries?.secondaries[index],
-        })
-      )}
-      onAddControl={onAddPrimary()}
-      onRemoveControl={onRemovePrimary()}
-    />,
-  ];
-
-  const controls = [
-    ...mainControls,
-    <Spacer />,
-    <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
-  ];
-
+    controls = [
+      ...mainControls,
+      <Spacer />,
+      <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
+    ];
+  } else {
+    controls = [<></>];
+  }
   return (
     <Form
       controls={controls}
-      onSubmit={(fields: any) => dispatch(updateObjectives(fields))}
+      errors={getErrors}
+      disabled={isLoading}
+      onSubmit={() => {
+        if (isValidOH(localObjectives)) {
+          dispatch(
+            injectSetLoadingCreator({
+              value: property,
+              isLoading: true,
+            } as LoadingValue<string>)()
+          );
+          dispatch(
+            call({
+              target: ServerTargets.Update,
+              args: [property, localObjectives],
+              onSuccessAction: injectSetLoadingCreator({
+                value: property,
+                isLoading: false,
+              } as LoadingValue<string>),
+              onErrorAction: injectSetErrorCreator(property),
+            } as CallModel)
+          );
+        } else {
+          console.warn('Invalid objective hierarchy');
+        }
+      }}
     />
   );
 }
