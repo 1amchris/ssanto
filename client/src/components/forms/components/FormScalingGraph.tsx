@@ -9,17 +9,19 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-
+import { Bar } from 'react-chartjs-2';
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
@@ -63,8 +65,6 @@ const generateData = (distribution: number[], distribution_value: number[]) => {
 class FormScalingGraph extends FormComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/control-'), key);
-    const distribution = props.distribution;
-    const distribution_value = props.distribution_value;
   }
 
   render = () => {
@@ -78,8 +78,6 @@ class FormScalingGraph extends FormComponent {
       label,
       distribution,
       distribution_value,
-      max,
-      min,
       type,
       ...props
     } = this.getFilteredProps();
@@ -95,7 +93,7 @@ class FormScalingGraph extends FormComponent {
           <small>{capitalize(t(label || this.props.name))}</small>
         </Form.Label>
         <this.Overlay>
-          {true ? (
+          {type == 'Continuous' ? (
             <div style={{ width: 200, height: 200 }}>
               <Line
                 key={this.key}
@@ -104,7 +102,13 @@ class FormScalingGraph extends FormComponent {
               />
             </div>
           ) : (
-            <></>
+            <div style={{ width: 200, height: 200 }}>
+              <Bar
+                key={this.key}
+                options={options}
+                data={generateData(distribution, distribution_value)}
+              />
+            </div>
           )}
         </this.Overlay>
       </Form.Group>

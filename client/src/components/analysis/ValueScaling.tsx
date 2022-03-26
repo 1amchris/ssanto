@@ -74,13 +74,6 @@ function ValueScaling({ t }: any) {
         onChange={onChangeValueScalingFunction(attributeIndex)}
         tooltip={t('')}
       />,
-      <ScalingGraph
-        distribution={localValueScaling[attributeIndex].properties.distribution}
-        distribution_value={
-          localValueScaling[attributeIndex].properties.distribution_value
-        }
-        style={{ height: '100px' }}
-      />,
     ];
 
     const categoricalRowFactory = ({
@@ -109,7 +102,7 @@ function ValueScaling({ t }: any) {
       key,
       attributeIndex,
       distribution,
-      values,
+      distribution_value,
     }: FactoryProps) => (
       <SimpleList
         key={key('categorical')}
@@ -118,7 +111,7 @@ function ValueScaling({ t }: any) {
         factory={categoricalRowFactory}
         controls={distribution.map((category: any, index: number) => ({
           category,
-          value: values[index],
+          value: distribution_value[index],
           categoryIndex: index,
           attributeIndex,
         }))}
@@ -136,6 +129,16 @@ function ValueScaling({ t }: any) {
         {type == 'Continuous'
           ? continuousScalingBox({ key, attributeIndex, ...properties })
           : categoricalScalingBox({ key, attributeIndex, ...properties })}
+        <ScalingGraph
+          distribution={
+            localValueScaling[attributeIndex].properties.distribution
+          }
+          distribution_value={
+            localValueScaling[attributeIndex].properties.distribution_value
+          }
+          type={type}
+        />
+        ,
       </Collapsible>
     );
 
