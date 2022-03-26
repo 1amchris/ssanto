@@ -57,11 +57,6 @@ export const mapSlice = createSlice({
     ) => {
       // if any validation is required, add it here
       state.cursorInformations = payload;
-      // console.log(
-      //   'updated cursor informations',
-      //   state.cursorInformations,
-      //   state.cursorInformations?.placeholder
-      // );
     },
     updateZoom: (state, { payload: zoom }: PayloadAction<number>) => {
       if (zoom < 1) {
