@@ -7,7 +7,6 @@ from py.subjects_manager import SubjectsManager
 
 from py.logger import *
 
-from py.analyser import Analyser
 from py.analysis import Analysis
 from py.file_manager import FilesManager
 from py.guide_builder import GuideBuilder

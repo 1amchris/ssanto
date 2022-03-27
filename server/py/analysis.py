@@ -1,4 +1,3 @@
-from .analyser import Analyser
 from .serializable import Serializable
 from .suitability_calculator import SuitabilityCalculator
 from .file import File
@@ -7,6 +6,7 @@ from .map import LatLng, MapCursorInformations
 from .server_socket import CallException
 from base64 import b64encode
 import pickle
+
 
 class Analysis(Serializable):
     @staticmethod
@@ -21,7 +21,7 @@ class Analysis(Serializable):
         self.files_manager = files_manager
 
         self.study_area_file_name = None
-    
+
         self.parameters = subjects_manager.create(
             "parameters",
             {
@@ -61,7 +61,7 @@ class Analysis(Serializable):
             "analysis": {
                 "parameters": self.parameters.value(),
                 # Commented for now, I'll (Tristan) fix it later.
-                #"study_area": self.study_area.__dict__() if self.study_area else None,
+                # "study_area": self.study_area.__dict__() if self.study_area else None,
                 "nbs": self.nbs.value(),
             },
             "files": self.files_manager.serialize(),
@@ -120,7 +120,7 @@ class Analysis(Serializable):
                 "No valid shapefiles uploaded. Make sure that both [.shx and .shp are uploaded, and both have the same name, then try again.]"
             )
         print("receive_study_area", shps[0].name)
-        self.study_area_file_name = shps[0].name # shp.name?
+        self.study_area_file_name = shps[0].name  # shp.name?
 
         geojson = FileParser.load(self.files_manager, shx.id, shp.id)
         return {"file_name": shp.name, "area": geojson}
@@ -148,9 +148,11 @@ class Analysis(Serializable):
                 ):
                     file_id = attributes["datasets"][0]["id"]
                     file = self.files_manager.get_files_by_id(file_id)
-                    input_file = file[0].name #"temp/" + file[0].group_id + ".shp"
-                    calculator.add_file_to_objective(primary, index, input_file, int(weight_secondary), scaling_function)
-                    #calculator.objectives[primary].add_file(
+                    input_file = file[0].name  # "temp/" + file[0].group_id + ".shp"
+                    calculator.add_file_to_objective(
+                        primary, index, input_file, int(weight_secondary), scaling_function
+                    )
+                    # calculator.objectives[primary].add_file(
                     #    index, path, "output.tiff", int(weight_secondary), scaling_function)
 
             geo_json = calculator.process_data()
