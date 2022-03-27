@@ -2,9 +2,12 @@ from uuid import uuid4
 from base64 import b64decode
 from geojson_rewind import rewind
 import shapefile
+import os
+import shutil
 
 from py.file import File
 from py.file_metadata import FileMetaData
+from py.serializable import Serializable
 
 
 class FileParser:
@@ -34,16 +37,39 @@ class FileParser:
         geojson = {"type": "FeatureCollection", "features": features}
         return rewind(geojson)
 
+class FilesWriter:
+    def __init__(self):
+        self.main_dir = os.path.join(os.getcwd(),'temp')
+        if os.path.exists(self.main_dir):
+            shutil.rmtree(self.main_dir)
+        os.makedirs(self.main_dir)
+
+    def get_path(self):
+        return self.main_dir
+
+    def save_file(self, name, content):
+        with open(os.path.join(self.main_dir, name), 'wb') as file:
+            file.write(content)
+
+    def remove_file(self, name):
+        os.remove(os.path.join(self.main_dir, name))
+
+    def __del__(self):
+        shutil.rmtree(self.main_dir)    
+
 
 class FilesManager:
     def __init__(self, subjects_manager):
         self.subjects_manager = subjects_manager
         self.files_content = dict()
-        self.temp_dir = "temp/"
         self.files = self.subjects_manager.create("file_manager.files", dict())
+        self.writer = FilesWriter()
 
-    def __dict__(self) -> dict:
-        return {key: file.__dict__() for key, file in self.files_content.items()}
+    def serialize(self) -> dict:
+        return {key: file.serialize() for key, file in self.files_content.items()}
+
+    def get_writer_path(self):
+        return self.writer.get_path()
 
     def get_file(self, id):
         return self.files[id]
@@ -64,21 +90,9 @@ class FilesManager:
 
     def remove_file(self, id):
         popped = self.files_content.pop(id)
+        self.writer.remove_file(popped.name)
         self.__notify_metadatas()
         return popped
-
-    def save_files_locally(self, temp_dir, file_name, *ids):
-        # print("add_files", temp_dir)
-
-        files = sorted(self.get_files_by_id(*ids), key=lambda file: file.extension)
-        path = []
-        for f in files:
-            print("save_files_locally", temp_dir, file_name, f.extension)
-            temp_path = temp_dir + file_name + "." + f.extension
-            with open(temp_path, "wb") as out:
-                out.write(f.get_file_descriptor().read())
-            path.append(temp_path)
-        return path
 
     # files: { name: string; size: number; content: string (base64); }[]
     def add_files(self, *files):
@@ -88,7 +102,8 @@ class FilesManager:
         for file in files:
             new_file = File(file["name"], b64decode(file["content"]), group_id=group_id)
             self.files_content[new_file.id] = new_file
-            new_file.path = self.save_files_locally(self.temp_dir, group_id, new_file.id)
+            self.writer.save_file(new_file.name, new_file.read_content())
+            #new_file.path = self.save_files_locally(self.temp_dir, group_id, new_file.id)
             # print("add_files", new_file.path)
             # if new_file.extension == "shp":
             #     new_file.set_column()
@@ -102,8 +117,6 @@ class FilesManager:
 
     def __notify_metadatas(self):
         metadatas = self.get_files_metadatas()
-        # we need to manually call __dict__ for some unknown reason.
-        # It doesn't seem to play nice otherwise
-        self.files.notify([metadata.__dict__() for metadata in metadatas])
+        self.files.notify(metadatas)
 
     # Add loaded file to the file manager?

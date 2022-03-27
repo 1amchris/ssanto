@@ -31,7 +31,6 @@ function ValueScaling({ t }: any) {
   const isLoading = selector.properties.valueScalingLoading;
 
   const [localValueScaling, setLocalValueScaling] = useState(valueScaling);
-  console.log('VALUE SCALING', localValueScaling);
   let controls = [];
   if (!(valueScaling === undefined) && valueScaling.length > 0) {
     const continuousScalingBox = ({
@@ -44,7 +43,7 @@ function ValueScaling({ t }: any) {
         key={key('continuous')}
         label="value scaling function"
         name="continuous"
-        defaultValue={valueScaling[attributeIndex].properties.function}
+        defaultValue={valueScaling[attributeIndex].properties}
         required
         prefix={
           <React.Fragment>

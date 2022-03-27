@@ -65,7 +65,7 @@ function StudyArea({ t }: any) {
               target: ServerCallTargets.UpdateStudyAreaFiles,
               args: files,
               onSuccessAction: studyAreaReceived,
-              onFailureAction: injectSetErrorCreator(property),
+              onErrorAction: injectSetErrorCreator(property),
             } as CallModel<FileContentModel<string>[], any, void, string, string>)
           );
         });

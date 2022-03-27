@@ -86,7 +86,7 @@ function FileExplorer({ t }: any) {
                 value: property,
                 isLoading: false,
               } as LoadingValue<string>),
-              onFailureAction: injectSetErrorCreator(property),
+              onErrorAction: injectSetErrorCreator(property),
             } as CallModel<[string], void, LoadingValue<string>, string, string>)
           );
         }}
@@ -118,7 +118,7 @@ function FileExplorer({ t }: any) {
                 value: property,
                 isLoading: false,
               } as LoadingValue<string>),
-              onFailureAction: injectSetErrorCreator(property),
+              onErrorAction: injectSetErrorCreator(property),
             } as CallModel<FileContentModel<string>[], void, LoadingValue<string>, string, string>)
           )
         );
