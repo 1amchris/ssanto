@@ -1,6 +1,7 @@
 import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
+import FormSelectOptionModel from '../../models/form/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 import {
@@ -22,8 +23,8 @@ import Form from 'components/forms/Form';
 import ValueScalingModel from 'models/ValueScalingModel';
 import LoadingValue from 'models/LoadingValue';
 import { call } from 'store/reducers/server';
-import ServerTargets from 'enums/ServerTargets';
 import CallModel from 'models/server-coms/CallModel';
+import ServerCallTargets from 'enums/ServerCallTargets';
 
 function ValueScaling({ t }: any) {
   const property = 'value_scaling';
@@ -36,8 +37,6 @@ function ValueScaling({ t }: any) {
   const isLoading = selector.properties.valueScalingLoading;
 
   const [localValueScaling, setLocalValueScaling] = useState(valueScaling);
-
-  console.log('VALUE SCALING', localValueScaling);
   let controls = [];
   if (!(localValueScaling === undefined) && localValueScaling.length > 0) {
     const onChangeValueScalingFunction =
@@ -195,7 +194,7 @@ function ValueScaling({ t }: any) {
         );
         dispatch(
           call({
-            target: ServerTargets.Update,
+            target: ServerCallTargets.Update,
             args: [property, localValueScaling],
             onSuccessAction: injectSetLoadingCreator({
               value: property,

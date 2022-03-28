@@ -20,7 +20,7 @@ import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import React from 'react';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 
 function Weighting({ t }: any) {
   const property = 'objectives';
@@ -105,7 +105,6 @@ function Weighting({ t }: any) {
       primaryIndex,
       secondaryIndex,
       defaultAttribute,
-      defaultDataset,
     }: FactoryProps): ReactElement | ReactElement[] => {
       const weightRef: RefObject<HTMLSpanElement> = createRef();
       return [
@@ -156,7 +155,7 @@ function Weighting({ t }: any) {
     }: FactoryProps): ReactElement | ReactElement[] => {
       const weightRef: RefObject<HTMLSpanElement> = createRef();
 
-      return [
+      const controls = [
         <Control
           key={key('secondary') + localObjectives.update}
           label={secondaryName(primaryIndex, orderIndex)}
@@ -187,22 +186,32 @@ function Weighting({ t }: any) {
           type="number"
           //tooltip={t('the cell size is ...')}
         />,
-        <SimpleList
-          hideLabel
-          key={key('secondaries') + localObjectives.update}
-          name={name('secondaries')}
-          factory={weightAttributeFactory}
-          controls={getAttribute(primaryIndex, secondaryIndex).map(
-            (defaultAttribute: string, index: number) => ({
-              defaultAttribute,
-              primaryIndex,
-              secondaryIndex,
-              attributeIndex: index,
-              attributeOptions: attributes.attributeOptions,
-            })
-          )}
-        />,
       ];
+      if (
+        localObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].attribute.length > 1
+      ) {
+        controls.push(
+          <SimpleList
+            hideLabel
+            key={key('secondaries') + localObjectives.update}
+            name={name('secondaries')}
+            factory={weightAttributeFactory}
+            controls={getAttribute(primaryIndex, secondaryIndex).map(
+              (defaultAttribute: string, index: number) => ({
+                defaultAttribute,
+                primaryIndex,
+                secondaryIndex,
+                attributeIndex: index,
+                attributeOptions: attributes.attributeOptions,
+              })
+            )}
+          />
+        );
+      }
+
+      return controls;
     };
 
     const weightPrimaryFactory = ({
@@ -214,7 +223,8 @@ function Weighting({ t }: any) {
       childrenValues: secondaries,
     }: FactoryProps): ReactElement | ReactElement[] => {
       const weightRef: RefObject<HTMLSpanElement> = createRef();
-      return [
+
+      const controls = [
         <Control
           label={primaryName(orderIndex)}
           key={key('primary') + localObjectives.update}
@@ -237,22 +247,39 @@ function Weighting({ t }: any) {
           type="number"
           //tooltip={t('the cell size is ...')}
         />,
-        <SimpleList
-          hideLabel
-          name={name('primaries')}
-          key={key('primaries') + localObjectives.update}
-          factory={weightSecondaryFactory}
-          controls={getSecondary(orderIndex).map(
-            (defaultValueSecondary: string, index: number) => ({
-              defaultValue: defaultValueSecondary,
-              primaryIndex,
-              secondaryIndex: index,
-              primary,
-              childrenValues: getAttribute(orderIndex, index),
-            })
-          )}
-        />,
       ];
+
+      // There is more than one secondary objective
+      // OR
+      // There is one secondary objective with many attributes
+      if (
+        localObjectives.primaries.secondaries[primaryIndex].secondary.length >
+          1 ||
+        (localObjectives.primaries.secondaries[primaryIndex].secondary.length ==
+          1 &&
+          localObjectives.primaries.secondaries[primaryIndex].attributes[0]
+            .attribute.length > 1)
+      ) {
+        controls.push(
+          <SimpleList
+            hideLabel
+            name={name('primaries')}
+            key={key('primaries') + localObjectives.update}
+            factory={weightSecondaryFactory}
+            controls={getSecondary(orderIndex).map(
+              (defaultValueSecondary: string, index: number) => ({
+                defaultValue: defaultValueSecondary,
+                primaryIndex,
+                secondaryIndex: index,
+                primary,
+                childrenValues: getAttribute(orderIndex, index),
+              })
+            )}
+          />
+        );
+      }
+
+      return controls;
     };
 
     const mainControls = [
@@ -294,7 +321,7 @@ function Weighting({ t }: any) {
         );
         dispatch(
           call({
-            target: ServerTargets.Update,
+            target: ServerCallTargets.Update,
             args: [property, localObjectives],
             onSuccessAction: injectSetLoadingCreator({
               value: property,

@@ -10,11 +10,11 @@ import {
 import Form from 'components/forms/Form';
 import { Control, Button, Spacer } from 'components/forms/components';
 import { call } from 'store/reducers/server';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
-import FileContentModel from 'models/file-models/FileContentModel';
+import FileContentModel from 'models/file/FileContentModel';
 import LoadingValue from 'models/LoadingValue';
-import Utils from 'utils';
+import FilesUtils from 'utils/files-utils';
 
 function StudyArea({ t }: any) {
   const property = 'studyArea';
@@ -59,13 +59,13 @@ function StudyArea({ t }: any) {
             isLoading: true,
           } as LoadingValue<string>)()
         );
-        Utils.extractContentFromFiles(Array.from(fields.files)).then(files => {
+        FilesUtils.extractContentFromFiles(Array.from(fields.files)).then(files => {
           dispatch(
             call({
-              target: ServerTargets.UpdateStudyAreaFiles,
+              target: ServerCallTargets.UpdateStudyAreaFiles,
               args: files,
               onSuccessAction: studyAreaReceived,
-              onFailureAction: injectSetErrorCreator(property),
+              onErrorAction: injectSetErrorCreator(property),
             } as CallModel<FileContentModel<string>[], any, void, string, string>)
           );
         });

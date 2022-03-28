@@ -1,5 +1,5 @@
 import React from 'react';
-import CategoryModel from 'models/guide-models/CategoryModel';
+import CategoryModel from 'models/guide/CategoryModel';
 import CategoryLink from 'components/guide/CategoryLink';
 
 function CategoryLinks({ children: categories, style }: any) {

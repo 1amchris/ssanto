@@ -4,7 +4,7 @@ import FormsBar from 'components/forms/FormsBar';
 import Collapsible from 'components/Collapsible';
 import FileExplorer from './analysis/FileExplorer';
 import InteractiveMapContainer from 'components/map/InteractiveMapContainer';
-import InformationCard from 'components/information-card/InformationCard';
+import InformationCard from 'components/aside-informations/InformationCard';
 import {
   Parameters,
   StudyArea,
@@ -15,10 +15,12 @@ import {
 } from 'components/analysis';
 import { useAppSelector } from 'store/hooks';
 import { selectAnalysis } from 'store/reducers/analysis';
-//import ValueScaling from './analysis/ValueScaling';
+import MapCursorInformation from './aside-informations/MapCursorInformation';
+import { selectMap } from 'store/reducers/map';
 
 function Main() {
   const selector = useAppSelector(selectAnalysis);
+  //const { cursor } = useAppSelector(selectMap);
   const ohIsLoading = selector.properties.objectivesLoading;
   const valueScalingIsLoading = selector.properties.valueScalingLoading;
 
@@ -70,6 +72,13 @@ function Main() {
             className="position-absolute top-0 end-0 mh-100 py-3 pe-3 overflow-scroll"
             style={{ width: '270px' }}
           >
+            {/*cursor && (
+              <InformationCard>
+                <Collapsible title={'Map informations'}>
+                  <MapCursorInformation />
+                </Collapsible>
+              </InformationCard>
+            )*/}
             {[
               'Interpolation chart',
               'World population',

@@ -1,11 +1,11 @@
 import React from 'react';
-import FileContentModel from 'models/file-models/FileContentModel';
+import FileContentModel from 'models/file/FileContentModel';
 import { useAppDispatch } from 'store/hooks';
 import { exportData } from 'store/reducers/export';
 import { Action, Divider, Import, Link } from './components';
 import { call } from 'store/reducers/server';
 import Menu from './Menu';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 
 function MenuBar() {
@@ -27,7 +27,7 @@ function MenuBar() {
         onClick={() =>
           dispatch(
             call({
-              target: ServerTargets.SaveProject,
+              target: ServerCallTargets.SaveProject,
               onSuccessAction: exportData,
               // TODO: There should probably be an "onErrorAction"
             } as CallModel<void, FileContentModel<string>, void, string, string>)
@@ -39,7 +39,7 @@ function MenuBar() {
         onClick={() =>
           dispatch(
             call({
-              target: ServerTargets.SaveProject,
+              target: ServerCallTargets.SaveProject,
               onSuccessAction: exportData,
               // TODO: There should probably be an "onErrorAction"
             } as CallModel<void, FileContentModel<string>, void, string, string>)

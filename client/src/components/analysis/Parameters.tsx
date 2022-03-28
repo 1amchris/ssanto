@@ -10,7 +10,7 @@ import {
 import { withTranslation } from 'react-i18next';
 import Form from 'components/forms/Form';
 import { call } from 'store/reducers/server';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
@@ -79,13 +79,13 @@ function Parameters({ t }: any) {
         );
         dispatch(
           call({
-            target: ServerTargets.Update,
+            target: ServerCallTargets.Update,
             args: [property, { ...properties, ...fields }],
             onSuccessAction: injectSetLoadingCreator({
               value: property,
               isLoading: false,
             } as LoadingValue<string>),
-            onFailureAction: injectSetErrorCreator(property),
+            onErrorAction: injectSetErrorCreator(property),
           } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
         );
       }}

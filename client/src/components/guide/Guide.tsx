@@ -11,7 +11,7 @@ import CategoryLinks from 'components/guide/CategoryLinks';
 import { call } from 'store/reducers/server';
 import { useEffectOnce } from 'hooks';
 import CallModel from 'models/server-coms/CallModel';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 
 function Guide({ t }: any) {
   const categories = useAppSelector(selectGuide).categories;
@@ -20,7 +20,7 @@ function Guide({ t }: any) {
   useEffectOnce(() => {
     dispatch(
       call({
-        target: ServerTargets.GuideGet,
+        target: ServerCallTargets.GuideGet,
         onSuccessAction: updateCategories,
       } as CallModel)
     );
