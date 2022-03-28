@@ -84,7 +84,7 @@ function ObjectiveHierarchy({ t }: any) {
   const [localObjectives, setLocalObjectives] = useState({
     ...objectives,
     update: true,
-  } as { main: string; update: boolean; primaries: { primary: string[]; weights: number[]; secondaries: { secondary: string[]; weights: number[]; attributes: { attribute: string[]; weights: number[]; datasets: DatasetModel[] }[] }[] } });
+  } as { main: string; update: boolean; primaries: { primary: string[]; weights: number[]; secondaries: { secondary: string[]; weights: number[]; attributes: { attribute: string[]; weights: number[]; datasets: { name: string; id: string }[] }[] }[] } });
 
   /* Début refactor ***************/
   let controls = [];
@@ -248,6 +248,9 @@ function ObjectiveHierarchy({ t }: any) {
 
       return formatOptions(options);
     };
+    let defaultSecondaries = { secondary: [], weights: [], attributes: [] };
+    let defaultAttributes = { attribute: [], weights: [], datasets: [] };
+    let defaultDataset = { name: '', id: '-1' };
 
     const generateOptionsDataset = (
       primaryIndex: number,
@@ -266,9 +269,11 @@ function ObjectiveHierarchy({ t }: any) {
 
       if (files.length > 0) {
         files.map((f: { name: string; id: string }) => {
-          if (f.id != currentDatasetId) options.push(DefaultDataset);
+          if (f.id != currentDatasetId) options.push(f);
         });
       }
+      console.log('generateOptionsDataset', options);
+
       return options.map(
         f =>
           ({
@@ -277,8 +282,6 @@ function ObjectiveHierarchy({ t }: any) {
           } as FormSelectOptionModel)
       );
     };
-    let defaultSecondaries = { secondary: [], weights: [], attributes: [] };
-    let defaultAttributes = { attribute: [], weights: [], datasets: [] };
 
     const onAddPrimary = () => () => {
       let unused = getUnusedPrimary();
@@ -433,6 +436,7 @@ function ObjectiveHierarchy({ t }: any) {
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
+    /*
     const onChangeColumn =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
@@ -444,6 +448,7 @@ function ObjectiveHierarchy({ t }: any) {
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
+      
     const onChangeIsCalculated =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
@@ -467,6 +472,7 @@ function ObjectiveHierarchy({ t }: any) {
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
+      */
 
     /* Fin **************/
 
@@ -484,37 +490,8 @@ function ObjectiveHierarchy({ t }: any) {
       primaryIndex,
       secondaryIndex,
       defaultAttribute,
-      defaultDataset,
     }: FactoryProps): ReactElement | ReactElement[] => {
-      return [
-        <Control
-          label="attribute"
-          key={key('attribute_') + localObjectives.update}
-          name="attribute"
-          defaultValue={
-            localObjectives.primaries.secondaries[primaryIndex].attributes[
-              secondaryIndex
-            ].attribute[orderIndex]
-          }
-          required
-          onChange={onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)}
-        />,
-        <Select
-          key={key('dataset') + localObjectives.update}
-          name={name('dataset')}
-          className="small position-relative d-flex"
-          defaultValue={defaultDataset}
-          label={`dataset`}
-          onChange={(e: any) => {
-            onChangeDataset(primaryIndex, secondaryIndex, orderIndex)(e);
-          }}
-          options={generateOptionsDataset(
-            primaryIndex,
-            secondaryIndex,
-            orderIndex
-          )}
-        />,
-        <Select
+      /*         <Select
           key={key('columns') + localObjectives.update}
           name={name('columns')}
           className="small position-relative d-flex"
@@ -564,6 +541,38 @@ function ObjectiveHierarchy({ t }: any) {
           onChange={onChangeDistance(primaryIndex, secondaryIndex, orderIndex)}
           type="number"
           tooltip={t('meter')}
+        />, */
+      return [
+        <Control
+          label="attribute"
+          key={key('attribute_') + localObjectives.update}
+          name="attribute"
+          defaultValue={
+            localObjectives.primaries.secondaries[primaryIndex].attributes[
+              secondaryIndex
+            ].attribute[orderIndex]
+          }
+          required
+          onChange={onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)}
+        />,
+        <Select
+          key={key('dataset') + localObjectives.update}
+          name={name('dataset')}
+          className="small position-relative d-flex"
+          defaultValue={
+            localObjectives.primaries.secondaries[primaryIndex].attributes[
+              secondaryIndex
+            ].datasets[orderIndex].name
+          }
+          label={`dataset`}
+          onChange={(e: any) => {
+            onChangeDataset(primaryIndex, secondaryIndex, orderIndex)(e);
+          }}
+          options={generateOptionsDataset(
+            primaryIndex,
+            secondaryIndex,
+            orderIndex
+          )}
         />,
       ];
     };

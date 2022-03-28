@@ -1,16 +1,19 @@
 import geopandas
 from py.file import File
 from pandas.api.types import is_numeric_dtype
+import os
 
 
 class Shapefile(File):
-    def __init__(self, name: str, content: bytes, id=None, group_id=None):
+    def __init__(self, name: str, content: bytes, id=None, group_id=None, dir=None):
         super().__init__(name, content, id=id, group_id=group_id)
+        self.dir = dir
         self.columns = []
         self.head = []
+        self.set_feature()
 
     def set_feature(self):
-        df = geopandas.read_file(self.path[0])
+        df = geopandas.read_file(os.path.join(self.dir, self.name))
         head = df.loc[:, df.columns != "geometry"].head(5).to_dict("index")
         column_names = [s for s in df.columns if s != "geometry"]
         category = []

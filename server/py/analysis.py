@@ -106,7 +106,7 @@ class Analysis(Serializable):
                         newAttribute = {
                             "attribute": attribute,
                             "dataset": dataset,
-                            "type": 'Continuous',
+                            "type": 'Categorical',
                             "properties": {"min": 0, "max": 100, "vs_function": 'x',
                                            "distribution": [20, 40, 60, 80, 100], "distribution_value": [20, 40, 30, 80, 100],
                                            },
@@ -189,6 +189,7 @@ class Analysis(Serializable):
                     file_id = attributes["datasets"][0]["id"]
                     file = self.files_manager.get_files_by_id(file_id)
                     # "temp/" + file[0].group_id + ".shp"
+                    print('FILE', file)
                     input_file = file[0].name
                     calculator.add_file_to_objective(
                         primary, index, input_file, int(
