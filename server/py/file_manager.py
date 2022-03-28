@@ -117,6 +117,7 @@ class FilesManager:
                     print("pb")
                 else:
                     newShapefiles[file.name] = newShapefile
+
         self.shapefiles = newShapefiles
 
     def add_files(self, *files):
@@ -131,7 +132,6 @@ class FilesManager:
             created.append(new_file)
 
         self.extractShapefiles()
-        # creer un object shapefile (différents fichiers, path/noms sont conformes)
 
         self.__notify_metadatas()
         return created
