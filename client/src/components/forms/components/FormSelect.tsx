@@ -1,7 +1,7 @@
 import { capitalize, uniqueId } from 'lodash';
 import { Form } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
+import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
 import FormComponent from './FormComponent';
 
 /**

@@ -1,7 +1,7 @@
-import FileContentModel from 'models/file-models/FileContentModel';
+import FileContentModel from 'models/file/FileContentModel';
 import { encode } from 'base64-arraybuffer';
 
-namespace Utils {
+namespace FilesUtils {
   // Extracts data from files and encodes it in base64
   export const extractContentFromFiles = async (
     files: File[]
@@ -21,4 +21,4 @@ namespace Utils {
     );
 }
 
-export default Utils;
+export default FilesUtils;

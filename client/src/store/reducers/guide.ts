@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
-import CategoryModel from 'models/guide-models/CategoryModel';
+import CategoryModel from 'models/guide/CategoryModel';
 
 export const guideSlice = createSlice({
   name: 'guide',

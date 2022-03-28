@@ -1,87 +1,70 @@
-import L from 'leaflet';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
-import { uniqueId } from 'lodash';
-import { GeoJSON } from 'geojson';
-
-export interface MapState {
-  location: LatLong;
-  zoom: number;
-  coordinateSystem: string;
-  layers: Layer[];
-  clickedCoord: LatLong;
-}
-
-export interface Layer {
-  identifier?: string;
-  label?: string;
-  name: string;
-  data: GeoJSON;
-}
-
-export interface LatLong {
-  lat: number;
-  long: number;
-}
+import { LayersGroups } from 'models/map/Layers';
+import { LatLong } from 'models/map/LatLong';
+import { MapCursorInformationsModel } from 'models/map/MapCursorInformationsModel';
+import { MapStateModel } from 'models/map/MapStateModel';
+import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
+import { InsertLayerModel } from 'models/map/InsertLayerModel';
+import LayersUtils from 'utils/layers-utils';
 
 export const mapSlice = createSlice({
   name: 'map',
   initialState: {
-    location: { lat: 45.509, long: -73.553 },
-    zoom: 10,
-    coordinateSystem: `${L.CRS.EPSG4326}`,
-    layers: [],
-    clickedCoord: { lat: NaN, long: NaN },
-  } as MapState,
+    location: { lat: 45.509, long: -73.553 }, // defaults to mtl.qc.ca
+    layers: {} as LayersGroups,
+    zoom: 10, // arbitrary, is big enough to fit the island of mtl
+  } as MapStateModel,
   reducers: {
     updateLocation: (state, { payload: location }: PayloadAction<LatLong>) => {
-      if (isNaN(location.lat) || isNaN(location.long))
-        console.error('Invalid coordinates', location);
+      if (isNaN(location?.lat) || isNaN(location?.long))
+        console.error('Received invalid map location coordinates: ', location);
       else state.location = location;
+    },
+    updateCursor: (state, { payload: cursor }: PayloadAction<LatLong>) => {
+      if (cursor && (isNaN(cursor.lat) || isNaN(cursor.long))) {
+        console.error('Received invalid cursor coordinates: ', cursor);
+        state.cursor = undefined;
+      } else state.cursor = cursor;
+    },
+    updateCursorInformations: (
+      state,
+      { payload }: PayloadAction<MapCursorInformationsModel>
+    ) => {
+      // if any validation is required, add it here
+      state.cursorInformations = payload;
     },
     updateZoom: (state, { payload: zoom }: PayloadAction<number>) => {
       if (zoom < 1) {
         console.error(
-          `Error: the zoom must be a positive integer greater than 0; got ${zoom}`
+          `Error: the zoom must be a positive integer > 0; got ${zoom}`
         );
       } else {
         state.zoom = zoom;
       }
     },
-    upsertLayer: (state, { payload: layer }: PayloadAction<Layer>) => {
-      const index = state.layers.findIndex(
-        ({ name }: Layer) => name === layer.name
-      );
-
-      state.layers.splice(index, 1, {
-        identifier: uniqueId('layer-'),
-        ...layer,
-      } as Layer);
-    },
-    removeLayer: (state, { payload: name }: PayloadAction<string>) => {
-      const index = state.layers.findIndex(
-        (layer: Layer) => layer.name === name
-      );
-
-      if (index > -1) {
-        state.layers.splice(index);
-      }
-    },
-    updateClickedCoord: (
+    upsertLayer: (
       state,
-      { payload: location }: PayloadAction<LatLong>
+      { payload: layer }: PayloadAction<InsertLayerModel>
     ) => {
-      state.clickedCoord = location;
+      state.layers = LayersUtils.add(state.layers, layer);
+    },
+    removeLayer: (
+      state,
+      { payload: layer }: PayloadAction<RemoveLayerModel>
+    ) => {
+      state.layers = LayersUtils.remove(state.layers, layer);
     },
   },
 });
 
 export const {
   updateLocation,
+  updateCursor,
+  updateCursorInformations,
   updateZoom,
   upsertLayer,
   removeLayer,
-  updateClickedCoord,
 } = mapSlice.actions;
 
 export const selectMap = (state: RootState) => state.map;

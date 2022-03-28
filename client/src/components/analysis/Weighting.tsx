@@ -20,7 +20,7 @@ import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import React from 'react';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 
 function Weighting({ t }: any) {
   const property = 'objectives';
@@ -321,7 +321,7 @@ function Weighting({ t }: any) {
         );
         dispatch(
           call({
-            target: ServerTargets.Update,
+            target: ServerCallTargets.Update,
             args: [property, localObjectives],
             onSuccessAction: injectSetLoadingCreator({
               value: property,

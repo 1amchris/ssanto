@@ -1,7 +1,7 @@
 import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from 'models/form-models/FormSelectOptionModel';
+import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
 import objectivesData from 'data/objectives.json';
@@ -23,7 +23,7 @@ import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import React from 'react';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 
 function isShp(file: { extension: string }, index: any, array: any) {
   return file.extension == 'shp';
@@ -641,7 +641,7 @@ function ObjectiveHierarchy({ t }: any) {
           );
           dispatch(
             call({
-              target: ServerTargets.Update,
+              target: ServerCallTargets.Update,
               args: [property, localObjectives],
               onSuccessAction: injectSetLoadingCreator({
                 value: property,

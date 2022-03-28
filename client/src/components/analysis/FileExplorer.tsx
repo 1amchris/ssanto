@@ -1,5 +1,5 @@
 import { capitalize } from 'lodash';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
@@ -7,17 +7,17 @@ import { Control, Button, Spacer, List } from 'components/forms/components';
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import { Badge } from 'react-bootstrap';
 import { call } from 'store/reducers/server';
-import Utils from 'utils';
+import FilesUtils from 'utils/files-utils';
 import {
   injectSetLoadingCreator,
   injectSetErrorCreator,
   selectAnalysis,
 } from 'store/reducers/analysis';
-import FileMetadataModel from 'models/file-models/FileMetadataModel';
+import FileMetadataModel from 'models/file/FileMetadataModel';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
-import ServerTargets from 'enums/ServerTargets';
-import FileContentModel from 'models/file-models/FileContentModel';
+import ServerCallTargets from 'enums/ServerCallTargets';
+import FileContentModel from 'models/file/FileContentModel';
 
 const FileRowFactory = ({
   file,
@@ -80,7 +80,7 @@ function FileExplorer({ t }: any) {
           );
           dispatch(
             call({
-              target: ServerTargets.FileManagerRemoveFile,
+              target: ServerCallTargets.FileManagerRemoveFile,
               args: [(files[index] as FileMetadataModel).id],
               onSuccessAction: injectSetLoadingCreator({
                 value: property,
@@ -109,10 +109,10 @@ function FileExplorer({ t }: any) {
             isLoading: true,
           } as LoadingValue<string>)()
         );
-        Utils.extractContentFromFiles(Array.from(fields.files)).then(files =>
+        FilesUtils.extractContentFromFiles(Array.from(fields.files)).then(files =>
           dispatch(
             call({
-              target: ServerTargets.FileManagerAddFiles,
+              target: ServerCallTargets.FileManagerAddFiles,
               args: files,
               onSuccessAction: injectSetLoadingCreator({
                 value: property,

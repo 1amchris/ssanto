@@ -6,7 +6,7 @@ import { useAppDispatch } from 'store/hooks';
 import { analysisReturn } from 'store/reducers/analysis';
 import { Button } from 'components/forms/components';
 import CallModel from 'models/server-coms/CallModel';
-import ServerTargets from 'enums/ServerTargets';
+import ServerCallTargets from 'enums/ServerCallTargets';
 
 function FormsBar({ children, className, t }: any, key?: string) {
   const closeOverlay = () => document.body.click();
@@ -52,7 +52,7 @@ function FormsBar({ children, className, t }: any, key?: string) {
                   onClick={() => {
                     dispatch(
                       call({
-                        target: ServerTargets.ComputeSuitability,
+                        target: ServerCallTargets.ComputeSuitability,
                         onSuccessAction: analysisReturn,
                       } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
                     );

@@ -1,10 +1,11 @@
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { TileLayer, LayersControl, GeoJSON } from 'react-leaflet';
-import { Layer, selectMap } from 'store/reducers/map';
+import { TileLayer, LayersControl, GeoJSON, LayerGroup } from 'react-leaflet';
+import { selectMap } from 'store/reducers/map';
+import { Layer, Layers } from 'models/map/Layers';
 import { useAppSelector } from 'store/hooks';
 
-const Layers = ({ t }: any) => {
+const LayersGroups = ({ t }: any) => {
   const { layers } = useAppSelector(selectMap);
 
   const perc2color = (perc: number) => {
@@ -23,7 +24,6 @@ const Layers = ({ t }: any) => {
   };
 
   const style = (feature: any) => {
-    // console.log('STYLE', feature, feature.properties);
     if (feature.properties !== undefined && feature.properties.sutability > 0) {
       let color = perc2color(feature.properties.sutability);
       return {
@@ -49,6 +49,7 @@ const Layers = ({ t }: any) => {
       return { color: '#0000ff', fillOpacity: 0 };
     }
   };
+
   return (
     <LayersControl position="bottomleft">
       <LayersControl.BaseLayer checked name={capitalize(t('osm'))}>
@@ -60,17 +61,25 @@ const Layers = ({ t }: any) => {
       <LayersControl.BaseLayer name={capitalize(t('none'))}>
         <TileLayer url="" />
       </LayersControl.BaseLayer>
-      {layers.map(({ identifier, label, name, data }: Layer) => (
-        <LayersControl.Overlay
-          key={identifier}
-          name={capitalize(t(label || name))}
-          checked
+      {Object.entries(layers).map(([group, layers]: [string, Layers]) => (
+        <LayerGroup
+          key={`${group}/${Object.keys(layers).reduce(
+            (prev, curr) => prev + curr
+          )}`}
         >
-          <GeoJSON data={data} style={style} />
-        </LayersControl.Overlay>
+          {Object.entries(layers).map(([name, layer]: [string, Layer]) => (
+            <LayersControl.Overlay
+              checked
+              name={capitalize(t(layer.label || name))}
+              key={layer.identifier}
+            >
+              <GeoJSON data={layer.geojson} style={style} />
+            </LayersControl.Overlay>
+          ))}
+        </LayerGroup>
       ))}
     </LayersControl>
   );
 };
 
-export default withTranslation()(Layers);
+export default withTranslation()(LayersGroups);

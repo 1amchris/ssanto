@@ -1,4 +1,4 @@
-enum ServerTargets {
+enum ServerCallTargets {
   Update = 'update',
   SaveProject = 'analysis.save_project',
   SaveWeights = 'analysis.save_weights',
@@ -10,7 +10,10 @@ enum ServerTargets {
   FileManagerAddFiles = 'file_manager.add_files',
   FileManagerRemoveFile = 'file_manager.remove_file',
 
+  GetCellSuitability = 'get_cell_suitability',
+  MapSetCursor = 'map.set_cursor',
+
   GuideGet = 'guide.get',
 }
 
-export default ServerTargets;
+export default ServerCallTargets;
