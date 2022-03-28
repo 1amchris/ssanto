@@ -497,7 +497,6 @@ function ObjectiveHierarchy({ t }: any) {
           }
           required
           onChange={onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)}
-          //tooltip={t("the modeler's name will ...")}
         />,
         <Select
           key={key('dataset') + localObjectives.update}
@@ -518,7 +517,11 @@ function ObjectiveHierarchy({ t }: any) {
           key={key('columns') + localObjectives.update}
           name={name('columns')}
           className="small position-relative d-flex"
-          defaultValue={'a'}
+          defaultValue={
+            localObjectives.primaries.secondaries[primaryIndex].attributes[
+              secondaryIndex
+            ].datasets[orderIndex].selectedColumn
+          }
           label={`columns`}
           onChange={(e: any) => {
             onChangeColumn(primaryIndex, secondaryIndex, orderIndex)(e);
@@ -528,6 +531,7 @@ function ObjectiveHierarchy({ t }: any) {
             secondaryIndex,
             orderIndex
           )}
+          //tooltip={localObjectives.primaries.secondaries[primaryIndex].attributes[secondaryIndex].datasets[orderIndex].head[??????]}
         />,
         <Control
           key={key('calculated_distance') + localObjectives.update}
@@ -557,15 +561,8 @@ function ObjectiveHierarchy({ t }: any) {
             ].datasets[orderIndex].calculationDistance
           }
           onChange={onChangeDistance(primaryIndex, secondaryIndex, orderIndex)}
-          /*
-          onChange={({ target: { value } }: { target: HTMLInputElement }) => {
-            if (distanceRef.current?.textContent) {
-              distanceRef.current.textContent = value;
-              onChangeDistance(primaryIndex, secondaryIndex, orderIndex)(value);
-            }
-          }} */
           type="number"
-          //tooltip={t('the cell size is ...')}
+          tooltip={t('meter')}
         />,
       ];
     };
