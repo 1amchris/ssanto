@@ -3,6 +3,7 @@ from base64 import b64decode
 from geojson_rewind import rewind
 import os
 import shutil
+import operator
 
 from py.file import File
 from py.shapefile import Shapefile
@@ -66,6 +67,7 @@ class FilesManager:
         self.files_content = dict()
         self.files = self.subjects_manager.create("file_manager.files", dict())
         self.writer = FilesWriter()
+        self.shapefiles = {}
 
     def serialize(self) -> dict:
         return {key: file.serialize() for key, file in self.files_content.items()}
@@ -99,26 +101,36 @@ class FilesManager:
     def getExtension(self, file_name):
         return file_name.split(".")[-1]
 
+    def getName(self, file_name):
+        return file_name.split(".")[0]
+
     # files: { name: string; size: number; content: string (base64); }[]
+
+    def extractShapefiles(self,):
+        newShapefiles = {}
+        for file in self.files_content.values():
+            if self.getExtension(file.name) == 'shp':
+                try:
+                    newShapefile = Shapefile(file.name, b64decode(
+                        file.content), file.group_id, dir=self.writer.main_dir)
+                except:
+                    print("pb")
+                else:
+                    newShapefiles[file.name] = newShapefile
+        self.shapefiles = newShapefiles
 
     def add_files(self, *files):
         created = []
         group_id = str(uuid4())
-        for file in files:
-            extension = self.getExtension(file['name'])
-            if extension == 'shp':
-                new_file = Shapefile(file["name"], b64decode(
-                    file["content"]), group_id=group_id)
-                self.files_content[new_file.id] = new_file
-                self.writer.save_file(new_file.name, new_file.read_content())
 
-            else:
-                new_file = File(file["name"], b64decode(
-                    file["content"]), group_id=group_id)
-                self.files_content[new_file.id] = new_file
-                self.writer.save_file(new_file.name, new_file.read_content())
+        for file in files:
+            new_file = File(file["name"], b64decode(
+                file["content"]), group_id=group_id)
+            self.files_content[new_file.id] = new_file
+            self.writer.save_file(new_file.name, new_file.read_content())
             created.append(new_file)
 
+        self.extractShapefiles()
         # creer un object shapefile (différents fichiers, path/noms sont conformes)
 
         self.__notify_metadatas()
