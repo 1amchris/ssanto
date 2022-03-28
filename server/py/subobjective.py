@@ -1,35 +1,23 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 from osgeo import gdal, ogr
 from py.raster_transform import *
 import math
 from py.study_area import StudyArea
+from py.math_operation import MATH_OPERATION
 
 
-math_op = {
-    "log": math.log,
-    "ln": math.log,
-    "sin": math.sin,
-    "cos": math.cos,
-    "tan": math.tan,
-    "arcsin": math.asin,
-    "arccos": math.acos,
-    "arctan": math.atan,
-    "sqrt": math.sqrt,
-    "pow": math.pow,
-    "floor": math.floor,
-    "ceil": math.ceil,
-    "degrees": math.degrees,
-    "radian": math.radians,
-    'factorial': math.factorial,
-    "pi": math.pi,
-    "e": math.e,
-}
-
-
-class Feature():
-    def __init__(self, path, output_tiff, weight, cell_size, crs, study_area: StudyArea, scaling_function):
+class Feature:
+    def __init__(
+        self,
+        path,
+        output_tiff,
+        weight,
+        cell_size,
+        crs,
+        study_area: StudyArea,
+        scaling_function,
+    ):
         self.path = path
         self.output_tiff = output_tiff
         self.cell_size = cell_size
@@ -39,10 +27,20 @@ class Feature():
 
 
 class ContinuousFeature(Feature):
-
-    def __init__(self, path, output_tiff, weight, cell_size, crs, study_area: StudyArea, scaling_function, field_name=False):
-        super().__init__(path, output_tiff, weight,
-                         cell_size, crs, study_area, scaling_function)
+    def __init__(
+        self,
+        path,
+        output_tiff,
+        weight,
+        cell_size,
+        crs,
+        study_area: StudyArea,
+        scaling_function,
+        field_name=False,
+    ):
+        super().__init__(
+            path, output_tiff, weight, cell_size, crs, study_area, scaling_function
+        )
 
         self.field_name = field_name
         self.scaling_function = "x"
@@ -51,7 +49,12 @@ class ContinuousFeature(Feature):
 
     def update(self):
         self.as_raster = process_raster(
-            self.cell_size, self.crs, self.path, self.output_tiff, field_name=self.field_name)
+            self.cell_size,
+            self.crs,
+            self.path,
+            self.output_tiff,
+            field_name=self.field_name,
+        )
         self.as_array = self.process_raster_as_array()
 
     def process_raster_as_array(self):
@@ -63,27 +66,39 @@ class ContinuousFeature(Feature):
         return file_array
 
     def apply_value_scaling(self, file_array):
-        equation = compile(self.scaling_function, "", 'eval')
+        equation = compile(self.scaling_function, "", "eval")
         for i in range(len(file_array)):
             for j in range(len(file_array[1])):
                 x = file_array[i, j]
-                file_array[i, j] = eval(equation, math_op, {"x": x})
+                file_array[i, j] = eval(equation, MATH_OPERATION, {"x": x})
         return file_array
 
     def clip_matrix(self, file):
-        origin_file = (self.as_raster.GetGeoTransform()[
-            0], self.as_raster.GetGeoTransform()[3])
+        origin_file = (
+            self.as_raster.GetGeoTransform()[0],
+            self.as_raster.GetGeoTransform()[3],
+        )
 
-        offset = offset = (-int((origin_file[1] - self.study_area.origin[1]) // self.cell_size), int(
-            (origin_file[0] - self.study_area.origin[0]) // self.cell_size))
+        offset = offset = (
+            -int((origin_file[1] - self.study_area.origin[1]) // self.cell_size),
+            int((origin_file[0] - self.study_area.origin[0]) // self.cell_size),
+        )
         return self.balance_matrix(file, self.study_area.as_array, offset)
 
     def balance_matrix(self, input_matrix, study_area, offset):
         output_matrix = np.zeros(study_area.shape)
         output_matrix = np.zeros(study_area.shape)
-        output_matrix[max(offset[0], 0): max(min(len(input_matrix)+offset[0], len(study_area)), 0),
-                      max(offset[1], 0): max(min(len(input_matrix[0])+offset[1], len(study_area[0])), 0)] = input_matrix[max(0, -offset[0]): max(len(study_area)-offset[0], 0),
-                                                                                                                         max(0, -offset[1]): max(len(study_area[0])-offset[1], 0)]
+        output_matrix[
+            max(offset[0], 0) : max(
+                min(len(input_matrix) + offset[0], len(study_area)), 0
+            ),
+            max(offset[1], 0) : max(
+                min(len(input_matrix[0]) + offset[1], len(study_area[0])), 0
+            ),
+        ] = input_matrix[
+            max(0, -offset[0]) : max(len(study_area) - offset[0], 0),
+            max(0, -offset[1]) : max(len(study_area[0]) - offset[1], 0),
+        ]
         return output_matrix
 
     def default_normalize_matrix(self, matrix, minimum=None, maximum=None):
@@ -92,7 +107,7 @@ class ContinuousFeature(Feature):
 
         if maximum == None or minimum > matrix.min():
             maximum = matrix.max()
-        return (matrix - minimum)/(maximum-minimum)
+        return (matrix - minimum) / (maximum - minimum)
 
     def display_array(self):
         plt.figure()
@@ -108,9 +123,32 @@ class ContinuousFeature(Feature):
 
 
 class DistanceFeature(ContinuousFeature):
-    def __init__(self, path, output_tiff, weight, max_distance, cell_size, crs, study_area: StudyArea, scaling_function,  field_name=False, maximize_distance=True, centroid=True, granularity=None, threshold=0.8):
-        super().__init__(path, output_tiff, weight, cell_size, crs,
-                         study_area, scaling_function, field_name)
+    def __init__(
+        self,
+        path,
+        output_tiff,
+        weight,
+        max_distance,
+        cell_size,
+        crs,
+        study_area: StudyArea,
+        scaling_function,
+        field_name=False,
+        maximize_distance=True,
+        centroid=True,
+        granularity=None,
+        threshold=0.8,
+    ):
+        super().__init__(
+            path,
+            output_tiff,
+            weight,
+            cell_size,
+            crs,
+            study_area,
+            scaling_function,
+            field_name,
+        )
         self.max_distance = max_distance / self.cellsize
         self.granularity = granularity
         self.threshold = threshold
@@ -127,7 +165,12 @@ class DistanceFeature(ContinuousFeature):
         else:
             points = self.get_coordinate(self.as_array, self.threshold)
         self.distance_matrix = self.draw_distance_matrix(
-            self.as_array.shape, points, self.max_distance, self.granularity, self.maximise_distance)
+            self.as_array.shape,
+            points,
+            self.max_distance,
+            self.granularity,
+            self.maximise_distance,
+        )
 
     def get_value_matrix(self):
         return self.distance_matrix
@@ -145,7 +188,13 @@ class DistanceFeature(ContinuousFeature):
         return np.sqrt((point_a[0] - point_b[0]) ** 2 + (point_a[1] - point_b[1]) ** 2)
 
     def draw_distance_matrix(
-        self, shape, point, max_distance, granularity=None, maximize=True, distance_function=euclidean
+        self,
+        shape,
+        point,
+        max_distance,
+        granularity=None,
+        maximize=True,
+        distance_function=euclidean,
     ):
         """
         Form matrix of minimal distance to a given point or EPSG:32188many points.
@@ -165,8 +214,9 @@ class DistanceFeature(ContinuousFeature):
             for p in point:
                 np.minimum(
                     arr,
-                    self.draw_distance_matrix(shape, p, max_distance,
-                                              granularity, distance_function),
+                    self.draw_distance_matrix(
+                        shape, p, max_distance, granularity, distance_function
+                    ),
                     arr,
                 )
 
@@ -179,10 +229,16 @@ class DistanceFeature(ContinuousFeature):
             if granularity != None:
                 cat = np.linspace(0, 1, granularity + 1)
             arr = np.ones(shape)
-            a = max(point[0]-max_distance, 0)
-            b = min(point[0]+max_distance, len(arr))
-            for i in range(int(max(point[0]-max_distance, 0)), int(min(point[0]+max_distance, len(arr)))):
-                for j in range(int(max(point[1]-max_distance, 0)), int(min(point[1]+max_distance, len(arr[0])))):
+            a = max(point[0] - max_distance, 0)
+            b = min(point[0] + max_distance, len(arr))
+            for i in range(
+                int(max(point[0] - max_distance, 0)),
+                int(min(point[0] + max_distance, len(arr))),
+            ):
+                for j in range(
+                    int(max(point[1] - max_distance, 0)),
+                    int(min(point[1] + max_distance, len(arr[0]))),
+                ):
                     if granularity != None:
 
                         arr[i, j] = cat[
@@ -196,8 +252,7 @@ class DistanceFeature(ContinuousFeature):
                             )
                         ]
                     else:
-                        arr[i, j] = distance_function(
-                            (i, j), point) / max_distance
+                        arr[i, j] = distance_function((i, j), point) / max_distance
 
             if maximize:
                 return arr
