@@ -24,7 +24,7 @@ import React from 'react';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import ServerTargets from 'enums/ServerTargets';
-
+import DatasetModel, { DefaultDataset } from 'models/DatasetModel';
 function isShp(file: { extension: string }, index: any, array: any) {
   return file.extension == 'shp';
 }
@@ -83,7 +83,7 @@ function ObjectiveHierarchy({ t }: any) {
   const [localObjectives, setLocalObjectives] = useState({
     ...objectives,
     update: true,
-  } as { main: string; update: boolean; primaries: { primary: string[]; weights: number[]; secondaries: { secondary: string[]; weights: number[]; attributes: { attribute: string[]; weights: number[]; datasets: { name: string; id: string }[] }[] }[] } });
+  } as { main: string; update: boolean; primaries: { primary: string[]; weights: number[]; secondaries: { secondary: string[]; weights: number[]; attributes: { attribute: string[]; weights: number[]; datasets: DatasetModel[] }[] }[] } });
 
   /* Début refactor ***************/
   let controls = [];
@@ -265,8 +265,7 @@ function ObjectiveHierarchy({ t }: any) {
 
       if (files.length > 0) {
         files.map((f: { name: string; id: string }) => {
-          if (f.id != currentDatasetId)
-            options.push({ name: f.name, id: f.id });
+          if (f.id != currentDatasetId) options.push(DefaultDataset);
         });
       }
       return options.map(
@@ -279,7 +278,6 @@ function ObjectiveHierarchy({ t }: any) {
     };
     let defaultSecondaries = { secondary: [], weights: [], attributes: [] };
     let defaultAttributes = { attribute: [], weights: [], datasets: [] };
-    let defaultDataset = { name: '', id: '0' };
 
     const onAddPrimary = () => () => {
       let unused = getUnusedPrimary();
@@ -328,7 +326,7 @@ function ObjectiveHierarchy({ t }: any) {
 
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
-          ].datasets.push(defaultDataset);
+          ].datasets.push(DefaultDataset);
 
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
@@ -407,24 +405,9 @@ function ObjectiveHierarchy({ t }: any) {
 
     const onChangeAttribute =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
-      (value: any) => {
-        console.log('onChangeAttribute', value);
-        let newAttribute = value;
-        let newObjectives = copyLocalObjective();
-        newObjectives.primaries.secondaries[primaryIndex].attributes[
-          secondaryIndex
-        ].attribute[attributeIndex] = newAttribute;
-        newObjectives.update = !localObjectives.update;
-        setLocalObjectives(newObjectives);
-      };
-
-    const onChangeAttribute2 =
-      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (event: any) => {
         event.persist();
         let value = event.target.value;
-        console.log(value);
-
         let newAttribute = value;
         let newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
@@ -441,10 +424,49 @@ function ObjectiveHierarchy({ t }: any) {
         let newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
-        ].datasets[attributeIndex] = { name: newDatasetName, id: newDatasetId };
+        ].datasets[attributeIndex] = {
+          ...DefaultDataset,
+          name: newDatasetName,
+          id: newDatasetId,
+        };
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
+    const onChangeColumn =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (e: any) => {
+        let newColumn = JSON.parse(e.target.value).name;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].selectedColumn = newColumn;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+    const onChangeIsCalculated =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (e: any) => {
+        let newIsCalculated = e.target.checked;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].isCalculated = newIsCalculated;
+
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+    const onChangeDistance =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (e: any) => {
+        let newDistance = e.target.value;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].calculationDistance = newDistance;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
     /* Fin **************/
 
     /**
@@ -463,8 +485,6 @@ function ObjectiveHierarchy({ t }: any) {
       defaultAttribute,
       defaultDataset,
     }: FactoryProps): ReactElement | ReactElement[] => {
-      const attributeNameRef: RefObject<HTMLSpanElement> = createRef();
-
       return [
         <Control
           label="attribute"
@@ -476,17 +496,13 @@ function ObjectiveHierarchy({ t }: any) {
             ].attribute[orderIndex]
           }
           required
-          onChange={onChangeAttribute2(
-            primaryIndex,
-            secondaryIndex,
-            orderIndex
-          )}
+          onChange={onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)}
           //tooltip={t("the modeler's name will ...")}
         />,
         <Select
-          hideLabel
           key={key('dataset') + localObjectives.update}
           name={name('dataset')}
+          className="small position-relative d-flex"
           defaultValue={defaultDataset}
           label={`dataset`}
           onChange={(e: any) => {
@@ -497,6 +513,59 @@ function ObjectiveHierarchy({ t }: any) {
             secondaryIndex,
             orderIndex
           )}
+        />,
+        <Select
+          key={key('columns') + localObjectives.update}
+          name={name('columns')}
+          className="small position-relative d-flex"
+          defaultValue={'a'}
+          label={`columns`}
+          onChange={(e: any) => {
+            onChangeColumn(primaryIndex, secondaryIndex, orderIndex)(e);
+          }}
+          options={generateOptionsDataset(
+            primaryIndex,
+            secondaryIndex,
+            orderIndex
+          )}
+        />,
+        <Control
+          key={key('calculated_distance') + localObjectives.update}
+          label={'calculated distance'}
+          className="small position-relative d-flex"
+          name={name('calculated_distance')}
+          suffix={
+            <React.Fragment>
+              <input
+                type="checkbox"
+                checked={
+                  localObjectives.primaries.secondaries[primaryIndex]
+                    .attributes[secondaryIndex].datasets[orderIndex]
+                    .isCalculated
+                }
+                onChange={onChangeIsCalculated(
+                  primaryIndex,
+                  secondaryIndex,
+                  orderIndex
+                )}
+              />
+            </React.Fragment>
+          }
+          defaultValue={
+            localObjectives.primaries.secondaries[primaryIndex].attributes[
+              secondaryIndex
+            ].datasets[orderIndex].calculationDistance
+          }
+          onChange={onChangeDistance(primaryIndex, secondaryIndex, orderIndex)}
+          /*
+          onChange={({ target: { value } }: { target: HTMLInputElement }) => {
+            if (distanceRef.current?.textContent) {
+              distanceRef.current.textContent = value;
+              onChangeDistance(primaryIndex, secondaryIndex, orderIndex)(value);
+            }
+          }} */
+          type="number"
+          //tooltip={t('the cell size is ...')}
         />,
       ];
     };
