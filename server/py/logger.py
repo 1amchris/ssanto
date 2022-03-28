@@ -17,7 +17,8 @@ class Logger:
 
     def write(self, msg):
         if self.debug:
-            printed_msg = msg if self.max_line_length < 0 else self.truncate_middle(msg, self.max_line_length)
+            printed_msg = msg if self.max_line_length < 0 else self.truncate_middle(
+                msg, self.max_line_length)
             self.stdout.write(printed_msg)
         self.flush()
 
@@ -35,4 +36,4 @@ class Logger:
 # Create the logger at global scope
 # Replace 120 by the number of characters maximum to be displayed
 #  in the terminal per log, or -1 to remove the limit
-Logger(True, 120)
+Logger(True, -1)

@@ -1,11 +1,11 @@
 from uuid import uuid4
 from base64 import b64decode
 from geojson_rewind import rewind
-import shapefile
 import os
 import shutil
 
 from py.file import File
+from py.shapefile import Shapefile
 from py.file_metadata import FileMetaData
 from py.serializable import Serializable
 
@@ -13,7 +13,8 @@ from py.serializable import Serializable
 class FileParser:
     @staticmethod
     def load(files_manager, *ids):
-        files = sorted(files_manager.get_files_by_id(*ids), key=lambda file: file.extension)
+        files = sorted(files_manager.get_files_by_id(
+            *ids), key=lambda file: file.extension)
 
         if files[0].extension == "shp" and len(files) == 2:
             shp, shx = files
@@ -37,9 +38,10 @@ class FileParser:
         geojson = {"type": "FeatureCollection", "features": features}
         return rewind(geojson)
 
+
 class FilesWriter:
     def __init__(self):
-        self.main_dir = os.path.join(os.getcwd(),'temp')
+        self.main_dir = os.path.join(os.getcwd(), 'temp')
         if os.path.exists(self.main_dir):
             shutil.rmtree(self.main_dir)
         os.makedirs(self.main_dir)
@@ -55,7 +57,7 @@ class FilesWriter:
         os.remove(os.path.join(self.main_dir, name))
 
     def __del__(self):
-        shutil.rmtree(self.main_dir)    
+        shutil.rmtree(self.main_dir)
 
 
 class FilesManager:
@@ -94,20 +96,27 @@ class FilesManager:
         self.__notify_metadatas()
         return popped
 
+    def getExtension(self, file_name):
+        return file_name.split(".")[-1]
+
     # files: { name: string; size: number; content: string (base64); }[]
+
     def add_files(self, *files):
         created = []
-        # print("add_files", self.temp_dir)
         group_id = str(uuid4())
         for file in files:
-            new_file = File(file["name"], b64decode(file["content"]), group_id=group_id)
-            self.files_content[new_file.id] = new_file
-            self.writer.save_file(new_file.name, new_file.read_content())
-            #new_file.path = self.save_files_locally(self.temp_dir, group_id, new_file.id)
-            # print("add_files", new_file.path)
-            # if new_file.extension == "shp":
-            #     new_file.set_column()
-            #     new_file.set_head()
+            extension = self.getExtension(file['name'])
+            if extension == 'shp':
+                new_file = Shapefile(file["name"], b64decode(
+                    file["content"]), group_id=group_id)
+                self.files_content[new_file.id] = new_file
+                self.writer.save_file(new_file.name, new_file.read_content())
+
+            else:
+                new_file = File(file["name"], b64decode(
+                    file["content"]), group_id=group_id)
+                self.files_content[new_file.id] = new_file
+                self.writer.save_file(new_file.name, new_file.read_content())
             created.append(new_file)
 
         # creer un object shapefile (différents fichiers, path/noms sont conformes)

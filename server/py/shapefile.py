@@ -10,7 +10,8 @@ class Shapefile(File):
 
     def set_head(self):
         df = geopandas.read_file(self.path[0])
-        self.head = df.loc[:, df.columns != "geometry"].head(5).to_dict("index")
+        self.head = df.loc[:, df.columns !=
+                           "geometry"].head(5).to_dict("index")
         print(self.head)
 
     def set_column(self):
