@@ -31,7 +31,7 @@ class Shapefile(File):
                 category.append("Categorical")
             min_category.append(min)
             max_category.append(max)
-        columns = list(zip(column, category, min_category, max_category))
+        columns = list(zip(column_name, category, min_category, max_category))
 
         self.head = head
         self.columns = columns
