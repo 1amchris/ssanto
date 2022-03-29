@@ -22,7 +22,7 @@ import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 
-function Weighting({ t }: any) {
+function Weighting({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
@@ -312,7 +312,7 @@ function Weighting({ t }: any) {
     <Form
       controls={controls}
       errors={getErrors}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       key={'weight_form'}
       onSubmit={() => {
         dispatch(

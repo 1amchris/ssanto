@@ -20,7 +20,7 @@ import { FactoryProps } from 'components/forms/components/FormList';
 import Collapsible from 'components/Collapsible';
 import Form from 'components/forms/Form';
 
-function ValueScaling({ t }: any) {
+function ValueScaling({ t, disabled }: any) {
   const property = 'value_scaling';
   const selector = useAppSelector(selectAnalysis);
   const valueScaling = selector.properties.value_scaling;
@@ -154,7 +154,7 @@ function ValueScaling({ t }: any) {
     <Form
       controls={controls}
       errors={getErrors}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       key={'weight_form'}
       onSubmit={() => {}}
     />

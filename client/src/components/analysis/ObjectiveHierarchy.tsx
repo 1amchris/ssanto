@@ -67,7 +67,7 @@ function isValidOH(objectiveHierarchy: {
   return primaryHasSecondary && secondaryHasAttribute && attributeHasName;
 }
 
-function ObjectiveHierarchy({ t }: any) {
+function ObjectiveHierarchy({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
@@ -631,7 +631,7 @@ function ObjectiveHierarchy({ t }: any) {
     <Form
       controls={controls}
       errors={getErrors}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       onSubmit={() => {
         if (isValidOH(localObjectives)) {
           dispatch(

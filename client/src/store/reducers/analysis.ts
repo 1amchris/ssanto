@@ -39,8 +39,8 @@ export const analysisSlice = createSlice({
       valueScalingError: '',
       valueScalingLoading: false,
 
-      computeSuitabilityLoading: false,
-      computeSuitabilityError: '',
+      analysisLoading: false,
+      analysisError: '',
 
       objectives: {
         main: 'Needs',
@@ -110,6 +110,11 @@ export const analysisSlice = createSlice({
       let temp: any = state.properties;
       temp[property + 'Error'] = error;
       temp[property + 'Loading'] = false;
+
+      console.error(
+        `property ${property} has errored. Error:`,
+        temp[property + 'Error']
+      );
     },
 
     setLoading: (
@@ -124,8 +129,8 @@ export const analysisSlice = createSlice({
       temp[property + 'Loading'] = isLoading;
     },
 
-    analysisReturn: (state, _: PayloadAction<any>) => {
-      state.properties.computeSuitabilityLoading = false;
+    analysisSuccess: (state, _: PayloadAction<any>) => {
+      state.properties.analysisLoading = false;
     },
   },
 });
@@ -144,7 +149,7 @@ export const injectReceivePropertiesCreator = createActionCreatorSyringe<
   any
 >(analysisSlice.actions.receiveProperties);
 
-export const { updateObjectives, studyAreaReceived, analysisReturn } =
+export const { updateObjectives, studyAreaReceived, analysisSuccess } =
   analysisSlice.actions;
 
 export const selectAnalysis = (state: RootState) => state.analysis;

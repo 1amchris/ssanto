@@ -4,7 +4,8 @@ import { withTranslation } from 'react-i18next';
 import { call } from 'store/reducers/server';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
-  analysisReturn,
+  analysisSuccess,
+  injectSetErrorCreator,
   injectSetLoadingCreator,
   selectAnalysis,
 } from 'store/reducers/analysis';
@@ -18,8 +19,8 @@ function FormsBar({ children, className, t }: any, key?: string) {
   const selector = useAppSelector(selectAnalysis);
   const dispatch = useAppDispatch();
 
-  const isLoading = selector.properties.computeSuitabilityLoading;
-  const error = selector.properties.computeSuitabilityError;
+  const isLoading = selector.properties.analysisLoading;
+  const error = selector.properties.analysisError;
 
   return (
     <div
@@ -69,7 +70,8 @@ function FormsBar({ children, className, t }: any, key?: string) {
                     dispatch(
                       call({
                         target: ServerCallTargets.ComputeSuitability,
-                        onSuccessAction: analysisReturn,
+                        onSuccessAction: analysisSuccess,
+                        onErrorAction: injectSetErrorCreator('analysis'),
                       } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
                     );
                   }}

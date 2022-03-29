@@ -4,9 +4,15 @@ import { FcCollapse, FcExpand } from 'react-icons/fc';
 import { capitalize, uniqueId } from 'lodash';
 import { Collapse, Button } from 'react-bootstrap';
 
-function Collapsible({ t, title, children, collapsed = false }: any) {
+function Collapsible({
+  t,
+  title,
+  children,
+  collapsed = false,
+  disabled = false,
+}: any) {
   const id = uniqueId('collapsible-');
-  const [open, setOpen] = useState(!(collapsed as boolean));
+  const [open, setOpen] = useState(!(collapsed as boolean) && !disabled);
 
   return (
     <React.Fragment>
@@ -16,6 +22,7 @@ function Collapsible({ t, title, children, collapsed = false }: any) {
         className="w-100 px-0 mb-1 d-flex justify-content-between"
         aria-expanded={open}
         aria-controls={id}
+        disabled={disabled}
         onClick={() => {
           setOpen(!open);
         }}

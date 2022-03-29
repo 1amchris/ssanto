@@ -14,7 +14,7 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
-function NbsSystem({ t }: any) {
+function NbsSystem({ t, disabled }: any) {
   const property = 'nbs_system';
   const selector = useAppSelector(selectAnalysis);
   const properties = selector.properties[property];
@@ -54,7 +54,7 @@ function NbsSystem({ t }: any) {
     <Form
       controls={controls}
       errors={getErrors}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       onSubmit={(fields: any) => {
         dispatch(
           injectSetLoadingCreator({

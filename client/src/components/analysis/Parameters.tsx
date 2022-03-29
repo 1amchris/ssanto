@@ -14,7 +14,7 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
-function Parameters({ t }: any) {
+function Parameters({ t, disabled }: any) {
   const property = 'parameters';
   const selector = useAppSelector(selectAnalysis);
   const properties = selector.properties[property];
@@ -68,7 +68,7 @@ function Parameters({ t }: any) {
   return (
     <Form
       controls={controls}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       errors={getErrors}
       onSubmit={(fields: any) => {
         dispatch(
