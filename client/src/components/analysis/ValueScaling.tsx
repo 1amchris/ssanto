@@ -142,7 +142,9 @@ function ValueScaling({ t }: any) {
     controls = [
       ...mainControls,
       <Spacer />,
-      <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
+      <Button variant="outline-primary" loading={isLoading}>
+        {capitalize(t('apply'))}
+      </Button>,
     ];
   } else {
     controls = [<></>];

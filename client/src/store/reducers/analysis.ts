@@ -23,16 +23,24 @@ export const analysisSlice = createSlice({
 
       parametersLoading: false,
       parametersError: '',
+
       nbsSystemLoading: false,
       nbsSystemError: '',
+
       studyAreaLoading: false,
       studyAreaError: '',
+
       filesLoading: false,
       filesError: '',
+
       objectivesError: '',
       objectivesLoading: false,
+
       valueScalingError: '',
       valueScalingLoading: false,
+
+      computeSuitabilityLoading: false,
+      computeSuitabilityError: '',
 
       objectives: {
         main: 'Needs',
@@ -116,11 +124,8 @@ export const analysisSlice = createSlice({
       temp[property + 'Loading'] = isLoading;
     },
 
-    analysisReturn: (state, { payload }: PayloadAction<any>) => {
-      console.warn(
-        'No validation was performed on the analysis return',
-        payload
-      );
+    analysisReturn: (state, _: PayloadAction<any>) => {
+      state.properties.computeSuitabilityLoading = false;
     },
   },
 });

@@ -20,7 +20,6 @@ import {
   injectSetErrorCreator,
 } from 'store/reducers/analysis';
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
-import React from 'react';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import ServerCallTargets from 'enums/ServerCallTargets';
@@ -621,7 +620,9 @@ function ObjectiveHierarchy({ t }: any) {
     controls = [
       ...mainControls,
       <Spacer />,
-      <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
+      <Button variant="outline-primary" loading={isLoading}>
+        {capitalize(t('apply'))}
+      </Button>,
     ];
   } else {
     controls = [<></>];
