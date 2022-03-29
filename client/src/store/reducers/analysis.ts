@@ -21,6 +21,7 @@ export const analysisSlice = createSlice({
       nbs_system: { system_type: '2' },
       studyArea: { fileName: '', area: undefined },
       files: [] as FileMetadataModel[],
+      shapefiles: [],
 
       parametersLoading: false,
       parametersError: '',

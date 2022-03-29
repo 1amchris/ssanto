@@ -1,5 +1,6 @@
 enum ServerSubscriptionTargets {
   FileManagerFiles = 'file_manager.files',
+  FileManagerShapefiles = 'file_manager.shapefiles',
   MapCursor = 'map.cursor',
   MapCursorInformations = 'map.cursor.informations',
   AnalysisParameters = 'parameters',

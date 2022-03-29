@@ -1,3 +1,5 @@
+import math
+
 MATH_OPERATION = {
     "log": math.log,
     "ln": math.log,
