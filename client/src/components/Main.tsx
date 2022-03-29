@@ -77,28 +77,6 @@ function Main() {
                 </Collapsible>
               </InformationCard>
             )}
-            {[
-              'Interpolation chart',
-              'World population',
-              'Vertical bar charts',
-              'Economics & politics',
-            ].map((title: string, index: number) => (
-              <InformationCard key={`data-${index}`}>
-                <Collapsible title={title}>
-                  <p style={{ textAlign: 'justify', textIndent: '2rem' }}>
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life
-                    accusamus terry richardson ad squid. 3 wolf moon officia
-                    aute, non cupidatat skateboard dolor brunch. Food truck
-                    quinoa nesciunt laborum eiusmod.
-                  </p>
-                  <p style={{ textAlign: 'justify', textIndent: '2rem' }}>
-                    Brunch 3 wolf moon tempor, sunt aliqua put a bird on it
-                    probably haven't heard of them accusamus labore sustainable
-                    VHS.
-                  </p>
-                </Collapsible>
-              </InformationCard>
-            ))}
           </aside>
         </main>
       </div>
