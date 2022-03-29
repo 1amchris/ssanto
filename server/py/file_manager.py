@@ -67,7 +67,8 @@ class FilesManager:
         self.files_content = dict()
         self.files = self.subjects_manager.create("file_manager.files", dict())
         self.writer = FilesWriter()
-        self.shapefiles = {}
+        self.shapefiles = self.subjects_manager.create(
+            "file_manager.shapefiles", dict())
 
     def serialize(self) -> dict:
         return {key: file.serialize() for key, file in self.files_content.items()}
@@ -79,6 +80,12 @@ class FilesManager:
         return self.files[id]
 
     def get_files_metadatas(self):
+        print(list(
+            map(
+                lambda file: FileMetaData(file.name, id=file.id),
+                self.files_content.values(),
+            )
+        ))
         return list(
             map(
                 lambda file: FileMetaData(file.name, id=file.id),
@@ -107,18 +114,19 @@ class FilesManager:
     # files: { name: string; size: number; content: string (base64); }[]
 
     def extractShapefiles(self,):
-        newShapefiles = {}
+        new_shapefiles = []
         for file in self.files_content.values():
             if self.getExtension(file.name) == 'shp':
                 try:
-                    newShapefile = Shapefile(file.name, b64decode(
+                    new_shapefile = Shapefile(file.name, b64decode(
                         file.content), file.group_id, dir=self.writer.main_dir)
+                    dic_new_shapefile = new_shapefile.serialize()
                 except:
-                    print("pb")
+                    print("invalid shapefile")
                 else:
-                    newShapefiles[file.name] = newShapefile
+                    new_shapefiles.append(dic_new_shapefile)
 
-        self.shapefiles = newShapefiles
+        self.shapefiles.notify(new_shapefiles)
 
     def add_files(self, *files):
         created = []

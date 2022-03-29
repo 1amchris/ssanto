@@ -6,12 +6,9 @@ import Guide from 'components/guide/Guide';
 import { subscribe, openConnection } from 'store/reducers/server';
 import { injectReceivePropertiesCreator } from 'store/reducers/analysis';
 import SubscriptionModel from 'models/server-coms/SubscriptionModel';
-import {
-  updateCursor,
-  updateCursorInformations,
-} from 'store/reducers/map';
-import { MapCursorInformationsModel } from "models/map/MapCursorInformationsModel";
-import { LatLong } from "models/map/LatLong";
+import { updateCursor, updateCursorInformations } from 'store/reducers/map';
+import { MapCursorInformationsModel } from 'models/map/MapCursorInformationsModel';
+import { LatLong } from 'models/map/LatLong';
 import ServerSubscriptionTargets from 'enums/ServerSubscriptionTargets';
 
 function App() {
@@ -22,6 +19,13 @@ function App() {
       subscribe({
         subject: ServerSubscriptionTargets.FileManagerFiles,
         onAction: injectReceivePropertiesCreator('files'),
+      } as SubscriptionModel<string, any>)
+    );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTargets.FileManagerShapefiles,
+        onAction: injectReceivePropertiesCreator('shapefiles'),
       } as SubscriptionModel<string, any>)
     );
     dispatch(
