@@ -93,20 +93,23 @@ class Analysis(Serializable):
     def value_scaling_update(self):
         newValueScaling = []
         objectives_data = self.objectives.value()
+        print('objectives_data', objectives_data)
         for (primary, secondaries) in zip(
             objectives_data["primaries"]["primary"], objectives_data["primaries"]["secondaries"]
         ):
             for (index, (secondary, attributes)) in enumerate(zip(secondaries["secondary"], secondaries["attributes"])):
                 for (attribute, dataset) in zip(attributes['attribute'], attributes['datasets']):
                     # type continuous or categorical according to dataset
-                    # validation si l'attribut existe déjà
+                    # à partir du dataset et colonne, aller chercher
+                    # max min, catégories,
                     newAttribute = self.existingAttribute(
                         primary, secondary, attribute, dataset)
                     if (newAttribute == None):
                         newAttribute = {
                             "attribute": attribute,
-                            "dataset": dataset,
-                            "type": 'Categorical',
+                            "dataset": dataset["id"],
+                            "type": dataset["columnType"],
+                            "column": dataset["column"],
                             "properties": {"min": 0, "max": 100, "vs_function": 'x',
                                            "distribution": [20, 40, 60, 80, 100], "distribution_value": [20, 40, 30, 80, 100],
                                            },
@@ -189,7 +192,7 @@ class Analysis(Serializable):
                     file_id = attributes["datasets"][0]["id"]
                     file = self.files_manager.get_files_by_id(file_id)
                     # "temp/" + file[0].group_id + ".shp"
-                    print('FILE', file)
+                    print('FILE')
                     input_file = file[0].name
                     calculator.add_file_to_objective(
                         primary, index, input_file, int(

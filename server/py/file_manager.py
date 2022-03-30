@@ -127,6 +127,7 @@ class FilesManager:
                     new_shapefiles.append(dic_new_shapefile)
 
         self.shapefiles.notify(new_shapefiles)
+        self.shapefiles.value
 
     def add_files(self, *files):
         created = []

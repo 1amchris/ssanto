@@ -1,9 +1,10 @@
 export default interface DatasetModel {
   name: string;
   id: string;
-  selectedColumn: string;
-  columns: string[];
-  head: string[];
+  column: string;
+  columnType: string;
+  //columns: string[];
+  //head: string[];
   isCalculated: boolean;
   calculationDistance: number;
 }
@@ -11,9 +12,10 @@ export default interface DatasetModel {
 export const DefaultDataset: DatasetModel = {
   name: '',
   id: '-1',
-  selectedColumn: '',
-  columns: [],
-  head: [],
+  column: '',
+  columnType: '',
+  //columns: [],
+  //head: [],
   isCalculated: false,
   calculationDistance: 0,
 };
