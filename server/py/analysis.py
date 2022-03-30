@@ -105,6 +105,8 @@ class Analysis(Serializable):
                     newAttribute = self.existingAttribute(
                         primary, secondary, attribute, dataset)
                     if (newAttribute == None):
+                        shapefile = self.files_manager.get_files_by_id(
+                            dataset["id"])
                         newAttribute = {
                             "attribute": attribute,
                             "dataset": dataset["id"],
@@ -191,13 +193,15 @@ class Analysis(Serializable):
                 ):
                     file_id = attributes["datasets"][0]["id"]
                     file = self.files_manager.get_files_by_id(file_id)
-                    # "temp/" + file[0].group_id + ".shp"
-                    print('FILE')
-                    input_file = file[0].name
-                    calculator.add_file_to_objective(
-                        primary, index, input_file, int(
-                            weight_secondary), scaling_function
-                    )
+
+                    if len(file) > 0:
+                        input_file = file[0].name
+                        calculator.add_file_to_objective(
+                            primary, index, input_file, int(
+                                weight_secondary), scaling_function
+                        )
+                    else:
+                        print("pb, dataset not found")
                     # calculator.objectives[primary].add_file(
                     #    index, path, "output.tiff", int(weight_secondary), scaling_function)
 

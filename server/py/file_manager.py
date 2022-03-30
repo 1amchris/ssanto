@@ -4,6 +4,7 @@ from geojson_rewind import rewind
 import os
 import shutil
 import operator
+import shapefile
 
 from py.file import File
 from py.shapefile import Shapefile
@@ -80,12 +81,7 @@ class FilesManager:
         return self.files[id]
 
     def get_files_metadatas(self):
-        print(list(
-            map(
-                lambda file: FileMetaData(file.name, id=file.id),
-                self.files_content.values(),
-            )
-        ))
+
         return list(
             map(
                 lambda file: FileMetaData(file.name, id=file.id),
@@ -119,7 +115,7 @@ class FilesManager:
             if self.getExtension(file.name) == 'shp':
                 try:
                     new_shapefile = Shapefile(file.name, b64decode(
-                        file.content), file.group_id, dir=self.writer.main_dir)
+                        file.content), file.id, dir=self.writer.main_dir)
                     dic_new_shapefile = new_shapefile.serialize()
                 except:
                     print("invalid shapefile")
