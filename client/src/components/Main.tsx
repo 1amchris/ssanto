@@ -1,4 +1,3 @@
-import React from 'react';
 import MenuBar from 'components/menu-bar/MenuBar';
 import FormsBar from 'components/forms/FormsBar';
 import Collapsible from 'components/Collapsible';
@@ -84,6 +83,15 @@ function Main() {
     );
   }
 
+  function valueScalingIsEnabled() {
+    return (
+      parametersIsValid() &&
+      studyAreaIsValid() &&
+      systemTypeIsValid() &&
+      objectiveHierarchyIsValid()
+    );
+  }
+
   return (
     <div style={{ overflowY: 'clip' }}>
       <header>
@@ -116,14 +124,23 @@ function Main() {
                 disabled={!objectiveHierarchyIsEnabled()}
               />
             </Collapsible>
-            <Collapsible title={'weighting'} disabled={!weightsAreEnabled()}>
+            <Collapsible
+              title={'objectives weighting'}
+              disabled={!weightsAreEnabled()}
+            >
               <Weighting
                 key={'weighting' + ohIsLoading}
                 disabled={!weightsAreEnabled()}
               />
             </Collapsible>
-            <Collapsible title={'value scaling'}>
-              <ValueScaling key={'value_scaling' + valueScalingIsLoading} />
+            <Collapsible
+              title={'value scaling'}
+              disabled={!valueScalingIsEnabled()}
+            >
+              <ValueScaling
+                key={'value_scaling' + valueScalingIsLoading}
+                disabled={!valueScalingIsEnabled()}
+              />
             </Collapsible>
           </FormsBar>
         </aside>
