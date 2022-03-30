@@ -1,11 +1,10 @@
-
 from py.study_area import StudyArea
-from py.subobjective import ContinuousFeature, DistanceFeature
+from py.Feature import ContinuousFeature, DistanceFeature
 
 import numpy as np
 
 
-class Objective():
+class Objective:
     def __init__(self, weight, cell_size, crs, study_area: StudyArea):
         self.subobjective = {}
         self.weight = weight
@@ -13,13 +12,49 @@ class Objective():
         self.crs = crs
         self.study_area = study_area
 
-    def add_file(self, id, path, output_tiff, weight, scaling_function, field_name=False):
+    def add_file(
+        self, id, path, output_tiff, weight, scaling_function, field_name=False
+    ):
         self.subobjective[id] = ContinuousFeature(
-            path, output_tiff, weight, self.cell_size, self.crs, self.study_area, field_name)
+            path,
+            output_tiff,
+            weight,
+            self.cell_size,
+            self.crs,
+            self.study_area,
+            scaling_function,
+            field_name,
+        )
 
-    def add_distance_file(self, id, path, output_tiff, weight, scaling_function, maximize_distance, max_distance, centroid, granularity, threshold=0.8, field_name=False,):
+    def add_distance_file(
+        self,
+        id,
+        path,
+        output_tiff,
+        weight,
+        scaling_function,
+        maximize_distance,
+        max_distance,
+        centroid,
+        granularity,
+        threshold=0.8,
+        field_name=False,
+    ):
         self.subobjective[id] = DistanceFeature(
-            path, output_tiff, weight, max_distance, self.cell_size, self.crs, self.study_area, field_name, maximize_distance, centroid, granularity, threshold)
+            path,
+            output_tiff,
+            weight,
+            max_distance,
+            self.cell_size,
+            self.crs,
+            self.study_area,
+            scaling_function,
+            field_name,
+            maximize_distance,
+            centroid,
+            granularity,
+            threshold,
+        )
 
     def add_subobjective(self, id, weight):
         new_objective = Objective(weight, self.cell_size, self.crs, self.study_area)
@@ -32,10 +67,8 @@ class Objective():
         for file in self.subobjective:
             total_weight += self.subobjective[file].weight
             value_matrix = self.subobjective[file].process_value_matrix()
-            output_array += value_matrix * \
-                self.subobjective[file].weight
-        output_array/total_weight
+            output_array += value_matrix * self.subobjective[file].weight
+        output_array / total_weight
 
-        output_array = np.multiply(
-            output_array, self.study_area.as_array)
+        output_array = np.multiply(output_array, self.study_area.as_array)
         return output_array

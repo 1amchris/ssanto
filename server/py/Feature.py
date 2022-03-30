@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from osgeo import gdal, ogr
+
 from py.raster_transform import *
-import math
+
 from py.study_area import StudyArea
 from py.math_operation import MATH_OPERATION
+import geopandas
 
 
 class Feature:
@@ -44,8 +45,6 @@ class ContinuousFeature(Feature):
 
         self.field_name = field_name
         self.scaling_function = "x"
-        # if study_area != None:
-        #     self.update_study_area(study_area)
 
     def update(self):
         self.as_raster = process_raster(
@@ -280,3 +279,47 @@ class DistanceFeature(ContinuousFeature):
                 if array[i][j] > threshold:
                     coordinate.append((i, j))
         return coordinate
+
+
+class CategoricalFeature(ContinuousFeature):
+    def __init__(
+        self,
+        path,
+        output_tiff,
+        weight,
+        cell_size,
+        crs,
+        study_area: StudyArea,
+        scaling_function,
+        field_name,
+        category_value_dict,
+    ):
+        super().__init__(
+            path,
+            output_tiff,
+            weight,
+            cell_size,
+            crs,
+            study_area,
+            scaling_function,
+            field_name,
+        )
+        self.categorize_value = category_value_dict
+
+    def update(self):
+        self.categorize_value()
+        self.as_raster = process_raster(
+            self.cell_size,
+            self.crs,
+            self.path,
+            self.output_tiff,
+            field_name="cal_value",
+        )
+        self.as_array = self.process_raster_as_array()
+
+    def categorize_value(self):
+        df = geopandas.read_file(self.path)
+        df["cal_value"] = (
+            df[self.field_name].map(self.category_value_dict).fillna(0.0).astype(float)
+        )
+        df.to_file(self.path)
