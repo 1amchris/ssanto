@@ -11,6 +11,7 @@ import geopandas
 class Feature:
     def __init__(
         self,
+        id,
         path,
         output_tiff,
         weight,
@@ -19,6 +20,7 @@ class Feature:
         study_area: StudyArea,
         scaling_function,
     ):
+        self.id = id
         self.path = path
         self.output_tiff = output_tiff
         self.cell_size = cell_size
@@ -30,6 +32,7 @@ class Feature:
 class ContinuousFeature(Feature):
     def __init__(
         self,
+        id,
         path,
         output_tiff,
         weight,
@@ -40,7 +43,7 @@ class ContinuousFeature(Feature):
         field_name=False,
     ):
         super().__init__(
-            path, output_tiff, weight, cell_size, crs, study_area, scaling_function
+            id, path, output_tiff, weight, cell_size, crs, study_area, scaling_function
         )
 
         self.field_name = field_name
@@ -115,7 +118,7 @@ class ContinuousFeature(Feature):
 
     def process_value_matrix(self):
         self.update()
-        return self.as_array
+        return self.as_array, {}
 
     def get_value_matrix(self):
         return self.as_array
@@ -124,6 +127,7 @@ class ContinuousFeature(Feature):
 class DistanceFeature(ContinuousFeature):
     def __init__(
         self,
+        id,
         path,
         output_tiff,
         weight,
@@ -139,6 +143,7 @@ class DistanceFeature(ContinuousFeature):
         threshold=0.8,
     ):
         super().__init__(
+            id,
             path,
             output_tiff,
             weight,
@@ -284,6 +289,7 @@ class DistanceFeature(ContinuousFeature):
 class CategoricalFeature(ContinuousFeature):
     def __init__(
         self,
+        id,
         path,
         output_tiff,
         weight,

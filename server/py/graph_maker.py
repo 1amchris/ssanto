@@ -8,3 +8,6 @@ class Graph_maker:
         x = np.linspace(min, max, num=50)
         y = list(map(lambda x_i: eval(equation, MATH_OPERATION, {"x": x_i}), x))
         return x, y
+
+    def calculate_fraction_above_threshold(array, treshold):
+        return np.count_nonzero(array > treshold) / array.size

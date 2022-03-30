@@ -1,11 +1,13 @@
 from py.study_area import StudyArea
-from py.Feature import ContinuousFeature, DistanceFeature
+from py.feature import ContinuousFeature, DistanceFeature
 
 import numpy as np
 
 
 class Objective:
-    def __init__(self, weight, cell_size, crs, study_area: StudyArea):
+    def __init__(self, objective_name, weight, cell_size, crs, study_area: StudyArea):
+        self.objective_name = objective_name
+        self.id = objective_name
         self.subobjective = {}
         self.weight = weight
         self.cell_size = cell_size
@@ -16,6 +18,7 @@ class Objective:
         self, id, path, output_tiff, weight, scaling_function, field_name=False
     ):
         self.subobjective[id] = ContinuousFeature(
+            id,
             path,
             output_tiff,
             weight,
@@ -42,6 +45,7 @@ class Objective:
     ):
         self.subobjective[id] = DistanceFeature(
             path,
+            id,
             output_tiff,
             weight,
             max_distance,
@@ -62,13 +66,22 @@ class Objective:
 
     def process_value_matrix(self):
         total_weight = 0
-
+        subobjective_arrays_dict = {}
         output_array = np.zeros(self.study_area.as_array.shape)
         for file in self.subobjective:
             total_weight += self.subobjective[file].weight
-            value_matrix = self.subobjective[file].process_value_matrix()
+            value_matrix, subsubobjective_arrays_dict = self.subobjective[
+                file
+            ].process_value_matrix()
+            subobjective_arrays_dict[self.subobjective[file].id] = (
+                value_matrix * self.subobjective[file].weight
+            )
+            subobjective_arrays_dict.update(subsubobjective_arrays_dict)
             output_array += value_matrix * self.subobjective[file].weight
-        output_array / total_weight
 
+        for obj in subobjective_arrays_dict:
+            subobjective_arrays_dict[obj] /= total_weight
+
+        output_array = output_array / total_weight
         output_array = np.multiply(output_array, self.study_area.as_array)
-        return output_array
+        return output_array, subobjective_arrays_dict
