@@ -19,7 +19,7 @@ class Analysis(Serializable):
     def __init__(self, subjects_manager, files_manager):
         self.subjects_manager = subjects_manager
         self.files_manager = files_manager
-
+        self.suitability_calculator = None
         self.study_area_file_name = None
 
         self.parameters = subjects_manager.create(
@@ -83,52 +83,61 @@ class Analysis(Serializable):
     def existingAttribute(self, primary, secondary, attribute, dataset):
         value_scaling_data = self.value_scaling.value()
         for existing_attribute in value_scaling_data:
-            if(attribute == existing_attribute['attribute']
-               and existing_attribute["primary"] == primary
-               and existing_attribute["secondary"] == secondary
-               and existing_attribute["dataset"]["id"] == dataset["id"]):
+            if (
+                attribute == existing_attribute["attribute"]
+                and existing_attribute["primary"] == primary
+                and existing_attribute["secondary"] == secondary
+                and existing_attribute["dataset"]["id"] == dataset["id"]
+            ):
                 return existing_attribute
         return None
 
     def value_scaling_update(self):
         newValueScaling = []
         objectives_data = self.objectives.value()
-        print('objectives_data', objectives_data)
+        print("objectives_data", objectives_data)
         for (primary, secondaries) in zip(
             objectives_data["primaries"]["primary"], objectives_data["primaries"]["secondaries"]
         ):
             for (index, (secondary, attributes)) in enumerate(zip(secondaries["secondary"], secondaries["attributes"])):
-                for (attribute, dataset) in zip(attributes['attribute'], attributes['datasets']):
+                for (attribute, dataset) in zip(attributes["attribute"], attributes["datasets"]):
                     # type continuous or categorical according to dataset
                     # à partir du dataset et colonne, aller chercher
                     # max min, catégories,
-                    newAttribute = self.existingAttribute(
-                        primary, secondary, attribute, dataset)
-                    if (newAttribute == None):
+                    newAttribute = self.existingAttribute(primary, secondary, attribute, dataset)
+                    if newAttribute == None:
                         newAttribute = {
                             "attribute": attribute,
                             "dataset": dataset["id"],
                             "type": dataset["columnType"],
                             "column": dataset["column"],
-                            "properties": {"min": 0, "max": 100, "vs_function": 'x',
-                                           "distribution": [20, 40, 60, 80, 100], "distribution_value": [20, 40, 30, 80, 100],
-                                           },
+                            "properties": {
+                                "min": 0,
+                                "max": 100,
+                                "vs_function": "x",
+                                "distribution": [20, 40, 60, 80, 100],
+                                "distribution_value": [20, 40, 30, 80, 100],
+                            },
                             "primary": primary,
                             "secondary": secondary,
                         }
                     newValueScaling.append(newAttribute)
         self.subjects_manager.update("value_scaling", newValueScaling)
+
     # TODO: replace with the map informations at the cursor's position
 
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
+        if calculator := self.suitability_calculator:
+            data = calculator.get_cell_data(cursor.lat, cursor.long)
+            print("cursor data", data)
         if cursor is not None:
             base.placeholder += f". lat: {cursor.lat:.3f}, lng: {cursor.long:.3f}"
         return base
 
     def update(self, subject, data):
         self.subjects_manager.update(subject, data)
-        if(subject == 'objectives'):
+        if subject == "objectives":
             self.value_scaling_update()
 
     def receive_study_area(self, *files):
@@ -175,33 +184,30 @@ class Analysis(Serializable):
             cell_size = self.parameters.value().get("cell_size")
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
 
-            calculator = SuitabilityCalculator(
-                self.files_manager.get_writer_path())
-            calculator.set_cell_size(cell_size)
-            calculator.set_crs("epsg:32188")
-            calculator.set_study_area_input(self.study_area_file_name)
+            self.suitability_calculator = SuitabilityCalculator(self.files_manager.get_writer_path())
+            self.suitability_calculator.set_cell_size(cell_size)
+            self.suitability_calculator.set_crs("epsg:32188")
+            self.suitability_calculator.set_study_area_input(self.study_area_file_name)
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]
             ):
-                calculator.add_objective(primary, int(weight_primary))
+                self.suitability_calculator.add_objective(primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(
-                    zip(secondaries["secondary"],
-                        secondaries["weights"], secondaries["attributes"])
+                    zip(secondaries["secondary"], secondaries["weights"], secondaries["attributes"])
                 ):
                     file_id = attributes["datasets"][0]["id"]
                     file = self.files_manager.get_files_by_id(file_id)
                     # "temp/" + file[0].group_id + ".shp"
-                    print('FILE')
+                    print("FILE")
                     input_file = file[0].name
-                    calculator.add_file_to_objective(
-                        primary, index, input_file, int(
-                            weight_secondary), scaling_function
+                    self.suitability_calculator.add_file_to_objective(
+                        primary, index, input_file, int(weight_secondary), scaling_function
                     )
-                    # calculator.objectives[primary].add_file(
+                    # self.suitability_calculator.objectives[primary].add_file(
                     #    index, path, "output.tiff", int(weight_secondary), scaling_function)
 
-            geo_json = calculator.process_data()
+            geo_json = self.suitability_calculator.process_data()
 
             return {"file_name": "current analysis", "area": geo_json}
         else:
