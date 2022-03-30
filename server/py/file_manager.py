@@ -15,12 +15,15 @@ from py.serializable import Serializable
 class FileParser:
     @staticmethod
     def load(files_manager, *ids):
-        files = sorted(files_manager.get_files_by_id(
-            *ids), key=lambda file: file.extension)
+        files = sorted(
+            files_manager.get_files_by_id(*ids), key=lambda file: file.extension
+        )
 
         if files[0].extension == "shp" and len(files) == 2:
             shp, shx = files
-            return FileParser.__load_shp(shp.get_file_descriptor(), shx.get_file_descriptor())
+            return FileParser.__load_shp(
+                shp.get_file_descriptor(), shx.get_file_descriptor()
+            )
         # elif ext == '...'
 
         return None
@@ -43,7 +46,7 @@ class FileParser:
 
 class FilesWriter:
     def __init__(self):
-        self.main_dir = os.path.join(os.getcwd(), 'temp')
+        self.main_dir = os.path.join(os.getcwd(), "temp")
         if os.path.exists(self.main_dir):
             shutil.rmtree(self.main_dir)
         os.makedirs(self.main_dir)
@@ -52,7 +55,7 @@ class FilesWriter:
         return self.main_dir
 
     def save_file(self, name, content):
-        with open(os.path.join(self.main_dir, name), 'wb') as file:
+        with open(os.path.join(self.main_dir, name), "wb") as file:
             file.write(content)
 
     def remove_file(self, name):
@@ -69,7 +72,8 @@ class FilesManager:
         self.files = self.subjects_manager.create("file_manager.files", dict())
         self.writer = FilesWriter()
         self.shapefiles = self.subjects_manager.create(
-            "file_manager.shapefiles", dict())
+            "file_manager.shapefiles", dict()
+        )
 
     def serialize(self) -> dict:
         return {key: file.serialize() for key, file in self.files_content.items()}
@@ -81,7 +85,6 @@ class FilesManager:
         return self.files[id]
 
     def get_files_metadatas(self):
-
         return list(
             map(
                 lambda file: FileMetaData(file.name, id=file.id),
@@ -109,10 +112,12 @@ class FilesManager:
 
     # files: { name: string; size: number; content: string (base64); }[]
 
-    def extractShapefiles(self,):
+    def extractShapefiles(
+        self,
+    ):
         new_shapefiles = []
         for file in self.files_content.values():
-            if self.getExtension(file.name) == 'shp':
+            if self.getExtension(file.name) == "shp":
                 try:
                     new_shapefile = Shapefile(file.name, b64decode(
                         file.content), file.id, dir=self.writer.main_dir)
