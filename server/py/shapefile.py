@@ -22,29 +22,39 @@ class Shapefile(File):
         else:
             head = df.loc[:, df.columns != "geometry"].head(5).to_dict("index")
             column_names = [s for s in df.columns if s != "geometry"]
-            category = []
-            min_category = []
-            max_category = []
+            column_types = []
+            minimums = dict()
+            maximums = dict()
+            categories = dict()
             for column_name in column_names:
                 column = df[column_name]
                 min = None
                 max = None
                 if is_numeric_dtype(column):
                     if column.isin([0, 1]).all():
-                        category.append("Boolean")
+                        column_types.append("Boolean")
+                        categories[column_name] = self.getCategories(
+                            column_name, df)
                     else:
-                        category.append("Continuous")
-                        min = column.min()
-                        max = column.max()
+                        column_types.append("Continuous")
+                        minimums[column_name] = column.min()
+                        maximums[column_name] = column.max()
+
                 else:
-                    category.append("Categorical")
-                min_category.append(min)
-                max_category.append(max)
-            columns = {'column_names': column_names, 'category': category,
-                       'min_category': min_category, 'max_category': max_category}
+                    column_types.append("Categorical")
+                    categories[column_name] = self.getCategories(
+                        column_name, df)
+
+            columns = {'column_names': column_names, 'type': column_types,
+                       'minimums': minimums, 'maximums': maximums, 'categories': categories}
 
             self.head = head
             self.columns = columns
 
+    def getCategories(self, column_name, df):
+        print(column_name, df[column_name].unique())
+        return [str(category) for category in df[column_name].unique()]
+        # return categories of this colum
+
     def serialize(self):
-        return {"id": self.id, "name": self.name, "stem": self.stem, "extension": self.extension, "column_names": self.columns["column_names"], 'category': self.columns["category"]}
+        return {"id": self.id, "name": self.name, "stem": self.stem, "extension": self.extension, "column_names": self.columns["column_names"], 'type': self.columns["type"]}

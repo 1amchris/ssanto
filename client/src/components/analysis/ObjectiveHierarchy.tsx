@@ -288,7 +288,7 @@ function ObjectiveHierarchy({ t }: any) {
           secondaryIndex
         ].datasets[attributeIndex];
       let options: string[] = [currentDataset.column];
-      let options_category: string[] = [currentDataset.columnType];
+      let options_type: string[] = [currentDataset.columnType];
 
       if (files.length > 0) {
         files.forEach((f: any) => {
@@ -296,7 +296,8 @@ function ObjectiveHierarchy({ t }: any) {
             f.column_names.forEach((column: string, index: number) => {
               if (column != currentDataset.column) {
                 options.push(column);
-                options_category.push(f.category[index]);
+                console.log('file', f);
+                options_type.push(f.type[index]);
               }
             });
           }
@@ -308,7 +309,7 @@ function ObjectiveHierarchy({ t }: any) {
           ({
             value: `${JSON.stringify({
               column: column,
-              category: options_category[index],
+              type: options_type[index],
             })}`,
             label: `${column}`,
           } as FormSelectOptionModel)
@@ -474,7 +475,7 @@ function ObjectiveHierarchy({ t }: any) {
       (e: any) => {
         console.log('onChangeColumn', e.target.value);
         let newColumn = JSON.parse(e.target.value).column;
-        let newColumnType = JSON.parse(e.target.value).category;
+        let newColumnType = JSON.parse(e.target.value).type;
         console.log(newColumn, newColumnType);
 
         let newObjectives = copyLocalObjective();

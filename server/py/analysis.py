@@ -88,6 +88,7 @@ class Analysis(Serializable):
                 and existing_attribute["primary"] == primary
                 and existing_attribute["secondary"] == secondary
                 and existing_attribute["dataset"]["id"] == dataset["id"]
+                and existing_attribute["dataset"]["column"] == dataset["column"]
             ):
                 return existing_attribute
         return None
@@ -103,27 +104,39 @@ class Analysis(Serializable):
                 for (attribute, dataset) in zip(attributes["attribute"], attributes["datasets"]):
                     # type continuous or categorical according to dataset
                     # à partir du dataset et colonne, aller chercher
-                    # max min, catégories,
+                    # max min, catégories, function
                     newAttribute = self.existingAttribute(
                         primary, secondary, attribute, dataset)
                     if newAttribute == None:
-                        shapefile = self.files_manager.get_files_by_id(
-                            dataset["id"])
-                        newAttribute = {
-                            "attribute": attribute,
-                            "dataset": dataset["id"],
-                            "type": dataset["columnType"],
-                            "column": dataset["column"],
-                            "properties": {
-                                "min": 0,
-                                "max": 100,
-                                "vs_function": "x",
-                                "distribution": [20, 40, 60, 80, 100],
-                                "distribution_value": [20, 40, 30, 80, 100],
-                            },
-                            "primary": primary,
-                            "secondary": secondary,
-                        }
+                        # get shapefile from
+                        try:
+                            shapefile = self.files_manager.shapefiles_content[dataset["id"]]
+                        except:
+                            print("pb, shapefile doesn't exist")
+                        else:
+                            #print('SHAPEFILES', shapefile)
+                            if dataset["columnType"] == 'Categorical':
+                                distribution = shapefile.columns['categories'][dataset["column"]]
+                                distribution_value = [0] * len(distribution)
+                            else:
+                                distribution = []
+                                distribution_value = []
+
+                            newAttribute = {
+                                "attribute": attribute,
+                                "dataset": dataset["id"],
+                                "type": dataset["columnType"],
+                                "column": dataset["column"],
+                                "properties": {
+                                    "min": 0,
+                                    "max": 100,
+                                    "vs_function": "x",
+                                    "distribution": distribution,
+                                    "distribution_value": distribution_value,
+                                },
+                                "primary": primary,
+                                "secondary": secondary,
+                            }
                     newValueScaling.append(newAttribute)
         self.subjects_manager.update("value_scaling", newValueScaling)
 
