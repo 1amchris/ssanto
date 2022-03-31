@@ -1,5 +1,5 @@
 import { createRef, ReactElement, RefObject, useState } from 'react';
-import { capitalize } from 'lodash';
+import { capitalize, values } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from '../../models/form/FormSelectOptionModel';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -25,20 +25,81 @@ import LoadingValue from 'models/LoadingValue';
 import { call } from 'store/reducers/server';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
+import DatasetModel from 'models/DatasetModel';
+import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 
 function ValueScaling({ t }: any) {
-  const property = 'value_scaling';
+  const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
-  const valueScaling = selector.properties[property] as ValueScalingModel[];
+  const objectives = selector.properties[property] as ObjectivesHierarchyModel;
+  const getErrors = selector.properties['objectivesError'];
+  const isLoading = selector.properties['objectivesLoading'];
 
   const dispatch = useAppDispatch();
 
-  const getErrors = selector.properties.valueScalingError;
-  const isLoading = selector.properties.valueScalingLoading;
+  //const getErrors = selector.properties.valueScalingError;
+  //const isLoading = selector.properties.valueScalingLoading;
 
-  const [localValueScaling, setLocalValueScaling] = useState(valueScaling);
+  const extractAttributeFromOH = () => {
+    let localAttributes: any = [];
+
+    if (objectives.primaries.primary.length == 0) {
+      return localAttributes;
+    } else {
+      for (
+        let primaryIndex = 0;
+        primaryIndex < objectives.primaries.primary.length;
+        primaryIndex++
+      ) {
+        let secondaries = objectives.primaries.secondaries[primaryIndex];
+        for (
+          let secondaryIndex = 0;
+          secondaryIndex < secondaries.secondary.length;
+          secondaryIndex++
+        ) {
+          let attributes = secondaries.attributes[secondaryIndex];
+          for (
+            let attributeIndex = 0;
+            attributeIndex < attributes.attribute.length;
+            attributeIndex++
+          ) {
+            let dataset = attributes.datasets[attributeIndex];
+            localAttributes.push({
+              primaryIndex: primaryIndex,
+              secondaryIndex: secondaryIndex,
+              attributeIndex: attributeIndex,
+              attribute: attributes.attribute[attributeIndex],
+              dataset: dataset,
+            });
+          }
+        }
+      }
+      return localAttributes as ValueScalingModel;
+    }
+  };
+
+  const injectAttributeInOH = () => {
+    let newObjectivesHierarchy = JSON.parse(
+      JSON.stringify(objectives)
+    ) as typeof objectives;
+    localValueScaling.forEach((attribute: ValueScalingModel) => {
+      newObjectivesHierarchy.primaries.secondaries[
+        attribute.primaryIndex
+      ].attributes[attribute.secondaryIndex].datasets[
+        attribute.attributeIndex
+      ] = attribute.dataset;
+    });
+    console.log('newObjectivesHierarchy', newObjectivesHierarchy);
+    return newObjectivesHierarchy;
+  };
+
+  const [localValueScaling, setLocalValueScaling] = useState(
+    extractAttributeFromOH() as ValueScalingModel[]
+  );
   let controls = [];
-  if (!(localValueScaling === undefined) && localValueScaling.length > 0) {
+
+  if (localValueScaling !== undefined && localValueScaling.length > 0) {
+    console.log('localValueScaling', localValueScaling);
     const onChangeValueScalingFunction =
       (attributeIndex: number) => (e: any) => {
         e.persist();
@@ -48,7 +109,9 @@ function ValueScaling({ t }: any) {
         let newValueScaling = JSON.parse(
           JSON.stringify(localValueScaling)
         ) as typeof localValueScaling;
-        newValueScaling[attributeIndex].properties.vs_function = newFunction;
+        newValueScaling[
+          attributeIndex
+        ].dataset.properties.valueScalingFunction = newFunction;
         setLocalValueScaling(newValueScaling);
       };
     const onChangeCategoryValue =
@@ -58,7 +121,7 @@ function ValueScaling({ t }: any) {
         let newValueScaling = JSON.parse(
           JSON.stringify(localValueScaling)
         ) as typeof localValueScaling;
-        newValueScaling[attributeIndex].properties.distribution_value[
+        newValueScaling[attributeIndex].dataset.properties.distribution_value[
           categoryIndex
         ] = newCategoryValue;
         setLocalValueScaling(newValueScaling);
@@ -66,16 +129,16 @@ function ValueScaling({ t }: any) {
     const continuousScalingBox = ({
       key,
       attributeIndex,
-      min,
-      max,
-      distribution,
-      distribution_value,
+      value,
     }: FactoryProps) => [
       <Control
         key={key('continuous')}
         label="value scaling function"
         name="continuous"
-        defaultValue={localValueScaling[attributeIndex].properties.vs_function}
+        defaultValue={
+          localValueScaling[attributeIndex].dataset.properties
+            .valueScalingFunction
+        }
         required
         prefix={
           <React.Fragment>
@@ -99,9 +162,8 @@ function ValueScaling({ t }: any) {
           label={category}
           className="small position-relative d-flex"
           defaultValue={
-            localValueScaling[attributeIndex].properties.distribution_value[
-              categoryIndex
-            ]
+            localValueScaling[attributeIndex].dataset.properties
+              .distribution_value[categoryIndex]
           }
           onChange={onChangeCategoryValue(attributeIndex, categoryIndex)}
           type="number"
@@ -112,41 +174,41 @@ function ValueScaling({ t }: any) {
     const categoricalScalingBox = ({
       key,
       attributeIndex,
-      distribution,
-      distribution_value,
+      dataset,
     }: FactoryProps) => (
       <SimpleList
         key={key('categorical')}
         name={'weights'}
         hideLabel
         factory={categoricalRowFactory}
-        controls={distribution.map((category: any, index: number) => ({
-          category,
-          categoryIndex: index,
-          attributeIndex,
-        }))}
+        controls={dataset.properties.distribution.map(
+          (category: any, index: number) => ({
+            category,
+            categoryIndex: index,
+            attributeIndex,
+          })
+        )}
       />
     );
 
     const ScalingBoxFactory = ({
-      attribute,
-      type,
-      properties,
+      value,
       attributeIndex,
       key,
     }: FactoryProps): ReactElement | ReactElement[] => (
-      <Collapsible key={key('scalingBox')} title={attribute}>
-        {type == 'Continuous'
-          ? continuousScalingBox({ key, attributeIndex, ...properties })
-          : categoricalScalingBox({ key, attributeIndex, ...properties })}
+      <Collapsible key={key('scalingBox')} title={value.attribute}>
+        {value.dataset.type == 'Continuous'
+          ? continuousScalingBox({ key, attributeIndex, ...value })
+          : categoricalScalingBox({ key, attributeIndex, ...value })}
         <ScalingGraph
           distribution={
-            localValueScaling[attributeIndex].properties.distribution
+            localValueScaling[attributeIndex].dataset.properties.distribution
           }
           distribution_value={
-            localValueScaling[attributeIndex].properties.distribution_value
+            localValueScaling[attributeIndex].dataset.properties
+              .distribution_value
           }
-          type={type}
+          type={value.dataset.type}
         />
         ,
       </Collapsible>
@@ -160,12 +222,12 @@ function ValueScaling({ t }: any) {
               name={'attributes_vs'}
               hideLabel
               factory={ScalingBoxFactory}
-              controls={localValueScaling.map((value: any, index: number) => ({
-                attribute: value.attribute,
-                type: value.type,
-                properties: value.properties,
-                attributeIndex: index,
-              }))}
+              controls={localValueScaling.map(
+                (value: ValueScalingModel, index: number) => ({
+                  value,
+                  attributeIndex: index,
+                })
+              )}
             />,
           ]
         : [];
@@ -175,15 +237,16 @@ function ValueScaling({ t }: any) {
       <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
     ];
   } else {
-    controls = [<></>];
+    controls = [<Spacer></Spacer>];
   }
 
   return (
+    //reconvertir localAttribute en Objective Hierarchy
     <Form
       controls={controls}
       errors={getErrors}
       disabled={isLoading}
-      key={'weight_form'}
+      key={'value_scaling_form'}
       onSubmit={(fields: any) => {
         console.log('ON SUBMIT', fields);
         dispatch(
@@ -195,7 +258,7 @@ function ValueScaling({ t }: any) {
         dispatch(
           call({
             target: ServerCallTargets.Update,
-            args: [property, localValueScaling],
+            args: [property, injectAttributeInOH()],
             onSuccessAction: injectSetLoadingCreator({
               value: property,
               isLoading: false,

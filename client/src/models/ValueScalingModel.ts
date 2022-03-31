@@ -1,14 +1,9 @@
+import DatasetModel from 'models/DatasetModel';
+
 export default interface ValueScalingModel {
+  attributeIndex: number;
   attribute: string;
-  dataset: { name: string; id: string };
-  type: string;
-  properties: {
-    min: number;
-    max: number;
-    vs_function: string;
-    distribution: string[];
-    distribution_value: number[];
-  };
-  primary: string;
-  secondary: string;
+  dataset: DatasetModel;
+  primaryIndex: number;
+  secondaryIndex: number;
 }

@@ -2,6 +2,7 @@ import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
+import ShapefileModel from 'models/ShapefileModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
 import objectivesData from 'data/objectives.json';
@@ -25,6 +26,7 @@ import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import DatasetModel, { DefaultDataset } from 'models/DatasetModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
+import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 
 function isShp(file: { extension: string }, index: any, array: any) {
   return file.extension == 'shp';
@@ -82,9 +84,9 @@ function ObjectiveHierarchy({ t }: any) {
   const isLoading = selector.properties['objectivesLoading'];
 
   const [localObjectives, setLocalObjectives] = useState({
-    ...objectives,
+    ...(objectives as ObjectivesHierarchyModel),
     update: true,
-  } as { main: string; update: boolean; primaries: { primary: string[]; weights: number[]; secondaries: { secondary: string[]; weights: number[]; attributes: { attribute: string[]; weights: number[]; datasets: DatasetModel[] }[] }[] } });
+  });
 
   /* Début refactor ***************/
   let controls = [];
@@ -288,7 +290,7 @@ function ObjectiveHierarchy({ t }: any) {
           secondaryIndex
         ].datasets[attributeIndex];
       let options: string[] = [currentDataset.column];
-      let options_type: string[] = [currentDataset.columnType];
+      let options_type: string[] = [currentDataset.type];
 
       if (files.length > 0) {
         files.forEach((f: any) => {
@@ -296,7 +298,6 @@ function ObjectiveHierarchy({ t }: any) {
             f.column_names.forEach((column: string, index: number) => {
               if (column != currentDataset.column) {
                 options.push(column);
-                console.log('file', f);
                 options_type.push(f.type[index]);
               }
             });
@@ -363,7 +364,7 @@ function ObjectiveHierarchy({ t }: any) {
 
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
-          ].datasets.push(DefaultDataset);
+          ].datasets.push(DefaultDataset as DatasetModel);
 
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
@@ -465,7 +466,7 @@ function ObjectiveHierarchy({ t }: any) {
           ...DefaultDataset,
           name: newDatasetName,
           id: newDatasetId,
-        };
+        } as DatasetModel;
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
@@ -473,10 +474,8 @@ function ObjectiveHierarchy({ t }: any) {
     const onChangeColumn =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
-        console.log('onChangeColumn', e.target.value);
         let newColumn = JSON.parse(e.target.value).column;
-        let newColumnType = JSON.parse(e.target.value).type;
-        console.log(newColumn, newColumnType);
+        let newtype = JSON.parse(e.target.value).type;
 
         let newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
@@ -484,7 +483,30 @@ function ObjectiveHierarchy({ t }: any) {
         ].datasets[attributeIndex].column = newColumn;
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
-        ].datasets[attributeIndex].columnType = newColumnType;
+        ].datasets[attributeIndex].type = newtype;
+
+        //update properties distribution si type == categorical
+        if (newtype == 'Categorical') {
+          const dataset =
+            newObjectives.primaries.secondaries[primaryIndex].attributes[
+              secondaryIndex
+            ].datasets[attributeIndex];
+          //get les shapefiles selon id, get categories selon colonne
+          const shapefile = files.filter((file: any) => {
+            return file.id == dataset.id;
+          }) as ShapefileModel[];
+          const categories = shapefile[0].categories;
+          console.log('categories', categories[newColumn]);
+          newObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].datasets[attributeIndex].properties.distribution =
+            categories[newColumn];
+          newObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].datasets[attributeIndex].properties.distribution_value =
+            new Array<number>(categories[newColumn].length).fill(0);
+        }
+
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
@@ -534,7 +556,7 @@ function ObjectiveHierarchy({ t }: any) {
       if (
         localObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
-        ].datasets[orderIndex].columnType == 'Continuous'
+        ].datasets[orderIndex].type == 'Continuous'
       ) {
         continuousOptions.push(
           <Control

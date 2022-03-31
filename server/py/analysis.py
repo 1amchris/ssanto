@@ -7,6 +7,8 @@ from .server_socket import CallException
 from base64 import b64encode
 import pickle
 
+from py.graph_maker import Graph_maker
+
 
 class Analysis(Serializable):
     @staticmethod
@@ -80,65 +82,27 @@ class Analysis(Serializable):
         # self.parameters.update()
         pass
 
-    def existingAttribute(self, primary, secondary, attribute, dataset):
-        value_scaling_data = self.value_scaling.value()
-        for existing_attribute in value_scaling_data:
-            if (
-                attribute == existing_attribute["attribute"]
-                and existing_attribute["primary"] == primary
-                and existing_attribute["secondary"] == secondary
-                and existing_attribute["dataset"]["id"] == dataset["id"]
-                and existing_attribute["dataset"]["column"] == dataset["column"]
-            ):
-                return existing_attribute
-        return None
-
-    def value_scaling_update(self):
-        newValueScaling = []
+    def distribution_update(self):
         objectives_data = self.objectives.value()
         print("objectives_data", objectives_data)
-        for (primary, secondaries) in zip(
-            objectives_data["primaries"]["primary"], objectives_data["primaries"]["secondaries"]
-        ):
-            for (index, (secondary, attributes)) in enumerate(zip(secondaries["secondary"], secondaries["attributes"])):
-                for (attribute, dataset) in zip(attributes["attribute"], attributes["datasets"]):
-                    # type continuous or categorical according to dataset
-                    # à partir du dataset et colonne, aller chercher
-                    # max min, catégories, function
-                    newAttribute = self.existingAttribute(
-                        primary, secondary, attribute, dataset)
-                    if newAttribute == None:
-                        # get shapefile from
-                        try:
-                            shapefile = self.files_manager.shapefiles_content[dataset["id"]]
-                        except:
-                            print("pb, shapefile doesn't exist")
-                        else:
-                            #print('SHAPEFILES', shapefile)
-                            if dataset["columnType"] == 'Categorical':
-                                distribution = shapefile.columns['categories'][dataset["column"]]
-                                distribution_value = [0] * len(distribution)
-                            else:
-                                distribution = []
-                                distribution_value = []
+        """ 
+        newValueScaling = []
+        for existing_attribute in list(filter(lambda attribute: (attribute['type'] == 'Continuous'), value_scaling_data)):
+            value_scaling_fc = existing_attribute['properties']['vs_function']
+            min_value = existing_attribute['properties']['min']
+            max_value = existing_attribute['properties']['max']
+            x, y = Graph_maker.compute_scaling_graph(
+                value_scaling_fc, min_value, max_value)
+            print('x, y', x, y)
+            newValueScaling.append(existing_attribute)
+            """
+        self.subjects_manager.update("objectives", objectives_data)
 
-                            newAttribute = {
-                                "attribute": attribute,
-                                "dataset": dataset["id"],
-                                "type": dataset["columnType"],
-                                "column": dataset["column"],
-                                "properties": {
-                                    "min": 0,
-                                    "max": 100,
-                                    "vs_function": "x",
-                                    "distribution": distribution,
-                                    "distribution_value": distribution_value,
-                                },
-                                "primary": primary,
-                                "secondary": secondary,
-                            }
-                    newValueScaling.append(newAttribute)
-        self.subjects_manager.update("value_scaling", newValueScaling)
+    """ 
+    value_scaling_update: update value_scaling when objectives are updated. 
+
+
+    """
 
     # TODO: replace with the map informations at the cursor's position
 
@@ -154,7 +118,7 @@ class Analysis(Serializable):
     def update(self, subject, data):
         self.subjects_manager.update(subject, data)
         if subject == "objectives":
-            self.value_scaling_update()
+            self.distribution_update()
 
     def receive_study_area(self, *files):
         created = self.files_manager.add_files(*files)
@@ -219,7 +183,6 @@ class Analysis(Serializable):
                     file_id = attributes["datasets"][0]["id"]
                     file = self.files_manager.get_files_by_id(file_id)
                     # "temp/" + file[0].group_id + ".shp"
-                    print("FILE")
                     if(len(file) > 0):
                         input_file = file[0].name
                         self.suitability_calculator.add_file_to_objective(
