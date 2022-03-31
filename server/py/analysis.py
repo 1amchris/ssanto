@@ -5,6 +5,7 @@ from .file_manager import FileParser
 from .map import LatLng, MapCursorInformations
 from .server_socket import CallException
 from base64 import b64encode
+import copy
 import pickle
 
 from py.graph_maker import Graph_maker
@@ -50,11 +51,6 @@ class Analysis(Serializable):
             },
         )
 
-        self.value_scaling = subjects_manager.create(
-            "value_scaling",
-            [],
-        )
-
     def __repr__(self) -> str:
         return str(self.serialize())
 
@@ -84,25 +80,21 @@ class Analysis(Serializable):
 
     def distribution_update(self):
         objectives_data = self.objectives.value()
-        print("objectives_data", objectives_data)
-        """ 
-        newValueScaling = []
-        for existing_attribute in list(filter(lambda attribute: (attribute['type'] == 'Continuous'), value_scaling_data)):
-            value_scaling_fc = existing_attribute['properties']['vs_function']
-            min_value = existing_attribute['properties']['min']
-            max_value = existing_attribute['properties']['max']
-            x, y = Graph_maker.compute_scaling_graph(
-                value_scaling_fc, min_value, max_value)
-            print('x, y', x, y)
-            newValueScaling.append(existing_attribute)
-            """
-        self.subjects_manager.update("objectives", objectives_data)
+        new_objectives_data = copy.deepcopy(objectives_data)
+        for (primary_index, secondaries) in enumerate(objectives_data['primaries']['secondaries']):
+            for (secondary_index, attributes) in enumerate(secondaries['attributes']):
+                for(attribute_index, datasets) in enumerate(attributes['datasets']):
+                    if datasets['type'] == 'Continuous':
+                        string_function = datasets['properties']['valueScalingFunction']
+                        x, y = Graph_maker.compute_scaling_graph(
+                            string_function, 0, 100)
 
-    """ 
-    value_scaling_update: update value_scaling when objectives are updated. 
+                        new_objectives_data["primaries"]["secondaries"][primary_index]['attributes'][
+                            secondary_index]['datasets'][attribute_index]['properties']["distribution"] = [int(x_) for x_ in list(x)]
+                        new_objectives_data["primaries"]["secondaries"][primary_index]['attributes'][
+                            secondary_index]['datasets'][attribute_index]['properties']["distribution_value"] = [int(y_) for y_ in list(y)]
 
-
-    """
+        self.subjects_manager.update("objectives", new_objectives_data)
 
     # TODO: replace with the map informations at the cursor's position
 

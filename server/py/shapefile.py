@@ -52,7 +52,6 @@ class Shapefile(File):
             self.columns = columns
 
     def getCategories(self, column_name, df):
-        print(column_name, df[column_name].unique())
         return [str(category) for category in df[column_name].unique()]
         # return categories of this colum
 
