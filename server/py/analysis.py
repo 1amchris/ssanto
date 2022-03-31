@@ -172,15 +172,26 @@ class Analysis(Serializable):
                     zip(secondaries["secondary"],
                         secondaries["weights"], secondaries["attributes"])
                 ):
+
                     file_id = attributes["datasets"][0]["id"]
+                    column_type = attributes["datasets"][0]["type"]
+                    column_name = attributes["datasets"][0]["column"]
+                    scaling_function = attributes["datasets"][0]["properties"]['valueScalingFunction']
                     file = self.files_manager.get_files_by_id(file_id)
                     # "temp/" + file[0].group_id + ".shp"
                     if(len(file) > 0):
                         input_file = file[0].name
-                        self.suitability_calculator.add_file_to_objective(
-                            primary, index, input_file, int(
-                                weight_secondary), scaling_function
-                        )
+                        if column_type == 'Boolean':
+                            self.suitability_calculator.add_file_to_objective(
+                                primary, index, input_file, int(
+                                    weight_secondary), scaling_function
+                            )
+                        else:
+
+                            self.suitability_calculator.add_file_to_objective(
+                                primary, index, input_file, int(
+                                    weight_secondary), scaling_function, column_name
+                            )
 
                     # self.suitability_calculator.objectives[primary].add_file(
                     #    index, path, "output.tiff", int(weight_secondary), scaling_function)
