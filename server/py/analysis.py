@@ -87,7 +87,7 @@ class Analysis(Serializable):
                     if datasets['type'] == 'Continuous':
                         string_function = datasets['properties']['valueScalingFunction']
                         x, y = Graph_maker.compute_scaling_graph(
-                            string_function, 0, 100)
+                            string_function, datasets['min_value'], datasets['max_value'])
 
                         new_objectives_data["primaries"]["secondaries"][primary_index]['attributes'][
                             secondary_index]['datasets'][attribute_index]['properties']["distribution"] = [int(x_) for x_ in list(x)]

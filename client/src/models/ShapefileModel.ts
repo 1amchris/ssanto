@@ -6,4 +6,6 @@ export default interface ShapefileModel {
   column_names: string[];
   type: string[];
   categories: any;
+  max_value: number[];
+  min_value: number[];
 }
