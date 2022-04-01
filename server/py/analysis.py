@@ -81,18 +81,19 @@ class Analysis(Serializable):
     def distribution_update(self):
         objectives_data = self.objectives.value()
         new_objectives_data = copy.deepcopy(objectives_data)
-        for (primary_index, secondaries) in enumerate(objectives_data['primaries']['secondaries']):
-            for (secondary_index, attributes) in enumerate(secondaries['attributes']):
-                for(attribute_index, datasets) in enumerate(attributes['datasets']):
-                    if datasets['type'] == 'Continuous':
-                        string_function = datasets['properties']['valueScalingFunction']
-                        x, y = Graph_maker.compute_scaling_graph(
-                            string_function, 0, 100)
+        for (primary_index, secondaries) in enumerate(objectives_data["primaries"]["secondaries"]):
+            for (secondary_index, attributes) in enumerate(secondaries["attributes"]):
+                for (attribute_index, datasets) in enumerate(attributes["datasets"]):
+                    if datasets["type"] == "Continuous":
+                        string_function = datasets["properties"]["valueScalingFunction"]
+                        x, y = Graph_maker.compute_scaling_graph(string_function, 0, 100)
 
-                        new_objectives_data["primaries"]["secondaries"][primary_index]['attributes'][
-                            secondary_index]['datasets'][attribute_index]['properties']["distribution"] = [int(x_) for x_ in list(x)]
-                        new_objectives_data["primaries"]["secondaries"][primary_index]['attributes'][
-                            secondary_index]['datasets'][attribute_index]['properties']["distribution_value"] = [int(y_) for y_ in list(y)]
+                        new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
+                            "datasets"
+                        ][attribute_index]["properties"]["distribution"] = [int(x_) for x_ in list(x)]
+                        new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
+                            "datasets"
+                        ][attribute_index]["properties"]["distribution_value"] = [int(y_) for y_ in list(y)]
 
         self.subjects_manager.update("objectives", new_objectives_data)
 
@@ -101,10 +102,8 @@ class Analysis(Serializable):
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
         if calculator := self.suitability_calculator:
-            data = calculator.get_cell_data(cursor.lat, cursor.long)
-            print("cursor data", data)
-        if cursor is not None:
-            base.placeholder += f". lat: {cursor.lat:.3f}, lng: {cursor.long:.3f}"
+            base.objectives = calculator.get_cell_data(cursor.lat, cursor.long)
+            print("cursor data", base.objectives)
         return base
 
     def update(self, subject, data):
@@ -156,30 +155,25 @@ class Analysis(Serializable):
             cell_size = self.parameters.value().get("cell_size")
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
 
-            self.suitability_calculator = SuitabilityCalculator(
-                self.files_manager.get_writer_path())
+            self.suitability_calculator = SuitabilityCalculator(self.files_manager.get_writer_path())
             self.suitability_calculator.set_cell_size(cell_size)
             self.suitability_calculator.set_crs("epsg:32188")
-            self.suitability_calculator.set_study_area_input(
-                self.study_area_file_name)
+            self.suitability_calculator.set_study_area_input(self.study_area_file_name)
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]
             ):
-                self.suitability_calculator.add_objective(
-                    primary, int(weight_primary))
+                self.suitability_calculator.add_objective(primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(
-                    zip(secondaries["secondary"],
-                        secondaries["weights"], secondaries["attributes"])
+                    zip(secondaries["secondary"], secondaries["weights"], secondaries["attributes"])
                 ):
                     file_id = attributes["datasets"][0]["id"]
                     file = self.files_manager.get_files_by_id(file_id)
                     # "temp/" + file[0].group_id + ".shp"
-                    if(len(file) > 0):
+                    if len(file) > 0:
                         input_file = file[0].name
                         self.suitability_calculator.add_file_to_objective(
-                            primary, index, input_file, int(
-                                weight_secondary), scaling_function
+                            primary, index, input_file, int(weight_secondary), scaling_function
                         )
 
                     # self.suitability_calculator.objectives[primary].add_file(
