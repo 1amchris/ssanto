@@ -82,6 +82,7 @@ class FormScalingGraph extends FormComponent {
       isCalculated,
       ...props
     } = this.getFilteredProps();
+    console.log('isCalculated', isCalculated, isCalculated as Boolean);
 
     return (
       <Form.Group
@@ -94,8 +95,7 @@ class FormScalingGraph extends FormComponent {
           <small>{capitalize(t(label || this.props.name))}</small>
         </Form.Label>
         <this.Overlay>
-          {type == 'Continuous' ||
-          (type == 'Boolean' && (isCalculated as boolean)) ? (
+          {type == 'Continuous' ? (
             <div style={{ width: 200, height: 200 }}>
               <Line
                 key={this.key}

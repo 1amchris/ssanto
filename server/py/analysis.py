@@ -84,10 +84,18 @@ class Analysis(Serializable):
         for (primary_index, secondaries) in enumerate(objectives_data['primaries']['secondaries']):
             for (secondary_index, attributes) in enumerate(secondaries['attributes']):
                 for(attribute_index, datasets) in enumerate(attributes['datasets']):
-                    if datasets['type'] == 'Continuous':
+                    continuousCondition = datasets['type'] == 'Continuous'
+                    booleanCondition = datasets['type'] == 'Boolean' and bool(
+                        datasets["isCalculated"])
+                    if continuousCondition or booleanCondition:
                         string_function = datasets['properties']['valueScalingFunction']
-                        x, y = Graph_maker.compute_scaling_graph(
-                            string_function, datasets['min_value'], datasets['max_value'])
+                        if continuousCondition:
+                            x, y = Graph_maker.compute_scaling_graph(
+                                string_function, datasets['min_value'], datasets['max_value'])
+                        elif booleanCondition:
+                            # ici, ajuster num= granularity pour l'affichage
+                            x, y = Graph_maker.compute_scaling_graph(
+                                string_function, 0, int(datasets["calculationDistance"]), num=10)
 
                         new_objectives_data["primaries"]["secondaries"][primary_index]['attributes'][
                             secondary_index]['datasets'][attribute_index]['properties']["distribution"] = [int(x_) for x_ in list(x)]
