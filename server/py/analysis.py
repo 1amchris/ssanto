@@ -194,7 +194,8 @@ class Analysis(Serializable):
                             print("is_calculated")
                             self.suitability_calculator.add_file_to_calculated_objective(
                                 primary, index, input_file, int(
-                                    weight_secondary), scaling_function, attributes["datasets"][0]["calculationDistance"]
+                                    weight_secondary), scaling_function,
+                                attributes["datasets"][0]["calculationDistance"]
                             )
                         elif column_type == 'Categorical':
                             categories = attributes["datasets"][0]["properties"]['distribution']

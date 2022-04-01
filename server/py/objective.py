@@ -63,7 +63,6 @@ class Objective:
         threshold=0.8,
         field_name=False,
     ):
-        print('add_distance_file', path, '*******',  output_tiff)
         self.subobjective[id] = DistanceFeature(
             id,
             path,

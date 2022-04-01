@@ -11,6 +11,7 @@ import geopandas as gp
 import pandas as pd
 from .study_area import StudyArea
 import os
+from .raster_transform import convert_projection
 
 
 class SuitabilityCalculator:
@@ -28,29 +29,13 @@ class SuitabilityCalculator:
             cell_values[key] = self.objectives_arrays_dict[key][x, y]
         return cell_values
 
-    def convert_projection(self, in_proj, out_proj, p1, p2):
-        InSR = osr.SpatialReference()
-        InSR.ImportFromEPSG(in_proj)
-        OutSR = osr.SpatialReference()
-
-        OutSR.ImportFromEPSG(out_proj)
-
-        Point = ogr.Geometry(ogr.wkbPoint)
-        Point.AddPoint(p1, p2)
-        Point.AssignSpatialReference(InSR)
-        Point.TransformTo(OutSR)
-
-        x = Point.GetX()
-        y = Point.GetY()
-        return x, y
-
     def geo_coordinate_to_matrix_coordinate(self, latitude, longitude):
         src = gdal.Open(os.path.join(self.path, "output_study_area.tiff"))
         ulx, _, _, uly, _, _ = src.GetGeoTransform()
         projection = osr.SpatialReference(wkt=src.GetProjection())
         target_epsg = int(projection.GetAttrValue("AUTHORITY", 1))
 
-        x, y = self.convert_projection(4326, target_epsg, latitude, longitude)
+        x, y = convert_projection(4326, target_epsg, latitude, longitude)
 
         cx = int((x - ulx) // self.cell_size)
         cy = -int((y - uly) // self.cell_size)
@@ -91,7 +76,6 @@ class SuitabilityCalculator:
 
         categories_dic = dict(zip(categories, categories_value))
         print('categories_dic', categories_dic)
-
         self.objectives[objective_name].add_categorical_file(
             id, input_path, output_path, weight, scaling_function, categories_dic, field_name
         )
@@ -100,17 +84,15 @@ class SuitabilityCalculator:
         self, objective_name, id, input, weight, scaling_function, max_distance, field_name=False
     ):
         input_path = os.path.join(self.path, input)
-        print("input_path", input_path)
-
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
         self.objectives[objective_name].add_distance_file(
             id, input_path, output_path, weight, scaling_function, maximize_distance=True,
             max_distance=max_distance,
-            centroid=False,
-            granularity=None,
+            centroid=True,
+            granularity=100,
             threshold=0.8,
-            field_name=field_name,
+            field_name=False,
         )
 
     # add calculated file to objective

@@ -156,7 +156,6 @@ class DistanceFeature(ContinuousFeature):
             scaling_function,
             field_name,
         )
-        print('DistanceFeature', path)
         self.max_distance = float(max_distance) / float(self.cell_size)
         self.granularity = granularity
         self.threshold = threshold
@@ -289,6 +288,10 @@ class DistanceFeature(ContinuousFeature):
                 if array[i][j] > threshold:
                     coordinate.append((i, j))
         return coordinate
+
+    def process_value_matrix(self):
+        self.update()
+        return self.distance_matrix, {}
 
 
 class CategoricalFeature(ContinuousFeature):
