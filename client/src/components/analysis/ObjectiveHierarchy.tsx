@@ -509,8 +509,9 @@ function ObjectiveHierarchy({ t }: any) {
           secondaryIndex
         ].datasets[attributeIndex].min_value = newMin;
 
-        if (newType == 'Categorical') {
+        if (newType == 'Categorical' || newType == 'Boolean') {
           const categories = shapefile[0].categories;
+          console.log(categories);
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
           ].datasets[attributeIndex].properties.distribution =
@@ -570,7 +571,7 @@ function ObjectiveHierarchy({ t }: any) {
       if (
         localObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
-        ].datasets[orderIndex].type == 'Continuous'
+        ].datasets[orderIndex].type == 'Boolean'
       ) {
         continuousOptions.push(
           <Control

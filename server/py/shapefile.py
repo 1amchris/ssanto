@@ -51,10 +51,12 @@ class Shapefile(File):
                     categories[column_name] = self.getCategories(
                         column_name, df)
 
-            column_names.append("None (boolean)")
+            column_name = "None (boolean)"
+            column_names.append(column_name)
             column_types.append("Boolean")
             minimums.append(min)
             maximums.append(max)
+            categories[column_name] = ['0', '1']
 
             columns = {'column_names': column_names, 'type': column_types,
                        'minimums': minimums, 'maximums': maximums, 'categories': categories}

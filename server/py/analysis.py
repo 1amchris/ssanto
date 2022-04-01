@@ -176,16 +176,34 @@ class Analysis(Serializable):
                     file_id = attributes["datasets"][0]["id"]
                     column_type = attributes["datasets"][0]["type"]
                     column_name = attributes["datasets"][0]["column"]
+                    is_calculated = bool(
+                        attributes["datasets"][0]["isCalculated"])
                     scaling_function = attributes["datasets"][0]["properties"]['valueScalingFunction']
                     file = self.files_manager.get_files_by_id(file_id)
                     # "temp/" + file[0].group_id + ".shp"
                     if(len(file) > 0):
+                        print("compute_suitability")
+
                         input_file = file[0].name
-                        if column_type == 'Boolean':
+                        if not is_calculated and column_type == 'Boolean':
                             self.suitability_calculator.add_file_to_objective(
                                 primary, index, input_file, int(
                                     weight_secondary), scaling_function
                             )
+                        elif is_calculated and column_type == 'Boolean':
+                            print("is_calculated")
+                            self.suitability_calculator.add_file_to_calculated_objective(
+                                primary, index, input_file, int(
+                                    weight_secondary), scaling_function, attributes["datasets"][0]["calculationDistance"]
+                            )
+                        elif column_type == 'Categorical':
+                            categories = attributes["datasets"][0]["properties"]['distribution']
+                            categories_value = attributes["datasets"][0]["properties"]['distribution_value']
+
+                            self.suitability_calculator.add_file_to_categorical_objective(primary, index, input_file, int(
+                                weight_secondary), scaling_function, categories, categories_value, column_name
+                            )
+
                         else:
 
                             self.suitability_calculator.add_file_to_objective(

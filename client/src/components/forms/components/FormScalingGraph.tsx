@@ -79,6 +79,7 @@ class FormScalingGraph extends FormComponent {
       distribution,
       distribution_value,
       type,
+      isCalculated,
       ...props
     } = this.getFilteredProps();
 
@@ -93,7 +94,8 @@ class FormScalingGraph extends FormComponent {
           <small>{capitalize(t(label || this.props.name))}</small>
         </Form.Label>
         <this.Overlay>
-          {type == 'Continuous' ? (
+          {type == 'Continuous' ||
+          (type == 'Boolean' && (isCalculated as boolean)) ? (
             <div style={{ width: 200, height: 200 }}>
               <Line
                 key={this.key}

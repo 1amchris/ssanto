@@ -197,7 +197,9 @@ function ValueScaling({ t }: any) {
       key,
     }: FactoryProps): ReactElement | ReactElement[] => (
       <Collapsible key={key('scalingBox')} title={value.attribute}>
-        {value.dataset.type == 'Continuous'
+        {value.dataset.type == 'Continuous' ||
+        (value.dataset.type == 'Boolean' &&
+          (value.dataset.isCalculated as boolean))
           ? continuousScalingBox({ key, attributeIndex, ...value })
           : categoricalScalingBox({ key, attributeIndex, ...value })}
         <ScalingGraph

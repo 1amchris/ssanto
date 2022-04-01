@@ -50,6 +50,7 @@ class ContinuousFeature(Feature):
         self.scaling_function = "x"
 
     def update(self):
+        print("update", self.path, '****', self.output_tiff)
         self.as_raster = process_raster(
             self.cell_size,
             self.crs,
@@ -155,7 +156,8 @@ class DistanceFeature(ContinuousFeature):
             scaling_function,
             field_name,
         )
-        self.max_distance = max_distance / self.cellsize
+        print('DistanceFeature', path)
+        self.max_distance = float(max_distance) / float(self.cell_size)
         self.granularity = granularity
         self.threshold = threshold
         self.maximise_distance = maximize_distance
@@ -314,10 +316,10 @@ class CategoricalFeature(ContinuousFeature):
             scaling_function,
             field_name,
         )
-        self.categorize_value = category_value_dict
+        self.categorized_value = category_value_dict
 
     def update(self):
-        self.categorize_value()
+        self.categorize_values()
         self.as_raster = process_raster(
             self.cell_size,
             self.crs,
@@ -327,10 +329,10 @@ class CategoricalFeature(ContinuousFeature):
         )
         self.as_array = self.process_raster_as_array()
 
-    def categorize_value(self):
+    def categorize_values(self):
         df = geopandas.read_file(self.path)
         df["cal_value"] = (
             df[self.field_name].map(
-                self.category_value_dict).fillna(0.0).astype(float)
+                self.categorized_value).fillna(0.0).astype(float)
         )
         df.to_file(self.path)

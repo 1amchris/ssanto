@@ -14,15 +14,19 @@ def shape_to_Raster(cell_size,
     input_srs = input_lyr.GetSpatialRef()
 
     x_min, x_max, y_min, y_max = input_lyr.GetExtent()
-    x_nb_cell = int((x_max - x_min) / cell_size)
-    y_nb_cells = int((y_max - y_min) / cell_size)
+    print("x_min...", x_min, x_max, y_min, y_max)
+
+    x_nb_cell = int((x_max - x_min) / int(cell_size))
+    y_nb_cells = int((y_max - y_min) / int(cell_size))
 
     output_driver = gdal.GetDriverByName("GTiff")
     if os.path.exists(output):
         output_driver.Delete(output)
 
-    print(cell_size,input,output)
-    output_source = output_driver.Create(output, x_nb_cell, y_nb_cells, 1, gdal.GDT_Float64)
+    print('shape_to_Raster', cell_size, input, output)
+    print("shape_to_raseter", x_nb_cell, y_nb_cells)
+    output_source = output_driver.Create(
+        output, x_nb_cell, y_nb_cells, 1, gdal.GDT_Float64)
     output_source.SetGeoTransform((x_min, cell_size, 0, y_max, 0, -cell_size))
     output_source.SetProjection(input_srs.ExportToWkt())
     output_lyr = output_source.GetRasterBand(1)
@@ -45,7 +49,7 @@ def shape_to_Raster(cell_size,
 
 
 def process_raster(cell_size, crs, input, output, field_name=False):
-
+    print('process_raster', input, '****',  output)
     if input.endswith('.shp'):
         shape_to_Raster(cell_size, input, output, field_name=field_name)
 

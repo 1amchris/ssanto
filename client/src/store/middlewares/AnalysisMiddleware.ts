@@ -1,6 +1,6 @@
 import { studyAreaReceived, analysisReturn } from 'store/reducers/analysis';
 import { upsertLayer } from 'store/reducers/map';
-import { InsertLayerModel } from "models/map/InsertLayerModel";
+import { InsertLayerModel } from 'models/map/InsertLayerModel';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
 
@@ -24,6 +24,7 @@ const AnalysisMiddleware: Middleware =
 
       case analysisReturn.type: {
         const { file_name, area } = action.payload;
+        console.log('area', area);
         dispatch(
           upsertLayer({
             group: 'analysis',

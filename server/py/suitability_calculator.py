@@ -78,6 +78,37 @@ class SuitabilityCalculator:
             id, input_path, output_path, weight, scaling_function, field_name
         )
 
+    def add_file_to_categorical_objective(
+        self, objective_name, id, input, weight, scaling_function, categories, categories_value, field_name
+    ):
+        input_path = os.path.join(self.path, input)
+        output_name = "output.tiff"
+        output_path = os.path.join(self.path, output_name)
+
+        categories_dic = dict(zip(categories, categories_value))
+        print('categories_dic', categories_dic)
+
+        self.objectives[objective_name].add_categorical_file(
+            id, input_path, output_path, weight, scaling_function, categories_dic, field_name
+        )
+
+    def add_file_to_calculated_objective(
+        self, objective_name, id, input, weight, scaling_function, max_distance, field_name=False
+    ):
+        input_path = os.path.join(self.path, input)
+        print("input_path", input_path)
+
+        output_name = "output.tiff"
+        output_path = os.path.join(self.path, output_name)
+        self.objectives[objective_name].add_distance_file(
+            id, input_path, output_path, weight, scaling_function, maximize_distance=True,
+            max_distance=max_distance,
+            centroid=False,
+            granularity=None,
+            threshold=0.8,
+            field_name=field_name,
+        )
+
     # add calculated file to objective
 
     def matrix_to_raster(self, matrix):
