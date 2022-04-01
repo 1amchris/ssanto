@@ -112,7 +112,7 @@ class Analysis(Serializable):
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
         if calculator := self.suitability_calculator:
-            base.objectives = calculator.get_cell_data(cursor.lat, cursor.long)
+            base.objectives = calculator.get(cursor.lat, cursor.long)
             print("cursor data", base.objectives)
         return base
 
