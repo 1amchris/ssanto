@@ -1,4 +1,5 @@
 import json
+from lib2to3.pytree import convert
 import matplotlib.pyplot as plt
 from .objective import Objective
 from osgeo import gdal, ogr, osr
@@ -20,33 +21,36 @@ class SuitabilityCalculator:
         self.cell_size = 20
         self.crs = "epsg:32188"
 
-    def get_cell_data(self, latitude, longitude):
+    def git(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
         cell_values = {}
         for key in self.objectives_arrays_dict:
             cell_values[key] = self.objectives_arrays_dict[key][x, y]
         return cell_values
 
-    def geo_coordinate_to_matrix_coordinate(self, latitude, longitude):
-
-        src = gdal.Open(os.path.join(self.path, "output_study_area.tiff"))
-        ulx, _, _, uly, _, _ = src.GetGeoTransform()
-        projection = osr.SpatialReference(wkt=src.GetProjection())
-        target_epsg = int(projection.GetAttrValue("AUTHORITY", 1))
-
+    def convert_projection(self, in_proj, out_proj, p1, p2):
         InSR = osr.SpatialReference()
-        InSR.ImportFromEPSG(4326)
+        InSR.ImportFromEPSG(in_proj)
         OutSR = osr.SpatialReference()
 
-        OutSR.ImportFromEPSG(target_epsg)
+        OutSR.ImportFromEPSG(out_proj)
 
         Point = ogr.Geometry(ogr.wkbPoint)
-        Point.AddPoint(latitude, longitude)
+        Point.AddPoint(p1, p2)
         Point.AssignSpatialReference(InSR)
         Point.TransformTo(OutSR)
 
         x = Point.GetX()
         y = Point.GetY()
+        return x, y
+
+    def geo_coordinate_to_matrix_coordinate(self, latitude, longitude):
+        src = gdal.Open(os.path.join(self.path, "output_study_area.tiff"))
+        ulx, _, _, uly, _, _ = src.GetGeoTransform()
+        projection = osr.SpatialReference(wkt=src.GetProjection())
+        target_epsg = int(projection.GetAttrValue("AUTHORITY", 1))
+
+        x, y = self.convert_projection(4326, target_epsg, latitude, longitude)
 
         cx = int((x - ulx) // self.cell_size)
         cy = -int((y - uly) // self.cell_size)
