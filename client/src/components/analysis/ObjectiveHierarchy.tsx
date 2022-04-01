@@ -21,12 +21,12 @@ import {
   injectSetErrorCreator,
 } from 'store/reducers/analysis';
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
-import React from 'react';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import DatasetModel, { DefaultDataset } from 'models/DatasetModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
+import React from 'react';
 
 function isShp(file: { extension: string }, index: any, array: any) {
   return file.extension == 'shp';
@@ -71,7 +71,7 @@ function isValidOH(objectiveHierarchy: {
   return primaryHasSecondary && secondaryHasAttribute && attributeHasName;
 }
 
-function ObjectiveHierarchy({ t }: any) {
+function ObjectiveHierarchy({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
@@ -612,39 +612,6 @@ function ObjectiveHierarchy({ t }: any) {
         );
       }
 
-      /*         
-
-        <Control
-          key={key('calculated_distance') + localObjectives.update}
-          label={'calculated distance'}
-          className="small position-relative d-flex"
-          name={name('calculated_distance')}
-          suffix={
-            <React.Fragment>
-              <input
-                type="checkbox"
-                checked={
-                  localObjectives.primaries.secondaries[primaryIndex]
-                    .attributes[secondaryIndex].datasets[orderIndex]
-                    .isCalculated
-                }
-                onChange={onChangeIsCalculated(
-                  primaryIndex,
-                  secondaryIndex,
-                  orderIndex
-                )}
-              />
-            </React.Fragment>
-          }
-          defaultValue={
-            localObjectives.primaries.secondaries[primaryIndex].attributes[
-              secondaryIndex
-            ].datasets[orderIndex].calculationDistance
-          }
-          onChange={onChangeDistance(primaryIndex, secondaryIndex, orderIndex)}
-          type="number"
-          tooltip={t('meter')}
-        />, */
       return [
         <Control
           label="attribute"
@@ -821,7 +788,9 @@ function ObjectiveHierarchy({ t }: any) {
     controls = [
       ...mainControls,
       <Spacer />,
-      <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
+      <Button variant="outline-primary" loading={isLoading}>
+        {capitalize(t('apply'))}
+      </Button>,
     ];
   } else {
     controls = [<></>];
@@ -830,7 +799,7 @@ function ObjectiveHierarchy({ t }: any) {
     <Form
       controls={controls}
       errors={getErrors}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       onSubmit={() => {
         if (isValidOH(localObjectives)) {
           dispatch(

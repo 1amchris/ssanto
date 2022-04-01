@@ -37,7 +37,7 @@ class Analysis(Serializable):
         self.nbs = subjects_manager.create(
             "nbs_system",
             {
-                "system_type": "2",
+                "system_type": "0",
                 # ...
             },
         )

@@ -1,4 +1,3 @@
-import React from 'react';
 import MenuBar from 'components/menu-bar/MenuBar';
 import FormsBar from 'components/forms/FormsBar';
 import Collapsible from 'components/Collapsible';
@@ -19,10 +18,78 @@ import MapCursorInformation from './aside-informations/MapCursorInformation';
 import { selectMap } from 'store/reducers/map';
 
 function Main() {
-  const selector = useAppSelector(selectAnalysis);
-  //const { cursor } = useAppSelector(selectMap);
-  const ohIsLoading = selector.properties.objectivesLoading;
-  const valueScalingIsLoading = selector.properties.valueScalingLoading;
+  const analysis = useAppSelector(selectAnalysis);
+  const { cursor } = useAppSelector(selectMap);
+  const ohIsLoading = analysis.properties.objectivesLoading;
+
+  function parametersIsValid() {
+    return (
+      analysis.properties.parameters.analysis_name?.length > 0 &&
+      analysis.properties.parameters.modeler_name?.length > 0 &&
+      analysis.properties.parameters.cell_size > 0 &&
+      (!analysis.properties.parametersError ||
+        analysis.properties.parametersError.length === 0) &&
+      !analysis.properties.parametersLoading
+    );
+  }
+
+  function studyAreaIsEnabled() {
+    return parametersIsValid();
+  }
+
+  function studyAreaIsValid() {
+    return (
+      analysis.properties.studyArea.fileName?.length > 0 &&
+      analysis.properties.studyArea.area &&
+      (!analysis.properties.studyAreaError ||
+        analysis.properties.studyAreaError.length === 0) &&
+      !analysis.properties.studyAreaLoading
+    );
+  }
+
+  function systemTypeIsEnabled() {
+    return parametersIsValid() && studyAreaIsValid();
+  }
+
+  function systemTypeIsValid() {
+    return (
+      analysis.properties.nbs_system &&
+      (!analysis.properties.nbsSystemError ||
+        analysis.properties.nbsSystemError.length === 0) &&
+      !analysis.properties.nbsSystemLoading
+    );
+  }
+
+  function objectiveHierarchyIsEnabled() {
+    return parametersIsValid() && studyAreaIsValid() && systemTypeIsValid();
+  }
+
+  function objectiveHierarchyIsValid() {
+    return (
+      analysis.properties.objectives &&
+      (!analysis.properties.objectivesError ||
+        analysis.properties.objectivesError.length === 0) &&
+      !analysis.properties.objectivesLoading
+    );
+  }
+
+  function weightsAreEnabled() {
+    return (
+      parametersIsValid() &&
+      studyAreaIsValid() &&
+      systemTypeIsValid() &&
+      objectiveHierarchyIsValid()
+    );
+  }
+
+  function valueScalingIsEnabled() {
+    return (
+      parametersIsValid() &&
+      studyAreaIsValid() &&
+      systemTypeIsValid() &&
+      objectiveHierarchyIsValid()
+    );
+  }
 
   return (
     <div style={{ overflowY: 'clip' }}>
@@ -32,26 +99,47 @@ function Main() {
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
           <FormsBar>
-            <Collapsible title={'file explorer'}>
+            <Collapsible title={'file explorer'} collapsed>
               <FileExplorer />
             </Collapsible>
-            <Collapsible title={'parameters'} collapsed>
+            <Collapsible title={'parameters'}>
               <Parameters />
             </Collapsible>
-            <Collapsible title={'study area'}>
-              <StudyArea />
+            <Collapsible title={'study area'} disabled={!studyAreaIsEnabled()}>
+              <StudyArea disabled={!studyAreaIsEnabled()} />
             </Collapsible>
-            <Collapsible title={'system type'} collapsed>
-              <NbsSystem />
+            <Collapsible
+              title={'system type'}
+              disabled={!systemTypeIsEnabled()}
+            >
+              <NbsSystem disabled={!systemTypeIsEnabled()} />
             </Collapsible>
-            <Collapsible title={'objective hierarchy'}>
-              <ObjectiveHierarchy key={'oh' + ohIsLoading} />
+            <Collapsible
+              title={'objective hierarchy'}
+              disabled={!objectiveHierarchyIsEnabled()}
+            >
+              <ObjectiveHierarchy
+                key={'oh' + ohIsLoading}
+                disabled={!objectiveHierarchyIsEnabled()}
+              />
             </Collapsible>
-            <Collapsible title={'weighting'}>
-              <Weighting key={'weighting' + ohIsLoading} collapsed />
+            <Collapsible
+              title={'objectives weighting'}
+              disabled={!weightsAreEnabled()}
+            >
+              <Weighting
+                key={'weighting' + ohIsLoading}
+                disabled={!weightsAreEnabled()}
+              />
             </Collapsible>
-            <Collapsible title={'value scaling'}>
-              <ValueScaling key={'value_scaling' + ohIsLoading} />
+            <Collapsible
+              title={'value scaling'}
+              disabled={!valueScalingIsEnabled()}
+            >
+              <ValueScaling
+                key={'value_scaling' + ohIsLoading}
+                disabled={!valueScalingIsEnabled()}
+              />
             </Collapsible>
           </FormsBar>
         </aside>

@@ -25,16 +25,24 @@ export const analysisSlice = createSlice({
 
       parametersLoading: false,
       parametersError: '',
+
       nbsSystemLoading: false,
       nbsSystemError: '',
+
       studyAreaLoading: false,
       studyAreaError: '',
+
       filesLoading: false,
       filesError: '',
+
       objectivesError: '',
       objectivesLoading: false,
+
       valueScalingError: '',
       valueScalingLoading: false,
+
+      analysisLoading: false,
+      analysisError: '',
 
       objectives: {
         main: 'Needs',
@@ -106,6 +114,11 @@ export const analysisSlice = createSlice({
       let temp: any = state.properties;
       temp[property + 'Error'] = error;
       temp[property + 'Loading'] = false;
+
+      console.error(
+        `property ${property} has errored. Error:`,
+        temp[property + 'Error']
+      );
     },
 
     setLoading: (
@@ -120,11 +133,8 @@ export const analysisSlice = createSlice({
       temp[property + 'Loading'] = isLoading;
     },
 
-    analysisReturn: (state, { payload }: PayloadAction<any>) => {
-      console.warn(
-        'No validation was performed on the analysis return',
-        payload
-      );
+    analysisSuccess: (state, _: PayloadAction<any>) => {
+      state.properties.analysisLoading = false;
     },
   },
 });
@@ -143,7 +153,7 @@ export const injectReceivePropertiesCreator = createActionCreatorSyringe<
   any
 >(analysisSlice.actions.receiveProperties);
 
-export const { updateObjectives, studyAreaReceived, analysisReturn } =
+export const { updateObjectives, studyAreaReceived, analysisSuccess } =
   analysisSlice.actions;
 
 export const selectAnalysis = (state: RootState) => state.analysis;

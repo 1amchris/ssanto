@@ -41,7 +41,7 @@ const FileRowFactory = ({
   </div>
 );
 
-function FileExplorer({ t }: any) {
+function FileExplorer({ t, disabled }: any) {
   const property = 'files';
   const selector = useAppSelector(selectAnalysis);
   const files = selector.properties[property];
@@ -101,7 +101,7 @@ function FileExplorer({ t }: any) {
     <Form
       controls={controls}
       errors={getErrors}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       onSubmit={(fields: any) => {
         dispatch(
           injectSetLoadingCreator({
@@ -109,18 +109,19 @@ function FileExplorer({ t }: any) {
             isLoading: true,
           } as LoadingValue<string>)()
         );
-        FilesUtils.extractContentFromFiles(Array.from(fields.files)).then(files =>
-          dispatch(
-            call({
-              target: ServerCallTargets.FileManagerAddFiles,
-              args: files,
-              onSuccessAction: injectSetLoadingCreator({
-                value: property,
-                isLoading: false,
-              } as LoadingValue<string>),
-              onErrorAction: injectSetErrorCreator(property),
-            } as CallModel<FileContentModel<string>[], void, LoadingValue<string>, string, string>)
-          )
+        FilesUtils.extractContentFromFiles(Array.from(fields.files)).then(
+          files =>
+            dispatch(
+              call({
+                target: ServerCallTargets.FileManagerAddFiles,
+                args: files,
+                onSuccessAction: injectSetLoadingCreator({
+                  value: property,
+                  isLoading: false,
+                } as LoadingValue<string>),
+                onErrorAction: injectSetErrorCreator(property),
+              } as CallModel<FileContentModel<string>[], void, LoadingValue<string>, string, string>)
+            )
         );
       }}
     />

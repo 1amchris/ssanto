@@ -14,7 +14,7 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
-function Parameters({ t }: any) {
+function Parameters({ t, disabled }: any) {
   const property = 'parameters';
   const selector = useAppSelector(selectAnalysis);
   const properties = selector.properties[property];
@@ -30,14 +30,14 @@ function Parameters({ t }: any) {
       name="analysis_name"
       defaultValue={properties.analysis_name}
       required
-      tooltip={t('the analysis name will ...')}
+      tooltip={t('the given name will be used to identify the saved project.')}
     />,
     <Control
       label="name of the modeler"
       name="modeler_name"
       defaultValue={properties.modeler_name}
       required
-      tooltip={t("the modeler's name will ...")}
+      tooltip={t('the given name will be used to identify the modeler.')}
     />,
     <Control
       label="cell size"
@@ -68,7 +68,7 @@ function Parameters({ t }: any) {
   return (
     <Form
       controls={controls}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       errors={getErrors}
       onSubmit={(fields: any) => {
         dispatch(
