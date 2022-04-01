@@ -26,7 +26,7 @@ class SuitabilityCalculator:
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
         cell_values = {}
         for key in self.objectives_arrays_dict:
-            cell_values[key] = self.objectives_arrays_dict[key][x, y]
+            cell_values[key] = self.objectives_arrays_dict[key][y, x]
         return cell_values
 
     def geo_coordinate_to_matrix_coordinate(self, latitude, longitude):
