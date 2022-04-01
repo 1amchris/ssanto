@@ -74,6 +74,7 @@ class FilesManager:
         self.shapefiles = self.subjects_manager.create(
             "file_manager.shapefiles", dict()
         )
+        self.shapefiles_content = dict()
 
     def serialize(self) -> dict:
         return {key: file.serialize() for key, file in self.files_content.items()}
@@ -85,14 +86,6 @@ class FilesManager:
         return self.files[id]
 
     def get_files_metadatas(self):
-        print(
-            list(
-                map(
-                    lambda file: FileMetaData(file.name, id=file.id),
-                    self.files_content.values(),
-                )
-            )
-        )
         return list(
             map(
                 lambda file: FileMetaData(file.name, id=file.id),
@@ -102,6 +95,9 @@ class FilesManager:
 
     def get_files_by_id(self, *ids):
         return list(filter(lambda file: file.id in ids, self.files_content.values()))
+
+    def get_shapefile_by_id(self, id):
+        return list(filter(lambda shapefile: shapefile['id'] == id, self.shapefiles.data))[0]
 
     def get_file_ids(self):
         return self.files_content.keys()
@@ -124,30 +120,30 @@ class FilesManager:
         self,
     ):
         new_shapefiles = []
+        new_shapefiles_content = dict()
+
         for file in self.files_content.values():
             if self.getExtension(file.name) == "shp":
                 try:
-                    new_shapefile = Shapefile(
-                        file.name,
-                        b64decode(file.content),
-                        file.group_id,
-                        dir=self.writer.main_dir,
-                    )
+                    new_shapefile = Shapefile(file.name, b64decode(
+                        file.content), file.id, dir=self.writer.main_dir)
                     dic_new_shapefile = new_shapefile.serialize()
                 except:
                     print("invalid shapefile")
                 else:
                     new_shapefiles.append(dic_new_shapefile)
+                    new_shapefiles_content[new_shapefile.id] = new_shapefile
 
         self.shapefiles.notify(new_shapefiles)
-        self.shapefiles.value
+        self.shapefiles_content = new_shapefiles_content
 
     def add_files(self, *files):
         created = []
         group_id = str(uuid4())
 
         for file in files:
-            new_file = File(file["name"], b64decode(file["content"]), group_id=group_id)
+            new_file = File(file["name"], b64decode(
+                file["content"]), group_id=group_id)
             self.files_content[new_file.id] = new_file
             self.writer.save_file(new_file.name, new_file.read_content())
             created.append(new_file)

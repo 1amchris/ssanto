@@ -2,6 +2,7 @@ import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
+import ShapefileModel from 'models/ShapefileModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
 import objectivesData from 'data/objectives.json';
@@ -25,6 +26,7 @@ import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import DatasetModel, { DefaultDataset } from 'models/DatasetModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
+import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 
 function isShp(file: { extension: string }, index: any, array: any) {
   return file.extension == 'shp';
@@ -82,9 +84,9 @@ function ObjectiveHierarchy({ t }: any) {
   const isLoading = selector.properties['objectivesLoading'];
 
   const [localObjectives, setLocalObjectives] = useState({
-    ...objectives,
+    ...(objectives as ObjectivesHierarchyModel),
     update: true,
-  } as { main: string; update: boolean; primaries: { primary: string[]; weights: number[]; secondaries: { secondary: string[]; weights: number[]; attributes: { attribute: string[]; weights: number[]; datasets: DatasetModel[] }[] }[] } });
+  });
 
   /* Début refactor ***************/
   let controls = [];
@@ -287,8 +289,8 @@ function ObjectiveHierarchy({ t }: any) {
         localObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex];
-      let options: string[] = [currentDataset.column];
-      let options_category: string[] = [currentDataset.columnType];
+      let options: string[] = [];
+      let options_index: number[] = [];
 
       if (files.length > 0) {
         files.forEach((f: any) => {
@@ -296,7 +298,10 @@ function ObjectiveHierarchy({ t }: any) {
             f.column_names.forEach((column: string, index: number) => {
               if (column != currentDataset.column) {
                 options.push(column);
-                options_category.push(f.category[index]);
+                options_index.push(index);
+              } else {
+                options.unshift(currentDataset.column);
+                options_index.unshift(index);
               }
             });
           }
@@ -308,7 +313,7 @@ function ObjectiveHierarchy({ t }: any) {
           ({
             value: `${JSON.stringify({
               column: column,
-              category: options_category[index],
+              index: options_index[index],
             })}`,
             label: `${column}`,
           } as FormSelectOptionModel)
@@ -362,7 +367,7 @@ function ObjectiveHierarchy({ t }: any) {
 
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
-          ].datasets.push(DefaultDataset);
+          ].datasets.push(DefaultDataset as DatasetModel);
 
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
@@ -464,7 +469,7 @@ function ObjectiveHierarchy({ t }: any) {
           ...DefaultDataset,
           name: newDatasetName,
           id: newDatasetId,
-        };
+        } as DatasetModel;
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
@@ -472,18 +477,50 @@ function ObjectiveHierarchy({ t }: any) {
     const onChangeColumn =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
-        console.log('onChangeColumn', e.target.value);
         let newColumn = JSON.parse(e.target.value).column;
-        let newColumnType = JSON.parse(e.target.value).category;
-        console.log(newColumn, newColumnType);
+        let newIndex = JSON.parse(e.target.value).index;
 
         let newObjectives = copyLocalObjective();
+
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex].column = newColumn;
+
+        const dataset =
+          newObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].datasets[attributeIndex];
+        //get les shapefiles selon id, get categories selon colonne
+        const shapefile = files.filter((file: any) => {
+          return file.id == dataset.id;
+        }) as ShapefileModel[];
+
+        let newType = shapefile[0].type[newIndex];
+        let newMax = shapefile[0].max_value[newIndex];
+        let newMin = shapefile[0].min_value[newIndex];
+
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
-        ].datasets[attributeIndex].columnType = newColumnType;
+        ].datasets[attributeIndex].type = newType;
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].max_value = newMax;
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].min_value = newMin;
+
+        if (newType == 'Categorical') {
+          const categories = shapefile[0].categories;
+          newObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].datasets[attributeIndex].properties.distribution =
+            categories[newColumn];
+          newObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].datasets[attributeIndex].properties.distribution_value =
+            new Array<number>(categories[newColumn].length).fill(0);
+        }
+
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
@@ -533,7 +570,7 @@ function ObjectiveHierarchy({ t }: any) {
       if (
         localObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
-        ].datasets[orderIndex].columnType == 'Continuous'
+        ].datasets[orderIndex].type == 'Continuous'
       ) {
         continuousOptions.push(
           <Control

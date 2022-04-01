@@ -51,9 +51,7 @@ function Main() {
               <Weighting key={'weighting' + ohIsLoading} collapsed />
             </Collapsible>
             <Collapsible title={'value scaling'}>
-              <ValueScaling
-                key={'value_scaling' + valueScalingIsLoading + ohIsLoading}
-              />
+              <ValueScaling key={'value_scaling' + ohIsLoading} />
             </Collapsible>
           </FormsBar>
         </aside>

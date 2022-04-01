@@ -2,6 +2,7 @@ import geopandas
 from py.file import File
 from pandas.api.types import is_numeric_dtype
 import os
+import math
 
 
 class Shapefile(File):
@@ -22,29 +23,51 @@ class Shapefile(File):
         else:
             head = df.loc[:, df.columns != "geometry"].head(5).to_dict("index")
             column_names = [s for s in df.columns if s != "geometry"]
-            category = []
-            min_category = []
-            max_category = []
+            column_types = []
+            minimums = []
+            maximums = []
+            categories = dict()
             for column_name in column_names:
                 column = df[column_name]
-                min = None
-                max = None
+                min = 0
+                max = 0
                 if is_numeric_dtype(column):
                     if column.isin([0, 1]).all():
-                        category.append("Boolean")
+                        column_types.append("Boolean")
+                        minimums.append(min)
+                        maximums.append(max)
+                        categories[column_name] = self.getCategories(
+                            column_name, df)
+
                     else:
-                        category.append("Continuous")
-                        min = column.min()
-                        max = column.max()
+                        column_types.append("Continuous")
+                        minimums.append(column.min())
+                        maximums.append(column.max())
+
                 else:
-                    category.append("Categorical")
-                min_category.append(min)
-                max_category.append(max)
-            columns = {'column_names': column_names, 'category': category,
-                       'min_category': min_category, 'max_category': max_category}
+                    column_types.append("Categorical")
+                    minimums.append(min)
+                    maximums.append(max)
+                    categories[column_name] = self.getCategories(
+                        column_name, df)
+
+            column_names.append("None (boolean)")
+            column_types.append("Boolean")
+            minimums.append(min)
+            maximums.append(max)
+
+            columns = {'column_names': column_names, 'type': column_types,
+                       'minimums': minimums, 'maximums': maximums, 'categories': categories}
 
             self.head = head
             self.columns = columns
 
+    def getCategories(self, column_name, df):
+        return [str(category) for category in df[column_name].unique()]
+        # return categories of this colum
+
     def serialize(self):
-        return {"id": self.id, "name": self.name, "stem": self.stem, "extension": self.extension, "column_names": self.columns["column_names"], 'category': self.columns["category"]}
+        print('MIN', self.columns["minimums"])
+        print('MAX', self.columns["maximums"])
+        # min_value": list(self.columns["minimums"]), "max_value": list(self.columns["maximums"])
+        return {"id": self.id, "name": self.name, "stem": self.stem, "extension": self.extension, "column_names": self.columns["column_names"], 'type': self.columns["type"], 'categories': self.columns["categories"], 'min_value': [math.floor(min_) for min_ in self.columns["minimums"]], 'max_value': [math.ceil(max_) for max_ in self.columns["maximums"]]}
