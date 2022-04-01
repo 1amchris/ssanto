@@ -68,29 +68,55 @@ class SuitabilityCalculator:
         )
 
     def add_file_to_categorical_objective(
-        self, objective_name, id, input, weight, scaling_function, categories, categories_value, field_name
+        self,
+        objective_name,
+        id,
+        input,
+        weight,
+        scaling_function,
+        categories,
+        categories_value,
+        field_name,
     ):
         input_path = os.path.join(self.path, input)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
 
         categories_dic = dict(zip(categories, categories_value))
-        print('categories_dic', categories_dic)
+        print("categories_dic", categories_dic)
         self.objectives[objective_name].add_categorical_file(
-            id, input_path, output_path, weight, scaling_function, categories_dic, field_name
+            id,
+            input_path,
+            output_path,
+            weight,
+            scaling_function,
+            categories_dic,
+            field_name,
         )
 
     def add_file_to_calculated_objective(
-        self, objective_name, id, input, weight, scaling_function, max_distance, field_name=False
+        self,
+        objective_name,
+        id,
+        input,
+        weight,
+        scaling_function,
+        max_distance,
+        field_name=False,
     ):
         input_path = os.path.join(self.path, input)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
         self.objectives[objective_name].add_distance_file(
-            id, input_path, output_path, weight, scaling_function, maximize_distance=True,
+            id,
+            input_path,
+            output_path,
+            weight,
+            scaling_function,
+            maximize_distance=True,
             max_distance=max_distance,
             centroid=True,
-            granularity=100,
+            granularity=20,
             threshold=0.8,
             field_name=False,
         )
@@ -99,8 +125,7 @@ class SuitabilityCalculator:
 
     def matrix_to_raster(self, matrix):
         matrix = np.int16(matrix)
-        print("matrix_to_raster", type(matrix),
-              type(matrix[0]), type(matrix[0][0]))
+        print("matrix_to_raster", type(matrix), type(matrix[0]), type(matrix[0][0]))
 
         study_area_path = os.path.join(self.path, StudyArea.OUTPUT_NAME)
         output_name = "output.tiff"
@@ -108,8 +133,7 @@ class SuitabilityCalculator:
 
         inDs = gdal.Open(study_area_path)
         driver = inDs.GetDriver()
-        outDs = driver.Create(output_path, len(
-            matrix[0]), len(matrix), 1, GDT_Int16)
+        outDs = driver.Create(output_path, len(matrix[0]), len(matrix), 1, GDT_Int16)
         # write the data
         outBand = outDs.GetRasterBand(1)
         outBand.WriteArray(matrix, 0, 0)
@@ -140,8 +164,7 @@ class SuitabilityCalculator:
                 )
             )
             geoms = list(results)
-            gpd_polygonized_raster = gp.GeoDataFrame.from_features(
-                geoms, crs=c)
+            gpd_polygonized_raster = gp.GeoDataFrame.from_features(geoms, crs=c)
             # gpd_polygonized_raster = gpd_polygonized_raster[gpd_polygonized_raster['NDVI'] > 0]
             # gpd_polygonized_raster.to_file('temp/dataframe.geojson', driver='GeoJSON')
 
@@ -150,8 +173,7 @@ class SuitabilityCalculator:
                 4326
             )  # Where these numbers come from?
             output_geojson_name = "analysis.geojson"
-            gpd_polygonized_raster.to_file(
-                os.path.join(self.path, output_geojson_name))
+            gpd_polygonized_raster.to_file(os.path.join(self.path, output_geojson_name))
             return gpd_polygonized_raster.to_json()
 
     def process_data(self):
@@ -159,8 +181,7 @@ class SuitabilityCalculator:
         output_matrix = []
         total_weight = 0
         for obj in self.objectives:
-            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix(
-            )
+            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix()
             objective_weight = self.objectives[obj].weight
             if len(output_matrix) == 0:
                 output_matrix = np.zeros(data.shape)
