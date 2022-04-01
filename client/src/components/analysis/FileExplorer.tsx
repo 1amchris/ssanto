@@ -61,7 +61,7 @@ function FileExplorer({ t, disabled }: any) {
         t('the selected files will be uploaded to the server for further use.')
       )}
     />,
-    <Button variant="outline-primary" type="submit">
+    <Button variant="outline-primary" type="submit" loading={isLoading}>
       {capitalize(t('add'))}
     </Button>,
     files?.length > 0 && <Spacer />,
