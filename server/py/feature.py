@@ -310,8 +310,8 @@ class CategoricalFeature(ContinuousFeature):
         category_value_dict,
     ):
         super().__init__(
-            path,
             id,
+            path,
             output_tiff,
             weight,
             cell_size,

@@ -38,13 +38,13 @@ function Main() {
             <Collapsible title={'parameters'} collapsed>
               <Parameters />
             </Collapsible>
-            <Collapsible title={'study area'} collapsed>
+            <Collapsible title={'study area'}>
               <StudyArea />
             </Collapsible>
             <Collapsible title={'system type'} collapsed>
               <NbsSystem />
             </Collapsible>
-            <Collapsible title={'objective hierarchy'} collapsed>
+            <Collapsible title={'objective hierarchy'}>
               <ObjectiveHierarchy key={'oh' + ohIsLoading} />
             </Collapsible>
             <Collapsible title={'weighting'}>
