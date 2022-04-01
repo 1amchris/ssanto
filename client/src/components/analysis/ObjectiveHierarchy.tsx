@@ -21,12 +21,12 @@ import {
   injectSetErrorCreator,
 } from 'store/reducers/analysis';
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
-import React from 'react';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import DatasetModel, { DefaultDataset } from 'models/DatasetModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
+import React from 'react';
 
 function isShp(file: { extension: string }, index: any, array: any) {
   return file.extension == 'shp';
@@ -71,7 +71,7 @@ function isValidOH(objectiveHierarchy: {
   return primaryHasSecondary && secondaryHasAttribute && attributeHasName;
 }
 
-function ObjectiveHierarchy({ t }: any) {
+function ObjectiveHierarchy({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
@@ -289,8 +289,8 @@ function ObjectiveHierarchy({ t }: any) {
         localObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex];
-      let options: string[] = [currentDataset.column];
-      let options_type: string[] = [currentDataset.type];
+      let options: string[] = [];
+      let options_index: number[] = [];
 
       if (files.length > 0) {
         files.forEach((f: any) => {
@@ -298,7 +298,10 @@ function ObjectiveHierarchy({ t }: any) {
             f.column_names.forEach((column: string, index: number) => {
               if (column != currentDataset.column) {
                 options.push(column);
-                options_type.push(f.type[index]);
+                options_index.push(index);
+              } else {
+                options.unshift(currentDataset.column);
+                options_index.unshift(index);
               }
             });
           }
@@ -310,7 +313,7 @@ function ObjectiveHierarchy({ t }: any) {
           ({
             value: `${JSON.stringify({
               column: column,
-              type: options_type[index],
+              index: options_index[index],
             })}`,
             label: `${column}`,
           } as FormSelectOptionModel)
@@ -475,28 +478,40 @@ function ObjectiveHierarchy({ t }: any) {
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
         let newColumn = JSON.parse(e.target.value).column;
-        let newtype = JSON.parse(e.target.value).type;
+        let newIndex = JSON.parse(e.target.value).index;
 
         let newObjectives = copyLocalObjective();
+
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex].column = newColumn;
+
+        const dataset =
+          newObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].datasets[attributeIndex];
+        //get les shapefiles selon id, get categories selon colonne
+        const shapefile = files.filter((file: any) => {
+          return file.id == dataset.id;
+        }) as ShapefileModel[];
+
+        let newType = shapefile[0].type[newIndex];
+        let newMax = shapefile[0].max_value[newIndex];
+        let newMin = shapefile[0].min_value[newIndex];
+
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
-        ].datasets[attributeIndex].type = newtype;
+        ].datasets[attributeIndex].type = newType;
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].max_value = newMax;
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].min_value = newMin;
 
-        //update properties distribution si type == categorical
-        if (newtype == 'Categorical') {
-          const dataset =
-            newObjectives.primaries.secondaries[primaryIndex].attributes[
-              secondaryIndex
-            ].datasets[attributeIndex];
-          //get les shapefiles selon id, get categories selon colonne
-          const shapefile = files.filter((file: any) => {
-            return file.id == dataset.id;
-          }) as ShapefileModel[];
+        if (newType == 'Categorical' || newType == 'Boolean') {
           const categories = shapefile[0].categories;
-          console.log('categories', categories[newColumn]);
+          console.log(categories);
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
           ].datasets[attributeIndex].properties.distribution =
@@ -556,7 +571,7 @@ function ObjectiveHierarchy({ t }: any) {
       if (
         localObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
-        ].datasets[orderIndex].type == 'Continuous'
+        ].datasets[orderIndex].type == 'Boolean'
       ) {
         continuousOptions.push(
           <Control
@@ -597,39 +612,6 @@ function ObjectiveHierarchy({ t }: any) {
         );
       }
 
-      /*         
-
-        <Control
-          key={key('calculated_distance') + localObjectives.update}
-          label={'calculated distance'}
-          className="small position-relative d-flex"
-          name={name('calculated_distance')}
-          suffix={
-            <React.Fragment>
-              <input
-                type="checkbox"
-                checked={
-                  localObjectives.primaries.secondaries[primaryIndex]
-                    .attributes[secondaryIndex].datasets[orderIndex]
-                    .isCalculated
-                }
-                onChange={onChangeIsCalculated(
-                  primaryIndex,
-                  secondaryIndex,
-                  orderIndex
-                )}
-              />
-            </React.Fragment>
-          }
-          defaultValue={
-            localObjectives.primaries.secondaries[primaryIndex].attributes[
-              secondaryIndex
-            ].datasets[orderIndex].calculationDistance
-          }
-          onChange={onChangeDistance(primaryIndex, secondaryIndex, orderIndex)}
-          type="number"
-          tooltip={t('meter')}
-        />, */
       return [
         <Control
           label="attribute"
@@ -806,7 +788,9 @@ function ObjectiveHierarchy({ t }: any) {
     controls = [
       ...mainControls,
       <Spacer />,
-      <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
+      <Button variant="outline-primary" loading={isLoading}>
+        {capitalize(t('apply'))}
+      </Button>,
     ];
   } else {
     controls = [<></>];
@@ -815,7 +799,7 @@ function ObjectiveHierarchy({ t }: any) {
     <Form
       controls={controls}
       errors={getErrors}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       onSubmit={() => {
         if (isValidOH(localObjectives)) {
           dispatch(

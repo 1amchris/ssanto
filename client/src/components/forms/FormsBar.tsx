@@ -2,15 +2,25 @@ import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { call } from 'store/reducers/server';
-import { useAppDispatch } from 'store/hooks';
-import { analysisReturn } from 'store/reducers/analysis';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import {
+  analysisSuccess,
+  injectSetErrorCreator,
+  injectSetLoadingCreator,
+  selectAnalysis,
+} from 'store/reducers/analysis';
 import { Button } from 'components/forms/components';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
+import LoadingValue from 'models/LoadingValue';
 
 function FormsBar({ children, className, t }: any, key?: string) {
   const closeOverlay = () => document.body.click();
+  const selector = useAppSelector(selectAnalysis);
   const dispatch = useAppDispatch();
+
+  const isLoading = selector.properties.analysisLoading;
+  const error = selector.properties.analysisError;
 
   return (
     <div
@@ -44,35 +54,48 @@ function FormsBar({ children, className, t }: any, key?: string) {
               <div onClick={closeOverlay}>
                 <p className="d-flex flex-wrap border-bottom pb-4">
                   This action will require recomputation, which in turn will
-                  <strong>take time</strong>.
+                  take time. Any unsaved results will be overwritten by this
+                  operation. <br /> Proceed anyway?
                 </p>
                 <Button
                   variant="outline-primary"
                   className="mb-2"
                   onClick={() => {
                     dispatch(
+                      injectSetLoadingCreator({
+                        value: 'computeSuitability',
+                        isLoading: true,
+                      } as LoadingValue<string>)()
+                    );
+                    dispatch(
                       call({
                         target: ServerCallTargets.ComputeSuitability,
-                        onSuccessAction: analysisReturn,
+                        onSuccessAction: analysisSuccess,
+                        onErrorAction: injectSetErrorCreator('analysis'),
                       } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
                     );
                   }}
+                  loading={isLoading}
+                  disabled={isLoading}
                 >
-                  Proceed
+                  {capitalize(t('proceed'))}
                 </Button>
                 <Button
                   variant="danger"
-                  onClick={() => console.log('Canceled!')}
+                  onClick={() => console.log('canceled!')}
+                  disabled={isLoading}
                 >
-                  Cancel
+                  {capitalize(t('cancel'))}
                 </Button>
               </div>
             }
             tooltipTrigger={'click'}
             tooltipPlacement="top"
             variant="primary"
+            disabled={isLoading}
+            loading={isLoading}
           >
-            {t('Compute suitability')}
+            {capitalize(t('compute suitability'))}
           </Button>
         </div>
       </div>

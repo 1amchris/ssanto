@@ -2,6 +2,7 @@ import geopandas
 from py.file import File
 from pandas.api.types import is_numeric_dtype
 import os
+import math
 
 
 class Shapefile(File):
@@ -23,27 +24,39 @@ class Shapefile(File):
             head = df.loc[:, df.columns != "geometry"].head(5).to_dict("index")
             column_names = [s for s in df.columns if s != "geometry"]
             column_types = []
-            minimums = dict()
-            maximums = dict()
+            minimums = []
+            maximums = []
             categories = dict()
             for column_name in column_names:
                 column = df[column_name]
-                min = None
-                max = None
+                min = 0
+                max = 0
                 if is_numeric_dtype(column):
                     if column.isin([0, 1]).all():
                         column_types.append("Boolean")
+                        minimums.append(min)
+                        maximums.append(max)
                         categories[column_name] = self.getCategories(
                             column_name, df)
+
                     else:
                         column_types.append("Continuous")
-                        minimums[column_name] = column.min()
-                        maximums[column_name] = column.max()
+                        minimums.append(column.min())
+                        maximums.append(column.max())
 
                 else:
                     column_types.append("Categorical")
+                    minimums.append(min)
+                    maximums.append(max)
                     categories[column_name] = self.getCategories(
                         column_name, df)
+
+            column_name = "None (boolean)"
+            column_names.append(column_name)
+            column_types.append("Boolean")
+            minimums.append(min)
+            maximums.append(max)
+            categories[column_name] = ['0', '1']
 
             columns = {'column_names': column_names, 'type': column_types,
                        'minimums': minimums, 'maximums': maximums, 'categories': categories}
@@ -56,4 +69,7 @@ class Shapefile(File):
         # return categories of this colum
 
     def serialize(self):
-        return {"id": self.id, "name": self.name, "stem": self.stem, "extension": self.extension, "column_names": self.columns["column_names"], 'type': self.columns["type"], 'categories': self.columns["categories"]}
+        print('MIN', self.columns["minimums"])
+        print('MAX', self.columns["maximums"])
+        # min_value": list(self.columns["minimums"]), "max_value": list(self.columns["maximums"])
+        return {"id": self.id, "name": self.name, "stem": self.stem, "extension": self.extension, "column_names": self.columns["column_names"], 'type': self.columns["type"], 'categories': self.columns["categories"], 'min_value': [math.floor(min_) for min_ in self.columns["minimums"]], 'max_value': [math.ceil(max_) for max_ in self.columns["maximums"]]}

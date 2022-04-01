@@ -9,6 +9,8 @@ export default interface DatasetModel {
   id: string;
   column: string;
   type: string;
+  max_value: number;
+  min_value: number;
   //columns: string[];
   //head: string[];
   properties: ValueScalingProperties;
@@ -26,6 +28,8 @@ export const DefaultDataset = {
     distribution: [] as number[],
     distribution_value: [] as number[],
   } as ValueScalingProperties,
+  min_value: 0,
+  max_value: 100,
   isCalculated: false,
   calculationDistance: 0,
 };

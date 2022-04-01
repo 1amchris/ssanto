@@ -1,4 +1,5 @@
 import json
+from lib2to3.pytree import convert
 import matplotlib.pyplot as plt
 from .objective import Objective
 from osgeo import gdal, ogr, osr
@@ -10,6 +11,7 @@ import geopandas as gp
 import pandas as pd
 from .study_area import StudyArea
 import os
+from .raster_transform import convert_projection
 
 
 class SuitabilityCalculator:
@@ -20,7 +22,7 @@ class SuitabilityCalculator:
         self.cell_size = 20
         self.crs = "epsg:32188"
 
-    def get_cell_data(self, latitude, longitude):
+    def git(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
         cell_values = {}
         for key in self.objectives_arrays_dict:
@@ -28,25 +30,12 @@ class SuitabilityCalculator:
         return cell_values
 
     def geo_coordinate_to_matrix_coordinate(self, latitude, longitude):
-
         src = gdal.Open(os.path.join(self.path, "output_study_area.tiff"))
         ulx, _, _, uly, _, _ = src.GetGeoTransform()
         projection = osr.SpatialReference(wkt=src.GetProjection())
         target_epsg = int(projection.GetAttrValue("AUTHORITY", 1))
 
-        InSR = osr.SpatialReference()
-        InSR.ImportFromEPSG(4326)
-        OutSR = osr.SpatialReference()
-
-        OutSR.ImportFromEPSG(target_epsg)
-
-        Point = ogr.Geometry(ogr.wkbPoint)
-        Point.AddPoint(latitude, longitude)
-        Point.AssignSpatialReference(InSR)
-        Point.TransformTo(OutSR)
-
-        x = Point.GetX()
-        y = Point.GetY()
+        x, y = convert_projection(4326, target_epsg, latitude, longitude)
 
         cx = int((x - ulx) // self.cell_size)
         cy = -int((y - uly) // self.cell_size)
@@ -77,6 +66,62 @@ class SuitabilityCalculator:
         self.objectives[objective_name].add_file(
             id, input_path, output_path, weight, scaling_function, field_name
         )
+
+    def add_file_to_categorical_objective(
+        self,
+        objective_name,
+        id,
+        input,
+        weight,
+        scaling_function,
+        categories,
+        categories_value,
+        field_name,
+    ):
+        input_path = os.path.join(self.path, input)
+        output_name = "output.tiff"
+        output_path = os.path.join(self.path, output_name)
+
+        categories_dic = dict(zip(categories, categories_value))
+        print("categories_dic", categories_dic)
+        self.objectives[objective_name].add_categorical_file(
+            id,
+            input_path,
+            output_path,
+            weight,
+            scaling_function,
+            categories_dic,
+            field_name,
+        )
+
+    def add_file_to_calculated_objective(
+        self,
+        objective_name,
+        id,
+        input,
+        weight,
+        scaling_function,
+        max_distance,
+        field_name=False,
+    ):
+        input_path = os.path.join(self.path, input)
+        output_name = "output.tiff"
+        output_path = os.path.join(self.path, output_name)
+        self.objectives[objective_name].add_distance_file(
+            id,
+            input_path,
+            output_path,
+            weight,
+            scaling_function,
+            maximize_distance=True,
+            max_distance=max_distance,
+            centroid=True,
+            granularity=20,
+            threshold=0.8,
+            field_name=False,
+        )
+
+    # add calculated file to objective
 
     def matrix_to_raster(self, matrix):
         matrix = np.int16(matrix)

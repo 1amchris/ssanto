@@ -16,7 +16,7 @@ import FileContentModel from 'models/file/FileContentModel';
 import LoadingValue from 'models/LoadingValue';
 import FilesUtils from 'utils/files-utils';
 
-function StudyArea({ t }: any) {
+function StudyArea({ t, disabled }: any) {
   const property = 'studyArea';
   const selector = useAppSelector(selectAnalysis);
   const properties = selector.properties[property];
@@ -49,7 +49,7 @@ function StudyArea({ t }: any) {
 
   return (
     <Form
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       controls={controls}
       errors={getErrors}
       onSubmit={(fields: any) => {
@@ -59,16 +59,18 @@ function StudyArea({ t }: any) {
             isLoading: true,
           } as LoadingValue<string>)()
         );
-        FilesUtils.extractContentFromFiles(Array.from(fields.files)).then(files => {
-          dispatch(
-            call({
-              target: ServerCallTargets.UpdateStudyAreaFiles,
-              args: files,
-              onSuccessAction: studyAreaReceived,
-              onErrorAction: injectSetErrorCreator(property),
-            } as CallModel<FileContentModel<string>[], any, void, string, string>)
-          );
-        });
+        FilesUtils.extractContentFromFiles(Array.from(fields.files)).then(
+          files => {
+            dispatch(
+              call({
+                target: ServerCallTargets.UpdateStudyAreaFiles,
+                args: files,
+                onSuccessAction: studyAreaReceived,
+                onErrorAction: injectSetErrorCreator(property),
+              } as CallModel<FileContentModel<string>[], any, void, string, string>)
+            );
+          }
+        );
       }}
     />
   );

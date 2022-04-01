@@ -22,7 +22,7 @@ import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 
-function Weighting({ t }: any) {
+function Weighting({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
@@ -300,7 +300,9 @@ function Weighting({ t }: any) {
     controls = [
       ...mainControls,
       <Spacer />,
-      <Button className="w-100 btn-primary">{capitalize(t('apply'))}</Button>,
+      <Button variant="outline-primary" loading={isLoading}>
+        {capitalize(t('apply'))}
+      </Button>,
     ];
   } else {
     controls = [<></>];
@@ -310,7 +312,7 @@ function Weighting({ t }: any) {
     <Form
       controls={controls}
       errors={getErrors}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       key={'weight_form'}
       onSubmit={() => {
         dispatch(

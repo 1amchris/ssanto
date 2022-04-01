@@ -47,9 +47,10 @@ class ContinuousFeature(Feature):
         )
 
         self.field_name = field_name
-        self.scaling_function = "x"
+        self.scaling_function = scaling_function
 
     def update(self):
+        print("update", self.path, "****", self.output_tiff)
         self.as_raster = process_raster(
             self.cell_size,
             self.crs,
@@ -82,8 +83,10 @@ class ContinuousFeature(Feature):
         )
 
         offset = offset = (
-            -int((origin_file[1] - self.study_area.origin[1]) // self.cell_size),
-            int((origin_file[0] - self.study_area.origin[0]) // self.cell_size),
+            -int((origin_file[1] - self.study_area.origin[1]
+                  ) // self.cell_size),
+            int((origin_file[0] - self.study_area.origin[0]) //
+                self.cell_size),
         )
         return self.balance_matrix(file, self.study_area.as_array, offset)
 
@@ -91,15 +94,15 @@ class ContinuousFeature(Feature):
         output_matrix = np.zeros(study_area.shape)
         output_matrix = np.zeros(study_area.shape)
         output_matrix[
-            max(offset[0], 0) : max(
+            max(offset[0], 0): max(
                 min(len(input_matrix) + offset[0], len(study_area)), 0
             ),
-            max(offset[1], 0) : max(
+            max(offset[1], 0): max(
                 min(len(input_matrix[0]) + offset[1], len(study_area[0])), 0
             ),
         ] = input_matrix[
-            max(0, -offset[0]) : max(len(study_area) - offset[0], 0),
-            max(0, -offset[1]) : max(len(study_area[0]) - offset[1], 0),
+            max(0, -offset[0]): max(len(study_area) - offset[0], 0),
+            max(0, -offset[1]): max(len(study_area[0]) - offset[1], 0),
         ]
         return output_matrix
 
@@ -153,7 +156,7 @@ class DistanceFeature(ContinuousFeature):
             scaling_function,
             field_name,
         )
-        self.max_distance = max_distance / self.cellsize
+        self.max_distance = float(max_distance) / float(self.cell_size)
         self.granularity = granularity
         self.threshold = threshold
         self.maximise_distance = maximize_distance
@@ -256,7 +259,9 @@ class DistanceFeature(ContinuousFeature):
                             )
                         ]
                     else:
-                        arr[i, j] = distance_function((i, j), point) / max_distance
+                        arr[i, j] = min(
+                            distance_function((i, j), point) / max_distance, 1
+                        )
 
             if maximize:
                 return arr
@@ -285,6 +290,10 @@ class DistanceFeature(ContinuousFeature):
                     coordinate.append((i, j))
         return coordinate
 
+    def process_value_matrix(self):
+        self.update()
+        return self.distance_matrix, {}
+
 
 class CategoricalFeature(ContinuousFeature):
     def __init__(
@@ -301,6 +310,7 @@ class CategoricalFeature(ContinuousFeature):
         category_value_dict,
     ):
         super().__init__(
+            id,
             path,
             output_tiff,
             weight,
@@ -310,10 +320,10 @@ class CategoricalFeature(ContinuousFeature):
             scaling_function,
             field_name,
         )
-        self.categorize_value = category_value_dict
+        self.categorized_value = category_value_dict
 
     def update(self):
-        self.categorize_value()
+        self.categorize_values()
         self.as_raster = process_raster(
             self.cell_size,
             self.crs,
@@ -323,9 +333,10 @@ class CategoricalFeature(ContinuousFeature):
         )
         self.as_array = self.process_raster_as_array()
 
-    def categorize_value(self):
+    def categorize_values(self):
         df = geopandas.read_file(self.path)
         df["cal_value"] = (
-            df[self.field_name].map(self.category_value_dict).fillna(0.0).astype(float)
+            df[self.field_name].map(
+                self.categorized_value).fillna(0.0).astype(float)
         )
         df.to_file(self.path)

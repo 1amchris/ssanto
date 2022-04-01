@@ -79,8 +79,10 @@ class FormScalingGraph extends FormComponent {
       distribution,
       distribution_value,
       type,
+      isCalculated,
       ...props
     } = this.getFilteredProps();
+    console.log('isCalculated', isCalculated, isCalculated as Boolean);
 
     return (
       <Form.Group

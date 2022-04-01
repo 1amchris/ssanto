@@ -1,5 +1,5 @@
 from py.study_area import StudyArea
-from py.feature import ContinuousFeature, DistanceFeature
+from py.feature import ContinuousFeature, CategoricalFeature, DistanceFeature
 
 import numpy as np
 
@@ -29,6 +29,26 @@ class Objective:
             field_name,
         )
 
+# TODO
+    def add_categorical_file(
+        self, id, path, output_tiff, weight, scaling_function, categories, field_name=False
+    ):
+        ''' 
+        categories est un dict : {category: value}
+        '''
+        self.subobjective[id] = CategoricalFeature(
+            id,
+            path,
+            output_tiff,
+            weight,
+            self.cell_size,
+            self.crs,
+            self.study_area,
+            scaling_function,
+            field_name,
+            categories
+        )
+
     def add_distance_file(
         self,
         id,
@@ -44,8 +64,8 @@ class Objective:
         field_name=False,
     ):
         self.subobjective[id] = DistanceFeature(
-            path,
             id,
+            path,
             output_tiff,
             weight,
             max_distance,
@@ -61,7 +81,8 @@ class Objective:
         )
 
     def add_subobjective(self, id, weight):
-        new_objective = Objective(weight, self.cell_size, self.crs, self.study_area)
+        new_objective = Objective(
+            weight, self.cell_size, self.crs, self.study_area)
         self.subobjective[id] = new_objective
 
     def process_value_matrix(self):
