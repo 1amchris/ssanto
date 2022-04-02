@@ -8,7 +8,7 @@ from base64 import b64encode
 import copy
 import pickle
 
-from py.graph_maker import Graph_maker
+from py.graph_maker import GraphMaker
 
 
 class Analysis(Serializable):
@@ -89,12 +89,12 @@ class Analysis(Serializable):
                     if continuousCondition or booleanCondition:
                         string_function = datasets["properties"]["valueScalingFunction"]
                         if continuousCondition:
-                            x, y = Graph_maker.compute_scaling_graph(
+                            x, y = GraphMaker.compute_scaling_graph(
                                 string_function, datasets["min_value"], datasets["max_value"]
                             )
                         elif booleanCondition:
                             # ici, ajuster num= granularity pour l'affichage
-                            x, y = Graph_maker.compute_scaling_graph(
+                            x, y = GraphMaker.compute_scaling_graph(
                                 string_function, 0, int(datasets["calculationDistance"]), num=10
                             )
 
@@ -107,13 +107,10 @@ class Analysis(Serializable):
 
         self.subjects_manager.update("objectives", new_objectives_data)
 
-    # TODO: replace with the map informations at the cursor's position
-
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
         if calculator := self.suitability_calculator:
             base.objectives = calculator.get(cursor.lat, cursor.long)
-            print("cursor data", base.objectives)
         return base
 
     def update(self, subject, data):
