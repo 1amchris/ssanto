@@ -23,6 +23,7 @@ class SuitabilityCalculator:
         self.crs = "epsg:32188"
 
     def get(self, latitude, longitude):
+
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
         cell_values = {}
         for key in self.objectives_arrays_dict:
@@ -52,17 +53,31 @@ class SuitabilityCalculator:
         self.study_area.update(self.path, self.cell_size, self.crs)
 
     def add_objective(self, objective_name, weight):
-        obj = Objective(objective_name, weight, self.cell_size, self.crs, self.study_area)
+        obj = Objective(
+            objective_name, weight, self.cell_size, self.crs, self.study_area
+        )
         self.objectives[objective_name] = obj
 
-    def add_file_to_objective(self, objective_name, id, input, weight, scaling_function, field_name=False):
+    def add_file_to_objective(
+        self,
+        file_name,
+        objective_name,
+        id,
+        input,
+        weight,
+        scaling_function,
+        field_name=False,
+    ):
         input_path = os.path.join(self.path, input)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
-        self.objectives[objective_name].add_file(id, input_path, output_path, weight, scaling_function, field_name)
+        self.objectives[objective_name].add_file(
+            id, file_name, input_path, output_path, weight, scaling_function, field_name
+        )
 
     def add_file_to_categorical_objective(
         self,
+        file_name,
         objective_name,
         id,
         input,
@@ -80,6 +95,7 @@ class SuitabilityCalculator:
         print("categories_dic", categories_dic)
         self.objectives[objective_name].add_categorical_file(
             id,
+            file_name,
             input_path,
             output_path,
             weight,
@@ -90,6 +106,7 @@ class SuitabilityCalculator:
 
     def add_file_to_calculated_objective(
         self,
+        file_name,
         objective_name,
         id,
         input,
@@ -103,6 +120,7 @@ class SuitabilityCalculator:
         output_path = os.path.join(self.path, output_name)
         self.objectives[objective_name].add_distance_file(
             id,
+            file_name,
             input_path,
             output_path,
             weight,
@@ -153,7 +171,9 @@ class SuitabilityCalculator:
             image = np.int16(image)
             results = (
                 {"properties": {"sutability": v}, "geometry": s}
-                for i, (s, v) in enumerate(shapes(image, mask=mask, transform=data["transform"]))
+                for i, (s, v) in enumerate(
+                    shapes(image, mask=mask, transform=data["transform"])
+                )
             )
             geoms = list(results)
             gpd_polygonized_raster = gp.GeoDataFrame.from_features(geoms, crs=c)
@@ -161,7 +181,9 @@ class SuitabilityCalculator:
             # gpd_polygonized_raster.to_file('temp/dataframe.geojson', driver='GeoJSON')
 
             # cs convertion
-            gpd_polygonized_raster = gpd_polygonized_raster.to_crs(4326)  # Where these numbers come from?
+            gpd_polygonized_raster = gpd_polygonized_raster.to_crs(
+                4326
+            )  # Where these numbers come from?
             output_geojson_name = "analysis.geojson"
             gpd_polygonized_raster.to_file(os.path.join(self.path, output_geojson_name))
             return gpd_polygonized_raster.to_json()
@@ -175,15 +197,14 @@ class SuitabilityCalculator:
             objective_weight = self.objectives[obj].weight
             if len(output_matrix) == 0:
                 output_matrix = np.zeros(data.shape)
-            self.objectives_arrays_dict[self.objectives[obj].id] = data * objective_weight
+            self.objectives_arrays_dict[self.objectives[obj].name] = data
             self.objectives_arrays_dict.update(sub_objective_array_dict)
-            output_matrix += self.objectives_arrays_dict[self.objectives[obj].id]
+            output_matrix += self.objectives_arrays_dict[self.objectives[obj].name]
             total_weight += objective_weight
-        for obj in self.objectives_arrays_dict:
-            self.objectives_arrays_dict[obj] /= total_weight
 
         output_matrix = output_matrix / total_weight * 100
-        self.objectives_arrays_dict["ANALYSIS"] = output_matrix
+        self.objectives_arrays_dict["ANALYSIS"] = output_matrix / 100
+        print(self)
         path = self.matrix_to_raster(output_matrix)
         geo_json = self.tiff_to_geojson(path)
         return geo_json

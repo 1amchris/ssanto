@@ -68,7 +68,9 @@ class Analysis(Serializable):
     def __get_project_name(self):
         # by default, the name is "analysis.ssanto", unless a name was specified by the user
         parameters = self.parameters.value()
-        return parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
+        return (
+            parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
+        )
 
     def perform_analysis(self):
         # self.parameters.value().get('analysis_name')
@@ -81,29 +83,46 @@ class Analysis(Serializable):
     def distribution_update(self):
         objectives_data = self.objectives.value()
         new_objectives_data = copy.deepcopy(objectives_data)
-        for (primary_index, secondaries) in enumerate(objectives_data["primaries"]["secondaries"]):
+        for (primary_index, secondaries) in enumerate(
+            objectives_data["primaries"]["secondaries"]
+        ):
             for (secondary_index, attributes) in enumerate(secondaries["attributes"]):
                 for (attribute_index, datasets) in enumerate(attributes["datasets"]):
                     continuousCondition = datasets["type"] == "Continuous"
-                    booleanCondition = datasets["type"] == "Boolean" and bool(datasets["isCalculated"])
+                    booleanCondition = datasets["type"] == "Boolean" and bool(
+                        datasets["isCalculated"]
+                    )
                     if continuousCondition or booleanCondition:
                         string_function = datasets["properties"]["valueScalingFunction"]
                         if continuousCondition:
                             x, y = GraphMaker.compute_scaling_graph(
-                                string_function, datasets["min_value"], datasets["max_value"]
+                                string_function,
+                                datasets["min_value"],
+                                datasets["max_value"],
                             )
                         elif booleanCondition:
                             # ici, ajuster num= granularity pour l'affichage
                             x, y = GraphMaker.compute_scaling_graph(
-                                string_function, 0, int(datasets["calculationDistance"]), num=10
+                                string_function,
+                                0,
+                                int(datasets["calculationDistance"]),
+                                num=10,
                             )
 
-                        new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
-                            "datasets"
-                        ][attribute_index]["properties"]["distribution"] = [int(x_) for x_ in list(x)]
-                        new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
-                            "datasets"
-                        ][attribute_index]["properties"]["distribution_value"] = [int(y_) for y_ in list(y)]
+                        new_objectives_data["primaries"]["secondaries"][primary_index][
+                            "attributes"
+                        ][secondary_index]["datasets"][attribute_index]["properties"][
+                            "distribution"
+                        ] = [
+                            int(x_) for x_ in list(x)
+                        ]
+                        new_objectives_data["primaries"]["secondaries"][primary_index][
+                            "attributes"
+                        ][secondary_index]["datasets"][attribute_index]["properties"][
+                            "distribution_value"
+                        ] = [
+                            int(y_) for y_ in list(y)
+                        ]
 
         self.subjects_manager.update("objectives", new_objectives_data)
 
@@ -162,25 +181,36 @@ class Analysis(Serializable):
             cell_size = self.parameters.value().get("cell_size")
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
 
-            self.suitability_calculator = SuitabilityCalculator(self.files_manager.get_writer_path())
+            self.suitability_calculator = SuitabilityCalculator(
+                self.files_manager.get_writer_path()
+            )
             self.suitability_calculator.set_cell_size(cell_size)
             self.suitability_calculator.set_crs("epsg:32188")
             self.suitability_calculator.set_study_area_input(self.study_area_file_name)
 
             for (primary, weight_primary, secondaries) in zip(
-                data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]
+                data["primaries"]["primary"],
+                data["primaries"]["weights"],
+                data["primaries"]["secondaries"],
             ):
                 self.suitability_calculator.add_objective(primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(
-                    zip(secondaries["secondary"], secondaries["weights"], secondaries["attributes"])
+                    zip(
+                        secondaries["secondary"],
+                        secondaries["weights"],
+                        secondaries["attributes"],
+                    )
                 ):
 
                     file_id = attributes["datasets"][0]["id"]
                     column_type = attributes["datasets"][0]["type"]
                     column_name = attributes["datasets"][0]["column"]
                     is_calculated = bool(attributes["datasets"][0]["isCalculated"])
-                    scaling_function = attributes["datasets"][0]["properties"]["valueScalingFunction"]
+                    scaling_function = attributes["datasets"][0]["properties"][
+                        "valueScalingFunction"
+                    ]
                     file = self.files_manager.get_files_by_id(file_id)
+                    print(secondary)
                     # "temp/" + file[0].group_id + ".shp"
                     if len(file) > 0:
                         print("compute_suitability")
@@ -188,11 +218,17 @@ class Analysis(Serializable):
                         input_file = file[0].name
                         if not is_calculated and column_type == "Boolean":
                             self.suitability_calculator.add_file_to_objective(
-                                primary, index, input_file, int(weight_secondary), scaling_function
+                                secondary,
+                                primary,
+                                index,
+                                input_file,
+                                int(weight_secondary),
+                                scaling_function,
                             )
                         elif is_calculated and column_type == "Boolean":
                             print("is_calculated")
                             self.suitability_calculator.add_file_to_calculated_objective(
+                                secondary,
                                 primary,
                                 index,
                                 input_file,
@@ -201,10 +237,15 @@ class Analysis(Serializable):
                                 attributes["datasets"][0]["calculationDistance"],
                             )
                         elif column_type == "Categorical":
-                            categories = attributes["datasets"][0]["properties"]["distribution"]
-                            categories_value = attributes["datasets"][0]["properties"]["distribution_value"]
+                            categories = attributes["datasets"][0]["properties"][
+                                "distribution"
+                            ]
+                            categories_value = attributes["datasets"][0]["properties"][
+                                "distribution_value"
+                            ]
 
                             self.suitability_calculator.add_file_to_categorical_objective(
+                                secondary,
                                 primary,
                                 index,
                                 input_file,
@@ -218,7 +259,13 @@ class Analysis(Serializable):
                         else:
 
                             self.suitability_calculator.add_file_to_objective(
-                                primary, index, input_file, int(weight_secondary), scaling_function, column_name
+                                secondary,
+                                primary,
+                                index,
+                                input_file,
+                                int(weight_secondary),
+                                scaling_function,
+                                column_name,
                             )
 
                     # self.suitability_calculator.objectives[primary].add_file(

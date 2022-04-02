@@ -12,6 +12,7 @@ class Feature:
     def __init__(
         self,
         id,
+        name,
         path,
         output_tiff,
         weight,
@@ -21,6 +22,7 @@ class Feature:
         scaling_function,
     ):
         self.id = id
+        self.name = name
         self.path = path
         self.output_tiff = output_tiff
         self.cell_size = cell_size
@@ -33,6 +35,7 @@ class ContinuousFeature(Feature):
     def __init__(
         self,
         id,
+        name,
         path,
         output_tiff,
         weight,
@@ -43,7 +46,15 @@ class ContinuousFeature(Feature):
         field_name=False,
     ):
         super().__init__(
-            id, path, output_tiff, weight, cell_size, crs, study_area, scaling_function
+            id,
+            name,
+            path,
+            output_tiff,
+            weight,
+            cell_size,
+            crs,
+            study_area,
+            scaling_function,
         )
 
         self.field_name = field_name
@@ -83,10 +94,8 @@ class ContinuousFeature(Feature):
         )
 
         offset = offset = (
-            -int((origin_file[1] - self.study_area.origin[1]
-                  ) // self.cell_size),
-            int((origin_file[0] - self.study_area.origin[0]) //
-                self.cell_size),
+            -int((origin_file[1] - self.study_area.origin[1]) // self.cell_size),
+            int((origin_file[0] - self.study_area.origin[0]) // self.cell_size),
         )
         return self.balance_matrix(file, self.study_area.as_array, offset)
 
@@ -94,15 +103,15 @@ class ContinuousFeature(Feature):
         output_matrix = np.zeros(study_area.shape)
         output_matrix = np.zeros(study_area.shape)
         output_matrix[
-            max(offset[0], 0): max(
+            max(offset[0], 0) : max(
                 min(len(input_matrix) + offset[0], len(study_area)), 0
             ),
-            max(offset[1], 0): max(
+            max(offset[1], 0) : max(
                 min(len(input_matrix[0]) + offset[1], len(study_area[0])), 0
             ),
         ] = input_matrix[
-            max(0, -offset[0]): max(len(study_area) - offset[0], 0),
-            max(0, -offset[1]): max(len(study_area[0]) - offset[1], 0),
+            max(0, -offset[0]) : max(len(study_area) - offset[0], 0),
+            max(0, -offset[1]) : max(len(study_area[0]) - offset[1], 0),
         ]
         return output_matrix
 
@@ -131,6 +140,7 @@ class DistanceFeature(ContinuousFeature):
     def __init__(
         self,
         id,
+        name,
         path,
         output_tiff,
         weight,
@@ -147,6 +157,7 @@ class DistanceFeature(ContinuousFeature):
     ):
         super().__init__(
             id,
+            name,
             path,
             output_tiff,
             weight,
@@ -299,6 +310,7 @@ class CategoricalFeature(ContinuousFeature):
     def __init__(
         self,
         id,
+        name,
         path,
         output_tiff,
         weight,
@@ -311,6 +323,7 @@ class CategoricalFeature(ContinuousFeature):
     ):
         super().__init__(
             id,
+            name,
             path,
             output_tiff,
             weight,
@@ -336,7 +349,6 @@ class CategoricalFeature(ContinuousFeature):
     def categorize_values(self):
         df = geopandas.read_file(self.path)
         df["cal_value"] = (
-            df[self.field_name].map(
-                self.categorized_value).fillna(0.0).astype(float)
+            df[self.field_name].map(self.categorized_value).fillna(0.0).astype(float)
         )
         df.to_file(self.path)
