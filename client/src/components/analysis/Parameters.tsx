@@ -30,14 +30,14 @@ function Parameters({ t, disabled }: any) {
       name="analysis_name"
       defaultValue={properties.analysis_name}
       required
-      tooltip={t('the analysis name will ...')}
+      tooltip={t('the given name will be used to identify the saved project.')}
     />,
     <Control
       label="name of the modeler"
       name="modeler_name"
       defaultValue={properties.modeler_name}
       required
-      tooltip={t("the modeler's name will ...")}
+      tooltip={t('the given name will be used to identify the modeler.')}
     />,
     <Control
       label="cell size"

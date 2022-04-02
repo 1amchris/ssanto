@@ -4,6 +4,7 @@ from geojson_rewind import rewind
 import shapefile as ShpLoader
 import os
 import shutil
+import operator
 
 from py.file_metadata import FileMetaData
 from py.file import File
@@ -41,9 +42,10 @@ class FileParser:
         data_str = json.dumps(rewind(geojson))
         return bytes(data_str, 'ascii')
 
+
 class FilesWriter:
     def __init__(self):
-        self.main_dir = os.path.join(os.getcwd(),'temp')
+        self.main_dir = os.path.join(os.getcwd(), "temp")
         if os.path.exists(self.main_dir):
             shutil.rmtree(self.main_dir)
         os.makedirs(self.main_dir)
@@ -62,7 +64,7 @@ class FilesWriter:
         os.remove(os.path.join(self.main_dir, name))
 
     def __del__(self):
-        shutil.rmtree(self.main_dir)    
+        shutil.rmtree(self.main_dir)
 
 class FilesManager:
     def __init__(self, subjects_manager):
@@ -70,6 +72,10 @@ class FilesManager:
         self.files_content = dict()
         self.files = self.subjects_manager.create("file_manager.files", dict())
         self.writer = FilesWriter()
+        self.shapefiles = self.subjects_manager.create(
+            "file_manager.shapefiles", dict()
+        )
+        self.shapefiles_content = dict()
 
     def serialize(self) -> dict:
         return {key: file.serialize() for key, file in self.files_content.items()}
@@ -90,6 +96,9 @@ class FilesManager:
 
     def get_files_by_names(self, *names):
         return list(filter(lambda file: file.name in names, self.files_content.values()))
+
+    #def get_shapefile_by_id(self, id):
+    #    return list(filter(lambda shapefile: shapefile['id'] == id, self.shapefiles.data))[0]
 
     def get_file_names(self):
         return self.files_content.keys()
@@ -128,6 +137,28 @@ class FilesManager:
         self.__notify_metadatas()
 
     # files: { name: string; size: number; content: string (base64); }[]
+
+    def extractShapefiles(
+        self,
+    ):
+        new_shapefiles = []
+        new_shapefiles_content = dict()
+
+        for file in self.files_content.values():
+            if self.getExtension(file.name) == "shp":
+                try:
+                    new_shapefile = Shapefile(file.name, b64decode(
+                        file.content), file.id, dir=self.writer.main_dir)
+                    dic_new_shapefile = new_shapefile.serialize()
+                except:
+                    print("invalid shapefile")
+                else:
+                    new_shapefiles.append(dic_new_shapefile)
+                    new_shapefiles_content[new_shapefile.id] = new_shapefile
+
+        self.shapefiles.notify(new_shapefiles)
+        self.shapefiles_content = new_shapefiles_content
+
     def add_files(self, *files):
         appended = []
         contains_invalid_file = False
@@ -153,6 +184,7 @@ class FilesManager:
             is_already_added = True if shapefile.name in self.files_content else False
             self.add_shapefile(shapefile)
             shapefile.content = FileParser.load(shapefile)
+            shapefile.set_feature(self.get_writer_path())
             if (not is_already_added):
                 appended.append(shapefile)
 

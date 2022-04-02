@@ -63,7 +63,7 @@ function FormsBar({ children, className, t }: any, key?: string) {
                   onClick={() => {
                     dispatch(
                       injectSetLoadingCreator({
-                        value: 'computeSuitability',
+                        value: 'analysis',
                         isLoading: true,
                       } as LoadingValue<string>)()
                     );

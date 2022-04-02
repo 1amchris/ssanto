@@ -1,4 +1,3 @@
-import React from 'react';
 import FileContentModel from 'models/file/FileContentModel';
 import { useAppDispatch } from 'store/hooks';
 import { exportData } from 'store/reducers/export';
@@ -42,7 +41,7 @@ function MenuBar() {
           )
         }
       />
-      <Action
+      {/* <Action
         label="save project as"
         onClick={() =>
           dispatch(
@@ -53,25 +52,25 @@ function MenuBar() {
             } as CallModel<void, FileContentModel<string>, void, string, string>)
           )
         }
-      />
+      /> */}
     </Menu>,
-    <Menu label="edit">
-      <Action
-        label="action"
-        onClick={(event: any) => console.log('/edit/action', event)}
-      />
-      <Action
-        label="another action"
-        onClick={(event: any) => console.log('/edit/another action', event)}
-      />
-      <Divider />
-      <Action
-        label="something else here"
-        onClick={(event: any) =>
-          console.log('/edit/something else here', event)
-        }
-      />
-    </Menu>,
+    // <Menu label="edit">
+    //   <Action
+    //     label="action"
+    //     onClick={(event: any) => console.log('/edit/action', event)}
+    //   />
+    //   <Action
+    //     label="another action"
+    //     onClick={(event: any) => console.log('/edit/another action', event)}
+    //   />
+    //   <Divider />
+    //   <Action
+    //     label="something else here"
+    //     onClick={(event: any) =>
+    //       console.log('/edit/something else here', event)
+    //     }
+    //   />
+    // </Menu>,
     <Menu label="help">
       <Link label="show guide" targetUrl="/guide" />
     </Menu>,

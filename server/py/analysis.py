@@ -8,6 +8,8 @@ from base64 import b64encode, b64decode
 import pickle
 import json
 
+from py.graph_maker import GraphMaker
+
 class Analysis(Serializable):
     @staticmethod
     def __export(filename, content):
@@ -23,6 +25,7 @@ class Analysis(Serializable):
     def __init__(self, subjects_manager, files_manager):
         self.subjects_manager = subjects_manager
         self.files_manager = files_manager
+        self.suitability_calculator = None
 
         self.parameters = subjects_manager.create(
             "parameters",
@@ -89,7 +92,9 @@ class Analysis(Serializable):
     def __get_project_name(self):
         # by default, the name is "analysis.ssanto", unless a name was specified by the user
         parameters = self.parameters.value()
-        return parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
+        return (
+            parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
+        )
 
     '''
     There is an exemple of method to be implemented as a bind command
@@ -130,15 +135,64 @@ class Analysis(Serializable):
         geojson = json.loads(self.files_manager.get_file(name).read_content())
         return {"group": group, "name": name, "geojson": geojson}
 
-    # TODO: replace with the map informations at the cursor's position
+    def distribution_update(self):
+        objectives_data = self.objectives.value()
+        new_objectives_data = copy.deepcopy(objectives_data)
+        for (primary_index, secondaries) in enumerate(
+            objectives_data["primaries"]["secondaries"]
+        ):
+            for (secondary_index, attributes) in enumerate(secondaries["attributes"]):
+                for (attribute_index, datasets) in enumerate(attributes["datasets"]):
+                    continuousCondition = datasets["type"] == "Continuous"
+                    booleanCondition = datasets["type"] == "Boolean" and bool(
+                        datasets["isCalculated"]
+                    )
+                    if continuousCondition or booleanCondition:
+                        string_function = datasets["properties"]["valueScalingFunction"]
+                        if continuousCondition:
+                            x, y = GraphMaker.compute_scaling_graph(
+                                string_function,
+                                datasets["min_value"],
+                                datasets["max_value"],
+                            )
+                        elif booleanCondition:
+                            # ici, ajuster num= granularity pour l'affichage
+                            x, y = GraphMaker.compute_scaling_graph(
+                                string_function,
+                                0,
+                                int(datasets["calculationDistance"]),
+                                num=10,
+                            )
+
+                        new_objectives_data["primaries"]["secondaries"][primary_index][
+                            "attributes"
+                        ][secondary_index]["datasets"][attribute_index]["properties"][
+                            "distribution"
+                        ] = [
+                            int(x_) for x_ in list(x)
+                        ]
+                        new_objectives_data["primaries"]["secondaries"][primary_index][
+                            "attributes"
+                        ][secondary_index]["datasets"][attribute_index]["properties"][
+                            "distribution_value"
+                        ] = [
+                            int(y_) for y_ in list(y)
+                        ]
+
+        self.subjects_manager.update("objectives", new_objectives_data)
+
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
-        if cursor is not None:
-            base.placeholder += f". lat: {cursor.lat:.3f}, lng: {cursor.long:.3f}"  
+        #if cursor is not None:
+        #    base.placeholder += f". lat: {cursor.lat:.3f}, lng: {cursor.long:.3f}"  
+        if calculator := self.suitability_calculator:
+            base.objectives = calculator.get(cursor.lat, cursor.long)
         return base
 
     def update(self, subject, data):
         self.subjects_manager.update(subject, data)
+        if subject == "objectives":
+            self.distribution_update()
 
     def receive_study_area(self, shp_name):
         print("receive_study_area", shp_name)
@@ -175,26 +229,95 @@ class Analysis(Serializable):
             cell_size = self.parameters.value().get("cell_size")
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
 
-            calculator = SuitabilityCalculator(self.files_manager.get_writer_path())
-            calculator.set_cell_size(cell_size)
-            calculator.set_crs("epsg:32188")
-            calculator.set_study_area_input(self.study_area.value())
+            self.suitability_calculator = SuitabilityCalculator(
+                self.files_manager.get_writer_path()
+            )
+            self.suitability_calculator.set_cell_size(cell_size)
+            self.suitability_calculator.set_crs("epsg:32188")
+            self.suitability_calculator.set_study_area_input(self.study_area.value())
 
             for (primary, weight_primary, secondaries) in zip(
-                data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]
+                data["primaries"]["primary"],
+                data["primaries"]["weights"],
+                data["primaries"]["secondaries"],
             ):
-                calculator.add_objective(primary, int(weight_primary))
+                self.suitability_calculator.add_objective(primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(
-                    zip(secondaries["secondary"], secondaries["weights"], secondaries["attributes"])
-                ):
-                    input_file = attributes["datasets"][0]["name"]
-                    calculator.add_file_to_objective(
-                        primary, index, input_file, int(weight_secondary), scaling_function
+                    zip(
+                        secondaries["secondary"],
+                        secondaries["weights"],
+                        secondaries["attributes"],
                     )
-                    # calculator.objectives[primary].add_file(
-                    #    index, path, "output.tiff", int(weight_secondary), scaling_function)
+                ):
 
-            geo_json = calculator.process_data()
+                    file_id = attributes["datasets"][0]["id"]
+                    column_type = attributes["datasets"][0]["type"]
+                    column_name = attributes["datasets"][0]["column"]
+                    is_calculated = bool(attributes["datasets"][0]["isCalculated"])
+                    scaling_function = attributes["datasets"][0]["properties"][
+                        "valueScalingFunction"
+                    ]
+                    file = self.files_manager.get_files_by_id(file_id)
+                    # "temp/" + file[0].group_id + ".shp"
+                    if len(file) > 0:
+
+                        input_file = file[0].name
+                        if not is_calculated and column_type == "Boolean":
+                            self.suitability_calculator.add_file_to_objective(
+                                secondary,
+                                primary,
+                                index,
+                                input_file,
+                                int(weight_secondary),
+                                scaling_function,
+                            )
+                        elif is_calculated and column_type == "Boolean":
+                            self.suitability_calculator.add_file_to_calculated_objective(
+                                secondary,
+                                primary,
+                                index,
+                                input_file,
+                                int(weight_secondary),
+                                scaling_function,
+                                attributes["datasets"][0]["calculationDistance"],
+                            )
+                        elif column_type == "Categorical":
+                            categories = attributes["datasets"][0]["properties"][
+                                "distribution"
+                            ]
+                            categories_value = attributes["datasets"][0]["properties"][
+                                "distribution_value"
+                            ]
+
+                            self.suitability_calculator.add_file_to_categorical_objective(
+                                secondary,
+                                primary,
+                                index,
+                                input_file,
+                                int(weight_secondary),
+                                scaling_function,
+                                categories,
+                                categories_value,
+                                column_name,
+                            )
+
+                        else:
+
+                            self.suitability_calculator.add_file_to_objective(
+                                secondary,
+                                primary,
+                                index,
+                                input_file,
+                                int(weight_secondary),
+                                scaling_function,
+                                column_name,
+                            )
+
+                    # self.suitability_calculator.objectives[primary].add_file(
+                    #    index, path, "output.tiff", int(weight_secondary), scaling_function)
+                    else:
+                        print("ob, no dataset for an objectives")
+            geo_json = self.suitability_calculator.process_data()
 
             return_value = {"file_name": "current analysis", "area": geo_json}
             #return {"file_name": "current analysis", "area": geo_json}

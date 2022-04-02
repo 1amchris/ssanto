@@ -3,8 +3,9 @@ import os
 
 
 class Logger:
-    LOGGING_FILE = 'server.log'
+    LOGGING_FILE = "server.log"
     # max_line_length: -1 to see all the text
+
     def __init__(self, debug=True, log=True, max_line_length=-1):
         self.stdout = sys.stdout
         self.debug = debug
@@ -14,7 +15,7 @@ class Logger:
 
         if os.path.exists(Logger.LOGGING_FILE):
             os.remove(Logger.LOGGING_FILE)
-        self.logging_file = open(Logger.LOGGING_FILE, 'a')
+        self.logging_file = open(Logger.LOGGING_FILE, "a")
 
     def __del__(self):
         self.logging_file.close()
@@ -27,11 +28,15 @@ class Logger:
 
     def write(self, msg):
         if self.debug:
-            printed_msg = msg if self.max_line_length < 0 else self.truncate_middle(msg, self.max_line_length)
+            printed_msg = (
+                msg
+                if self.max_line_length < 0
+                else self.truncate_middle(msg, self.max_line_length)
+            )
             self.stdout.write(printed_msg)
         if self.log:
             self.logging_file.write(msg)
-        
+
         self.flush()
 
     def truncate_middle(self, string, max_length):
@@ -49,4 +54,4 @@ class Logger:
 # Create the logger at global scope
 # Replace 120 by the number of characters maximum to be displayed
 #  in the terminal per log, or -1 to remove the limit
-Logger(True, True, 120)
+Logger(True, True, -1)

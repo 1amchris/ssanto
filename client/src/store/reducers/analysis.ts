@@ -7,6 +7,7 @@ import {
 import FileMetadataModel from 'models/file/FileMetadataModel';
 import LoadingValue from 'models/LoadingValue';
 import AnalysisObjectivesModel from 'models/AnalysisObjectivesModel';
+import ValueScalingModel from 'models/ValueScalingModel';
 
 export const analysisSlice = createSlice({
   name: 'analysis',
@@ -20,6 +21,7 @@ export const analysisSlice = createSlice({
       nbs_system: { system_type: '2' },
       study_area: '',
       files: [] as FileMetadataModel[],
+      shapefiles: [],
 
       objectives: {
         main: 'Needs',
@@ -31,6 +33,7 @@ export const analysisSlice = createSlice({
         },
       },
       value_scaling: [
+        /*
         {
           attribute: 'A',
           dataset: { name: 'Test1', id: '1' },
@@ -49,8 +52,8 @@ export const analysisSlice = createSlice({
           type: 'Continuous',
           properties: { min: -180, max: 180, function: 'x' },
         },
-      ],
-
+      */
+      ] as ValueScalingModel[],
       parametersLoading: false,
       parametersError: '',
 

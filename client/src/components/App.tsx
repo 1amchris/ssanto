@@ -6,13 +6,9 @@ import Guide from 'components/guide/Guide';
 import { subscribe, openConnection } from 'store/reducers/server';
 import { analysisSuccess, injectReceivePropertiesCreator } from 'store/reducers/analysis';
 import SubscriptionModel from 'models/server-coms/SubscriptionModel';
-import {
-  updateCursor,
-  updateCursorInformations,
-  updateLayers,
-} from 'store/reducers/map';
-import { MapCursorInformationsModel } from "models/map/MapCursorInformationsModel";
-import { LatLong } from "models/map/LatLong";
+import { updateCursor, updateCursorInformations, updateLayers } from 'store/reducers/map';
+import { MapCursorInformationsModel } from 'models/map/MapCursorInformationsModel';
+import { LatLong } from 'models/map/LatLong';
 import ServerSubscriptionTargets from 'enums/ServerSubscriptionTargets';
 import { InsertLayerModel } from 'models/map/InsertLayerModel';
 import { LayersGroups } from 'models/map/Layers';
@@ -25,6 +21,13 @@ function App() {
       subscribe({
         subject: ServerSubscriptionTargets.FileManagerFiles,
         onAction: injectReceivePropertiesCreator('files'),
+      } as SubscriptionModel<string, any>)
+    );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTargets.FileManagerShapefiles,
+        onAction: injectReceivePropertiesCreator('shapefiles'),
       } as SubscriptionModel<string, any>)
     );
     dispatch(
@@ -73,12 +76,6 @@ function App() {
       subscribe({
         subject: ServerSubscriptionTargets.AnalysisObjectives,
         onAction: injectReceivePropertiesCreator('objectives'),
-      } as SubscriptionModel<string, any>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisValueScaling,
-        onAction: injectReceivePropertiesCreator('value_scaling'),
       } as SubscriptionModel<string, any>)
     );
   });
