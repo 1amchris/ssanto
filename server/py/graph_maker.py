@@ -9,5 +9,5 @@ class Graph_maker:
         y = list(map(lambda x_i: eval(equation, MATH_OPERATION, {"x": x_i}), x))
         return x, y
 
-    def calculate_fraction_above_threshold(array, treshold):
-        return np.count_nonzero(array > treshold) / array.size
+    def calculate_fraction_above_threshold(array, threshold):
+        return np.count_nonzero(array > threshold) / array.size
