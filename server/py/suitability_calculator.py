@@ -186,13 +186,11 @@ class SuitabilityCalculator:
 
     def process_data(self):
         self.objectives_arrays_dict = {}
-        output_matrix = []
+        output_matrix = np.zeros(self.study_area.as_array.shape)
         total_weight = 0
         for obj in self.objectives:
             data, sub_objective_array_dict = self.objectives[obj].process_value_matrix()
             objective_weight = self.objectives[obj].weight
-            if len(output_matrix) == 0:
-                output_matrix = np.zeros(data.shape)
             self.objectives_arrays_dict[self.objectives[obj].name] = data
             self.objectives_arrays_dict.update(sub_objective_array_dict)
             output_matrix += self.objectives_arrays_dict[self.objectives[obj].name]
