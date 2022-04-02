@@ -1,18 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
-import { LayersGroups } from 'models/map/Layers';
+import { LayersGroups, LayersUpdateGroups } from 'models/map/Layers';
 import { LatLong } from 'models/map/LatLong';
 import { MapCursorInformationsModel } from 'models/map/MapCursorInformationsModel';
 import { MapStateModel } from 'models/map/MapStateModel';
 import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
 import { InsertLayerModel } from 'models/map/InsertLayerModel';
 import LayersUtils from 'utils/layers-utils';
+import { LayerGroup } from 'leaflet';
 
 export const mapSlice = createSlice({
   name: 'map',
   initialState: {
     location: { lat: 45.509, long: -73.553 }, // defaults to mtl.qc.ca
     layers: {} as LayersGroups,
+    update_layers: {} as LayersUpdateGroups,
     zoom: 10, // arbitrary, is big enough to fit the island of mtl
   } as MapStateModel,
   reducers: {
@@ -43,6 +45,12 @@ export const mapSlice = createSlice({
         state.zoom = zoom;
       }
     },
+    updateLayers: (
+        state,
+        { payload: layers }: PayloadAction<any>
+      ) => {
+        state.update_layers = layers
+      },
     upsertLayer: (
       state,
       { payload: layer }: PayloadAction<InsertLayerModel>
@@ -63,6 +71,7 @@ export const {
   updateCursor,
   updateCursorInformations,
   updateZoom,
+  updateLayers,
   upsertLayer,
   removeLayer,
 } = mapSlice.actions;

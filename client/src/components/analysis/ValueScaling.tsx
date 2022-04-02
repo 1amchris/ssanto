@@ -25,10 +25,9 @@ function ValueScaling({ t, disabled }: any) {
   const selector = useAppSelector(selectAnalysis);
   const valueScaling = selector.properties.value_scaling;
   const dispatch = useAppDispatch();
-  const files = selector.properties['files'];
 
-  const getErrors = selector.properties.valueScalingError;
-  const isLoading = selector.properties.valueScalingLoading;
+  const getErrors = selector.properties.value_scalingError;
+  const isLoading = selector.properties.value_scalingLoading;
 
   const [localValueScaling, setLocalValueScaling] = useState(valueScaling);
   let controls = [];

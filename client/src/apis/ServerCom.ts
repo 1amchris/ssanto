@@ -38,7 +38,7 @@ export default class ServerCom {
 
     this.client!.onopen = () => this.onOpen();
     this.client!.onmessage = (message: MessageEvent) => this.onMessage(message);
-    this.client!.onclose = () => this.onClose();
+    this.client!.onclose = (evt: CloseEvent) => this.onClose(evt);
   }
 
   private onOpen() {
@@ -54,6 +54,7 @@ export default class ServerCom {
   private onMessage(message: MessageEvent) {
     let received: ReceiveData = this.convertEventToObject(message);
 
+    // Debug purpose
     // console.log('onMessage subject', received);
 
     if (received.type === SendType.SUBJECT) {
@@ -77,9 +78,17 @@ export default class ServerCom {
     }
   }
 
-  private onClose() {
-    console.log('Connection closed');
+  private onClose(evt: CloseEvent) {
+    console.log('Connection closed with code', evt.code);
     this.isOpen = false;
+    this.client = undefined;
+    // The connection died in an abnormal way, try to reconnect
+    if (evt.code != 1000) {
+        setTimeout(()=> {
+            console.log("Trying to reconnect...");
+            this.open();
+        }, 1000);
+    }
   }
 
   private convertEventToObject(msg: MessageEvent) {

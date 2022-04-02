@@ -4,8 +4,8 @@ from py.file_metadata import FileMetaData
 
 
 class File(FileMetaData):
-    def __init__(self, name: str, content: bytes, id=None, group_id=None):
-        super().__init__(name, id=id, group_id=group_id)
+    def __init__(self, name: str, content: bytes):
+        super().__init__(name)
         self.content = content
 
     def get_metadata(self):

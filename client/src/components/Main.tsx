@@ -22,7 +22,7 @@ function Main() {
   const analysis = useAppSelector(selectAnalysis);
   const { cursor } = useAppSelector(selectMap);
   const ohIsLoading = analysis.properties.objectivesLoading;
-  const valueScalingIsLoading = analysis.properties.valueScalingLoading;
+  const valueScalingIsLoading = analysis.properties.value_scalingLoading;
 
   function parametersIsValid() {
     return (
@@ -41,11 +41,10 @@ function Main() {
 
   function studyAreaIsValid() {
     return (
-      analysis.properties.studyArea.fileName?.length > 0 &&
-      analysis.properties.studyArea.area &&
-      (!analysis.properties.studyAreaError ||
-        analysis.properties.studyAreaError.length === 0) &&
-      !analysis.properties.studyAreaLoading
+      analysis.properties.study_area.length > 0 &&
+      (!analysis.properties.study_areaError ||
+        analysis.properties.study_areaError.length === 0) &&
+      !analysis.properties.study_areaLoading
     );
   }
 
@@ -56,9 +55,9 @@ function Main() {
   function systemTypeIsValid() {
     return (
       analysis.properties.nbs_system &&
-      (!analysis.properties.nbsSystemError ||
-        analysis.properties.nbsSystemError.length === 0) &&
-      !analysis.properties.nbsSystemLoading
+      (!analysis.properties.nbs_systemError ||
+        analysis.properties.nbs_systemError.length === 0) &&
+      !analysis.properties.nbs_systemLoading
     );
   }
 
