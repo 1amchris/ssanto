@@ -110,7 +110,7 @@ class Objective:
         subobjective_arrays_dict = {}
         output_array = np.zeros(self.study_area.as_array.shape)
         for file in self.subobjective:
-            print("Subobjective name : ", self.subobjective[file].name)
+
             total_weight += self.subobjective[file].weight
             value_matrix, subsubobjective_arrays_dict = self.subobjective[
                 file
@@ -121,7 +121,7 @@ class Objective:
             subobjective_arrays_dict.update(subsubobjective_arrays_dict)
             subobjective_arrays_dict[self.subobjective[file].name] = value_matrix
             output_array += value_matrix * self.subobjective[file].weight
-        print(subobjective_arrays_dict)
+
         output_array = output_array / total_weight
         output_array = np.multiply(output_array, self.study_area.as_array)
         return output_array, subobjective_arrays_dict

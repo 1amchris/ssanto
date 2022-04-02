@@ -61,7 +61,6 @@ class ContinuousFeature(Feature):
         self.scaling_function = scaling_function
 
     def update(self):
-        print("update", self.path, "****", self.output_tiff)
         self.as_raster = process_raster(
             self.cell_size,
             self.crs,

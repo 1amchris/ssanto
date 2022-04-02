@@ -92,7 +92,6 @@ class SuitabilityCalculator:
         output_path = os.path.join(self.path, output_name)
 
         categories_dic = dict(zip(categories, categories_value))
-        print("categories_dic", categories_dic)
         self.objectives[objective_name].add_categorical_file(
             id,
             file_name,
@@ -137,7 +136,6 @@ class SuitabilityCalculator:
 
     def matrix_to_raster(self, matrix):
         matrix = np.int16(matrix)
-        print("matrix_to_raster", type(matrix), type(matrix[0]), type(matrix[0][0]))
 
         study_area_path = os.path.join(self.path, StudyArea.OUTPUT_NAME)
         output_name = "output.tiff"
@@ -162,9 +160,7 @@ class SuitabilityCalculator:
     def tiff_to_geojson(self, tiff_name):
         input_path = os.path.join(self.path, tiff_name)
         data = rasterio.open(input_path).meta
-        print("tiff_to_geojson", data)
         c = str(data["crs"])
-        print("CRS", c)
         mask = None
         with rasterio.open(input_path) as src:
             image = src.read()  # first band
@@ -204,7 +200,6 @@ class SuitabilityCalculator:
 
         output_matrix = output_matrix / total_weight * 100
         self.objectives_arrays_dict["ANALYSIS"] = output_matrix / 100
-        print(self)
         path = self.matrix_to_raster(output_matrix)
         geo_json = self.tiff_to_geojson(path)
         return geo_json

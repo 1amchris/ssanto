@@ -210,10 +210,8 @@ class Analysis(Serializable):
                         "valueScalingFunction"
                     ]
                     file = self.files_manager.get_files_by_id(file_id)
-                    print(secondary)
                     # "temp/" + file[0].group_id + ".shp"
                     if len(file) > 0:
-                        print("compute_suitability")
 
                         input_file = file[0].name
                         if not is_calculated and column_type == "Boolean":
@@ -226,7 +224,6 @@ class Analysis(Serializable):
                                 scaling_function,
                             )
                         elif is_calculated and column_type == "Boolean":
-                            print("is_calculated")
                             self.suitability_calculator.add_file_to_calculated_objective(
                                 secondary,
                                 primary,
