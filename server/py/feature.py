@@ -172,6 +172,13 @@ class DistanceFeature(ContinuousFeature):
         self.maximise_distance = maximize_distance
         self.centroid = centroid
 
+    def process_raster_as_array(self):
+        file_band = self.as_raster.GetRasterBand(1)
+        file_array = file_band.ReadAsArray()
+        file_array = self.clip_matrix(file_array)
+        file_array = self.default_normalize_matrix(file_array)
+        return file_array
+
     def update(self):
         super().update()
         self.compute_distance_matrix()
@@ -181,13 +188,19 @@ class DistanceFeature(ContinuousFeature):
             points = self.get_centroid(self.as_array)
         else:
             points = self.get_coordinate(self.as_array, self.threshold)
-        self.distance_matrix = self.draw_distance_matrix(
-            self.as_array.shape,
-            points,
-            self.max_distance,
-            self.granularity,
-            self.maximise_distance,
+        self.distance_matrix = (
+            self.draw_distance_matrix(
+                self.as_array.shape,
+                points,
+                self.max_distance,
+                self.granularity,
+                self.maximise_distance,
+            )
+            * self.max_distance
+            * self.cell_size
         )
+        self.distance_matrix = self.apply_value_scaling(self.distance_matrix)
+        self.distance_matrix = self.default_normalize_matrix(self.distance_matrix)
 
     def get_value_matrix(self):
         return self.distance_matrix
@@ -246,8 +259,6 @@ class DistanceFeature(ContinuousFeature):
             if granularity != None:
                 cat = np.linspace(0, 1, granularity + 1)
             arr = np.ones(shape)
-            a = max(point[0] - max_distance, 0)
-            b = min(point[0] + max_distance, len(arr))
             for i in range(
                 int(max(point[0] - max_distance, 0)),
                 int(min(point[0] + max_distance, len(arr))),
@@ -273,6 +284,7 @@ class DistanceFeature(ContinuousFeature):
                             distance_function((i, j), point) / max_distance, 1
                         )
 
+            arr = arr
             if maximize:
                 return arr
             else:
