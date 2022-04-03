@@ -8,38 +8,41 @@ import {
   studyAreaReceived,
 } from 'store/reducers/analysis';
 import Form from 'components/forms/Form';
-import { Control, Button, Spacer } from 'components/forms/components';
+import { Control, Button, Spacer, Select } from 'components/forms/components';
 import { call } from 'store/reducers/server';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
-import FileContentModel from 'models/file/FileContentModel';
 import LoadingValue from 'models/LoadingValue';
-import FilesUtils from 'utils/files-utils';
 
 function StudyArea({ t, disabled }: any) {
-  const property = 'studyArea';
+  const property = 'study_area';
   const selector = useAppSelector(selectAnalysis);
-  const properties = selector.properties[property];
   const dispatch = useAppDispatch();
+  const properties = selector.properties[property];
+  const files = selector.properties['files'];
+  let files_choices =  [
+    { value: '', label: '' },
+  ]
+  for (let i = 0; i < files.length; i+=1) {
+      files_choices.push({value: files[i].name, label: files[i].name});
+  }
 
-  const getErrors = selector.properties.studyAreaError;
-  const isLoading = selector.properties.studyAreaLoading;
+  const getErrors = selector.properties.study_areaError;
+  const isLoading = selector.properties.study_areaLoading;
 
   const controls = [
     <Control
-      visuallyHidden={!properties?.fileName}
+      visuallyHidden={!properties}
       label="selected file"
-      value={`${properties?.fileName}`}
+      value={`${properties}`}
       disabled
     />,
-    <Control
-      label="select study area"
-      name="files"
-      type="file"
-      accept=".shp, .shx, .cpg, .dbf, .prj, .dbs"
-      multiple
-      required
-      tooltip={t('the selected files will ...')}
+    <Select
+        label="select study area"
+        name='study_area_file'
+        required
+        defaultValue={properties}
+        options={files_choices}
     />,
     <Spacer />,
     <Button variant="outline-primary" type="submit" loading={isLoading}>
@@ -59,17 +62,16 @@ function StudyArea({ t, disabled }: any) {
             isLoading: true,
           } as LoadingValue<string>)()
         );
-        FilesUtils.extractContentFromFiles(Array.from(fields.files)).then(
-          files => {
-            dispatch(
-              call({
-                target: ServerCallTargets.UpdateStudyAreaFiles,
-                args: files,
-                onSuccessAction: studyAreaReceived,
-                onErrorAction: injectSetErrorCreator(property),
-              } as CallModel<FileContentModel<string>[], any, void, string, string>)
-            );
-          }
+        dispatch(
+            call({
+            target: ServerCallTargets.UpdateStudyAreaFiles,
+            args: [fields.study_area_file],
+            onSuccessAction: injectSetLoadingCreator({
+                value: property,
+                isLoading: false,
+                } as LoadingValue<string>),
+            onErrorAction: injectSetErrorCreator(property),
+            } as CallModel<string[], any, void, string, string>)
         );
       }}
     />

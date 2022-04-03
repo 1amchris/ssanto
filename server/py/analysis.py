@@ -4,12 +4,11 @@ from .file import File
 from .file_manager import FileParser
 from .map import LatLng, MapCursorInformations
 from .server_socket import CallException
-from base64 import b64encode
-import copy
+from base64 import b64encode, b64decode
 import pickle
+import json
 
 from py.graph_maker import GraphMaker
-
 
 class Analysis(Serializable):
     @staticmethod
@@ -19,11 +18,14 @@ class Analysis(Serializable):
             "content": b64encode(pickle.dumps(content)).decode("utf-8"),
         }
 
+    @staticmethod
+    def __import(content):
+        return json.loads(pickle.loads(b64decode(content.encode('utf-8'))))
+
     def __init__(self, subjects_manager, files_manager):
         self.subjects_manager = subjects_manager
         self.files_manager = files_manager
         self.suitability_calculator = None
-        self.study_area_file_name = None
 
         self.parameters = subjects_manager.create(
             "parameters",
@@ -32,6 +34,10 @@ class Analysis(Serializable):
                 "modeler_name": "",
                 "cell_size": 20,
             },
+        )
+
+        self.study_area = subjects_manager.create(
+            "study_area", ''
         )
 
         self.nbs = subjects_manager.create(
@@ -51,16 +57,34 @@ class Analysis(Serializable):
             },
         )
 
+        self.value_scaling = subjects_manager.create(
+            "value_scaling",
+            [],
+        )
+
+        self.layers = subjects_manager.create(
+            "layers",
+            {}
+        )
+
+        self.analysis = subjects_manager.create(
+            "analysis",
+            {}
+        )
+
     def __repr__(self) -> str:
-        return str(self.serialize())
+        return json.dumps(self.serialize())
 
     def serialize(self) -> dict:
         return {
             "analysis": {
                 "parameters": self.parameters.value(),
-                # Commented for now, I'll (Tristan) fix it later.
-                # "study_area": self.study_area.__dict__() if self.study_area else None,
+                "study_area": self.study_area.value(),
                 "nbs": self.nbs.value(),
+                "objectives": self.objectives.value(),
+                "value_scaling": self.value_scaling.value(),
+                "layers": self.layers.value()
+                # We dont had the analysis, but we could
             },
             "files": self.files_manager.serialize(),
         }
@@ -72,6 +96,9 @@ class Analysis(Serializable):
             parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
         )
 
+    '''
+    There is an exemple of method to be implemented as a bind command
+    and how to use subjects
     def perform_analysis(self):
         # self.parameters.value().get('analysis_name')
         # ...
@@ -79,6 +106,34 @@ class Analysis(Serializable):
         # ...
         # self.parameters.update()
         pass
+    '''
+    def add_files(self, *files):
+        added = self.files_manager.add_files(*files)
+        for shapefile in added:
+            self.add_layer('normal', shapefile.name)
+
+    def remove_file(self, name):
+        self.files_manager.remove_file(name)
+        self.remove_layer(name)
+
+    def add_layer(self, group, name):
+        layers = self.layers.value()
+        layers.setdefault(group, []).append(name)
+        self.layers.notify(layers)
+    
+    def remove_layer(self, name):
+        layers = self.layers.value()
+        for group in layers:
+            if name in group:
+                break
+        layers[group].remove(name)
+        if len(layers[group]) == 0: 
+            layers.pop(group)
+        self.layers.notify(layers)
+
+    def get_layer(self, group, name):
+        geojson = json.loads(self.files_manager.get_file(name).read_content())
+        return {"group": group, "name": name, "geojson": geojson}
 
     def distribution_update(self):
         objectives_data = self.objectives.value()
@@ -128,6 +183,8 @@ class Analysis(Serializable):
 
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
+        #if cursor is not None:
+        #    base.placeholder += f". lat: {cursor.lat:.3f}, lng: {cursor.long:.3f}"  
         if calculator := self.suitability_calculator:
             base.objectives = calculator.get(cursor.lat, cursor.long)
         return base
@@ -137,46 +194,37 @@ class Analysis(Serializable):
         if subject == "objectives":
             self.distribution_update()
 
-    def receive_study_area(self, *files):
-        created = self.files_manager.add_files(*files)
-        shps = [file for file in created if file.extension == "shp"]
-        shxs = [file for file in created if file.extension == "shx"]
-        dbfs = [file for file in created if file.extension == "dbf"]
-
-        # print("shps", shps, "shxs", shxs)
-        if len(shps) == 0:
-            raise CallException("No shapefiles received [shp].")
-        if len(shxs) == 0:
-            raise CallException("No shapefiles received [shx].")
-        if len(dbfs) == 0:
-            raise CallException("No shapefiles received [dbf].")
-
-        # find a matching pair
-        def is_matching_pair(shp: File, shx: File):
-            return shp != None and shx != None and shp.stem == shx.stem
-
-        # Lever des erreurs si plusieurs fichier shp
-        for shp in shps:
-            for shx in shxs:
-                if is_matching_pair(shp, shx):
-                    break
-            if is_matching_pair(shp, shx):
-                break
-        else:
-            raise CallException(
-                "No valid shapefiles uploaded. Make sure that both [.shx and .shp are uploaded, and both have the same name, then try again.]"
-            )
-        print("receive_study_area", shps[0].name)
-        self.study_area_file_name = shps[0].name  # shp.name?
-
-        geojson = FileParser.load(self.files_manager, shx.id, shp.id)
-        return {"file_name": shp.name, "area": geojson}
+    def receive_study_area(self, shp_name):
+        print("receive_study_area", shp_name)
+        '''
+        study_area = { 'file_name': '', 'area': None }
+        if shp_name != '':        
+            shapefile = self.files_manager.get_file(shp_name)
+            geojson = FileParser.load(self.files_manager, shapefile.get_shp(), shapefile.get_shx())
+            study_area = {"file_name": shp_name, "area": geojson}
+        '''
+        self.study_area.notify(shp_name)
 
     def export_project_save(self):
         return Analysis.__export(f"{self.__get_project_name()}.sproj", self.__repr__())
 
+    def import_project_save(self, file):
+        data = Analysis.__import(file)
+
+        analysis_data = data['analysis']
+        self.parameters.notify(analysis_data['parameters'])
+        self.study_area.notify(analysis_data['study_area'])
+        self.nbs.notify(analysis_data['nbs'])
+        self.objectives.notify(analysis_data['objectives'])
+        self.value_scaling.notify(analysis_data['value_scaling'])
+        self.layers.notify(analysis_data['layers'])
+
+        files_data = data['files']
+        for name, data in files_data.items():
+            self.files_manager.add_shapefile_from_save(name, data)
+
     def compute_suitability(self):
-        if self.study_area_file_name:
+        if self.study_area.value():
             data = self.objectives.value()
             cell_size = self.parameters.value().get("cell_size")
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
@@ -186,7 +234,7 @@ class Analysis(Serializable):
             )
             self.suitability_calculator.set_cell_size(cell_size)
             self.suitability_calculator.set_crs("epsg:32188")
-            self.suitability_calculator.set_study_area_input(self.study_area_file_name)
+            self.suitability_calculator.set_study_area_input(self.study_area.value())
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"],
@@ -276,6 +324,9 @@ class Analysis(Serializable):
                         print("ob, no dataset for an objectives")
             geo_json = self.suitability_calculator.process_data()
 
-            return {"file_name": "current analysis", "area": geo_json}
+            return_value = {"file_name": "current analysis", "area": geo_json}
+            #return {"file_name": "current analysis", "area": geo_json}
         else:
-            return {"file_name": "current analysis", "area": {}}
+            return_value = {"file_name": "current analysis", "area": {}}
+        
+        self.analysis.notify(return_value)

@@ -6,6 +6,7 @@ import { call } from 'store/reducers/server';
 import Menu from './Menu';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
+import FilesUtils from 'utils/files-utils';
 
 function MenuBar() {
   const dispatch = useAppDispatch();
@@ -18,7 +19,14 @@ function MenuBar() {
       />
       <Import
         label="open project"
-        onFileImported={(file: File) => console.log('/file/open project', file)}
+        onFileImported={(file: File) => FilesUtils.extractContentFromFiles([file]).then( file => 
+            dispatch(
+                call({
+                  target: ServerCallTargets.OpenProject,
+                  args: [file[0].content],
+                  // TODO: There should probably be an "onErrorAction"
+                } as CallModel<string[], FileContentModel<string>, void, string, string>)
+              ))}
       />
       <Divider />
       <Action
