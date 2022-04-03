@@ -1,6 +1,6 @@
 from osgeo import gdal, ogr, osr
 import os
-
+import geopandas
 
 DEFAULT_EMPTY_VAL = -99999999999
 
@@ -25,6 +25,9 @@ def convert_projection(in_proj, out_proj, p1, p2):
 def shape_to_Raster(
     cell_size, input, output, field_name=False, empty_data_value=DEFAULT_EMPTY_VAL
 ):
+    gdf = geopandas.read_file(input)
+    gdf = gdf.to_crs({"init": "epsg:3857"})
+    gdf.to_file(input)
 
     input_driver = ogr.GetDriverByName("ESRI Shapefile")
     input_source = input_driver.Open(input, 0)
