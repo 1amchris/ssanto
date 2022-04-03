@@ -40,21 +40,18 @@ export const mapSlice = createSlice({
     },
     updateSuitabilityThreshold: (state, { payload }: PayloadAction<number>) => {
       state.suitabilityThreshold = payload;
-      console.log('suitability threshold changed:', payload);
     },
     updateSuitabilityAboveThreshold: (
       state,
       { payload }: PayloadAction<number>
     ) => {
       state.suitabilityAboveThreshold = payload;
-      console.log('suitability above threshold changed:', payload);
     },
     updateSuitabilityCategories: (
       state,
       { payload }: PayloadAction<SuitabilityCategories>
     ) => {
       state.suitabilityCategories = payload;
-      console.log('suitability categories changed:', payload);
     },
     updateZoom: (state, { payload: zoom }: PayloadAction<number>) => {
       if (zoom < 1) {
