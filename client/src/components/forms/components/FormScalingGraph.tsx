@@ -86,7 +86,6 @@ class FormScalingGraph extends FormComponent {
 
     return (
       <Form.Group
-        key={this.key}
         className={`w-100 ${className} ${
           visuallyHidden ? 'visually-hidden' : ''
         }`}
@@ -99,7 +98,7 @@ class FormScalingGraph extends FormComponent {
           (type == 'Boolean' && (isCalculated as Boolean)) ? (
             <div style={{ width: 200, height: 200 }}>
               <Line
-                key={this.key}
+                key={`${this.key}/graph`}
                 options={options}
                 data={generateData(distribution, distribution_value)}
               />
@@ -107,7 +106,7 @@ class FormScalingGraph extends FormComponent {
           ) : (
             <div style={{ width: 200, height: 200 }}>
               <Bar
-                key={this.key}
+                key={`${this.key}/graph`}
                 options={options}
                 data={generateData(distribution, distribution_value)}
               />

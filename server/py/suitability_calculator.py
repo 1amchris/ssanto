@@ -228,6 +228,6 @@ class SuitabilityCalculator:
         self.objectives_arrays_dict["ANALYSIS"] = output_matrix / 100
         path = self.matrix_to_raster(output_matrix)
         analysis_df = self.tiff_to_geojson(path)
-        masked_analysis_df = self.study_area_mask(analysis_df)
-
+        #masked_analysis_df = self.study_area_mask(analysis_df)
+        masked_analysis_df = analysis_df
         return masked_analysis_df.to_json()

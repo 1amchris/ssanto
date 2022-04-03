@@ -125,29 +125,6 @@ function ValueScaling({ t }: any) {
         ] = newCategoryValue;
         setLocalValueScaling(newValueScaling);
       };
-    const continuousScalingBox = ({
-      key,
-      attributeIndex,
-      value,
-    }: FactoryProps) => [
-      <Control
-        key={key('continuous')}
-        label="value scaling function"
-        name="continuous"
-        defaultValue={
-          localValueScaling[attributeIndex].dataset.properties
-            .valueScalingFunction
-        }
-        required
-        prefix={
-          <React.Fragment>
-            <small className="me-1">y =</small>
-          </React.Fragment>
-        }
-        onChange={onChangeValueScalingFunction(attributeIndex)}
-        tooltip={t('')}
-      />,
-    ];
 
     const categoricalRowFactory = ({
       key,
@@ -170,50 +147,84 @@ function ValueScaling({ t }: any) {
       ];
     };
 
-    const categoricalScalingBox = ({
-      key,
-      attributeIndex,
-      dataset,
-    }: FactoryProps) => (
-      <SimpleList
-        key={key('categorical')}
-        name={'weights'}
-        hideLabel
-        factory={categoricalRowFactory}
-        controls={dataset.properties.distribution.map(
-          (category: any, index: number) => ({
-            category,
-            categoryIndex: index,
-            attributeIndex,
-          })
-        )}
-      />
-    );
-
     const ScalingBoxFactory = ({
       value,
       attributeIndex,
       key,
-    }: FactoryProps): ReactElement | ReactElement[] => (
-      <Collapsible key={key('scalingBox')} title={value.attribute}>
-        {value.dataset.type == 'Continuous' ||
+    }: FactoryProps): ReactElement | ReactElement[] => {
+      if (
+        value.dataset.type == 'Continuous' ||
         (value.dataset.type == 'Boolean' && value.dataset.isCalculated)
-          ? continuousScalingBox({ key, attributeIndex, ...value })
-          : categoricalScalingBox({ key, attributeIndex, ...value })}
-        <ScalingGraph
-          distribution={
-            localValueScaling[attributeIndex].dataset.properties.distribution
-          }
-          distribution_value={
-            localValueScaling[attributeIndex].dataset.properties
-              .distribution_value
-          }
-          type={value.dataset.type}
-          isCalculated={value.dataset.isCalculated}
-        />
-        ,
-      </Collapsible>
-    );
+      ) {
+        return (
+          <Collapsible key={key('scalingBox')} title={value.attribute}>
+            <Control
+              key={key('continuous')}
+              label="value scaling function"
+              name="continuous"
+              defaultValue={
+                localValueScaling[attributeIndex].dataset.properties
+                  .valueScalingFunction
+              }
+              required
+              prefix={
+                <React.Fragment>
+                  <small className="me-1">y =</small>
+                </React.Fragment>
+              }
+              onChange={onChangeValueScalingFunction(attributeIndex)}
+              tooltip={t('')}
+            />
+            <ScalingGraph
+              key={key('scaling_graph')}
+              distribution={
+                localValueScaling[attributeIndex].dataset.properties
+                  .distribution
+              }
+              distribution_value={
+                localValueScaling[attributeIndex].dataset.properties
+                  .distribution_value
+              }
+              type={value.dataset.type}
+              isCalculated={value.dataset.isCalculated}
+            />
+            ,
+          </Collapsible>
+        );
+      } else {
+        return (
+          <Collapsible key={key('scalingBox')} title={value.attribute}>
+            <SimpleList
+              key={key('categorical')}
+              name={'weights'}
+              hideLabel
+              factory={categoricalRowFactory}
+              controls={value.dataset.properties.distribution.map(
+                (category: any, index: number) => ({
+                  category,
+                  categoryIndex: index,
+                  attributeIndex,
+                })
+              )}
+            />
+            <ScalingGraph
+              key={key('scaling_graph')}
+              distribution={
+                localValueScaling[attributeIndex].dataset.properties
+                  .distribution
+              }
+              distribution_value={
+                localValueScaling[attributeIndex].dataset.properties
+                  .distribution_value
+              }
+              type={value.dataset.type}
+              isCalculated={value.dataset.isCalculated}
+            />
+            ,
+          </Collapsible>
+        );
+      }
+    };
 
     const mainControls =
       localValueScaling.length > 0
