@@ -1,5 +1,7 @@
+import imp
 import numpy as np
 from py.math_operation import MATH_OPERATION
+from py.study_area import StudyArea
 
 
 class GraphMaker:
@@ -11,8 +13,10 @@ class GraphMaker:
         return x, y
 
     @staticmethod
-    def compute_fraction_above_threshold(array, threshold):
-        return np.count_nonzero(array > threshold) / array.size
+    def compute_fraction_above_threshold(study_area: StudyArea, array, threshold):
+        return np.count_nonzero(array > threshold) / np.count_nonzero(
+            study_area.as_array > 0
+        )
 
     @staticmethod
     def compute_fraction_in_range(array, min_threshold, max_threshold):

@@ -37,8 +37,8 @@ function ValueScaling({ t }: any) {
 
   const dispatch = useAppDispatch();
 
-  //const getErrors = selector.properties.valueScalingError;
-  //const isLoading = selector.properties.valueScalingLoading;
+  //const getErrors = selector.properties.value_scalingError;
+  //const isLoading = selector.properties.value_scalingLoading;
 
   const extractAttributeFromOH = () => {
     let localAttributes: any = [];

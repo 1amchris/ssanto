@@ -20,8 +20,8 @@ function NbsSystem({ t, disabled }: any) {
   const properties = selector.properties[property];
   const dispatch = useAppDispatch();
 
-  const getErrors = selector.properties.nbsSystemError;
-  const isLoading = selector.properties.nbsSystemLoading;
+  const getErrors = selector.properties.nbs_systemError;
+  const isLoading = selector.properties.nbs_systemLoading;
 
   const controls = [
     <Select

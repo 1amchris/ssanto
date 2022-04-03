@@ -81,7 +81,7 @@ function FileExplorer({ t, disabled }: any) {
           dispatch(
             call({
               target: ServerCallTargets.FileManagerRemoveFile,
-              args: [(files[index] as FileMetadataModel).id],
+              args: [(files[index] as FileMetadataModel).name],
               onSuccessAction: injectSetLoadingCreator({
                 value: property,
                 isLoading: false,

@@ -1,27 +1,34 @@
 const electron = require('electron');
-const url = require('url');
+// const url = require('url');
 const path = require('path');
 
-const { spawn } = require('child_process');
+const {spawn} = require('child_process');
 
 const PYTHON_PATH = 'python3';
 const python = spawn(PYTHON_PATH, ['-u', './main.py'], {
   cwd: path.join(__dirname, 'server'),
 });
 
-python.stdout.on('data', data => {
+let loadCompleted = false;
+
+python.stdout.on('data', (data) => {
+  if (data == 'STARTUP_FINISH\n') {
+    while (!loadCompleted) {}
+    createWindow();
+    return;
+  }
   process.stdout.write(`[Python][stdout] ${data}`);
 });
 
-python.stderr.on('data', data => {
+python.stderr.on('data', (data) => {
   console.log(`[Python][stderr] ${data}`);
 });
 
-python.on('error', error => {
+python.on('error', (error) => {
   console.log(`[Python][error] Error: ${error}`);
 });
 
-python.on('close', code => {
+python.on('close', (code) => {
   console.log(`[Python][close] Code: ${code}`);
 });
 
@@ -31,14 +38,19 @@ python.on('exit', (code, signal) => {
 
 /* ----------------------*/
 
-const { app, BrowserWindow } = electron;
+const {app, BrowserWindow} = electron;
 
 let mainWindow = null;
 
-app.on('ready', () => {
+/**
+ * Create the app window.
+ * @return {void}}
+ */
+function createWindow() {
   mainWindow = new BrowserWindow({
     show: false,
-    title: 'SSanto',
+    title: 'SSANTO',
+    icon: './icon.png',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -47,13 +59,13 @@ app.on('ready', () => {
   });
 
   mainWindow.loadURL(
-    'http://localhost:3000',
-    /*url.format({
-            pathname: path.join(__dirname, './index.html'),
-            protocol: "file:",
-            slashes: true
-        })*/
-    {}
+      'http://localhost:3000',
+      /* url.format({
+              pathname: path.join(__dirname, './index.html'),
+              protocol: "file:",
+              slashes: true
+          })*/
+      {},
   );
   mainWindow.setMenuBarVisibility(false);
   mainWindow.webContents.openDevTools();
@@ -64,7 +76,9 @@ app.on('ready', () => {
     console.log('electron exit');
     python.kill();
   });
-});
+}
+
+app.on('ready', () => (loadCompleted = true));
 
 app.on('window-all-closed', () => {
   // On macOS specific close process

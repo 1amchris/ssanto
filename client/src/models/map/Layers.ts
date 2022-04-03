@@ -14,3 +14,7 @@ export interface Layers {
 export interface LayersGroups {
   [name: string]: Layers;
 }
+
+export interface LayersUpdateGroups {
+    [name: string]: string[];
+}

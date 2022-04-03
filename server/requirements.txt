@@ -1,5 +1,6 @@
-websockets==10.1
-Fiona==1.8.21
-geojson-rewind==1.0.2
-matplotlib==3.5.1
-rasterio==1.2.10
+websockets
+matplotlib
+rasterio
+pyshp
+geopandas
+geojson-rewind

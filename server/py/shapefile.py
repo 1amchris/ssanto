@@ -6,15 +6,68 @@ import math
 
 
 class Shapefile(File):
-    def __init__(self, name: str, content: bytes, id=None, group_id=None, dir=None):
-        super().__init__(name, content, id=id, group_id=group_id)
-        self.dir = dir
+    MANDATORY_EXT = {'shp', 'shx', 'dbf'}
+    OPTIONAL_EXT = {'prj',
+            'sbn','sbx',
+            'fbn', 'fbx',
+            'ain', 'aih',
+            'ixs', 'mxs',
+            'atx', 'xml', # .shp.xml
+            'cpg', 'qix'}
+
+    def __init__(self, name: str):
+        super().__init__(name, bytes())
+        self.extensions = set()
+        self.files = {}
+
         self.columns = []
         self.head = []
-        self.set_feature()
 
-    def set_feature(self):
-        df = geopandas.read_file(os.path.join(self.dir, self.name))
+    # WARNING: self.path doesnt exist!
+    def set_head(self):
+        df = geopandas.read_file(self.path[0])
+        self.head = df.loc[:, df.columns != "geometry"].head(5).to_dict("index")
+        print(self.head)
+
+    # WARNING: self.path doesnt exist!
+    def set_column(self):
+        df = geopandas.read_file(self.path[0])
+        self.columns = [s for s in df.columns if s != "geometry"]
+        print(self.columns)
+
+    def get_files(self):
+        return list(self.files.values())
+
+    def get_file_by_ext(self, ext):
+        return self.files[ext]
+
+    def add_file(self, file):
+        self.files[file.extension] = file
+        self.extensions.add(file.extension)
+
+    def is_complete(self):
+        return self.extensions.intersection(Shapefile.MANDATORY_EXT) == Shapefile.MANDATORY_EXT
+
+    def serialize(self):
+        base = super().serialize()
+        base.update({'files': [file.serialize() for file in self.get_files()], 'extensions': list(self.extensions)})
+        return base
+
+    @staticmethod
+    def is_shapefile_ext(ext):
+        return Shapefile.is_mandatory_ext(ext) or Shapefile.is_optional_ext(ext)
+
+    @staticmethod
+    def is_mandatory_ext(ext):
+        return ext in Shapefile.MANDATORY_EXT
+    
+    @staticmethod
+    def is_optional_ext(ext):
+        return ext in Shapefile.OPTIONAL_EXT
+
+
+    def set_feature(self, path):
+        df = geopandas.read_file(os.path.join(path, self.name))
         try:
             print(df)
             print(df.columns)
@@ -68,8 +121,8 @@ class Shapefile(File):
         return [str(category) for category in df[column_name].unique()]
         # return categories of this colum
 
-    def serialize(self):
-        print('MIN', self.columns["minimums"])
-        print('MAX', self.columns["maximums"])
-        # min_value": list(self.columns["minimums"]), "max_value": list(self.columns["maximums"])
-        return {"id": self.id, "name": self.name, "stem": self.stem, "extension": self.extension, "column_names": self.columns["column_names"], 'type': self.columns["type"], 'categories': self.columns["categories"], 'min_value': [math.floor(min_) for min_ in self.columns["minimums"]], 'max_value': [math.ceil(max_) for max_ in self.columns["maximums"]]}
+    #def serialize(self):
+    #    print('MIN', self.columns["minimums"])
+    #    print('MAX', self.columns["maximums"])
+    #    # min_value": list(self.columns["minimums"]), "max_value": list(self.columns["maximums"])
+    #    return {"id": self.id, "name": self.name, "stem": self.stem, "extension": self.extension, "column_names": self.columns["column_names"], 'type': self.columns["type"], 'categories': self.columns["categories"], 'min_value': [math.floor(min_) for min_ in self.columns["minimums"]], 'max_value': [math.ceil(max_) for max_ in self.columns["maximums"]]}

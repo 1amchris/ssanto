@@ -1,36 +1,34 @@
-from uuid import uuid4
 from base64 import b64decode
+import json
 from geojson_rewind import rewind
+import shapefile as ShpLoader
 import os
 import shutil
 import operator
-import shapefile
 
+from py.file_metadata import FileMetaData
 from py.file import File
 from py.shapefile import Shapefile
-from py.file_metadata import FileMetaData
+
 from py.serializable import Serializable
+from py.server_socket import CallException
 
 
 class FileParser:
     @staticmethod
-    def load(files_manager, *ids):
-        files = sorted(
-            files_manager.get_files_by_id(*ids), key=lambda file: file.extension
-        )
-
-        if files[0].extension == "shp" and len(files) == 2:
-            shp, shx = files
-            return FileParser.__load_shp(
-                shp.get_file_descriptor(), shx.get_file_descriptor()
-            )
+    def load(file):
+        # We only accept shp file groups for now
+        if isinstance(file, Shapefile):
+            shp = file.get_file_by_ext('shp')
+            shx = file.get_file_by_ext('shx')
+            return FileParser.__load_shp(shp.get_file_descriptor(), shx.get_file_descriptor())
         # elif ext == '...'
 
         return None
 
     @staticmethod
     def __load_shp(shp_file, shx_file):
-        reader = shapefile.Reader(shp=shp_file, shx=shx_file)
+        reader = ShpLoader.Reader(shp=shp_file, shx=shx_file)
 
         features = []
         for shp in reader.shapes():
@@ -41,7 +39,8 @@ class FileParser:
             features.append(feature)
 
         geojson = {"type": "FeatureCollection", "features": features}
-        return rewind(geojson)
+        data_str = json.dumps(rewind(geojson))
+        return bytes(data_str, 'ascii')
 
 
 class FilesWriter:
@@ -55,15 +54,17 @@ class FilesWriter:
         return self.main_dir
 
     def save_file(self, name, content):
-        with open(os.path.join(self.main_dir, name), "wb") as file:
+        path = os.path.join(self.main_dir, name)
+        is_overwritten = os.path.exists(path)
+        with open(path, 'wb') as file:
             file.write(content)
+        return is_overwritten
 
     def remove_file(self, name):
         os.remove(os.path.join(self.main_dir, name))
 
     def __del__(self):
         shutil.rmtree(self.main_dir)
-
 
 class FilesManager:
     def __init__(self, subjects_manager):
@@ -82,37 +83,58 @@ class FilesManager:
     def get_writer_path(self):
         return self.writer.get_path()
 
-    def get_file(self, id):
-        return self.files[id]
+    def get_file(self, name):
+        return self.files_content[name]
 
     def get_files_metadatas(self):
         return list(
             map(
-                lambda file: FileMetaData(file.name, id=file.id),
+                lambda file: FileMetaData(file.name),
                 self.files_content.values(),
             )
         )
 
-    def get_files_by_id(self, *ids):
-        return list(filter(lambda file: file.id in ids, self.files_content.values()))
+    def get_files_by_names(self, *names):
+        return list(filter(lambda file: file.name in names, self.files_content.values()))
 
-    def get_shapefile_by_id(self, id):
-        return list(filter(lambda shapefile: shapefile['id'] == id, self.shapefiles.data))[0]
+    #def get_shapefile_by_id(self, id):
+    #    return list(filter(lambda shapefile: shapefile['id'] == id, self.shapefiles.data))[0]
 
-    def get_file_ids(self):
+    def get_file_names(self):
         return self.files_content.keys()
 
-    def remove_file(self, id):
-        popped = self.files_content.pop(id)
-        self.writer.remove_file(popped.name)
+    def remove_file(self, name):
+        popped = self.files_content.pop(name)
+        # It is not elegant, but we need to implement composite in the self.files_content
+        if isinstance(popped, Shapefile):
+            for file in popped.get_files():
+                self.writer.remove_file(file.name)
+        else: # Probably not used since only shapefile are allowed
+            self.writer.remove_file(popped.name)
         self.__notify_metadatas()
         return popped
 
-    def getExtension(self, file_name):
-        return file_name.split(".")[-1]
+    def add_file(self, file):
+        self.writer.save_file(file.name, file.read_content())
+        self.files_content[file.name] = file
+        return file
 
-    def getName(self, file_name):
-        return file_name.split(".")[0]
+    def add_shapefile(self, shp):
+        for file in shp.get_files():
+            self.writer.save_file(file.name, file.read_content())
+        self.files_content[shp.name] = shp
+        return shp
+
+    def add_shapefile_from_save(self, name, data):
+        shp = Shapefile(name)
+        content = data["content"]
+        shp.content = b64decode(content.encode('ascii'))
+        for file_data in data['files']:
+            file = File(file_data['name'], b64decode(file_data["content"].encode('ascii')))
+            shp.add_file(file)
+
+        self.add_shapefile(shp)
+        self.__notify_metadatas()
 
     # files: { name: string; size: number; content: string (base64); }[]
 
@@ -138,20 +160,45 @@ class FilesManager:
         self.shapefiles_content = new_shapefiles_content
 
     def add_files(self, *files):
-        created = []
-        group_id = str(uuid4())
+        appended = []
+        contains_invalid_file = False
 
+        created = {}
         for file in files:
-            new_file = File(file["name"], b64decode(
-                file["content"]), group_id=group_id)
-            self.files_content[new_file.id] = new_file
-            self.writer.save_file(new_file.name, new_file.read_content())
-            created.append(new_file)
+            new_file = File(file["name"], b64decode(file["content"]))
+            created[new_file.name] = new_file
 
-        self.extractShapefiles()
+        shapefiles = dict()
+        for file in created.values():
+            if Shapefile.is_shapefile_ext(file.extension):
+                shapefile = shapefiles.setdefault(file.stem, Shapefile(file.stem+'.shp'))
+                shapefile.add_file(file) # TODO: Check if there is already a file with the extension added
+            else:
+                contains_invalid_file = True
+        
+        contains_invalid_shapefile = False
+        for shapefile in shapefiles.values():
+            if not shapefile.is_complete():
+                contains_invalid_shapefile = True
+                continue
+            is_already_added = True if shapefile.name in self.files_content else False
+            self.add_shapefile(shapefile)
+            shapefile.content = FileParser.load(shapefile)
+            shapefile.set_feature(self.get_writer_path())
+            if (not is_already_added):
+                appended.append(shapefile)
 
         self.__notify_metadatas()
-        return created
+
+        error = ""
+        if contains_invalid_shapefile:
+            error += "At least one of the provided shapefile is not complete. You must at least have a '.shp', '.shx' and '.dbf'."
+        if contains_invalid_file:
+            error += "At least one of the provided file is not accepted. Only the shapefile format is accepted."
+        if contains_invalid_shapefile or contains_invalid_file:
+            raise CallException(error)
+
+        return appended
 
     def __notify_metadatas(self):
         metadatas = self.get_files_metadatas()
