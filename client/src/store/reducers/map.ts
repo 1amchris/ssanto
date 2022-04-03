@@ -7,6 +7,7 @@ import { MapStateModel } from 'models/map/MapStateModel';
 import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
 import { InsertLayerModel } from 'models/map/InsertLayerModel';
 import LayersUtils from 'utils/layers-utils';
+import SuitabilityCategories from 'models/map/SuitabilityCategoriesModel';
 
 export const mapSlice = createSlice({
   name: 'map',
@@ -14,6 +15,8 @@ export const mapSlice = createSlice({
     location: { lat: 45.509, long: -73.553 }, // defaults to mtl.qc.ca
     layers: {} as LayersGroups,
     zoom: 10, // arbitrary, is big enough to fit the island of mtl
+    suitabilityThreshold: 0.5,
+    suitabilityAboveThreshold: 0.35,
   } as MapStateModel,
   reducers: {
     updateLocation: (state, { payload: location }: PayloadAction<LatLong>) => {
@@ -33,6 +36,24 @@ export const mapSlice = createSlice({
     ) => {
       // if any validation is required, add it here
       state.cursorInformations = payload;
+    },
+    updateSuitabilityThreshold: (state, { payload }: PayloadAction<number>) => {
+      state.suitabilityThreshold = payload;
+      console.log('suitability threshold changed:', payload);
+    },
+    updateSuitabilityAboveThreshold: (
+      state,
+      { payload }: PayloadAction<number>
+    ) => {
+      state.suitabilityAboveThreshold = payload;
+      console.log('suitability above threshold changed:', payload);
+    },
+    updateSuitabilityCategories: (
+      state,
+      { payload }: PayloadAction<SuitabilityCategories>
+    ) => {
+      state.suitabilityCategories = payload;
+      console.log('suitability categories changed:', payload);
     },
     updateZoom: (state, { payload: zoom }: PayloadAction<number>) => {
       if (zoom < 1) {
@@ -65,6 +86,9 @@ export const {
   updateZoom,
   upsertLayer,
   removeLayer,
+  updateSuitabilityThreshold,
+  updateSuitabilityAboveThreshold,
+  updateSuitabilityCategories,
 } = mapSlice.actions;
 
 export const selectMap = (state: RootState) => state.map;

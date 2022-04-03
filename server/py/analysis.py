@@ -51,8 +51,48 @@ class Analysis(Serializable):
             },
         )
 
+        # suitability categories: ([0-10[, [10-20[, [20-30[, [30-40[, [40-50[, [50-60[, [60-70[, [70-80[, [80-90[, [90-100]) or None
+        self.suitability_categories = subjects_manager.create("analysis.visualization.suitability_categories", None)
+
+        # suitability : [0, 1] or None
+        self.suitability_threshold = subjects_manager.create("analysis.visualization.suitability_threshold", 0.5)
+        self.suitability_above_threshold = subjects_manager.create(
+            "analysis.visualization.suitability_above_threshold", None
+        )
+
     def __repr__(self) -> str:
         return str(self.serialize())
+
+    def compute_suitability_categories(self):
+        if self.suitability_calculator is not None and (array := self.suitability_calculator.get_array()).any():
+            self.suitability_categories.notify(
+                {
+                    "00-10": GraphMaker.compute_fraction_in_range(array, 0.00, 0.10),
+                    "10-20": GraphMaker.compute_fraction_in_range(array, 0.10, 0.20),
+                    "20-30": GraphMaker.compute_fraction_in_range(array, 0.20, 0.30),
+                    "30-40": GraphMaker.compute_fraction_in_range(array, 0.30, 0.40),
+                    "40-50": GraphMaker.compute_fraction_in_range(array, 0.40, 0.50),
+                    "50-60": GraphMaker.compute_fraction_in_range(array, 0.50, 0.60),
+                    "60-70": GraphMaker.compute_fraction_in_range(array, 0.60, 0.70),
+                    "70-80": GraphMaker.compute_fraction_in_range(array, 0.70, 0.80),
+                    "80-90": GraphMaker.compute_fraction_in_range(array, 0.80, 0.90),
+                    "90-100": GraphMaker.compute_fraction_in_range(array, 0.90, 1.01),
+                }
+            )
+        else:
+            self.suitability_categories.notify(None)
+
+    def compute_suitability_above_threshold(self):
+        if (
+            self.suitability_calculator is not None
+            and (array := self.suitability_calculator.get_array()).any()
+            and (threshold := self.suitability_threshold.value()) is not None
+        ):
+            self.suitability_above_threshold.notify(
+                GraphMaker.compute_fraction_above_threshold(array, min(1, max(0, threshold)))
+            )
+        else:
+            self.suitability_above_threshold.notify(None)
 
     def serialize(self) -> dict:
         return {
@@ -107,16 +147,16 @@ class Analysis(Serializable):
 
         self.subjects_manager.update("objectives", new_objectives_data)
 
-    def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
-        base = MapCursorInformations()
-        if calculator := self.suitability_calculator:
-            base.objectives = calculator.get(cursor.lat, cursor.long)
-        return base
-
     def update(self, subject, data):
         self.subjects_manager.update(subject, data)
         if subject == "objectives":
             self.distribution_update()
+
+    def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
+        base = MapCursorInformations()
+        if calculator := self.suitability_calculator:
+            base.objectives = calculator.get_informations_at(cursor.lat, cursor.long)
+        return base
 
     def receive_study_area(self, *files):
         created = self.files_manager.add_files(*files)
@@ -226,6 +266,9 @@ class Analysis(Serializable):
                     else:
                         print("ob, no dataset for an objectives")
             geo_json = self.suitability_calculator.process_data()
+
+            self.compute_suitability_above_threshold()
+            self.compute_suitability_categories()
 
             return {"file_name": "current analysis", "area": geo_json}
         else:

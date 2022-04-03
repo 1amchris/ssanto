@@ -21,13 +21,17 @@ class SuitabilityCalculator:
         self.path = working_path
         self.cell_size = 20
         self.crs = "epsg:32188"
+        self.output_matrix = None
 
-    def get(self, latitude, longitude):
+    def get_informations_at(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
         cell_values = {}
         for key in self.objectives_arrays_dict:
             cell_values[key] = self.objectives_arrays_dict[key][y, x]
         return cell_values
+
+    def get_array(self):
+        return self.output_matrix
 
     def geo_coordinate_to_matrix_coordinate(self, latitude, longitude):
         src = gdal.Open(os.path.join(self.path, "output_study_area.tiff"))
@@ -182,8 +186,8 @@ class SuitabilityCalculator:
         for obj in self.objectives_arrays_dict:
             self.objectives_arrays_dict[obj] /= total_weight
 
-        output_matrix = output_matrix / total_weight * 100
-        self.objectives_arrays_dict["ANALYSIS"] = output_matrix
-        path = self.matrix_to_raster(output_matrix)
+        self.output_matrix = output_matrix / total_weight * 100
+        self.objectives_arrays_dict["ANALYSIS"] = self.output_matrix
+        path = self.matrix_to_raster(self.output_matrix)
         geo_json = self.tiff_to_geojson(path)
         return geo_json

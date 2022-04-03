@@ -14,12 +14,15 @@ import {
 } from 'components/analysis';
 import { useAppSelector } from 'store/hooks';
 import { selectAnalysis } from 'store/reducers/analysis';
-import MapCursorInformation from './aside-informations/MapCursorInformation';
 import { selectMap } from 'store/reducers/map';
+import MapCursorInformation from 'components/aside-informations/MapCursorInformation';
+import MapSuitabilityCategories from 'components/aside-informations/MapSuitabilityCategories';
+import MapSuitabilityAboveThreshold from 'components/aside-informations/MapSuitabilityAboveThreshold';
 
 function Main() {
   const analysis = useAppSelector(selectAnalysis);
-  const { cursor } = useAppSelector(selectMap);
+  const { cursor, suitabilityCategories, suitabilityAboveThreshold } =
+    useAppSelector(selectMap);
   const ohIsLoading = analysis.properties.objectivesLoading;
 
   function parametersIsValid() {
@@ -160,8 +163,22 @@ function Main() {
           >
             {cursor && (
               <InformationCard>
-                <Collapsible title={'Map informations'}>
+                <Collapsible title={'cursor informations'}>
                   <MapCursorInformation />
+                </Collapsible>
+              </InformationCard>
+            )}
+            {suitabilityCategories && (
+              <InformationCard>
+                <Collapsible title={'suitability ranges'}>
+                  <MapSuitabilityCategories />
+                </Collapsible>
+              </InformationCard>
+            )}
+            {suitabilityAboveThreshold && (
+              <InformationCard>
+                <Collapsible title={'% of suitability above threshold'}>
+                  <MapSuitabilityAboveThreshold />
                 </Collapsible>
               </InformationCard>
             )}
