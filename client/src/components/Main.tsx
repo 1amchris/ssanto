@@ -101,7 +101,11 @@ function Main() {
       <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
         <aside id="left-aside">
           <FormsBar>
-            <Collapsible title={'file explorer'} collapsed>
+            <Collapsible
+              title={'file explorer'}
+              guide_hash="category_1/topic_1"
+              collapsed
+            >
               <FileExplorer />
             </Collapsible>
             <Collapsible title={'parameters'}>
