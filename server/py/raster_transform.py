@@ -1,6 +1,6 @@
 from osgeo import gdal, ogr, osr
 import os
-
+import geopandas
 
 DEFAULT_EMPTY_VAL = -99999999999
 
@@ -22,9 +22,27 @@ def convert_projection(in_proj, out_proj, p1, p2):
     return x, y
 
 
+def get_center_latitude_longitude(shape_file_path):
+    df = geopandas.read_file(shape_file_path)
+
+    df = df.to_crs({"init": "epsg:4326"})
+    df["Center_point"] = df["geometry"].centroid
+
+    df["long"] = df.Center_point.map(lambda p: p.x)
+    df["lat"] = df.Center_point.map(lambda p: p.y)
+
+    latitude = (df["lat"].max() - df["lat"].min()) / 2 + df["lat"].min()
+    longitude = (df["long"].max() - df["long"].min()) / 2 + df["long"].min()
+
+    return latitude, longitude
+
+
 def shape_to_Raster(
     cell_size, input, output, field_name=False, empty_data_value=DEFAULT_EMPTY_VAL
 ):
+    gdf = geopandas.read_file(input)
+    gdf = gdf.to_crs({"init": "epsg:3857"})
+    gdf.to_file(input)
 
     input_driver = ogr.GetDriverByName("ESRI Shapefile")
     input_source = input_driver.Open(input, 0)
@@ -36,12 +54,12 @@ def shape_to_Raster(
 
     x_min, x_max, y_min, y_max = input_lyr.GetExtent()
 
-    x_min_converted, y_min_converted = convert_projection(
-        input_crs, output_crs, x_min, y_min
-    )
-    x_max_converted, y_max_converted = convert_projection(
-        input_crs, output_crs, x_max, y_max
-    )
+    # x_min_converted, y_min_converted = convert_projection(
+    #     input_crs, output_crs, x_min, y_min
+    # )
+    # x_max_converted, y_max_converted = convert_projection(
+    #     input_crs, output_crs, x_max, y_max
+    # )
 
     x_nb_cell = int((x_max - x_min) / int(cell_size))
     y_nb_cells = int((y_max - y_min) / int(cell_size))

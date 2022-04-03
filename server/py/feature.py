@@ -1,4 +1,3 @@
-from email.policy import default
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -38,6 +37,7 @@ class Feature:
 
     def process_missing_mask(self, array):
         self.missing_mask = array == DEFAULT_EMPTY_VAL
+        print(self.missing_data_default_val)
         array[self.missing_mask] = self.missing_data_default_val
         return array
 
@@ -113,7 +113,6 @@ class ContinuousFeature(Feature):
         return self.balance_matrix(file, self.study_area.as_array, offset)
 
     def balance_matrix(self, input_matrix, study_area, offset):
-        output_matrix = np.zeros(study_area.shape)
         output_matrix = np.zeros(study_area.shape)
         output_matrix[
             max(offset[0], 0) : max(
@@ -331,6 +330,7 @@ class DistanceFeature(ContinuousFeature):
 
     def process_value_matrix(self):
         self.update()
+        self.distance_matrix = self.process_missing_mask(self.distance_matrix)
         return self.distance_matrix, {}
 
 
