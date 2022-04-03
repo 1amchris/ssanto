@@ -20,13 +20,12 @@ import {
 import { FactoryProps } from 'components/forms/components/FormList';
 import Collapsible from 'components/Collapsible';
 import Form from 'components/forms/Form';
-import ValueScalingModel from 'models/ValueScalingModel';
 import LoadingValue from 'models/LoadingValue';
 import { call } from 'store/reducers/server';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
-import DatasetModel from 'models/DatasetModel';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
+import ValueScalingModel from 'models/ValueScalingModel';
 
 function ValueScaling({ t }: any) {
   const property = 'objectives';

@@ -199,8 +199,16 @@ class SuitabilityCalculator:
     def study_area_mask(self, analysis_df):
         study_area_df = self.geojson_to_gpd(
             self.study_area.geojson, self.study_area.crs).to_crs(analysis_df.crs)
+
+        # merge les polygones de study area en 1 polygone
+        #study_area_df = study_area_df.dissolve()
+        # use geopandas.GeoSeries.contains, filtrer selon True
+        #mask = study_area_df.contains(analysis_df)
+        #masked_analysis_df = analysis_df.loc[mask]
+
         masked_analysis_df = analysis_df.overlay(
             study_area_df, how='intersection')
+
         return masked_analysis_df
 
     def process_data(self):

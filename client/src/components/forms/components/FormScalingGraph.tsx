@@ -95,7 +95,8 @@ class FormScalingGraph extends FormComponent {
           <small>{capitalize(t(label || this.props.name))}</small>
         </Form.Label>
         <this.Overlay>
-          {type == 'Continuous' ? (
+          {type == 'Continuous' ||
+          (type == 'Boolean' && (isCalculated as Boolean)) ? (
             <div style={{ width: 200, height: 200 }}>
               <Line
                 key={this.key}

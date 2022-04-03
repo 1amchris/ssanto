@@ -23,10 +23,10 @@ import {
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
-import DatasetModel, { DefaultDataset } from 'models/DatasetModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 import React from 'react';
+import DatasetModel, { DefaultDataset } from 'models/DatasetModel';
 
 function isShp(file: { extension: string }, index: any, array: any) {
   return file.extension == 'shp';
@@ -534,6 +534,13 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex].isCalculated = newIsCalculated;
+
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].properties.distribution = [0, 1];
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].properties.distribution_value = [0, 0];
 
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);

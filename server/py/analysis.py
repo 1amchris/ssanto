@@ -124,7 +124,8 @@ class Analysis(Serializable):
                             int(y_) for y_ in list(y)
                         ]
 
-        self.subjects_manager.update("objectives", new_objectives_data)
+                        self.subjects_manager.update(
+                            "objectives", new_objectives_data)
 
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
@@ -165,7 +166,6 @@ class Analysis(Serializable):
             raise CallException(
                 "No valid shapefiles uploaded. Make sure that both [.shx and .shp are uploaded, and both have the same name, then try again.]"
             )
-        print("receive_study_area", shps[0].name)
         self.study_area_file_name = shps[0].name  # shp.name?
 
         geojson = FileParser.load(self.files_manager, shx.id, shp.id)
