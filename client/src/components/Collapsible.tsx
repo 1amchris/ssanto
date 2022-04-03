@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { FcCollapse, FcExpand } from 'react-icons/fc';
-import { GrCircleInformation } from 'react-icons/gr';
+import { FiInfo } from 'react-icons/fi';
 import { capitalize, uniqueId } from 'lodash';
 import { Collapse, Button } from 'react-bootstrap';
 import { HashLink } from 'react-router-hash-link';
@@ -34,7 +34,7 @@ function Collapsible({
           {capitalize(t(title || 'collapsible-title'))}{' '}
           {guide_hash?.length > 0 && (
             <HashLink to={`/guide#${guide_hash}`}>
-              <GrCircleInformation />
+              <FiInfo />
             </HashLink>
           )}
         </h6>

@@ -1,6 +1,8 @@
 import { capitalize, uniqueId } from 'lodash';
 import { Form, InputGroup } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
+import { FiInfo } from 'react-icons/fi';
+import { HashLink } from 'react-router-hash-link';
 import FormComponent from './FormComponent';
 
 /**
@@ -25,6 +27,7 @@ class FormControl extends FormComponent {
       label,
       suffix,
       prefix,
+      guide_hash = '',
       ...props
     } = this.getFilteredProps();
 
@@ -36,7 +39,14 @@ class FormControl extends FormComponent {
         }`}
       >
         <Form.Label visuallyHidden={hideLabel}>
-          <small>{capitalize(t(label || this.props.name))}</small>
+          <small>
+            {capitalize(t(label || this.props.name))}{' '}
+            {guide_hash?.length > 0 && (
+              <HashLink to={`/guide#${guide_hash}`}>
+                <FiInfo />
+              </HashLink>
+            )}
+          </small>
         </Form.Label>
         <this.Overlay>
           <InputGroup size="sm">
