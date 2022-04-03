@@ -1,3 +1,4 @@
+from email.policy import default
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -20,6 +21,7 @@ class Feature:
         crs,
         study_area: StudyArea,
         scaling_function,
+        missing_data_default_val,
     ):
         self.id = id
         self.name = name
@@ -29,6 +31,15 @@ class Feature:
         self.crs = crs
         self.study_area = study_area
         self.weight = weight
+        self.missing_data_default_val = missing_data_default_val
+
+    def get_missing_mask(self):
+        return {self.name: self.missing_mask}
+
+    def process_missing_mask(self, array):
+        self.missing_mask = array == DEFAULT_EMPTY_VAL
+        array[self.missing_mask] = self.missing_data_default_val
+        return array
 
 
 class ContinuousFeature(Feature):
@@ -43,6 +54,7 @@ class ContinuousFeature(Feature):
         crs,
         study_area: StudyArea,
         scaling_function,
+        missing_data_default_val,
         field_name=False,
     ):
         super().__init__(
@@ -55,6 +67,7 @@ class ContinuousFeature(Feature):
             crs,
             study_area,
             scaling_function,
+            missing_data_default_val,
         )
 
         self.field_name = field_name
@@ -73,6 +86,7 @@ class ContinuousFeature(Feature):
     def process_raster_as_array(self):
         file_band = self.as_raster.GetRasterBand(1)
         file_array = file_band.ReadAsArray()
+        file_array = self.process_missing_mask(file_array)
         file_array = self.clip_matrix(file_array)
         file_array = self.apply_value_scaling(file_array)
         file_array = self.default_normalize_matrix(file_array)
@@ -148,6 +162,7 @@ class DistanceFeature(ContinuousFeature):
         crs,
         study_area: StudyArea,
         scaling_function,
+        missing_data_default_val,
         field_name=False,
         maximize_distance=True,
         centroid=True,
@@ -164,6 +179,7 @@ class DistanceFeature(ContinuousFeature):
             crs,
             study_area,
             scaling_function,
+            missing_data_default_val,
             field_name,
         )
         self.max_distance = float(max_distance) / float(self.cell_size)
@@ -175,6 +191,7 @@ class DistanceFeature(ContinuousFeature):
     def process_raster_as_array(self):
         file_band = self.as_raster.GetRasterBand(1)
         file_array = file_band.ReadAsArray()
+        file_array = self.process_missing_mask(file_array)
         file_array = self.clip_matrix(file_array)
         file_array = self.default_normalize_matrix(file_array)
         return file_array
@@ -329,6 +346,7 @@ class CategoricalFeature(ContinuousFeature):
         crs,
         study_area: StudyArea,
         scaling_function,
+        missing_data_default_val,
         field_name,
         category_value_dict,
     ):
@@ -342,6 +360,7 @@ class CategoricalFeature(ContinuousFeature):
             crs,
             study_area,
             scaling_function,
+            missing_data_default_val,
             field_name,
         )
         self.categorized_value = category_value_dict

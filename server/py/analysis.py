@@ -210,6 +210,7 @@ class Analysis(Serializable):
                         "valueScalingFunction"
                     ]
                     file = self.files_manager.get_files_by_id(file_id)
+                    missing_data_default_value = 0
                     # "temp/" + file[0].group_id + ".shp"
                     if len(file) > 0:
 
@@ -222,6 +223,7 @@ class Analysis(Serializable):
                                 input_file,
                                 int(weight_secondary),
                                 scaling_function,
+                                missing_data_default_value,
                             )
                         elif is_calculated and column_type == "Boolean":
                             self.suitability_calculator.add_file_to_calculated_objective(
@@ -231,6 +233,7 @@ class Analysis(Serializable):
                                 input_file,
                                 int(weight_secondary),
                                 scaling_function,
+                                missing_data_default_value,
                                 attributes["datasets"][0]["calculationDistance"],
                             )
                         elif column_type == "Categorical":
@@ -248,6 +251,7 @@ class Analysis(Serializable):
                                 input_file,
                                 int(weight_secondary),
                                 scaling_function,
+                                missing_data_default_value,
                                 categories,
                                 categories_value,
                                 column_name,
@@ -262,6 +266,7 @@ class Analysis(Serializable):
                                 input_file,
                                 int(weight_secondary),
                                 scaling_function,
+                                missing_data_default_value,
                                 column_name,
                             )
 
