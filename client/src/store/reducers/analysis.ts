@@ -19,31 +19,10 @@ export const analysisSlice = createSlice({
         cell_size: 20,
       },
       nbs_system: { system_type: '2' },
-      studyArea: { fileName: '', area: undefined },
+      study_area: '',
       files: [] as FileMetadataModel[],
       shapefiles: [],
       default_missing_data: 0,
-
-      parametersLoading: false,
-      parametersError: '',
-
-      nbsSystemLoading: false,
-      nbsSystemError: '',
-
-      studyAreaLoading: false,
-      studyAreaError: '',
-
-      filesLoading: false,
-      filesError: '',
-
-      objectivesError: '',
-      objectivesLoading: false,
-
-      valueScalingError: '',
-      valueScalingLoading: false,
-
-      analysisLoading: false,
-      analysisError: '',
 
       objectives: {
         main: 'Needs',
@@ -76,6 +55,26 @@ export const analysisSlice = createSlice({
         },
       */
       ] as ValueScalingModel[],
+      parametersLoading: false,
+      parametersError: '',
+
+      nbs_systemLoading: false,
+      nbs_systemError: '',
+
+      study_areaLoading: false,
+      study_areaError: '',
+
+      filesLoading: false,
+      filesError: '',
+
+      objectivesError: '',
+      objectivesLoading: false,
+
+      value_scalingError: '',
+      value_scalingLoading: false,
+
+      analysisLoading: false,
+      analysisError: '',
     },
   },
   reducers: {
@@ -92,9 +91,9 @@ export const analysisSlice = createSlice({
     },
 
     studyAreaReceived: (state, { payload: data }: PayloadAction<any>) => {
-      state.properties.studyArea.fileName = data.file_name;
-      state.properties.studyArea.area = data.area;
-      state.properties.studyAreaLoading = false;
+      //state.properties.studyArea.fileName = data.file_name;
+      //state.properties.studyArea.area = data.area;
+      state.properties.study_areaLoading = false;
     },
 
     updateObjectives: (
@@ -132,6 +131,7 @@ export const analysisSlice = createSlice({
     ) => {
       let temp: any = state.properties;
       temp[property + 'Loading'] = isLoading;
+      temp[property + 'Error'] = '';
     },
 
     analysisSuccess: (state, _: PayloadAction<any>) => {

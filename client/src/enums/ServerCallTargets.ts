@@ -1,10 +1,13 @@
 enum ServerCallTargets {
   Update = 'update',
   SaveProject = 'analysis.save_project',
+  OpenProject = 'analysis.open_project',
   SaveWeights = 'analysis.save_weights',
   SaveObjectiveHierarchy = 'analysis.save_objective_hierarchy',
   UpdateStudyAreaFiles = 'analysis.set_study_area',
   ComputeSuitability = 'compute_suitability',
+
+  GetLayer = 'get_layer',
 
   FileManagerGetFiles = 'file_manager.get_files',
   FileManagerAddFiles = 'file_manager.add_files',

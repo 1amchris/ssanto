@@ -11,20 +11,20 @@ const AnalysisMiddleware: Middleware =
     switch (action.type) {
       case studyAreaReceived.type: {
         const { area } = action.payload;
-        dispatch(
+        /*dispatch(
           upsertLayer({
             group: 'study area',
             label: 'study area',
             name: 'study area',
             geojson: area,
           } as InsertLayerModel)
-        );
+        );*/
         return next(action);
       }
 
       case analysisSuccess.type: {
         const { file_name, area } = action.payload;
-        console.log('area', area);
+        if (area == undefined) return;
         dispatch(
           upsertLayer({
             group: 'analysis',

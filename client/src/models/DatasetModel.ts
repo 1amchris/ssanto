@@ -6,7 +6,6 @@ export default interface ValueScalingProperties {
 
 export default interface DatasetModel {
   name: string;
-  id: string;
   column: string;
   type: string;
   max_value: number;
@@ -26,7 +25,6 @@ export const DefaultValueScalingProperties = {
 
 export const DefaultDataset = {
   name: '',
-  id: '-1',
   column: '',
   type: '',
   properties: DefaultValueScalingProperties,

@@ -1,14 +1,10 @@
-import json
-from lib2to3.pytree import convert
-import matplotlib.pyplot as plt
 from .objective import Objective
-from osgeo import gdal, ogr, osr
+from osgeo import gdal, osr
 import numpy as np
 from osgeo.gdalconst import *
 import rasterio
 from rasterio.features import shapes
 import geopandas as gp
-import pandas as pd
 from .study_area import StudyArea
 import os
 from .raster_transform import convert_projection
@@ -22,17 +18,30 @@ class SuitabilityCalculator:
     def __init__(self, working_path):
         self.objectives = {}
         self.objectives_arrays_dict = {}
+        self.missing_mask_dict = {}
         self.path = working_path
         self.cell_size = 20
         self.crs = "epsg:32188"
+        self.output_matrix = None
 
-    def get(self, latitude, longitude):
-
+    def get_informations_at(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
         cell_values = {}
         for key in self.objectives_arrays_dict:
             cell_values[key] = self.objectives_arrays_dict[key][y, x]
+        print(self.get_missing(latitude, longitude))
         return cell_values
+
+    def get_array(self):
+        return self.output_matrix
+
+    def get_missing(self, latitude, longitude):
+        x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
+        missing_val = []
+        for key in self.missing_mask_dict:
+            if self.missing_mask_dict[key][y, x]:
+                missing_val.append(key)
+        return missing_val
 
     def geo_coordinate_to_matrix_coordinate(self, latitude, longitude):
         src = gdal.Open(os.path.join(self.path, "output_study_area.tiff"))
@@ -52,14 +61,13 @@ class SuitabilityCalculator:
     def set_crs(self, crs):  # "epsg:32188"?
         self.crs = crs
 
-    def set_study_area_input(self, input, files_manager):
-        self.study_area = StudyArea(input, files_manager)
+    def set_study_area_input(self, input):
+        self.study_area = StudyArea(input)
         self.study_area.update(self.path, self.cell_size, self.crs)
 
     def add_objective(self, objective_name, weight):
-        obj = Objective(
-            objective_name, weight, self.cell_size, self.crs, self.study_area
-        )
+        obj = Objective(objective_name, weight, self.cell_size,
+                        self.crs, self.study_area)
         self.objectives[objective_name] = obj
 
     def add_file_to_objective(
@@ -70,13 +78,21 @@ class SuitabilityCalculator:
         input,
         weight,
         scaling_function,
+        missing_data_default_val,
         field_name=False,
     ):
         input_path = os.path.join(self.path, input)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
         self.objectives[objective_name].add_file(
-            id, file_name, input_path, output_path, weight, scaling_function, field_name
+            id,
+            file_name,
+            input_path,
+            output_path,
+            weight,
+            scaling_function,
+            missing_data_default_val,
+            field_name,
         )
 
     def add_file_to_categorical_objective(
@@ -89,6 +105,7 @@ class SuitabilityCalculator:
         scaling_function,
         categories,
         categories_value,
+        missing_data_default_val,
         field_name,
     ):
         input_path = os.path.join(self.path, input)
@@ -104,6 +121,7 @@ class SuitabilityCalculator:
             weight,
             scaling_function,
             categories_dic,
+            missing_data_default_val,
             field_name,
         )
 
@@ -115,6 +133,7 @@ class SuitabilityCalculator:
         input,
         weight,
         scaling_function,
+        missing_data_default_val,
         max_distance,
         field_name=False,
     ):
@@ -128,6 +147,7 @@ class SuitabilityCalculator:
             output_path,
             weight,
             scaling_function,
+            missing_data_default_val,
             maximize_distance=True,
             max_distance=max_distance,
             centroid=True,
@@ -171,9 +191,7 @@ class SuitabilityCalculator:
             image = np.int16(image)
             results = (
                 {"properties": {"sutability": v}, "geometry": s}
-                for i, (s, v) in enumerate(
-                    shapes(image, mask=mask, transform=data["transform"])
-                )
+                for i, (s, v) in enumerate(shapes(image, mask=mask, transform=data["transform"]))
             )
             geoms = list(results)
             gpd_polygonized_raster = gp.GeoDataFrame.from_features(
@@ -183,8 +201,7 @@ class SuitabilityCalculator:
 
             # cs convertion
             gpd_polygonized_raster = gpd_polygonized_raster.to_crs(
-                4326
-            )  # Where these numbers come from?
+                4326)  # Where these numbers come from?
             output_geojson_name = "analysis.geojson"
             gpd_polygonized_raster.to_file(
                 os.path.join(self.path, output_geojson_name))
@@ -192,11 +209,14 @@ class SuitabilityCalculator:
 
     def process_data(self):
         self.objectives_arrays_dict = {}
+        self.missing_mask_dict = {}
         output_matrix = np.zeros(self.study_area.as_array.shape)
         total_weight = 0
         for obj in self.objectives:
             data, sub_objective_array_dict = self.objectives[obj].process_value_matrix(
             )
+            partial_missing_mask_dict = self.objectives[obj].get_missing_mask()
+            self.missing_mask_dict.update(partial_missing_mask_dict)
             objective_weight = self.objectives[obj].weight
             self.objectives_arrays_dict[self.objectives[obj].name] = data
             self.objectives_arrays_dict.update(sub_objective_array_dict)

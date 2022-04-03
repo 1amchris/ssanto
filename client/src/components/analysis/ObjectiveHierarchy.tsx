@@ -32,10 +32,6 @@ import DatasetModel, {
 } from 'models/DatasetModel';
 import ValueScalingProperties from 'models/DatasetModel';
 
-function isShp(file: { extension: string }, index: any, array: any) {
-  return file.extension == 'shp';
-}
-
 function isValidOH(objectiveHierarchy: {
   main: string;
   update: boolean;
@@ -82,7 +78,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
   const dispatch = useAppDispatch();
   const files =
     selector.properties['shapefiles'].length > 0
-      ? (selector.properties['shapefiles'].filter(isShp) as ShapefileModel[])
+      ? (selector.properties['shapefiles'] as ShapefileModel[])
       : ([] as ShapefileModel[]);
   const getErrors = selector.properties['objectivesError'];
   const isLoading = selector.properties['objectivesLoading'];
@@ -126,9 +122,9 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       ].attribute;
     };
 
-    const getShapefiles = (id: string) => {
+    const getShapefiles = (name: string) => {
       return files.filter((file: any) => {
-        return file.id == id;
+        return file.name == name;
       }) as ShapefileModel[];
     };
 
@@ -257,7 +253,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
       if (files.length > 0) {
         files.map((f: ShapefileModel) => {
-          if (f.id != currentDataset.id) options.push(f);
+          if (f.name != currentDataset.name) options.push(f);
           else options.unshift(f);
         });
       }
@@ -265,7 +261,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       return options.map(
         f =>
           ({
-            value: `${JSON.stringify({ id: f.id, name: f.name })}`,
+            value: `${JSON.stringify({ name: f.name })}`,
             label: `${f.name}`,
           } as FormSelectOptionModel)
       );
@@ -285,7 +281,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
       if (files.length > 0) {
         files.forEach((f: any) => {
-          if (f.id == currentDataset.id) {
+          if (f.name == currentDataset.name) {
             f.column_names.forEach((column: string, index: number) => {
               if (column != currentDataset.column) {
                 options.push(column);
@@ -359,7 +355,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           let defaultDataset = {
             ...DefaultDataset,
             name: defaultShapefile.name,
-            id: defaultShapefile.id,
             column:
               defaultShapefile.column_names.length > 0
                 ? defaultShapefile.column_names[0]
@@ -465,8 +460,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
         const newDatasetName = JSON.parse(e.target.value).name;
-        const newDatasetId = JSON.parse(e.target.value).id;
-        const newDatasetShapefile = getShapefiles(newDatasetId)[0];
+        const newDatasetShapefile = getShapefiles(newDatasetName)[0];
         const newObjectives = copyLocalObjective();
 
         const defaultColumn =
@@ -483,7 +477,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         let defaultDataset = {
           ...DefaultDataset,
           name: newDatasetName,
-          id: newDatasetId,
           column: defaultColumn,
           type:
             newDatasetShapefile.type.length > 0
@@ -521,7 +514,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
             secondaryIndex
           ].datasets[attributeIndex];
         //get les shapefiles selon id, get categories selon colonne
-        const shapefile = getShapefiles(dataset.id);
+        const shapefile = getShapefiles(dataset.name);
 
         let newType = shapefile[0].type[newIndex];
         let newMax = shapefile[0].max_value[newIndex];
@@ -836,7 +829,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       errors={getErrors}
       disabled={isLoading || disabled}
       onSubmit={() => {
-        if (isValidOH(localObjectives)) {
+        //ajouter les verifications
+        if (localObjectives) {
           dispatch(
             injectSetLoadingCreator({
               value: property,

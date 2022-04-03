@@ -1,6 +1,5 @@
 export default interface ShapefileModel {
   name: string;
-  id: string;
   stem: string;
   extension: string;
   column_names: string[];
@@ -12,7 +11,6 @@ export default interface ShapefileModel {
 
 export const DefaultShapefile = {
   name: '',
-  id: '',
   stem: '',
   extension: '',
   column_names: [],

@@ -9,6 +9,7 @@ class Objective:
         self.name = objective_name
         self.id = objective_name
         self.subobjective = {}
+        self.missing_mask_dict = {}
         self.weight = weight
         self.cell_size = cell_size
         self.crs = crs
@@ -22,6 +23,7 @@ class Objective:
         output_tiff,
         weight,
         scaling_function,
+        missing_data_default_value,
         field_name=False,
     ):
         self.subobjective[id] = ContinuousFeature(
@@ -34,6 +36,7 @@ class Objective:
             self.crs,
             self.study_area,
             scaling_function,
+            missing_data_default_value,
             field_name,
         )
 
@@ -46,6 +49,7 @@ class Objective:
         output_tiff,
         weight,
         scaling_function,
+        missing_data_default_value,
         categories,
         field_name=False,
     ):
@@ -62,6 +66,7 @@ class Objective:
             self.crs,
             self.study_area,
             scaling_function,
+            missing_data_default_value,
             field_name,
             categories,
         )
@@ -74,6 +79,7 @@ class Objective:
         output_tiff,
         weight,
         scaling_function,
+        missing_data_default_value,
         maximize_distance,
         max_distance,
         centroid,
@@ -92,6 +98,7 @@ class Objective:
             self.crs,
             self.study_area,
             scaling_function,
+            missing_data_default_value,
             field_name,
             maximize_distance,
             centroid,
@@ -108,6 +115,7 @@ class Objective:
     def process_value_matrix(self):
         total_weight = 0
         subobjective_arrays_dict = {}
+        self.missing_mask_dict = {}
         output_array = np.zeros(self.study_area.as_array.shape)
         for file in self.subobjective:
 
@@ -115,13 +123,17 @@ class Objective:
             value_matrix, subsubobjective_arrays_dict = self.subobjective[
                 file
             ].process_value_matrix()
-            subobjective_arrays_dict[self.subobjective[file].name] = (
-                value_matrix * self.subobjective[file].weight
-            )
-            subobjective_arrays_dict.update(subsubobjective_arrays_dict)
+
+            subobjective_missing_mask = self.subobjective[file].get_missing_mask()
+
             subobjective_arrays_dict[self.subobjective[file].name] = value_matrix
+            subobjective_arrays_dict.update(subsubobjective_arrays_dict)
+            self.missing_mask_dict.update(subobjective_missing_mask)
             output_array += value_matrix * self.subobjective[file].weight
 
         output_array = output_array / total_weight
         output_array = np.multiply(output_array, self.study_area.as_array)
         return output_array, subobjective_arrays_dict
+
+    def get_missing_mask(self):
+        return self.missing_mask_dict

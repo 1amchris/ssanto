@@ -27,6 +27,7 @@ function Parameters({ t, disabled }: any) {
   const controls = [
     <Control
       label="analysis name"
+      guide_hash="category_0/topic_0"
       name="analysis_name"
       defaultValue={properties.analysis_name}
       required
@@ -34,6 +35,7 @@ function Parameters({ t, disabled }: any) {
     />,
     <Control
       label="name of the modeler"
+      guide_hash="category_0/topic_0"
       name="modeler_name"
       defaultValue={properties.modeler_name}
       required
@@ -41,6 +43,7 @@ function Parameters({ t, disabled }: any) {
     />,
     <Control
       label="cell size"
+      guide_hash="category_0/topic_0"
       name="cell_size"
       suffix={
         <React.Fragment>

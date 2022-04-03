@@ -2,16 +2,14 @@
 import os
 import matplotlib.pyplot as plt
 from py.raster_transform import process_raster
-from .file_manager import FileParser
 import fiona
 
 
 class StudyArea():
     OUTPUT_NAME = "output_study_area.tiff"
 
-    def __init__(self, input_file_name, files_manager):
+    def __init__(self, input_file_name):
         self.input = input_file_name
-        self.files_manager = files_manager
 
     def process_raster_as_array(self):
         file_band = self.as_raster.GetRasterBand(1)

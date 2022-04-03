@@ -16,6 +16,9 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { Bar } from 'react-chartjs-2';
+import { FiInfo } from 'react-icons/fi';
+import { HashLink } from 'react-router-hash-link';
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -80,6 +83,7 @@ class FormScalingGraph extends FormComponent {
       distribution_value,
       type,
       isCalculated,
+      guide_hash = '',
       ...props
     } = this.getFilteredProps();
     console.log('isCalculated', isCalculated, isCalculated as Boolean);
@@ -91,7 +95,14 @@ class FormScalingGraph extends FormComponent {
         }`}
       >
         <Form.Label visuallyHidden={hideLabel}>
-          <small>{capitalize(t(label || this.props.name))}</small>
+          <small>
+            {capitalize(t(label || this.props.name))}{' '}
+            {guide_hash?.length > 0 && (
+              <HashLink to={`/guide#${guide_hash}`}>
+                <FiInfo />
+              </HashLink>
+            )}
+          </small>
         </Form.Label>
         <this.Overlay>
           {type == 'Continuous' ||

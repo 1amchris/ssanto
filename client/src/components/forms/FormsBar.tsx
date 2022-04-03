@@ -70,7 +70,6 @@ function FormsBar({ children, className, t }: any, key?: string) {
                     dispatch(
                       call({
                         target: ServerCallTargets.ComputeSuitability,
-                        onSuccessAction: analysisSuccess,
                         onErrorAction: injectSetErrorCreator('analysis'),
                       } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
                     );
