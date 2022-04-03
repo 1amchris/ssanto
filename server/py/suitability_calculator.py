@@ -12,6 +12,10 @@ import pandas as pd
 from .study_area import StudyArea
 import os
 from .raster_transform import convert_projection
+import geopandas as gpd
+
+from geojson import dump
+from shapely.geometry import shape
 
 
 class SuitabilityCalculator:
@@ -47,8 +51,8 @@ class SuitabilityCalculator:
     def set_crs(self, crs):  # "epsg:32188"?
         self.crs = crs
 
-    def set_study_area_input(self, input):
-        self.study_area = StudyArea(input)
+    def set_study_area_input(self, input, files_manager):
+        self.study_area = StudyArea(input, files_manager)
         self.study_area.update(self.path, self.cell_size, self.crs)
 
     def add_objective(self, objective_name, weight):
@@ -83,7 +87,6 @@ class SuitabilityCalculator:
         output_path = os.path.join(self.path, output_name)
 
         categories_dic = dict(zip(categories, categories_value))
-        print("categories_dic", categories_dic)
         self.objectives[objective_name].add_categorical_file(
             id,
             input_path,
@@ -125,15 +128,14 @@ class SuitabilityCalculator:
 
     def matrix_to_raster(self, matrix):
         matrix = np.int16(matrix)
-        print("matrix_to_raster", type(matrix), type(matrix[0]), type(matrix[0][0]))
-
         study_area_path = os.path.join(self.path, StudyArea.OUTPUT_NAME)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
 
         inDs = gdal.Open(study_area_path)
         driver = inDs.GetDriver()
-        outDs = driver.Create(output_path, len(matrix[0]), len(matrix), 1, GDT_Int16)
+        outDs = driver.Create(output_path, len(
+            matrix[0]), len(matrix), 1, GDT_Int16)
         # write the data
         outBand = outDs.GetRasterBand(1)
         outBand.WriteArray(matrix, 0, 0)
@@ -150,9 +152,7 @@ class SuitabilityCalculator:
     def tiff_to_geojson(self, tiff_name):
         input_path = os.path.join(self.path, tiff_name)
         data = rasterio.open(input_path).meta
-        print("tiff_to_geojson", data)
         c = str(data["crs"])
-        print("CRS", c)
         mask = None
         with rasterio.open(input_path) as src:
             image = src.read()  # first band
@@ -164,7 +164,8 @@ class SuitabilityCalculator:
                 )
             )
             geoms = list(results)
-            gpd_polygonized_raster = gp.GeoDataFrame.from_features(geoms, crs=c)
+            gpd_polygonized_raster = gp.GeoDataFrame.from_features(
+                geoms, crs=c)
             # gpd_polygonized_raster = gpd_polygonized_raster[gpd_polygonized_raster['NDVI'] > 0]
             # gpd_polygonized_raster.to_file('temp/dataframe.geojson', driver='GeoJSON')
 
@@ -173,15 +174,30 @@ class SuitabilityCalculator:
                 4326
             )  # Where these numbers come from?
             output_geojson_name = "analysis.geojson"
-            gpd_polygonized_raster.to_file(os.path.join(self.path, output_geojson_name))
-            return gpd_polygonized_raster.to_json()
+            gpd_polygonized_raster.to_file(
+                os.path.join(self.path, output_geojson_name))
+            return gpd_polygonized_raster
+
+    def geojson_to_gpd(self, geojson, crs):
+        geom = []
+        for feature in geojson["features"]:
+            geom.append(shape(feature["geometry"]))
+        return gpd.GeoDataFrame({'geometry': geom}, crs=crs)
+
+    def study_area_mask(self, analysis_df):
+        study_area_df = self.geojson_to_gpd(
+            self.study_area.geojson, self.study_area.crs).to_crs(analysis_df.crs)
+        masked_analysis_df = analysis_df.overlay(
+            study_area_df, how='intersection')
+        return masked_analysis_df
 
     def process_data(self):
         self.objectives_arrays_dict = {}
         output_matrix = []
         total_weight = 0
         for obj in self.objectives:
-            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix()
+            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix(
+            )
             objective_weight = self.objectives[obj].weight
             if len(output_matrix) == 0:
                 output_matrix = np.zeros(data.shape)
@@ -197,5 +213,7 @@ class SuitabilityCalculator:
         output_matrix = output_matrix / total_weight * 100
         self.objectives_arrays_dict["ANALYSIS"] = output_matrix
         path = self.matrix_to_raster(output_matrix)
-        geo_json = self.tiff_to_geojson(path)
-        return geo_json
+        analysis_df = self.tiff_to_geojson(path)
+        masked_analysis_df = self.study_area_mask(analysis_df)
+
+        return masked_analysis_df.to_json()

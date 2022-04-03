@@ -24,7 +24,10 @@ const LayersGroups = ({ t }: any) => {
   };
 
   const style = (feature: any) => {
-    if (feature.properties !== undefined && feature.properties.sutability > 0) {
+    if (
+      feature.properties !== undefined &&
+      feature.properties.sutability >= 0
+    ) {
       let color = perc2color(feature.properties.sutability);
       return {
         color: color,
@@ -42,7 +45,7 @@ const LayersGroups = ({ t }: any) => {
       };
     } else if (
       feature.properties !== undefined &&
-      feature.properties.sutability === 0
+      feature.properties.sutability < 0
     ) {
       return { color: '#00000000', fillOpacity: 0 };
     } else {

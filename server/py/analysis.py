@@ -37,7 +37,7 @@ class Analysis(Serializable):
         self.nbs = subjects_manager.create(
             "nbs_system",
             {
-                "system_type": "0",
+                "system_type": "2",
                 # ...
             },
         )
@@ -93,7 +93,6 @@ class Analysis(Serializable):
                             x, y = Graph_maker.compute_scaling_graph(
                                 string_function, datasets['min_value'], datasets['max_value'])
                         elif booleanCondition:
-                            # ici, ajuster num= granularity pour l'affichage
                             x, y = Graph_maker.compute_scaling_graph(
                                 string_function, 0, int(datasets["calculationDistance"]), num=10)
 
@@ -126,7 +125,6 @@ class Analysis(Serializable):
         shxs = [file for file in created if file.extension == "shx"]
         dbfs = [file for file in created if file.extension == "dbf"]
 
-        # print("shps", shps, "shxs", shxs)
         if len(shps) == 0:
             raise CallException("No shapefiles received [shp].")
         if len(shxs) == 0:
@@ -169,7 +167,7 @@ class Analysis(Serializable):
             self.suitability_calculator.set_cell_size(cell_size)
             self.suitability_calculator.set_crs("epsg:32188")
             self.suitability_calculator.set_study_area_input(
-                self.study_area_file_name)
+                self.study_area_file_name, self.files_manager)
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"], data["primaries"]["weights"], data["primaries"]["secondaries"]
@@ -190,8 +188,6 @@ class Analysis(Serializable):
                     file = self.files_manager.get_files_by_id(file_id)
                     # "temp/" + file[0].group_id + ".shp"
                     if(len(file) > 0):
-                        print("compute_suitability")
-
                         input_file = file[0].name
                         if not is_calculated and column_type == 'Boolean':
                             self.suitability_calculator.add_file_to_objective(
@@ -199,7 +195,6 @@ class Analysis(Serializable):
                                     weight_secondary), scaling_function
                             )
                         elif is_calculated and column_type == 'Boolean':
-                            print("is_calculated")
                             self.suitability_calculator.add_file_to_calculated_objective(
                                 primary, index, input_file, int(
                                     weight_secondary), scaling_function,
