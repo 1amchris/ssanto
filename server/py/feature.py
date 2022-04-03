@@ -1,4 +1,3 @@
-from email.policy import default
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -114,7 +113,6 @@ class ContinuousFeature(Feature):
         return self.balance_matrix(file, self.study_area.as_array, offset)
 
     def balance_matrix(self, input_matrix, study_area, offset):
-        output_matrix = np.zeros(study_area.shape)
         output_matrix = np.zeros(study_area.shape)
         output_matrix[
             max(offset[0], 0) : max(
