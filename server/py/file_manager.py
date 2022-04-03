@@ -29,20 +29,6 @@ class FileParser:
         return None
 
     @staticmethod
-    def load_by_name(files_manager, name):
-
-        files = sorted(files_manager.get_files_by_name(
-            name, ['shp', 'shx']), key=lambda file: files_manager.get_extension(file.name))
-        if files[0].extension == "shp" and len(files) == 2:
-            shp, shx = files
-            return FileParser.__load_shp(
-                shp.get_file_descriptor(), shx.get_file_descriptor()
-            )
-        # elif ext == '...'
-
-        return None
-
-    @staticmethod
     def __load_shp(shp_file, shx_file):
         reader = shapefile.Reader(shp=shp_file, shx=shx_file)
 
@@ -106,9 +92,6 @@ class FilesManager:
                 self.files_content.values(),
             )
         )
-
-    def get_files_by_name(self, name, extension):
-        return [file for file in (filter(lambda file: (self.get_name(file.name) == self.get_name(name) and self.get_extension(file.name) in extension), self.files_content.values()))]
 
     def get_files_by_id(self, *ids):
         return list(filter(lambda file: file.id in ids, self.files_content.values()))

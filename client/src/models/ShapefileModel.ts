@@ -9,3 +9,15 @@ export default interface ShapefileModel {
   max_value: number[];
   min_value: number[];
 }
+
+export const DefaultShapefile = {
+  name: '',
+  id: '',
+  stem: '',
+  extension: '',
+  column_names: [],
+  type: [],
+  categories: [],
+  max_value: [],
+  min_value: [],
+};

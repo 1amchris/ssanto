@@ -188,7 +188,6 @@ function ValueScaling({ t }: any) {
               type={value.dataset.type}
               isCalculated={value.dataset.isCalculated}
             />
-            ,
           </Collapsible>
         );
       } else {
@@ -220,7 +219,6 @@ function ValueScaling({ t }: any) {
               type={value.dataset.type}
               isCalculated={value.dataset.isCalculated}
             />
-            ,
           </Collapsible>
         );
       }

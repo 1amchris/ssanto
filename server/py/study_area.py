@@ -26,9 +26,6 @@ class StudyArea():
         self.as_array = self.process_raster_as_array()
         self.origin = (self.as_raster.GetGeoTransform()[
                        0], self.as_raster.GetGeoTransform()[3])
-        # We need the study area in geojson to mask the output analysis
-        self.geojson = FileParser.load_by_name(self.files_manager, self.input)
-        self.crs = self.get_crs(path)
 
     def get_crs(self, path):
         c = fiona.open(os.path.join(path, self.input))

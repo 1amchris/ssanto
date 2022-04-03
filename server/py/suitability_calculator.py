@@ -190,27 +190,6 @@ class SuitabilityCalculator:
                 os.path.join(self.path, output_geojson_name))
             return gpd_polygonized_raster
 
-    def geojson_to_gpd(self, geojson, crs):
-        geom = []
-        for feature in geojson["features"]:
-            geom.append(shape(feature["geometry"]))
-        return gpd.GeoDataFrame({'geometry': geom}, crs=crs)
-
-    def study_area_mask(self, analysis_df):
-        study_area_df = self.geojson_to_gpd(
-            self.study_area.geojson, self.study_area.crs).to_crs(analysis_df.crs)
-
-        # merge les polygones de study area en 1 polygone
-        #study_area_df = study_area_df.dissolve()
-        # use geopandas.GeoSeries.contains, filtrer selon True
-        #mask = study_area_df.contains(analysis_df)
-        #masked_analysis_df = analysis_df.loc[mask]
-
-        masked_analysis_df = analysis_df.overlay(
-            study_area_df, how='intersection')
-
-        return masked_analysis_df
-
     def process_data(self):
         self.objectives_arrays_dict = {}
         output_matrix = np.zeros(self.study_area.as_array.shape)
@@ -225,9 +204,10 @@ class SuitabilityCalculator:
             total_weight += objective_weight
 
         output_matrix = output_matrix / total_weight * 100
+        mask = self.study_area.as_array == 0
+        output_matrix[mask] = -1
         self.objectives_arrays_dict["ANALYSIS"] = output_matrix / 100
         path = self.matrix_to_raster(output_matrix)
         analysis_df = self.tiff_to_geojson(path)
-        #masked_analysis_df = self.study_area_mask(analysis_df)
         masked_analysis_df = analysis_df
         return masked_analysis_df.to_json()

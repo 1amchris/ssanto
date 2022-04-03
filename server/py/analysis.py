@@ -92,6 +92,8 @@ class Analysis(Serializable):
                     booleanCondition = datasets["type"] == "Boolean" and bool(
                         datasets["isCalculated"]
                     )
+                    print('distribution_update', datasets)
+
                     if continuousCondition or booleanCondition:
                         string_function = datasets["properties"]["valueScalingFunction"]
                         if continuousCondition:

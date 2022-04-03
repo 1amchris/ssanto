@@ -18,16 +18,18 @@ export default interface DatasetModel {
   calculationDistance: number;
 }
 
+export const DefaultValueScalingProperties = {
+  valueScalingFunction: 'x',
+  distribution: [] as number[],
+  distribution_value: [] as number[],
+};
+
 export const DefaultDataset = {
   name: '',
   id: '-1',
   column: '',
   type: '',
-  properties: {
-    valueScalingFunction: 'x',
-    distribution: [] as number[],
-    distribution_value: [] as number[],
-  } as ValueScalingProperties,
+  properties: DefaultValueScalingProperties,
   min_value: 0,
   max_value: 100,
   isCalculated: false,
