@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { FcCollapse, FcExpand } from 'react-icons/fc';
+import { FiInfo } from 'react-icons/fi';
 import { capitalize, uniqueId } from 'lodash';
 import { Collapse, Button } from 'react-bootstrap';
+import { HashLink } from 'react-router-hash-link';
 
 function Collapsible({
   t,
   title,
   children,
+  guide_hash = '',
   collapsed = false,
   disabled = false,
 }: any) {
@@ -27,7 +30,14 @@ function Collapsible({
           setOpen(!open);
         }}
       >
-        <h6 className="mb-0">{capitalize(t(title || 'collapsible-title'))}</h6>
+        <h6 className="mb-0">
+          {capitalize(t(title || 'collapsible-title'))}{' '}
+          {guide_hash?.length > 0 && (
+            <HashLink to={`/guide#${guide_hash}`}>
+              <FiInfo />
+            </HashLink>
+          )}
+        </h6>
         <span>{open ? <FcCollapse /> : <FcExpand />}</span>
       </Button>
       <Collapse in={open}>

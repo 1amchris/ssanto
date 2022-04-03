@@ -7,7 +7,7 @@ import { MapStateModel } from 'models/map/MapStateModel';
 import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
 import { InsertLayerModel } from 'models/map/InsertLayerModel';
 import LayersUtils from 'utils/layers-utils';
-import { LayerGroup } from 'leaflet';
+import SuitabilityCategories from 'models/map/SuitabilityCategoriesModel';
 
 export const mapSlice = createSlice({
   name: 'map',
@@ -16,6 +16,8 @@ export const mapSlice = createSlice({
     layers: {} as LayersGroups,
     update_layers: {} as LayersUpdateGroups,
     zoom: 10, // arbitrary, is big enough to fit the island of mtl
+    suitabilityThreshold: 0.5,
+    suitabilityAboveThreshold: 0.35,
   } as MapStateModel,
   reducers: {
     updateLocation: (state, { payload: location }: PayloadAction<LatLong>) => {
@@ -36,6 +38,21 @@ export const mapSlice = createSlice({
       // if any validation is required, add it here
       state.cursorInformations = payload;
     },
+    updateSuitabilityThreshold: (state, { payload }: PayloadAction<number>) => {
+      state.suitabilityThreshold = payload;
+    },
+    updateSuitabilityAboveThreshold: (
+      state,
+      { payload }: PayloadAction<number>
+    ) => {
+      state.suitabilityAboveThreshold = payload;
+    },
+    updateSuitabilityCategories: (
+      state,
+      { payload }: PayloadAction<SuitabilityCategories>
+    ) => {
+      state.suitabilityCategories = payload;
+    },
     updateZoom: (state, { payload: zoom }: PayloadAction<number>) => {
       if (zoom < 1) {
         console.error(
@@ -45,12 +62,9 @@ export const mapSlice = createSlice({
         state.zoom = zoom;
       }
     },
-    updateLayers: (
-        state,
-        { payload: layers }: PayloadAction<any>
-      ) => {
-        state.update_layers = layers
-      },
+    updateLayers: (state, { payload: layers }: PayloadAction<any>) => {
+      state.update_layers = layers;
+    },
     upsertLayer: (
       state,
       { payload: layer }: PayloadAction<InsertLayerModel>
@@ -74,6 +88,9 @@ export const {
   updateLayers,
   upsertLayer,
   removeLayer,
+  updateSuitabilityThreshold,
+  updateSuitabilityAboveThreshold,
+  updateSuitabilityCategories,
 } = mapSlice.actions;
 
 export const selectMap = (state: RootState) => state.map;

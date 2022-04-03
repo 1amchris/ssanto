@@ -1,14 +1,10 @@
-import json
-from lib2to3.pytree import convert
-import matplotlib.pyplot as plt
 from .objective import Objective
-from osgeo import gdal, ogr, osr
+from osgeo import gdal, osr
 import numpy as np
 from osgeo.gdalconst import *
 import rasterio
 from rasterio.features import shapes
 import geopandas as gp
-import pandas as pd
 from .study_area import StudyArea
 import os
 from .raster_transform import convert_projection
@@ -22,15 +18,18 @@ class SuitabilityCalculator:
         self.path = working_path
         self.cell_size = 20
         self.crs = "epsg:32188"
+        self.output_matrix = None
 
-    def get(self, latitude, longitude):
-
+    def get_informations_at(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
         cell_values = {}
         for key in self.objectives_arrays_dict:
             cell_values[key] = self.objectives_arrays_dict[key][y, x]
         print(self.get_missing(latitude, longitude))
         return cell_values
+
+    def get_array(self):
+        return self.output_matrix
 
     def get_missing(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
@@ -63,9 +62,7 @@ class SuitabilityCalculator:
         self.study_area.update(self.path, self.cell_size, self.crs)
 
     def add_objective(self, objective_name, weight):
-        obj = Objective(
-            objective_name, weight, self.cell_size, self.crs, self.study_area
-        )
+        obj = Objective(objective_name, weight, self.cell_size, self.crs, self.study_area)
         self.objectives[objective_name] = obj
 
     def add_file_to_objective(
@@ -189,9 +186,7 @@ class SuitabilityCalculator:
             image = np.int16(image)
             results = (
                 {"properties": {"sutability": v}, "geometry": s}
-                for i, (s, v) in enumerate(
-                    shapes(image, mask=mask, transform=data["transform"])
-                )
+                for i, (s, v) in enumerate(shapes(image, mask=mask, transform=data["transform"]))
             )
             geoms = list(results)
             gpd_polygonized_raster = gp.GeoDataFrame.from_features(geoms, crs=c)
@@ -199,9 +194,7 @@ class SuitabilityCalculator:
             # gpd_polygonized_raster.to_file('temp/dataframe.geojson', driver='GeoJSON')
 
             # cs convertion
-            gpd_polygonized_raster = gpd_polygonized_raster.to_crs(
-                4326
-            )  # Where these numbers come from?
+            gpd_polygonized_raster = gpd_polygonized_raster.to_crs(4326)  # Where these numbers come from?
             output_geojson_name = "analysis.geojson"
             gpd_polygonized_raster.to_file(os.path.join(self.path, output_geojson_name))
             return gpd_polygonized_raster.to_json()

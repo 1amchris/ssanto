@@ -3,7 +3,8 @@ import PropsModel from 'models/PropsModel';
 import React, { ReactElement } from 'react';
 import { Button, ListGroup } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
-import { FiMinusCircle } from 'react-icons/fi';
+import { FiInfo, FiMinusCircle } from 'react-icons/fi';
+import { HashLink } from 'react-router-hash-link';
 import FormComponent from './FormComponent';
 
 export interface FactoryProps extends PropsModel {
@@ -109,7 +110,7 @@ class FormList extends FormComponent {
   }
 
   render = () => {
-    const { t, label, name } = this.props;
+    const { t, label, name, guide_hash = '' } = this.props;
     return (
       <React.Fragment>
         <label
@@ -119,7 +120,12 @@ class FormList extends FormComponent {
           }`}
         >
           {capitalize(t(label || name))}{' '}
-          <span>({this.state.controls.length || '0'})</span>
+          <span>({this.state.controls.length || '0'})</span>{' '}
+          {guide_hash?.length > 0 && (
+            <HashLink to={`/guide#${guide_hash}`}>
+              <FiInfo />
+            </HashLink>
+          )}
         </label>
 
         <ListGroup>

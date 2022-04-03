@@ -2,10 +2,11 @@ import { capitalize, uniqueId } from 'lodash';
 import React, { ReactElement } from 'react';
 import { Button } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
-import { FiMinusCircle, FiPlus } from 'react-icons/fi';
+import { FiMinusCircle, FiPlus, FiInfo } from 'react-icons/fi';
 import { MdSubdirectoryArrowRight } from 'react-icons/md';
 import PropsModel from 'models/PropsModel';
 import FormComponent from './FormComponent';
+import { HashLink } from 'react-router-hash-link';
 
 export interface FactoryProps extends PropsModel {
   orderIndex: number;
@@ -103,7 +104,7 @@ class FormExpandableList extends FormComponent {
   }
 
   render = () => {
-    const { t, label, name } = this.props;
+    const { t, label, name, guide_hash = '' } = this.props;
     return (
       <React.Fragment>
         <label
@@ -112,7 +113,12 @@ class FormExpandableList extends FormComponent {
             this.hideLabel ? 'visually-hidden' : ''
           }`}
         >
-          {capitalize(t(label || name))}
+          {capitalize(t(label || name))}{' '}
+          {guide_hash?.length > 0 && (
+            <HashLink to={`/guide#${guide_hash}`}>
+              <FiInfo />
+            </HashLink>
+          )}
         </label>
 
         <ul className="list-unstyled">

@@ -3,6 +3,8 @@ import { Form } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
 import FormComponent from './FormComponent';
+import { HashLink } from 'react-router-hash-link';
+import { FiInfo } from 'react-icons/fi';
 
 /**
  * FormSelect
@@ -24,6 +26,7 @@ class FormSelect extends FormComponent {
       visuallyHidden,
       className,
       label,
+      guide_hash = '',
       ...props
     } = this.getFilteredProps();
 
@@ -35,7 +38,14 @@ class FormSelect extends FormComponent {
         }`}
       >
         <Form.Label visuallyHidden={hideLabel}>
-          <small>{capitalize(t(label || this.props.name))}</small>
+          <small>
+            {capitalize(t(label || this.props.name))}{' '}
+            {guide_hash?.length > 0 && (
+              <HashLink to={`/guide#${guide_hash}`}>
+                <FiInfo />
+              </HashLink>
+            )}
+          </small>
         </Form.Label>
         <this.Overlay>
           <Form.Select {...props} id={this.id} size="sm">

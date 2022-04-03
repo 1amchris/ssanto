@@ -10,6 +10,9 @@ enum ServerSubscriptionTargets {
   AnalysisNbsSystem = 'nbs_system',
   AnalysisObjectives = 'objectives',
   AnalysisValueScaling = 'value_scaling',
+  AnalysisGraphSuitabilityCategories = 'analysis.visualization.suitability_categories',
+  AnalysisGraphSuitabilityThreshold = 'analysis.visualization.suitability_threshold',
+  AnalysisGraphSuitabilityAboveThreshold = 'analysis.visualization.suitability_above_threshold',
 }
 
 export default ServerSubscriptionTargets;
