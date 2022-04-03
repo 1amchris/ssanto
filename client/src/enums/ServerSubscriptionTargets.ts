@@ -7,6 +7,7 @@ enum ServerSubscriptionTargets {
   AnalysisNbsSystem = 'nbs_system',
   AnalysisObjectives = 'objectives',
   AnalysisValueScaling = 'value_scaling',
+  AnalysisDefaultMissingData = 'default_missing_data',
 }
 
 export default ServerSubscriptionTargets;

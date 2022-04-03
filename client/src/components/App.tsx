@@ -58,6 +58,13 @@ function App() {
         onAction: injectReceivePropertiesCreator('objectives'),
       } as SubscriptionModel<string, any>)
     );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTargets.AnalysisDefaultMissingData,
+        onAction: injectReceivePropertiesCreator('default_missing_data'),
+      } as SubscriptionModel<string, any>)
+    );
   });
 
   return (

@@ -22,6 +22,7 @@ export const analysisSlice = createSlice({
       studyArea: { fileName: '', area: undefined },
       files: [] as FileMetadataModel[],
       shapefiles: [],
+      default_missing_data: 0,
 
       parametersLoading: false,
       parametersError: '',

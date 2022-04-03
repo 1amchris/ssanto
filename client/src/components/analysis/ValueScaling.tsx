@@ -31,6 +31,9 @@ function ValueScaling({ t }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties[property] as ObjectivesHierarchyModel;
+  const localDefaultMissingData = selector.properties[
+    'default_missing_data'
+  ] as number;
   const getErrors = selector.properties['objectivesError'];
   const isLoading = selector.properties['objectivesLoading'];
 
@@ -224,23 +227,36 @@ function ValueScaling({ t }: any) {
       }
     };
 
-    const mainControls =
-      localValueScaling.length > 0
-        ? [
-            <SimpleList
-              key={'attributes_vs' + isLoading}
-              name={'attributes_vs'}
-              hideLabel
-              factory={ScalingBoxFactory}
-              controls={localValueScaling.map(
-                (value: ValueScalingModel, index: number) => ({
-                  value,
-                  attributeIndex: index,
-                })
-              )}
-            />,
-          ]
-        : [];
+    const mainControls = [
+      <Control
+        label="missing data default"
+        name="missing_data_default"
+        defaultValue={localDefaultMissingData}
+        required
+        tooltip={t(
+          'indicate the default suitability value that will be use if data are missing for a cell.'
+        )}
+      />,
+    ];
+
+    mainControls.push(
+      localValueScaling.length > 0 ? (
+        <SimpleList
+          key={'attributes_vs' + isLoading}
+          name={'attributes_vs'}
+          hideLabel
+          factory={ScalingBoxFactory}
+          controls={localValueScaling.map(
+            (value: ValueScalingModel, index: number) => ({
+              value,
+              attributeIndex: index,
+            })
+          )}
+        />
+      ) : (
+        <></>
+      )
+    );
     controls = [
       ...mainControls,
       <Spacer />,
@@ -253,7 +269,6 @@ function ValueScaling({ t }: any) {
   }
 
   return (
-    //reconvertir localAttribute en Objective Hierarchy
     <Form
       controls={controls}
       errors={getErrors}
@@ -271,6 +286,17 @@ function ValueScaling({ t }: any) {
           call({
             target: ServerCallTargets.Update,
             args: [property, injectAttributeInOH()],
+            onSuccessAction: injectSetLoadingCreator({
+              value: property,
+              isLoading: false,
+            } as LoadingValue<string>),
+            onErrorAction: injectSetErrorCreator('default_missing_data'),
+          } as CallModel)
+        );
+        dispatch(
+          call({
+            target: ServerCallTargets.Update,
+            args: ['default_missing_data', fields['missing_data_default']],
             onSuccessAction: injectSetLoadingCreator({
               value: property,
               isLoading: false,

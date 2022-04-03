@@ -51,6 +51,10 @@ class Analysis(Serializable):
             },
         )
 
+        self.default_missing_data = subjects_manager.create(
+            "default_missing_data", 100,
+        )
+
     def __repr__(self) -> str:
         return str(self.serialize())
 
@@ -92,8 +96,6 @@ class Analysis(Serializable):
                     booleanCondition = datasets["type"] == "Boolean" and bool(
                         datasets["isCalculated"]
                     )
-                    print('distribution_update', datasets)
-
                     if continuousCondition or booleanCondition:
                         string_function = datasets["properties"]["valueScalingFunction"]
                         if continuousCondition:
