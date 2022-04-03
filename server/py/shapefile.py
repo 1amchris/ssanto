@@ -14,10 +14,8 @@ class Shapefile(File):
         self.set_feature()
 
     def set_feature(self):
-        df = geopandas.read_file(os.path.join(self.dir, self.name))
         try:
-            print(df)
-            print(df.columns)
+            df = geopandas.read_file(os.path.join(self.dir, self.name))
         except:
             print('pb')
         else:
@@ -69,7 +67,4 @@ class Shapefile(File):
         # return categories of this colum
 
     def serialize(self):
-        print('MIN', self.columns["minimums"])
-        print('MAX', self.columns["maximums"])
-        # min_value": list(self.columns["minimums"]), "max_value": list(self.columns["maximums"])
         return {"id": self.id, "name": self.name, "stem": self.stem, "extension": self.extension, "column_names": self.columns["column_names"], 'type': self.columns["type"], 'categories': self.columns["categories"], 'min_value': [math.floor(min_) for min_ in self.columns["minimums"]], 'max_value': [math.ceil(max_) for max_ in self.columns["maximums"]]}

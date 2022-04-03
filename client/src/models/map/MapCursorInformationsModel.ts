@@ -1,3 +1,3 @@
 export interface MapCursorInformationsModel {
-  placeholder: string;
+  objectives: { [objective: string]: number };
 }

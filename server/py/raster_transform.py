@@ -71,7 +71,6 @@ def shape_to_Raster(cell_size,
 
 
 def process_raster(cell_size, crs, input, output, field_name=False):
-    print('process_raster', input, '****',  output)
     if input.endswith('.shp'):
         shape_to_Raster(cell_size, input, output, field_name=field_name)
 
