@@ -171,17 +171,17 @@ function Main() {
                 </Collapsible>
               </InformationCard>
             )}
-            {suitabilityCategories && (
-              <InformationCard>
-                <Collapsible title={'suitability ranges'}>
-                  <MapSuitabilityCategories />
-                </Collapsible>
-              </InformationCard>
-            )}
             {suitabilityAboveThreshold && (
               <InformationCard>
                 <Collapsible title={'% of suitability above threshold'}>
                   <MapSuitabilityAboveThreshold />
+                </Collapsible>
+              </InformationCard>
+            )}
+            {suitabilityCategories && (
+              <InformationCard>
+                <Collapsible title={'suitability ranges'}>
+                  <MapSuitabilityCategories />
                 </Collapsible>
               </InformationCard>
             )}

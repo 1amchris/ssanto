@@ -5,7 +5,6 @@ import {
   selectAnalysis,
   injectSetErrorCreator,
   injectSetLoadingCreator,
-  studyAreaReceived,
 } from 'store/reducers/analysis';
 import Form from 'components/forms/Form';
 import { Control, Button, Spacer, Select } from 'components/forms/components';
@@ -20,11 +19,9 @@ function StudyArea({ t, disabled }: any) {
   const dispatch = useAppDispatch();
   const properties = selector.properties[property];
   const files = selector.properties['files'];
-  let files_choices =  [
-    { value: '', label: '' },
-  ]
-  for (let i = 0; i < files.length; i+=1) {
-      files_choices.push({value: files[i].name, label: files[i].name});
+  let files_choices = [{ value: '', label: '' }];
+  for (let i = 0; i < files.length; i += 1) {
+    files_choices.push({ value: files[i].name, label: files[i].name });
   }
 
   const getErrors = selector.properties.study_areaError;
@@ -38,11 +35,11 @@ function StudyArea({ t, disabled }: any) {
       disabled
     />,
     <Select
-        label="select study area"
-        name='study_area_file'
-        required
-        defaultValue={properties}
-        options={files_choices}
+      label="select study area"
+      name="study_area_file"
+      required
+      defaultValue={properties}
+      options={files_choices}
     />,
     <Spacer />,
     <Button variant="outline-primary" type="submit" loading={isLoading}>
@@ -63,15 +60,15 @@ function StudyArea({ t, disabled }: any) {
           } as LoadingValue<string>)()
         );
         dispatch(
-            call({
+          call({
             target: ServerCallTargets.UpdateStudyAreaFiles,
             args: [fields.study_area_file],
             onSuccessAction: injectSetLoadingCreator({
-                value: property,
-                isLoading: false,
-                } as LoadingValue<string>),
+              value: property,
+              isLoading: false,
+            } as LoadingValue<string>),
             onErrorAction: injectSetErrorCreator(property),
-            } as CallModel<string[], any, void, string, string>)
+          } as CallModel<string[], any, void, string, string>)
         );
       }}
     />

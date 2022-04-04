@@ -1,6 +1,8 @@
 import { selectMap } from 'store/reducers/map';
 import { useAppSelector } from 'store/hooks';
 import React from 'react';
+import { Control } from 'components/forms/components';
+import Form from 'components/forms/Form';
 
 function MapSuitabilityAboveThreshold() {
   const { suitabilityAboveThreshold, suitabilityThreshold } =
@@ -8,11 +10,21 @@ function MapSuitabilityAboveThreshold() {
 
   const rows = [
     suitabilityAboveThreshold && (
-      <div className="bg-light border rounded p-2 mb-1">
-        <code>
-          Suitability above {suitabilityThreshold}: {suitabilityAboveThreshold}
-        </code>
-      </div>
+      <Form
+        controls={[
+          <Control
+            label={`suitability above: ${suitabilityThreshold}%`}
+            value={`${suitabilityAboveThreshold}`}
+            disabled
+          />,
+        ]}
+      />
+
+      // <div className="bg-light border rounded p-2 mb-1">
+      //   <code>
+      //     Suitability above {suitabilityThreshold}: {suitabilityAboveThreshold}
+      //   </code>
+      // </div>
     ),
   ];
 
