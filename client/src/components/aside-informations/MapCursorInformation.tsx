@@ -17,10 +17,6 @@ function MapCursorInformation() {
     [201, 203, 207],
   ];
 
-  useEffect(() => {
-    console.log('cursorInformations', cursorInformations);
-  });
-
   const rows = [
     // <div>
     //   <small>Latitude/Longitude</small>
@@ -67,7 +63,7 @@ function MapCursorInformation() {
               .map(
                 objective =>
                   `${objective}${
-                    cursorInformations.missings.includes(objective)
+                    Array.from(cursorInformations.missings).includes(objective)
                       ? ' (est.)'
                       : ''
                   }`
@@ -81,7 +77,11 @@ function MapCursorInformation() {
                   (objective, index, objectives) => {
                     const [r, g, b] = colors[index % objectives.length];
                     return `rgba(${r}, ${g}, ${b}, ${
-                      cursorInformations.missings.includes(objective) ? 0 : 0.2
+                      Array.from(cursorInformations.missings).includes(
+                        objective
+                      )
+                        ? 0
+                        : 0.2
                     })`;
                   }
                 ),
