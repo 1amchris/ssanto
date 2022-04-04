@@ -300,7 +300,7 @@ class Analysis(Serializable):
                 self.files_manager.get_writer_path()
             )
             self.suitability_calculator.set_cell_size(cell_size)
-            self.suitability_calculator.set_crs("epsg:32188")
+            self.suitability_calculator.set_crs("epsg:3857")
             self.suitability_calculator.set_study_area_input(self.study_area.value())
 
             for (primary, weight_primary, secondaries) in zip(
