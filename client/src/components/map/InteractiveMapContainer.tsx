@@ -8,6 +8,7 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
+import { now } from 'lodash';
 
 function InteractiveMapContainer({ className, style }: any) {
   const { location, zoom, cursor } = useAppSelector(selectMap);
@@ -42,7 +43,9 @@ function InteractiveMapContainer({ className, style }: any) {
       className={className}
       style={{ ...style }}
       whenCreated={map => {
-        new SimpleMapScreenshoter().addTo(map);
+        new SimpleMapScreenshoter({
+          mimeType: 'image/jpeg',
+        }).addTo(map);
       }}
     >
       <MapEvents />
