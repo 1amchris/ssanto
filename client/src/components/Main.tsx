@@ -103,25 +103,31 @@ function Main() {
           <FormsBar>
             <Collapsible
               title={'file explorer'}
-              guide_hash="category_1/topic_1"
+              guide_hash="analysis/file-explorer"
               collapsed
             >
               <FileExplorer />
             </Collapsible>
-            <Collapsible title={'parameters'}>
+            <Collapsible title={'parameters'} guide_hash="analysis/parameters">
               <Parameters />
             </Collapsible>
-            <Collapsible title={'study area'} disabled={!studyAreaIsEnabled()}>
+            <Collapsible
+              title={'study area'}
+              guide_hash="analysis/study-area"
+              disabled={!studyAreaIsEnabled()}
+            >
               <StudyArea disabled={!studyAreaIsEnabled()} />
             </Collapsible>
             <Collapsible
               title={'system type'}
+              guide_hash="analysis/nbs-system"
               disabled={!systemTypeIsEnabled()}
             >
               <NbsSystem disabled={!systemTypeIsEnabled()} />
             </Collapsible>
             <Collapsible
               title={'objective hierarchy'}
+              guide_hash="analysis/objectives-hierarchy"
               disabled={!objectiveHierarchyIsEnabled()}
             >
               <ObjectiveHierarchy
