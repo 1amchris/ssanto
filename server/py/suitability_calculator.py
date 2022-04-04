@@ -7,7 +7,7 @@ from rasterio.features import shapes
 import geopandas as gp
 from .study_area import StudyArea
 import os
-from .raster_transform import convert_projection
+from .raster_transform import DEFAULT_EMPTY_VAL, convert_projection
 import geopandas as gpd
 
 from geojson import dump
@@ -170,8 +170,7 @@ class SuitabilityCalculator:
 
         inDs = gdal.Open(study_area_path)
         driver = inDs.GetDriver()
-        outDs = driver.Create(output_path, len(
-            matrix[0]), len(matrix), 1, GDT_Int16)
+        outDs = driver.Create(output_path, len(matrix[0]), len(matrix), 1, GDT_Int16)
         # write the data
         outBand = outDs.GetRasterBand(1)
         outBand.WriteArray(matrix, 0, 0)
@@ -200,17 +199,16 @@ class SuitabilityCalculator:
                 )
             )
             geoms = list(results)
-            gpd_polygonized_raster = gp.GeoDataFrame.from_features(
-                geoms, crs=c)
+            gpd_polygonized_raster = gp.GeoDataFrame.from_features(geoms, crs=c)
             # gpd_polygonized_raster = gpd_polygonized_raster[gpd_polygonized_raster['NDVI'] > 0]
             # gpd_polygonized_raster.to_file('temp/dataframe.geojson', driver='GeoJSON')
 
             # cs convertion
             gpd_polygonized_raster = gpd_polygonized_raster.to_crs(
-                4326)  # Where these numbers come from?
+                4326
+            )  # Where these numbers come from?
             output_geojson_name = "analysis.geojson"
-            gpd_polygonized_raster.to_file(
-                os.path.join(self.path, output_geojson_name))
+            gpd_polygonized_raster.to_file(os.path.join(self.path, output_geojson_name))
             return gpd_polygonized_raster
 
     def process_data(self):
@@ -219,8 +217,7 @@ class SuitabilityCalculator:
         output_matrix = np.zeros(self.study_area.as_array.shape)
         total_weight = 0
         for obj in self.objectives:
-            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix(
-            )
+            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix()
             partial_missing_mask_dict = self.objectives[obj].get_missing_mask()
             self.missing_mask_dict.update(partial_missing_mask_dict)
             objective_weight = self.objectives[obj].weight
@@ -230,8 +227,9 @@ class SuitabilityCalculator:
             total_weight += objective_weight
 
         output_matrix = output_matrix / total_weight * 100
-        mask = self.study_area.as_array == 0
-        print('MASK', mask)
+        mask = self.study_area.as_array == DEFAULT_EMPTY_VAL
+        print(self.study_area.as_array)
+        print("MASK", mask)
         output_matrix[mask] = -1
         self.output_matrix = output_matrix
         self.objectives_arrays_dict["ANALYSIS"] = output_matrix / 100
