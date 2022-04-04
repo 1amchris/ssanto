@@ -347,16 +347,40 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
           ].attribute.push('');
-          let defaultShapefile = files.length > 0 ? files[0] : DefaultShapefile;
+          const defaultShapefile =
+            files.length > 0 ? files[0] : DefaultShapefile;
+          const defaultColumn =
+            defaultShapefile.column_names.length > 0
+              ? defaultShapefile.column_names[0]
+              : DefaultDataset.column;
+
+          const defaultProperties = {
+            ...DefaultValueScalingProperties,
+            distribution:
+              defaultColumn in defaultShapefile.categories
+                ? defaultShapefile.categories[defaultColumn]
+                : [],
+            distribution_value: new Array<number>(
+              defaultShapefile.categories[defaultColumn].length
+            ).fill(0),
+          };
           let defaultDataset = {
             ...DefaultDataset,
             name: defaultShapefile.name,
-            column:
-              defaultShapefile.column_names.length > 0
-                ? defaultShapefile.column_names[0]
-                : '',
+            column: defaultColumn,
             type:
-              defaultShapefile.type.length > 0 ? defaultShapefile.type[0] : '',
+              defaultShapefile.type.length > 0
+                ? defaultShapefile.type[0]
+                : DefaultDataset.type,
+            properties: defaultProperties,
+            max_value:
+              defaultShapefile.max_value.length > 0
+                ? defaultShapefile.max_value[0]
+                : DefaultDataset.max_value,
+            min_value:
+              defaultShapefile.min_value.length > 0
+                ? defaultShapefile.min_value[0]
+                : DefaultDataset.min_value,
           } as DatasetModel;
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
