@@ -199,14 +199,6 @@ class Analysis(Serializable):
                                 num=10,
                             )
 
-<<<<<<< HEAD
-                        new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
-                            "datasets"
-                        ][attribute_index]["properties"]["distribution"] = [int(x_) for x_ in list(x)]
-                        new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
-                            "datasets"
-                        ][attribute_index]["properties"]["distribution_value"] = [int(y_) for y_ in list(y)]
-=======
                         new_objectives_data["primaries"]["secondaries"][primary_index][
                             "attributes"
                         ][secondary_index]["datasets"][attribute_index]["properties"][
@@ -221,7 +213,6 @@ class Analysis(Serializable):
                         ] = [
                             int(y_) for y_ in list(y)
                         ]
->>>>>>> f85ead6db47a5963c4dd9ea312412cbe354a8bb8
 
                         self.subjects_manager.update("objectives", new_objectives_data)
 
