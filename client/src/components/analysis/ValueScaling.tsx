@@ -38,7 +38,7 @@ function ValueScaling({ t }: any) {
   const isLoading = selector.properties['objectivesLoading'];
 
   const dispatch = useAppDispatch();
-
+  const maxSuitabilityValue = 100;
   //const getErrors = selector.properties.value_scalingError;
   //const isLoading = selector.properties.value_scalingLoading;
 
@@ -129,6 +129,24 @@ function ValueScaling({ t }: any) {
         setLocalValueScaling(newValueScaling);
       };
 
+    const onChangeMissingData =
+      (attributeIndex: number, maxSuitability: number) => (e: any) => {
+        e.persist();
+        let newMissingDataSuitability: number = e.target.value;
+        newMissingDataSuitability =
+          newMissingDataSuitability <= maxSuitability
+            ? newMissingDataSuitability
+            : maxSuitability;
+
+        let newValueScaling = JSON.parse(
+          JSON.stringify(localValueScaling)
+        ) as typeof localValueScaling;
+        newValueScaling[
+          attributeIndex
+        ].dataset.properties.missingDataSuitability = newMissingDataSuitability;
+        setLocalValueScaling(newValueScaling);
+      };
+
     const categoricalRowFactory = ({
       key,
       category,
@@ -138,7 +156,7 @@ function ValueScaling({ t }: any) {
       return [
         <Control
           key={key('categorical_row')}
-          label={category}
+          label={category.toString().substring(0, 8).concat('...')}
           className="small position-relative d-flex"
           defaultValue={
             localValueScaling[attributeIndex].dataset.properties
@@ -146,6 +164,7 @@ function ValueScaling({ t }: any) {
           }
           onChange={onChangeCategoryValue(attributeIndex, categoryIndex)}
           type="number"
+          tooltip={category}
         />,
       ];
     };
@@ -161,6 +180,24 @@ function ValueScaling({ t }: any) {
       ) {
         return (
           <Collapsible key={key('scalingBox')} title={value.attribute}>
+            <Control
+              key={key('missing_data_suitability')}
+              label="missing data suitability"
+              name="missing_data_suitability"
+              defaultValue={
+                localValueScaling[attributeIndex].dataset.properties
+                  .missingDataSuitability
+              }
+              type="number"
+              required
+              onChange={onChangeMissingData(
+                attributeIndex,
+                maxSuitabilityValue
+              )}
+              tooltip={t(
+                'indicate the default suitability value that will be use if data are missing for a cell.'
+              )}
+            />
             <Control
               key={key('continuous')}
               label="value scaling function"
@@ -196,6 +233,24 @@ function ValueScaling({ t }: any) {
       } else {
         return (
           <Collapsible key={key('scalingBox')} title={value.attribute}>
+            <Control
+              key={key('missing_data_suitability')}
+              label="missing data suitability"
+              name="missing_data_suitability"
+              defaultValue={
+                localValueScaling[attributeIndex].dataset.properties
+                  .missingDataSuitability
+              }
+              type="number"
+              required
+              onChange={onChangeMissingData(
+                attributeIndex,
+                maxSuitabilityValue
+              )}
+              tooltip={t(
+                'indicate the default suitability value that will be use if data are missing for a cell.'
+              )}
+            />
             <SimpleList
               key={key('categorical')}
               name={'weights'}
@@ -227,17 +282,7 @@ function ValueScaling({ t }: any) {
       }
     };
 
-    const mainControls = [
-      <Control
-        label="missing data default"
-        name="missing_data_default"
-        defaultValue={localDefaultMissingData}
-        required
-        tooltip={t(
-          'indicate the default suitability value that will be use if data are missing for a cell.'
-        )}
-      />,
-    ];
+    const mainControls = [];
 
     mainControls.push(
       localValueScaling.length > 0 ? (

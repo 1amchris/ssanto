@@ -4,7 +4,7 @@ import { Bar } from 'react-chartjs-2';
 import { capitalize } from 'lodash';
 
 function MapCursorInformation() {
-  const { cursor, cursorInformations } = useAppSelector(selectMap);
+  const { cursorInformations } = useAppSelector(selectMap);
 
   const rows = [
     // <div>
@@ -32,12 +32,12 @@ function MapCursorInformation() {
           options={{
             scales: {
               y: {
-                beginAtZero: true,
-                suggestedMax: 1.0,
+                suggestedMin: 0,
+                suggestedMax: 1,
               },
             },
             indexAxis: 'y' as const,
-            responsive: true,
+            // responsive: true,
             plugins: {
               legend: {
                 display: false,

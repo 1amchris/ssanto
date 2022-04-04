@@ -2,6 +2,7 @@ import DatasetModel from 'models/DatasetModel';
 
 export default interface ObjectivesHierarchyModel {
   main: string;
+  update?: boolean;
   primaries: {
     primary: string[];
     weights: number[];

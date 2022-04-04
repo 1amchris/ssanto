@@ -1,4 +1,4 @@
-import { createRef, ReactElement, RefObject, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
@@ -30,29 +30,12 @@ import DatasetModel, {
   DefaultDataset,
   DefaultValueScalingProperties,
 } from 'models/DatasetModel';
-import ValueScalingProperties from 'models/DatasetModel';
 
-function isValidOH(objectiveHierarchy: {
-  main: string;
-  update: boolean;
-  primaries: {
-    primary: string[];
-    weights: number[];
-    secondaries: {
-      secondary: string[];
-      weights: number[];
-      attributes: {
-        attribute: string[];
-        weights: number[];
-        datasets: DatasetModel[];
-      }[];
-    }[];
-  };
-}) {
+function isValidOH(objectiveHierarchy: ObjectivesHierarchyModel) {
   let primaryHasSecondary = true;
   let secondaryHasAttribute = true;
   let attributeHasName = true;
-  let datasetsAreSelected = true;
+  let attLeastOnePrimary = objectiveHierarchy.primaries.primary.length > 0;
   objectiveHierarchy.primaries.secondaries.map(json => {
     primaryHasSecondary = primaryHasSecondary && json.secondary.length > 0;
     json.attributes.map(json => {
@@ -64,7 +47,12 @@ function isValidOH(objectiveHierarchy: {
       );
     });
   });
-  return primaryHasSecondary && secondaryHasAttribute && attributeHasName;
+  return (
+    attLeastOnePrimary &&
+    primaryHasSecondary &&
+    secondaryHasAttribute &&
+    attributeHasName
+  );
 }
 
 function ObjectiveHierarchy({ t, disabled }: any) {
@@ -233,7 +221,21 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
       return formatOptions(options);
     };
-    let defaultSecondaries = { secondary: [], weights: [], attributes: [] };
+    let defaultSecondaries = {
+      secondary: [] as string[],
+      weights: [] as number[],
+      attributes: [] as {
+        attribute: string[];
+        weights: number[];
+        datasets: DatasetModel[];
+      }[],
+    };
+
+    let defaultPrimaries = {
+      primary: [] as string[],
+      weights: [] as number[],
+      secondaries: [],
+    };
     let defaultAttributes = { attribute: [], weights: [], datasets: [] };
 
     const generateOptionsDataset = (
@@ -347,16 +349,44 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
           ].attribute.push('');
-          let defaultShapefile = files.length > 0 ? files[0] : DefaultShapefile;
+          const defaultShapefile =
+            files.length > 0 ? files[0] : DefaultShapefile;
+          const defaultColumn =
+            defaultShapefile.column_names.length > 0
+              ? defaultShapefile.column_names[0]
+              : DefaultDataset.column;
+
+          console.log('OH');
+          const defaultProperties = {
+            ...DefaultValueScalingProperties,
+            distribution:
+              defaultColumn in defaultShapefile.categories
+                ? defaultShapefile.categories[defaultColumn]
+                : [],
+            distribution_value:
+              defaultColumn in defaultShapefile.categories
+                ? new Array<number>(
+                    defaultShapefile.categories[defaultColumn].length
+                  ).fill(0)
+                : [],
+          };
           let defaultDataset = {
             ...DefaultDataset,
             name: defaultShapefile.name,
-            column:
-              defaultShapefile.column_names.length > 0
-                ? defaultShapefile.column_names[0]
-                : '',
+            column: defaultColumn,
             type:
-              defaultShapefile.type.length > 0 ? defaultShapefile.type[0] : '',
+              defaultShapefile.type.length > 0
+                ? defaultShapefile.type[0]
+                : DefaultDataset.type,
+            properties: defaultProperties,
+            max_value:
+              defaultShapefile.max_value.length > 0
+                ? defaultShapefile.max_value[0]
+                : DefaultDataset.max_value,
+            min_value:
+              defaultShapefile.min_value.length > 0
+                ? defaultShapefile.min_value[0]
+                : DefaultDataset.min_value,
           } as DatasetModel;
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
@@ -413,6 +443,15 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
+
+    const onChangeMain = () => (e: any) => {
+      let newPrimary = e.target.value;
+      let newObjectives = copyLocalObjective();
+      newObjectives.main = newPrimary;
+      newObjectives.primaries = defaultPrimaries;
+      newObjectives.update = !localObjectives.update;
+      setLocalObjectives(newObjectives);
+    };
 
     const onChangePrimary = (primaryIndex: number) => (e: any) => {
       let newPrimary = e.target.value;
@@ -787,10 +826,13 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
     const mainControls = [
       <Select
-        key="main"
+        key={'main' + localObjectives.update}
         name="main"
         label={'Objectives'}
-        //defaultValue={'h'}
+        defaultValue={localObjectives.main}
+        onChange={(e: any) => {
+          onChangeMain()(e);
+        }}
         options={generateOptionsMain()}
       />,
       <ExpandableList
