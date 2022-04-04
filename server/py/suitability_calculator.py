@@ -117,9 +117,9 @@ class SuitabilityCalculator:
         input,
         weight,
         scaling_function,
+        missing_data_default_val,
         categories,
         categories_value,
-        missing_data_default_val,
         field_name,
     ):
         input_path = os.path.join(self.path, input)
@@ -134,8 +134,8 @@ class SuitabilityCalculator:
             output_path,
             weight,
             scaling_function,
-            categories_dic,
             missing_data_default_val,
+            categories_dic,
             field_name,
         )
 
