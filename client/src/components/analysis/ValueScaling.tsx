@@ -66,13 +66,14 @@ function ValueScaling({ t }: any) {
             attributeIndex++
           ) {
             let dataset = attributes.datasets[attributeIndex];
-            localAttributes.push({
-              primaryIndex: primaryIndex,
-              secondaryIndex: secondaryIndex,
-              attributeIndex: attributeIndex,
-              attribute: attributes.attribute[attributeIndex],
-              dataset: dataset,
-            });
+            if (!(dataset.type == 'Boolean' && !dataset.isCalculated))
+              localAttributes.push({
+                primaryIndex: primaryIndex,
+                secondaryIndex: secondaryIndex,
+                attributeIndex: attributeIndex,
+                attribute: attributes.attribute[attributeIndex],
+                dataset: dataset,
+              });
           }
         }
       }
