@@ -33,10 +33,10 @@ function MenuBar() {
 
   const getMenus = () => [
     <Menu label="project">
-      <Action
+      {/* <Action
         label="new project"
         onClick={(event: any) => console.log('/file/new project', event)}
-      />
+      /> */}
       <Import
         label="open project"
         onFileImported={(file: File) =>
@@ -51,15 +51,6 @@ function MenuBar() {
           )
         }
       />
-      <Divider />
-      <Action
-        label="Export analysis as .TIFF"
-        onClick={(event: any) => {
-          createTIFF();
-          console.log('analysis.tiff', event);
-        }}
-      />
-      <Divider />
       <Action
         label="save project"
         onClick={() =>
@@ -71,6 +62,14 @@ function MenuBar() {
             } as CallModel<void, FileContentModel<string>, void, string, string>)
           )
         }
+      />
+      <Divider />
+      <Action
+        label="Export analysis as .TIFF"
+        onClick={(event: any) => {
+          createTIFF();
+          console.log('analysis.tiff', event);
+        }}
       />
       {/* <Action
         label="save project as"
