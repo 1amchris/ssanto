@@ -66,6 +66,7 @@ class FilesWriter:
     def __del__(self):
         shutil.rmtree(self.main_dir)
 
+
 class FilesManager:
     def __init__(self, subjects_manager):
         self.subjects_manager = subjects_manager
@@ -94,10 +95,18 @@ class FilesManager:
             )
         )
 
+    def get_shapefiles_metadatas(self):
+        return list(
+            map(
+                lambda shapefile: shapefile.get_metadatas(),
+                self.files_content.values(),
+            )
+        )
+
     def get_files_by_names(self, *names):
         return list(filter(lambda file: file.name in names, self.files_content.values()))
 
-    #def get_shapefile_by_id(self, id):
+    # def get_shapefile_by_id(self, id):
     #    return list(filter(lambda shapefile: shapefile['id'] == id, self.shapefiles.data))[0]
 
     def get_file_names(self):
@@ -109,10 +118,16 @@ class FilesManager:
         if isinstance(popped, Shapefile):
             for file in popped.get_files():
                 self.writer.remove_file(file.name)
-        else: # Probably not used since only shapefile are allowed
+        else:  # Probably not used since only shapefile are allowed
             self.writer.remove_file(popped.name)
         self.__notify_metadatas()
         return popped
+
+    def get_extension(self, file_name):
+        return file_name.split(".")[-1]
+
+    def get_name(self, file_name):
+        return file_name.split(".")[0]
 
     def add_file(self, file):
         self.writer.save_file(file.name, file.read_content())
@@ -130,34 +145,14 @@ class FilesManager:
         content = data["content"]
         shp.content = b64decode(content.encode('ascii'))
         for file_data in data['files']:
-            file = File(file_data['name'], b64decode(file_data["content"].encode('ascii')))
+            file = File(file_data['name'], b64decode(
+                file_data["content"].encode('ascii')))
             shp.add_file(file)
 
         self.add_shapefile(shp)
         self.__notify_metadatas()
 
     # files: { name: string; size: number; content: string (base64); }[]
-
-    def extractShapefiles(
-        self,
-    ):
-        new_shapefiles = []
-        new_shapefiles_content = dict()
-
-        for file in self.files_content.values():
-            if self.getExtension(file.name) == "shp":
-                try:
-                    new_shapefile = Shapefile(file.name, b64decode(
-                        file.content), file.id, dir=self.writer.main_dir)
-                    dic_new_shapefile = new_shapefile.serialize()
-                except:
-                    print("invalid shapefile")
-                else:
-                    new_shapefiles.append(dic_new_shapefile)
-                    new_shapefiles_content[new_shapefile.id] = new_shapefile
-
-        self.shapefiles.notify(new_shapefiles)
-        self.shapefiles_content = new_shapefiles_content
 
     def add_files(self, *files):
         appended = []
@@ -171,11 +166,13 @@ class FilesManager:
         shapefiles = dict()
         for file in created.values():
             if Shapefile.is_shapefile_ext(file.extension):
-                shapefile = shapefiles.setdefault(file.stem, Shapefile(file.stem+'.shp'))
-                shapefile.add_file(file) # TODO: Check if there is already a file with the extension added
+                shapefile = shapefiles.setdefault(
+                    file.stem, Shapefile(file.stem+'.shp'))
+                # TODO: Check if there is already a file with the extension added
+                shapefile.add_file(file)
             else:
                 contains_invalid_file = True
-        
+
         contains_invalid_shapefile = False
         for shapefile in shapefiles.values():
             if not shapefile.is_complete():
@@ -202,6 +199,8 @@ class FilesManager:
 
     def __notify_metadatas(self):
         metadatas = self.get_files_metadatas()
+        shapefiles_metadatas = self.get_shapefiles_metadatas()
         self.files.notify(metadatas)
+        self.shapefiles.notify(shapefiles_metadatas)
 
     # Add loaded file to the file manager?

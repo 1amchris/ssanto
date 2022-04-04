@@ -2,7 +2,7 @@ import { createRef, ReactElement, RefObject, useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
-import ShapefileModel from 'models/ShapefileModel';
+import ShapefileModel, { DefaultShapefile } from 'models/ShapefileModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
 import objectivesData from 'data/objectives.json';
@@ -23,14 +23,14 @@ import {
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
-import DatasetModel, { DefaultDataset } from 'models/DatasetModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 import React from 'react';
-
-function isShp(file: { extension: string }, index: any, array: any) {
-  return file.extension == 'shp';
-}
+import DatasetModel, {
+  DefaultDataset,
+  DefaultValueScalingProperties,
+} from 'models/DatasetModel';
+import ValueScalingProperties from 'models/DatasetModel';
 
 function isValidOH(objectiveHierarchy: {
   main: string;
@@ -78,8 +78,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
   const dispatch = useAppDispatch();
   const files =
     selector.properties['shapefiles'].length > 0
-      ? selector.properties['shapefiles'].filter(isShp)
-      : [];
+      ? (selector.properties['shapefiles'] as ShapefileModel[])
+      : ([] as ShapefileModel[]);
   const getErrors = selector.properties['objectivesError'];
   const isLoading = selector.properties['objectivesLoading'];
 
@@ -120,6 +120,12 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       return localObjectives.primaries.secondaries[primaryIndex].attributes[
         secondaryIndex
       ].attribute;
+    };
+
+    const getShapefiles = (name: string) => {
+      return files.filter((file: any) => {
+        return file.name == name;
+      }) as ShapefileModel[];
     };
 
     const getAllMainOptions = () => {
@@ -210,25 +216,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       return unused;
     };
 
-    const getUnusedAttribute = (
-      primaryIndex: number,
-      secondaryIndex: number
-    ) => {
-      let unused: string[] = [];
-      getAllAttributesOptions(
-        primaryName(primaryIndex),
-        secondaryName(primaryIndex, secondaryIndex)
-      ).map(attribute => {
-        if (
-          !localObjectives.primaries.secondaries[primaryIndex].attributes[
-            secondaryIndex
-          ].attribute.includes(attribute)
-        )
-          unused.push(attribute);
-      });
-      return unused;
-    };
-
     const generateOptionsPrimary = (primaryIndex: number) => {
       let options = [
         localObjectives.primaries.primary[primaryIndex],
@@ -252,7 +239,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
     let defaultSecondaries = { secondary: [], weights: [], attributes: [] };
     let defaultAttributes = { attribute: [], weights: [], datasets: [] };
-    let defaultDataset = { name: '', id: '-1', column: '' };
 
     const generateOptionsDataset = (
       primaryIndex: number,
@@ -263,18 +249,19 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         localObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex];
-      let options = [currentDataset];
+      let options: ShapefileModel[] = [];
 
       if (files.length > 0) {
-        files.map((f: DatasetModel) => {
-          if (f.id != currentDataset.id) options.push(f);
+        files.map((f: ShapefileModel) => {
+          if (f.name != currentDataset.name) options.push(f);
+          else options.unshift(f);
         });
       }
 
       return options.map(
         f =>
           ({
-            value: `${JSON.stringify({ id: f.id, name: f.name })}`,
+            value: `${JSON.stringify({ name: f.name })}`,
             label: `${f.name}`,
           } as FormSelectOptionModel)
       );
@@ -294,7 +281,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
       if (files.length > 0) {
         files.forEach((f: any) => {
-          if (f.id == currentDataset.id) {
+          if (f.name == currentDataset.name) {
             f.column_names.forEach((column: string, index: number) => {
               if (column != currentDataset.column) {
                 options.push(column);
@@ -364,10 +351,20 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
           ].attribute.push('');
-
+          let defaultShapefile = files.length > 0 ? files[0] : DefaultShapefile;
+          let defaultDataset = {
+            ...DefaultDataset,
+            name: defaultShapefile.name,
+            column:
+              defaultShapefile.column_names.length > 0
+                ? defaultShapefile.column_names[0]
+                : '',
+            type:
+              defaultShapefile.type.length > 0 ? defaultShapefile.type[0] : '',
+          } as DatasetModel;
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
-          ].datasets.push(DefaultDataset as DatasetModel);
+          ].datasets.push(defaultDataset as DatasetModel);
 
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
@@ -457,19 +454,45 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
+
+    //DOING
     const onChangeDataset =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
-        let newDatasetName = JSON.parse(e.target.value).name;
-        let newDatasetId = JSON.parse(e.target.value).id;
-        let newObjectives = copyLocalObjective();
-        newObjectives.primaries.secondaries[primaryIndex].attributes[
-          secondaryIndex
-        ].datasets[attributeIndex] = {
+        const newDatasetName = JSON.parse(e.target.value).name;
+        const newDatasetShapefile = getShapefiles(newDatasetName)[0];
+        const newObjectives = copyLocalObjective();
+
+        const defaultColumn =
+          newDatasetShapefile.column_names.length > 0
+            ? newDatasetShapefile.column_names[0]
+            : '';
+        console.log(
+          'TESTS',
+          defaultColumn,
+          defaultColumn in newDatasetShapefile.categories,
+          newDatasetShapefile.categories
+        );
+
+        let defaultDataset = {
           ...DefaultDataset,
           name: newDatasetName,
-          id: newDatasetId,
+          column: defaultColumn,
+          type:
+            newDatasetShapefile.type.length > 0
+              ? newDatasetShapefile.type[0]
+              : '',
+          properties: {
+            ...DefaultValueScalingProperties,
+            distribution:
+              defaultColumn in newDatasetShapefile.categories
+                ? newDatasetShapefile.categories[defaultColumn]
+                : [],
+          },
         } as DatasetModel;
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex] = defaultDataset;
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
@@ -491,9 +514,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
             secondaryIndex
           ].datasets[attributeIndex];
         //get les shapefiles selon id, get categories selon colonne
-        const shapefile = files.filter((file: any) => {
-          return file.id == dataset.id;
-        }) as ShapefileModel[];
+        const shapefile = getShapefiles(dataset.name);
 
         let newType = shapefile[0].type[newIndex];
         let newMax = shapefile[0].max_value[newIndex];
@@ -534,6 +555,13 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex].isCalculated = newIsCalculated;
+
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].properties.distribution = [0, 1];
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].properties.distribution_value = [0, 0];
 
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
@@ -801,7 +829,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       errors={getErrors}
       disabled={isLoading || disabled}
       onSubmit={() => {
-        if (isValidOH(localObjectives)) {
+        //ajouter les verifications
+        if (localObjectives) {
           dispatch(
             injectSetLoadingCreator({
               value: property,

@@ -40,6 +40,7 @@ function App() {
         onAction: injectReceivePropertiesCreator('shapefiles'),
       } as SubscriptionModel<string, string>)
     );
+
     dispatch(
       subscribe({
         subject: ServerSubscriptionTargets.MapCursor,
@@ -106,6 +107,13 @@ function App() {
         subject: ServerSubscriptionTargets.AnalysisGraphSuitabilityCategories,
         onAction: updateSuitabilityCategories,
       } as SubscriptionModel<SuitabilityCategoriesModel>)
+    );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTargets.AnalysisDefaultMissingData,
+        onAction: injectReceivePropertiesCreator('default_missing_data'),
+      } as SubscriptionModel<string, any>)
     );
   });
 

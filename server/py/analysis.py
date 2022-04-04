@@ -40,7 +40,7 @@ class Analysis(Serializable):
         self.nbs = subjects_manager.create(
             "nbs_system",
             {
-                "system_type": "0",
+                "system_type": "2",
                 # ...
             },
         )
@@ -54,6 +54,8 @@ class Analysis(Serializable):
             },
         )
 
+        self.default_missing_data = subjects_manager.create(
+            "default_missing_data", 100,)
         self.value_scaling = subjects_manager.create(
             "value_scaling",
             [],
@@ -129,9 +131,10 @@ class Analysis(Serializable):
             and (threshold := self.suitability_threshold.value()) is not None
         ):
             self.suitability_above_threshold.notify(
-                GraphMaker.compute_fraction_above_threshold(
-                    array, min(1, max(0, threshold))
-                )
+                GraphMaker.compute_fraction_above_threshold(self.suitability_calculator.study_area,
+                                                            array, min(
+                                                                1, max(0, threshold))
+                                                            )
             )
         else:
             self.suitability_above_threshold.notify(None)
@@ -241,12 +244,14 @@ class Analysis(Serializable):
                             int(y_) for y_ in list(y)
                         ]
 
-        self.subjects_manager.update("objectives", new_objectives_data)
+                        self.subjects_manager.update(
+                            "objectives", new_objectives_data)
 
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
         if calculator := self.suitability_calculator:
-            base.objectives = calculator.get(cursor.lat, cursor.long)
+            base.objectives = calculator.get_informations_at(
+                cursor.lat, cursor.long)
         return base
 
     def update(self, subject, data):
@@ -258,9 +263,10 @@ class Analysis(Serializable):
         print("receive_study_area", shp_name)
         """
         study_area = { 'file_name': '', 'area': None }
-        if shp_name != '':        
+        if shp_name != '':
             shapefile = self.files_manager.get_file(shp_name)
-            geojson = FileParser.load(self.files_manager, shapefile.get_shp(), shapefile.get_shx())
+            geojson = FileParser.load(
+                self.files_manager, shapefile.get_shp(), shapefile.get_shx())
             study_area = {"file_name": shp_name, "area": geojson}
         """
         self.study_area.notify(shp_name)
@@ -290,18 +296,19 @@ class Analysis(Serializable):
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
 
             self.suitability_calculator = SuitabilityCalculator(
-                self.files_manager.get_writer_path()
-            )
+                self.files_manager.get_writer_path())
             self.suitability_calculator.set_cell_size(cell_size)
             self.suitability_calculator.set_crs("epsg:32188")
-            self.suitability_calculator.set_study_area_input(self.study_area.value())
+            self.suitability_calculator.set_study_area_input(
+                self.study_area.value())
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"],
                 data["primaries"]["weights"],
                 data["primaries"]["secondaries"],
             ):
-                self.suitability_calculator.add_objective(primary, int(weight_primary))
+                self.suitability_calculator.add_objective(
+                    primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(
                     zip(
                         secondaries["secondary"],
@@ -310,78 +317,69 @@ class Analysis(Serializable):
                     )
                 ):
 
-                    file_id = attributes["datasets"][0]["id"]
+                    file_name = attributes["datasets"][0]["name"]
                     column_type = attributes["datasets"][0]["type"]
                     column_name = attributes["datasets"][0]["column"]
-                    is_calculated = bool(attributes["datasets"][0]["isCalculated"])
-                    scaling_function = attributes["datasets"][0]["properties"][
-                        "valueScalingFunction"
-                    ]
-                    file = self.files_manager.get_files_by_id(file_id)
+                    is_calculated = bool(
+                        attributes["datasets"][0]["isCalculated"])
+                    scaling_function = attributes["datasets"][0]["properties"]["valueScalingFunction"]
                     missing_data_default_value = 0
-                    # "temp/" + file[0].group_id + ".shp"
-                    if len(file) > 0:
 
-                        input_file = file[0].name
-                        if not is_calculated and column_type == "Boolean":
-                            self.suitability_calculator.add_file_to_objective(
-                                secondary,
-                                primary,
-                                index,
-                                input_file,
-                                int(weight_secondary),
-                                scaling_function,
-                                missing_data_default_value,
-                            )
-                        elif is_calculated and column_type == "Boolean":
-                            self.suitability_calculator.add_file_to_calculated_objective(
-                                secondary,
-                                primary,
-                                index,
-                                input_file,
-                                int(weight_secondary),
-                                scaling_function,
-                                missing_data_default_value,
-                                attributes["datasets"][0]["calculationDistance"],
-                            )
-                        elif column_type == "Categorical":
-                            categories = attributes["datasets"][0]["properties"][
-                                "distribution"
-                            ]
-                            categories_value = attributes["datasets"][0]["properties"][
-                                "distribution_value"
-                            ]
+                    input_file = file_name
+                    if not is_calculated and column_type == "Boolean":
+                        self.suitability_calculator.add_file_to_objective(
+                            secondary,
+                            primary,
+                            index,
+                            input_file,
+                            int(weight_secondary),
+                            scaling_function,
+                            missing_data_default_value,
+                        )
+                    elif is_calculated and column_type == "Boolean":
+                        self.suitability_calculator.add_file_to_calculated_objective(
+                            secondary,
+                            primary,
+                            index,
+                            input_file,
+                            int(weight_secondary),
+                            scaling_function,
+                            missing_data_default_value,
+                            attributes["datasets"][0]["calculationDistance"],
+                        )
+                    elif column_type == "Categorical":
+                        categories = attributes["datasets"][0]["properties"]["distribution"]
+                        categories_value = attributes["datasets"][0]["properties"]["distribution_value"]
 
-                            self.suitability_calculator.add_file_to_categorical_objective(
-                                secondary,
-                                primary,
-                                index,
-                                input_file,
-                                int(weight_secondary),
-                                scaling_function,
-                                missing_data_default_value,
-                                categories,
-                                categories_value,
-                                column_name,
-                            )
+                        self.suitability_calculator.add_file_to_categorical_objective(
+                            secondary,
+                            primary,
+                            index,
+                            input_file,
+                            int(weight_secondary),
+                            scaling_function,
+                            missing_data_default_value,
+                            categories,
+                            categories_value,
+                            column_name,
+                        )
 
-                        else:
+                    else:
 
-                            self.suitability_calculator.add_file_to_objective(
-                                secondary,
-                                primary,
-                                index,
-                                input_file,
-                                int(weight_secondary),
-                                scaling_function,
-                                missing_data_default_value,
-                                column_name,
-                            )
+                        self.suitability_calculator.add_file_to_objective(
+                            secondary,
+                            primary,
+                            index,
+                            input_file,
+                            int(weight_secondary),
+                            scaling_function,
+                            missing_data_default_value,
+                            column_name,
+                        )
 
                     # self.suitability_calculator.objectives[primary].add_file(
                     #    index, path, "output.tiff", int(weight_secondary), scaling_function)
-                    else:
-                        print("ob, no dataset for an objectives")
+
             geo_json = self.suitability_calculator.process_data()
 
             self.compute_suitability_above_threshold()
@@ -391,5 +389,5 @@ class Analysis(Serializable):
             # return {"file_name": "current analysis", "area": geo_json}
         else:
             return_value = {"file_name": "current analysis", "area": {}}
-
+        print("end of analysis")
         self.analysis.notify(return_value)
