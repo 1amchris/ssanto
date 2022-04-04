@@ -16,8 +16,6 @@ export const mapSlice = createSlice({
     layers: {} as LayersGroups,
     update_layers: {} as LayersUpdateGroups,
     zoom: 10, // arbitrary, is big enough to fit the island of mtl
-    suitabilityThreshold: 0.5,
-    suitabilityAboveThreshold: 0.35,
   } as MapStateModel,
   reducers: {
     updateLocation: (state, { payload: location }: PayloadAction<LatLong>) => {

@@ -9,16 +9,8 @@ class LatLng:
 
 class MapCursorInformations:
     def __init__(self):
-        # the placeholder is for dev purposes, and should be
-        #  replaced by the actual information displayed.
-        self.objectives = {
-            # "slope": 0.125,
-            # "greenary": 0.6,
-            # "education_level": 0.3,
-            # "socio_economi": 0.12,
-            # "biophysical": 0.435,
-            # "ANALYSIS": 0.555,
-        }
+        self.objectives = {}
+        self.missings = {}
 
 
 class Map:

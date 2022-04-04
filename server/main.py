@@ -22,8 +22,8 @@ async def main():
     server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
 
     server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
-    #server_socket.bind_command("file_manager.add_files", files_manager.add_files, False)
-    #server_socket.bind_command("file_manager.remove_file", files_manager.remove_file, False)
+    # server_socket.bind_command("file_manager.add_files", files_manager.add_files, False)
+    # server_socket.bind_command("file_manager.remove_file", files_manager.remove_file, False)
 
     analysis = Analysis(subjects_manager, files_manager)
     server_socket.bind_command("update", analysis.update)

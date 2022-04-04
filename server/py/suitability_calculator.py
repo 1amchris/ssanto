@@ -39,7 +39,7 @@ class SuitabilityCalculator:
                 cell_values[key] = obj[y, x]
             else:
                 return {}
-        print(self.get_missing(latitude, longitude))
+        print(self.get_missing_at(latitude, longitude))
         return cell_values
 
     def get_array(self):
@@ -48,7 +48,7 @@ class SuitabilityCalculator:
     def get_study_area(self):
         return self.study_area
 
-    def get_missing(self, latitude, longitude):
+    def get_missing_at(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
         missing_val = []
         for key in self.missing_mask_dict:

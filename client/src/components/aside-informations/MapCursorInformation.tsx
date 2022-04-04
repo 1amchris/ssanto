@@ -2,9 +2,24 @@ import { selectMap } from 'store/reducers/map';
 import { useAppSelector } from 'store/hooks';
 import { Bar } from 'react-chartjs-2';
 import { capitalize } from 'lodash';
+import { useEffect } from 'react';
 
 function MapCursorInformation() {
   const { cursorInformations } = useAppSelector(selectMap);
+
+  const colors = [
+    [255, 99, 132],
+    [255, 159, 64],
+    [255, 205, 86],
+    [75, 192, 192],
+    [54, 162, 235],
+    [153, 102, 255],
+    [201, 203, 207],
+  ];
+
+  useEffect(() => {
+    console.log('cursorInformations', cursorInformations);
+  });
 
   const rows = [
     // <div>
@@ -37,7 +52,6 @@ function MapCursorInformation() {
               },
             },
             indexAxis: 'y' as const,
-            // responsive: true,
             plugins: {
               legend: {
                 display: false,
@@ -49,29 +63,34 @@ function MapCursorInformation() {
             },
           }}
           data={{
-            labels: Object.keys(cursorInformations.objectives).map(capitalize),
+            labels: Object.keys(cursorInformations.objectives)
+              .map(
+                objective =>
+                  `${objective}${
+                    cursorInformations.missings.includes(objective)
+                      ? ' (est.)'
+                      : ''
+                  }`
+              )
+              .map(capitalize),
             datasets: [
               {
                 label: 'Objective suitability',
                 data: Object.values(cursorInformations.objectives),
-                backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(255, 159, 64, 0.2)',
-                  'rgba(255, 205, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(153, 102, 255, 0.2)',
-                  'rgba(201, 203, 207, 0.2)',
-                ],
-                borderColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(255, 159, 64)',
-                  'rgb(255, 205, 86)',
-                  'rgb(75, 192, 192)',
-                  'rgb(54, 162, 235)',
-                  'rgb(153, 102, 255)',
-                  'rgb(201, 203, 207)',
-                ],
+                backgroundColor: Object.keys(cursorInformations.objectives).map(
+                  (objective, index, objectives) => {
+                    const [r, g, b] = colors[index % objectives.length];
+                    return `rgba(${r}, ${g}, ${b}, ${
+                      cursorInformations.missings.includes(objective) ? 0 : 0.2
+                    })`;
+                  }
+                ),
+                borderColor: Object.keys(cursorInformations.objectives).map(
+                  (_, index, objectives) => {
+                    const [r, g, b] = colors[index % objectives.length];
+                    return `rgba(${r}, ${g}, ${b})`;
+                  }
+                ),
                 borderWidth: 1,
               },
             ],
