@@ -84,10 +84,10 @@ export default class ServerCom {
     this.client = undefined;
     // The connection died in an abnormal way, try to reconnect
     if (evt.code != 1000) {
-        setTimeout(()=> {
-            console.log("Trying to reconnect...");
-            this.open();
-        }, 1000);
+      setTimeout(() => {
+        console.log('Trying to reconnect...');
+        this.open();
+      }, 1000);
     }
   }
 

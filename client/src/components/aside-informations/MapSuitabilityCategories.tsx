@@ -17,7 +17,7 @@ function MapCursorInformation() {
     //   )),
     suitabilityCategories && (
       <Bar
-        height={Object.keys(suitabilityCategories).length * 75}
+        height={Object.keys(suitabilityCategories).length * 50}
         options={{
           scales: {
             y: {

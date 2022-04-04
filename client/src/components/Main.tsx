@@ -21,8 +21,11 @@ import MapSuitabilityAboveThreshold from 'components/aside-informations/MapSuita
 
 function Main() {
   const analysis = useAppSelector(selectAnalysis);
-  const { cursor, suitabilityCategories, suitabilityAboveThreshold } =
-    useAppSelector(selectMap);
+  const {
+    cursorInformations,
+    suitabilityCategories,
+    suitabilityAboveThreshold,
+  } = useAppSelector(selectMap);
   const ohIsLoading = analysis.properties.objectivesLoading;
 
   function parametersIsValid() {
@@ -170,13 +173,14 @@ function Main() {
             className="position-absolute top-0 end-0 mh-100 py-3 pe-3 overflow-scroll"
             style={{ width: '270px' }}
           >
-            {cursor && (
-              <InformationCard>
-                <Collapsible title={'cursor informations'}>
-                  <MapCursorInformation />
-                </Collapsible>
-              </InformationCard>
-            )}
+            {cursorInformations?.objectives &&
+              Object.keys(cursorInformations.objectives).length > 0 && (
+                <InformationCard>
+                  <Collapsible title={'cursor informations'}>
+                    <MapCursorInformation />
+                  </Collapsible>
+                </InformationCard>
+              )}
             {suitabilityAboveThreshold && (
               <InformationCard>
                 <Collapsible title={'% of suitability above threshold'}>
