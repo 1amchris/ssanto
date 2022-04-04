@@ -199,20 +199,12 @@ class Analysis(Serializable):
                                 num=10,
                             )
 
-                        new_objectives_data["primaries"]["secondaries"][primary_index][
-                            "attributes"
-                        ][secondary_index]["datasets"][attribute_index]["properties"][
-                            "distribution"
-                        ] = [
-                            int(x_) for x_ in list(x)
-                        ]
-                        new_objectives_data["primaries"]["secondaries"][primary_index][
-                            "attributes"
-                        ][secondary_index]["datasets"][attribute_index]["properties"][
-                            "distribution_value"
-                        ] = [
-                            int(y_) for y_ in list(y)
-                        ]
+                        new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
+                            "datasets"
+                        ][attribute_index]["properties"]["distribution"] = [int(x_) for x_ in list(x)]
+                        new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
+                            "datasets"
+                        ][attribute_index]["properties"]["distribution_value"] = [int(y_) for y_ in list(y)]
 
                         self.subjects_manager.update("objectives", new_objectives_data)
 
@@ -220,10 +212,6 @@ class Analysis(Serializable):
         base = MapCursorInformations()
         if calculator := self.suitability_calculator:
             base.objectives = calculator.get_informations_at(cursor.lat, cursor.long)
-<<<<<<< HEAD
-            base.missings = calculator.get_missing_at(cursor.lat, cursor.long)
-=======
->>>>>>> f85ead6db47a5963c4dd9ea312412cbe354a8bb8
         return base
 
     def update(self, subject, data):
@@ -290,17 +278,8 @@ class Analysis(Serializable):
                     column_type = attributes["datasets"][0]["type"]
                     column_name = attributes["datasets"][0]["column"]
                     is_calculated = bool(attributes["datasets"][0]["isCalculated"])
-<<<<<<< HEAD
                     scaling_function = attributes["datasets"][0]["properties"]["valueScalingFunction"]
                     missing_data_default_value = attributes["datasets"][0]["properties"]["missingDataSuitability"]
-=======
-                    scaling_function = attributes["datasets"][0]["properties"][
-                        "valueScalingFunction"
-                    ]
-                    missing_data_default_value = attributes["datasets"][0][
-                        "properties"
-                    ]["missingDataSuitability"]
->>>>>>> f85ead6db47a5963c4dd9ea312412cbe354a8bb8
 
                     input_file = file_name
                     if not is_calculated and column_type == "Boolean":
