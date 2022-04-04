@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 function MapCursorInformation() {
   const { cursorInformations } = useAppSelector(selectMap);
 
+  const defaultTransparency = 0.2;
+
   const colors = [
     [255, 99, 132],
     [255, 159, 64],
@@ -81,7 +83,7 @@ function MapCursorInformation() {
                         objective
                       )
                         ? 0
-                        : 0.2
+                        : defaultTransparency
                     })`;
                   }
                 ),
