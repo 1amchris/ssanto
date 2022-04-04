@@ -3,6 +3,7 @@ import { useAppSelector } from 'store/hooks';
 import React from 'react';
 import { Control } from 'components/forms/components';
 import Form from 'components/forms/Form';
+import { round } from 'lodash';
 
 function MapSuitabilityAboveThreshold() {
   const { suitabilityAboveThreshold, suitabilityThreshold } =
@@ -14,7 +15,7 @@ function MapSuitabilityAboveThreshold() {
         controls={[
           <Control
             label={`suitability above: ${suitabilityThreshold}%`}
-            value={`${suitabilityAboveThreshold}`}
+            value={`${round(suitabilityAboveThreshold * 100, 2)}%`}
             disabled
           />,
         ]}

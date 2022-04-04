@@ -2,22 +2,13 @@ import { selectMap } from 'store/reducers/map';
 import { useAppSelector } from 'store/hooks';
 import { Bar } from 'react-chartjs-2';
 import { capitalize } from 'lodash';
-import { useEffect } from 'react';
 
 function MapCursorInformation() {
   const { cursorInformations } = useAppSelector(selectMap);
 
   const defaultTransparency = 0.2;
 
-  const colors = [
-    [255, 99, 132],
-    [255, 159, 64],
-    [255, 205, 86],
-    [75, 192, 192],
-    [54, 162, 235],
-    [153, 102, 255],
-    [201, 203, 207],
-  ];
+  const colors = [[54, 162, 235]];
 
   const rows = [
     // <div>
@@ -76,8 +67,8 @@ function MapCursorInformation() {
                 label: 'Objective suitability',
                 data: Object.values(cursorInformations.objectives),
                 backgroundColor: Object.keys(cursorInformations.objectives).map(
-                  (objective, index, objectives) => {
-                    const [r, g, b] = colors[index % objectives.length];
+                  (objective, index) => {
+                    const [r, g, b] = colors[index % colors.length];
                     return `rgba(${r}, ${g}, ${b}, ${
                       Array.from(cursorInformations.missings).includes(
                         objective
@@ -88,8 +79,8 @@ function MapCursorInformation() {
                   }
                 ),
                 borderColor: Object.keys(cursorInformations.objectives).map(
-                  (_, index, objectives) => {
-                    const [r, g, b] = colors[index % objectives.length];
+                  (_, index) => {
+                    const [r, g, b] = colors[index % colors.length];
                     return `rgba(${r}, ${g}, ${b})`;
                   }
                 ),
