@@ -4,14 +4,13 @@ from geojson_rewind import rewind
 import shapefile as ShpLoader
 import os
 import shutil
-import operator
 
-from py.file_metadata import FileMetaData
-from py.file import File
-from py.shapefile import Shapefile
+from files.file_metadata import FileMetaData
+from files.file import File
+from files.shapefile import Shapefile
 
-from py.serializable import Serializable
-from py.server_socket import CallException
+from files.serializable import Serializable
+from network.server_socket import CallException
 
 
 class FileParser:

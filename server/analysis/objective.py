@@ -1,5 +1,5 @@
-from py.study_area import StudyArea
-from py.feature import ContinuousFeature, CategoricalFeature, DistanceFeature
+from analysis.study_area import StudyArea
+from analysis.feature import ContinuousFeature, CategoricalFeature, DistanceFeature
 
 import numpy as np
 

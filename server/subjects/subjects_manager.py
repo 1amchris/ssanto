@@ -1,5 +1,5 @@
 from .subject import Subject
-from .network_definitions import Field, SendType
+from network.network_definitions import Field, SendType
 
 
 class SubjectsManager:

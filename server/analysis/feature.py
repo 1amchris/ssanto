@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from py.raster_transform import *
+from analysis.raster_transform import *
 
-from py.study_area import StudyArea
-from py.math_operation import MATH_OPERATION
+from analysis.study_area import StudyArea
+from analysis.math_operation import MATH_OPERATION
 import geopandas
 
 

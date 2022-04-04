@@ -1,5 +1,5 @@
 import geopandas
-from py.file import File
+from files.file import File
 from pandas.api.types import is_numeric_dtype
 import os
 import math

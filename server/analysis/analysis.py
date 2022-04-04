@@ -1,12 +1,12 @@
-from .serializable import Serializable
-from .suitability_calculator import SuitabilityCalculator
+from files.serializable import Serializable
+from analysis.suitability_calculator import SuitabilityCalculator
 from .map import LatLng, MapCursorInformations
 from base64 import b64encode, b64decode
 import copy
 import pickle
 import json
 
-from py.graph_maker import GraphMaker
+from analysis.graph_maker import GraphMaker
 
 
 class Analysis(Serializable):
