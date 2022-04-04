@@ -4,3 +4,4 @@ rasterio
 pyshp
 geopandas
 geojson-rewind
+geojson

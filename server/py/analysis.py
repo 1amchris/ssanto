@@ -72,9 +72,9 @@ class Analysis(Serializable):
             "analysis.visualization.suitability_categories", None
         )
 
-        # suitability : [0, 1] or None
+        # suitability : [0, 100] or None
         self.suitability_threshold = subjects_manager.create(
-            "analysis.visualization.suitability_threshold", 0.5
+            "analysis.visualization.suitability_threshold", 50
         )
         self.suitability_above_threshold = subjects_manager.create(
             "analysis.visualization.suitability_above_threshold", None
@@ -92,34 +92,34 @@ class Analysis(Serializable):
             self.suitability_categories.notify(
                 {
                     "00-10": GraphMaker.compute_fraction_in_range(
-                        study_area, array, 0.00, 0.10
+                        study_area, array, 00, 10
                     ),
                     "10-20": GraphMaker.compute_fraction_in_range(
-                        study_area, array, 0.10, 0.20
+                        study_area, array, 10, 20
                     ),
                     "20-30": GraphMaker.compute_fraction_in_range(
-                        study_area, array, 0.20, 0.30
+                        study_area, array, 20, 30
                     ),
                     "30-40": GraphMaker.compute_fraction_in_range(
-                        study_area, array, 0.30, 0.40
+                        study_area, array, 30, 40
                     ),
                     "40-50": GraphMaker.compute_fraction_in_range(
-                        study_area, array, 0.40, 0.50
+                        study_area, array, 40, 50
                     ),
                     "50-60": GraphMaker.compute_fraction_in_range(
-                        study_area, array, 0.50, 0.60
+                        study_area, array, 50, 60
                     ),
                     "60-70": GraphMaker.compute_fraction_in_range(
-                        study_area, array, 0.60, 0.70
+                        study_area, array, 60, 70
                     ),
                     "70-80": GraphMaker.compute_fraction_in_range(
-                        study_area, array, 0.70, 0.80
+                        study_area, array, 70, 80
                     ),
                     "80-90": GraphMaker.compute_fraction_in_range(
-                        study_area, array, 0.80, 0.90
+                        study_area, array, 80, 90
                     ),
                     "90-100": GraphMaker.compute_fraction_in_range(
-                        study_area, array, 0.90, 1.01
+                        study_area, array, 90, 101
                     ),
                 }
             )
@@ -300,7 +300,7 @@ class Analysis(Serializable):
                 self.files_manager.get_writer_path()
             )
             self.suitability_calculator.set_cell_size(cell_size)
-            self.suitability_calculator.set_crs("epsg:3857")
+            self.suitability_calculator.set_crs("epsg:32188")
             self.suitability_calculator.set_study_area_input(self.study_area.value())
 
             for (primary, weight_primary, secondaries) in zip(

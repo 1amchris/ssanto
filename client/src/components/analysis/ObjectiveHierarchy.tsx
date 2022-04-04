@@ -44,7 +44,7 @@ function isValidOH(objectiveHierarchy: {
       attributes: {
         attribute: string[];
         weights: number[];
-        datasets: { name: string; id: string }[];
+        datasets: DatasetModel[];
       }[];
     }[];
   };
@@ -61,10 +61,6 @@ function isValidOH(objectiveHierarchy: {
       json.attribute.map(
         attributeName =>
           (attributeHasName = attributeHasName && attributeName.length > 0)
-      );
-      json.datasets.map(
-        dataset =>
-          (datasetsAreSelected = datasetsAreSelected && dataset.id != '0')
       );
     });
   });
@@ -829,8 +825,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       errors={getErrors}
       disabled={isLoading || disabled}
       onSubmit={() => {
-        //ajouter les verifications
-        if (localObjectives) {
+        //ajouter la validation de la OH
+        if (isValidOH(localObjectives)) {
           dispatch(
             injectSetLoadingCreator({
               value: property,
