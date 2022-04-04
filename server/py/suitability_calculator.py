@@ -31,6 +31,9 @@ class SuitabilityCalculator:
     def get_array(self):
         return self.output_matrix
 
+    def get_study_area(self):
+        return self.study_area
+
     def get_missing(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
         missing_val = []
@@ -62,7 +65,9 @@ class SuitabilityCalculator:
         self.study_area.update(self.path, self.cell_size, self.crs)
 
     def add_objective(self, objective_name, weight):
-        obj = Objective(objective_name, weight, self.cell_size, self.crs, self.study_area)
+        obj = Objective(
+            objective_name, weight, self.cell_size, self.crs, self.study_area
+        )
         self.objectives[objective_name] = obj
 
     def add_file_to_objective(
@@ -186,7 +191,9 @@ class SuitabilityCalculator:
             image = np.int16(image)
             results = (
                 {"properties": {"sutability": v}, "geometry": s}
-                for i, (s, v) in enumerate(shapes(image, mask=mask, transform=data["transform"]))
+                for i, (s, v) in enumerate(
+                    shapes(image, mask=mask, transform=data["transform"])
+                )
             )
             geoms = list(results)
             gpd_polygonized_raster = gp.GeoDataFrame.from_features(geoms, crs=c)
@@ -194,7 +201,9 @@ class SuitabilityCalculator:
             # gpd_polygonized_raster.to_file('temp/dataframe.geojson', driver='GeoJSON')
 
             # cs convertion
-            gpd_polygonized_raster = gpd_polygonized_raster.to_crs(4326)  # Where these numbers come from?
+            gpd_polygonized_raster = gpd_polygonized_raster.to_crs(
+                4326
+            )  # Where these numbers come from?
             output_geojson_name = "analysis.geojson"
             gpd_polygonized_raster.to_file(os.path.join(self.path, output_geojson_name))
             return gpd_polygonized_raster.to_json()

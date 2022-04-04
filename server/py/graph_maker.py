@@ -19,7 +19,11 @@ class GraphMaker:
         )
 
     @staticmethod
-    def compute_fraction_in_range(array, min_threshold, max_threshold):
-        above_max = GraphMaker.compute_fraction_above_threshold(array, max_threshold)
-        above_min = GraphMaker.compute_fraction_above_threshold(array, min_threshold)
+    def compute_fraction_in_range(study_area, array, min_threshold, max_threshold):
+        above_max = GraphMaker.compute_fraction_above_threshold(
+            study_area, array, max_threshold
+        )
+        above_min = GraphMaker.compute_fraction_above_threshold(
+            study_area, array, min_threshold
+        )
         return above_min - above_max

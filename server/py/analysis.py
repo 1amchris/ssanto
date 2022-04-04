@@ -64,10 +64,14 @@ class Analysis(Serializable):
         self.analysis = subjects_manager.create("analysis", {})
 
         # suitability categories: ([0-10[, [10-20[, [20-30[, [30-40[, [40-50[, [50-60[, [60-70[, [70-80[, [80-90[, [90-100]) or None
-        self.suitability_categories = subjects_manager.create("analysis.visualization.suitability_categories", None)
+        self.suitability_categories = subjects_manager.create(
+            "analysis.visualization.suitability_categories", None
+        )
 
         # suitability : [0, 1] or None
-        self.suitability_threshold = subjects_manager.create("analysis.visualization.suitability_threshold", 0.5)
+        self.suitability_threshold = subjects_manager.create(
+            "analysis.visualization.suitability_threshold", 0.5
+        )
         self.suitability_above_threshold = subjects_manager.create(
             "analysis.visualization.suitability_above_threshold", None
         )
@@ -76,19 +80,43 @@ class Analysis(Serializable):
         return json.dumps(self.serialize())
 
     def compute_suitability_categories(self):
-        if self.suitability_calculator is not None and (array := self.suitability_calculator.get_array()).any():
+        if (
+            self.suitability_calculator is not None
+            and (array := self.suitability_calculator.get_array()).any()
+        ):
+            study_area = self.suitability_calculator.get_study_area()
             self.suitability_categories.notify(
                 {
-                    "00-10": GraphMaker.compute_fraction_in_range(array, 0.00, 0.10),
-                    "10-20": GraphMaker.compute_fraction_in_range(array, 0.10, 0.20),
-                    "20-30": GraphMaker.compute_fraction_in_range(array, 0.20, 0.30),
-                    "30-40": GraphMaker.compute_fraction_in_range(array, 0.30, 0.40),
-                    "40-50": GraphMaker.compute_fraction_in_range(array, 0.40, 0.50),
-                    "50-60": GraphMaker.compute_fraction_in_range(array, 0.50, 0.60),
-                    "60-70": GraphMaker.compute_fraction_in_range(array, 0.60, 0.70),
-                    "70-80": GraphMaker.compute_fraction_in_range(array, 0.70, 0.80),
-                    "80-90": GraphMaker.compute_fraction_in_range(array, 0.80, 0.90),
-                    "90-100": GraphMaker.compute_fraction_in_range(array, 0.90, 1.01),
+                    "00-10": GraphMaker.compute_fraction_in_range(
+                        study_area, array, 0.00, 0.10
+                    ),
+                    "10-20": GraphMaker.compute_fraction_in_range(
+                        study_area, array, 0.10, 0.20
+                    ),
+                    "20-30": GraphMaker.compute_fraction_in_range(
+                        study_area, array, 0.20, 0.30
+                    ),
+                    "30-40": GraphMaker.compute_fraction_in_range(
+                        study_area, array, 0.30, 0.40
+                    ),
+                    "40-50": GraphMaker.compute_fraction_in_range(
+                        study_area, array, 0.40, 0.50
+                    ),
+                    "50-60": GraphMaker.compute_fraction_in_range(
+                        study_area, array, 0.50, 0.60
+                    ),
+                    "60-70": GraphMaker.compute_fraction_in_range(
+                        study_area, array, 0.60, 0.70
+                    ),
+                    "70-80": GraphMaker.compute_fraction_in_range(
+                        study_area, array, 0.70, 0.80
+                    ),
+                    "80-90": GraphMaker.compute_fraction_in_range(
+                        study_area, array, 0.80, 0.90
+                    ),
+                    "90-100": GraphMaker.compute_fraction_in_range(
+                        study_area, array, 0.90, 1.01
+                    ),
                 }
             )
         else:
@@ -101,7 +129,9 @@ class Analysis(Serializable):
             and (threshold := self.suitability_threshold.value()) is not None
         ):
             self.suitability_above_threshold.notify(
-                GraphMaker.compute_fraction_above_threshold(array, min(1, max(0, threshold)))
+                GraphMaker.compute_fraction_above_threshold(
+                    array, min(1, max(0, threshold))
+                )
             )
         else:
             self.suitability_above_threshold.notify(None)
@@ -123,7 +153,9 @@ class Analysis(Serializable):
     def __get_project_name(self):
         # by default, the name is "analysis.ssanto", unless a name was specified by the user
         parameters = self.parameters.value()
-        return parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
+        return (
+            parameters["analysis_name"] if "analysis_name" in parameters else "analysis"
+        )
 
     """
     There is an exemple of method to be implemented as a bind command
@@ -168,11 +200,15 @@ class Analysis(Serializable):
     def distribution_update(self):
         objectives_data = self.objectives.value()
         new_objectives_data = copy.deepcopy(objectives_data)
-        for (primary_index, secondaries) in enumerate(objectives_data["primaries"]["secondaries"]):
+        for (primary_index, secondaries) in enumerate(
+            objectives_data["primaries"]["secondaries"]
+        ):
             for (secondary_index, attributes) in enumerate(secondaries["attributes"]):
                 for (attribute_index, datasets) in enumerate(attributes["datasets"]):
                     continuousCondition = datasets["type"] == "Continuous"
-                    booleanCondition = datasets["type"] == "Boolean" and bool(datasets["isCalculated"])
+                    booleanCondition = datasets["type"] == "Boolean" and bool(
+                        datasets["isCalculated"]
+                    )
                     if continuousCondition or booleanCondition:
                         string_function = datasets["properties"]["valueScalingFunction"]
                         if continuousCondition:
@@ -190,12 +226,20 @@ class Analysis(Serializable):
                                 num=10,
                             )
 
-                        new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
-                            "datasets"
-                        ][attribute_index]["properties"]["distribution"] = [int(x_) for x_ in list(x)]
-                        new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
-                            "datasets"
-                        ][attribute_index]["properties"]["distribution_value"] = [int(y_) for y_ in list(y)]
+                        new_objectives_data["primaries"]["secondaries"][primary_index][
+                            "attributes"
+                        ][secondary_index]["datasets"][attribute_index]["properties"][
+                            "distribution"
+                        ] = [
+                            int(x_) for x_ in list(x)
+                        ]
+                        new_objectives_data["primaries"]["secondaries"][primary_index][
+                            "attributes"
+                        ][secondary_index]["datasets"][attribute_index]["properties"][
+                            "distribution_value"
+                        ] = [
+                            int(y_) for y_ in list(y)
+                        ]
 
         self.subjects_manager.update("objectives", new_objectives_data)
 
@@ -245,7 +289,9 @@ class Analysis(Serializable):
             cell_size = self.parameters.value().get("cell_size")
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
 
-            self.suitability_calculator = SuitabilityCalculator(self.files_manager.get_writer_path())
+            self.suitability_calculator = SuitabilityCalculator(
+                self.files_manager.get_writer_path()
+            )
             self.suitability_calculator.set_cell_size(cell_size)
             self.suitability_calculator.set_crs("epsg:32188")
             self.suitability_calculator.set_study_area_input(self.study_area.value())
@@ -268,7 +314,9 @@ class Analysis(Serializable):
                     column_type = attributes["datasets"][0]["type"]
                     column_name = attributes["datasets"][0]["column"]
                     is_calculated = bool(attributes["datasets"][0]["isCalculated"])
-                    scaling_function = attributes["datasets"][0]["properties"]["valueScalingFunction"]
+                    scaling_function = attributes["datasets"][0]["properties"][
+                        "valueScalingFunction"
+                    ]
                     file = self.files_manager.get_files_by_id(file_id)
                     missing_data_default_value = 0
                     # "temp/" + file[0].group_id + ".shp"
@@ -297,8 +345,12 @@ class Analysis(Serializable):
                                 attributes["datasets"][0]["calculationDistance"],
                             )
                         elif column_type == "Categorical":
-                            categories = attributes["datasets"][0]["properties"]["distribution"]
-                            categories_value = attributes["datasets"][0]["properties"]["distribution_value"]
+                            categories = attributes["datasets"][0]["properties"][
+                                "distribution"
+                            ]
+                            categories_value = attributes["datasets"][0]["properties"][
+                                "distribution_value"
+                            ]
 
                             self.suitability_calculator.add_file_to_categorical_objective(
                                 secondary,
