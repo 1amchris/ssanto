@@ -7,6 +7,7 @@ import pickle
 import json
 
 from py.graph_maker import GraphMaker
+from py.raster_transform import *
 
 
 class Analysis(Serializable):
@@ -58,6 +59,10 @@ class Analysis(Serializable):
             "default_missing_data",
             100,
         )
+        self.suggested_map_center = subjects_manager.create(
+            # "map.center", LatLng(45.56, -76.9))
+            "map.center", LatLng(51.511906, -0.122520))
+
         self.value_scaling = subjects_manager.create(
             "value_scaling",
             [],
@@ -125,7 +130,8 @@ class Analysis(Serializable):
                 "nbs": self.nbs.value(),
                 "objectives": self.objectives.value(),
                 "value_scaling": self.value_scaling.value(),
-                "layers": self.layers.value()
+                "layers": self.layers.value(),
+                "suggested_map_center": self.suggested_map_center.value()
                 # We dont had the analysis, but we could
             },
             "files": self.files_manager.serialize(),
@@ -234,7 +240,10 @@ class Analysis(Serializable):
                 self.files_manager, shapefile.get_shp(), shapefile.get_shx())
             study_area = {"file_name": shp_name, "area": geojson}
         """
+        study_area_path = self.files_manager.get_shp_path(shp_name)
+        lat_long = get_center_latitude_longitude(study_area_path)
         self.study_area.notify(shp_name)
+        self.suggested_map_center.notify(LatLng(lat_long[0], lat_long[1]))
 
     def export_project_save(self):
         return Analysis.__export(f"{self.__get_project_name()}.sproj", self.__repr__())

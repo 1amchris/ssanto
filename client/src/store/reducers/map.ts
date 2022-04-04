@@ -12,16 +12,17 @@ import SuitabilityCategories from 'models/map/SuitabilityCategoriesModel';
 export const mapSlice = createSlice({
   name: 'map',
   initialState: {
-    location: { lat: 45.509, long: -73.553 }, // defaults to mtl.qc.ca
+    map_center: { lat: 0, long: 0 }, // defaults to mtl.qc.ca
     layers: {} as LayersGroups,
     update_layers: {} as LayersUpdateGroups,
     zoom: 10, // arbitrary, is big enough to fit the island of mtl
   } as MapStateModel,
   reducers: {
     updateLocation: (state, { payload: location }: PayloadAction<LatLong>) => {
+      console.log('location', location);
       if (isNaN(location?.lat) || isNaN(location?.long))
         console.error('Received invalid map location coordinates: ', location);
-      else state.location = location;
+      else state.map_center = location;
     },
     updateCursor: (state, { payload: cursor }: PayloadAction<LatLong>) => {
       if (cursor && (isNaN(cursor.lat) || isNaN(cursor.long))) {

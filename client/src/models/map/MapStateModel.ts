@@ -4,7 +4,7 @@ import { MapCursorInformationsModel } from './MapCursorInformationsModel';
 import SuitabilityCategoriesModel from './SuitabilityCategoriesModel';
 
 export interface MapStateModel {
-  location: LatLong; // the map location
+  map_center: LatLong; // the map location
   zoom: number;
   layers: LayersGroups;
   update_layers: LayersUpdateGroups;

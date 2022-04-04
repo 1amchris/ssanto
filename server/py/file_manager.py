@@ -87,6 +87,9 @@ class FilesManager:
     def get_file(self, name):
         return self.files_content[name]
 
+    def get_shp_path(self, name):
+        return os.path.join(self.get_writer_path(), name)
+
     def get_files_metadatas(self):
         return list(
             map(

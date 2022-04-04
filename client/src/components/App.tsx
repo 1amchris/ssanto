@@ -16,6 +16,7 @@ import {
   updateSuitabilityCategories,
   updateSuitabilityThreshold,
   updateLayers,
+  updateLocation,
 } from 'store/reducers/map';
 import { MapCursorInformationsModel } from 'models/map/MapCursorInformationsModel';
 import { LatLong } from 'models/map/LatLong';
@@ -58,6 +59,12 @@ function App() {
         subject: ServerSubscriptionTargets.Layer,
         onAction: updateLayers,
       } as SubscriptionModel<LayersGroups, void>)
+    );
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTargets.MapCenter,
+        onAction: updateLocation,
+      } as SubscriptionModel<LatLong>)
     );
     dispatch(
       subscribe({

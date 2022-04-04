@@ -11,7 +11,7 @@ import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import React from 'react';
 
 function InteractiveMapContainer({ className, style, id }: any) {
-  const { location, zoom, cursor } = useAppSelector(selectMap);
+  const { map_center, zoom, cursor } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();
 
   const printRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -39,8 +39,8 @@ function InteractiveMapContainer({ className, style, id }: any) {
   return (
     <MapContainer
       id={id}
-      key={JSON.stringify([location.lat, location.long])}
-      center={[location.lat, location.long]}
+      key={map_center.lat + map_center.long}
+      center={[map_center.lat, map_center.long]}
       crs={L.CRS.EPSG3857}
       zoom={zoom}
       className={className}
