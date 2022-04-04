@@ -2,7 +2,7 @@ import websockets
 import asyncio
 import json
 
-from .serializable import Serializable
+from files.serializable import Serializable
 
 from .network_definitions import Field, SendType
 import traceback

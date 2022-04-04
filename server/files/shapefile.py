@@ -1,5 +1,5 @@
 import geopandas
-from py.file import File
+from files.file import File
 from pandas.api.types import is_numeric_dtype
 import os
 import math
@@ -103,7 +103,7 @@ class Shapefile(File):
         return [str(category) for category in df[column_name].unique()]
 
     def get_metadatas(self):
-        print('Column', self.columns)
+        #print('Column', self.columns)
         return {"name": self.name, "column_names": self.columns["column_names"], "column_names": self.columns["column_names"], 'type': self.columns["type"], 'categories': self.columns["categories"], 'min_value': [math.floor(min_) for min_ in self.columns["minimums"]], 'max_value': [math.ceil(max_) for max_ in self.columns["maximums"]]}
 
     # def serialize(self):

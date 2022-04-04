@@ -1,4 +1,3 @@
-from pandas import array
 from .objective import Objective
 from osgeo import gdal, osr
 import numpy as np
@@ -9,10 +8,6 @@ import geopandas as gp
 from .study_area import StudyArea
 import os
 from .raster_transform import DEFAULT_EMPTY_VAL, convert_projection
-import geopandas as gpd
-
-from geojson import dump
-from shapely.geometry import shape
 
 
 class SuitabilityCalculator:

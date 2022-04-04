@@ -27,7 +27,7 @@ class GuideBuilder:
 
     def __init__(self):
         self.categories = []
-        path = os.path.join(os.getcwd(), "guide")
+        path = os.path.join(os.getcwd(), "guide-data")
         if not os.path.exists(path):
             print("Path '{}' doesn't exit. The guide will be empty.".format(path))
             return

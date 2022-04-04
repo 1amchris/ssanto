@@ -1,6 +1,6 @@
 from base64 import b64encode
 from io import BytesIO
-from py.file_metadata import FileMetaData
+from files.file_metadata import FileMetaData
 
 
 class File(FileMetaData):

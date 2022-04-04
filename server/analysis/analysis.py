@@ -1,13 +1,13 @@
-from .serializable import Serializable
-from .suitability_calculator import SuitabilityCalculator
+from files.serializable import Serializable
+from analysis.suitability_calculator import SuitabilityCalculator
 from .map import LatLng, MapCursorInformations
 from base64 import b64encode, b64decode
 import copy
 import pickle
 import json
 
-from py.graph_maker import GraphMaker
-from py.raster_transform import *
+from .graph_maker import GraphMaker
+from .raster_transform import *
 
 
 class Analysis(Serializable):
@@ -231,7 +231,6 @@ class Analysis(Serializable):
             self.distribution_update()
 
     def receive_study_area(self, shp_name):
-        print("receive_study_area", shp_name)
         """
         study_area = { 'file_name': '', 'area': None }
         if shp_name != '':

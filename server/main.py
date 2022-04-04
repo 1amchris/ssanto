@@ -2,15 +2,16 @@ import signal
 
 import asyncio
 
-from py.server_socket import ServerSocket
-from py.subjects_manager import SubjectsManager
+from network.server_socket import ServerSocket
+from subjects.subjects_manager import SubjectsManager
 
-from py.logger import *
+from logger import *
 
-from py.analysis import Analysis
-from py.file_manager import FilesManager
-from py.guide_builder import GuideBuilder
-from py.map import Map
+from analysis.analysis import Analysis
+from analysis.map import Map
+from files.file_manager import FilesManager
+from guide_builder import GuideBuilder
+
 
 
 async def main():

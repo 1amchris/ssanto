@@ -1,7 +1,7 @@
 import imp
 import numpy as np
-from py.math_operation import MATH_OPERATION
-from py.study_area import StudyArea
+from analysis.math_operation import MATH_OPERATION
+from analysis.study_area import StudyArea
 
 
 class GraphMaker:
