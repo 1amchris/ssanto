@@ -156,7 +156,7 @@ function ValueScaling({ t }: any) {
       return [
         <Control
           key={key('categorical_row')}
-          label={category}
+          label={category.toString().substring(0, 8).concat('...')}
           className="small position-relative d-flex"
           defaultValue={
             localValueScaling[attributeIndex].dataset.properties
@@ -164,6 +164,7 @@ function ValueScaling({ t }: any) {
           }
           onChange={onChangeCategoryValue(attributeIndex, categoryIndex)}
           type="number"
+          tooltip={category}
         />,
       ];
     };

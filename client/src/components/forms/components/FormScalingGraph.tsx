@@ -32,7 +32,12 @@ ChartJS.register(
 
 export const options = {
   maintainAspectRatio: false,
-
+  scales: {
+    y: {
+      beginAtZero: true,
+      suggestedMax: 100,
+    },
+  },
   //responsive: true,
   plugins: {
     legend: {
@@ -47,7 +52,11 @@ export const options = {
 
 const generateData = (distribution: number[], distribution_value: number[]) => {
   const data = {
-    labels: distribution.map(d => d.toString()),
+    labels: distribution.map(d =>
+      d.toString().length < 10
+        ? d.toString()
+        : d.toString().substring(0, 8).concat('...')
+    ),
     datasets: [
       {
         label: 'suitability',

@@ -356,15 +356,19 @@ function ObjectiveHierarchy({ t, disabled }: any) {
               ? defaultShapefile.column_names[0]
               : DefaultDataset.column;
 
+          console.log('OH');
           const defaultProperties = {
             ...DefaultValueScalingProperties,
             distribution:
               defaultColumn in defaultShapefile.categories
                 ? defaultShapefile.categories[defaultColumn]
                 : [],
-            distribution_value: new Array<number>(
-              defaultShapefile.categories[defaultColumn].length
-            ).fill(0),
+            distribution_value:
+              defaultColumn in defaultShapefile.categories
+                ? new Array<number>(
+                    defaultShapefile.categories[defaultColumn].length
+                  ).fill(0)
+                : [],
           };
           let defaultDataset = {
             ...DefaultDataset,
