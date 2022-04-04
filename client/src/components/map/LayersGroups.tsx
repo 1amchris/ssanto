@@ -5,7 +5,6 @@ import { removeLayer, selectMap, upsertLayer } from 'store/reducers/map';
 import { Layer, Layers, LayersUpdateGroups } from 'models/map/Layers';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import { call } from 'store/reducers/server';
 import CallModel from 'models/server-coms/CallModel';
@@ -13,12 +12,12 @@ import { InsertLayerModel } from 'models/map/InsertLayerModel';
 import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
 
 const usePrevious = (value: any) => {
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value;
-    });
-    return ref.current;
-  };
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+};
 
 const LayersGroups = ({ t }: any) => {
   const { layers, update_layers } = useAppSelector(selectMap);
@@ -48,8 +47,7 @@ const LayersGroups = ({ t }: any) => {
       return {
         color: color,
         fillColor: color,
-        fillOpacity: 0.5,
-
+        fillOpacity: 0.65,
         // the fillColor is adapted from a property which can be changed by the user (segment)
         //fillColor: 'black',
         //weight: 0.3,
@@ -58,6 +56,7 @@ const LayersGroups = ({ t }: any) => {
         //color: 'black',
         //dashArray: '3',
         //fillOpacity: 0.5,
+        weight: 0.35,
       };
     } else if (
       feature.properties !== undefined &&
@@ -69,69 +68,60 @@ const LayersGroups = ({ t }: any) => {
     }
   };
 
+  const prevUpdateLayers: LayersUpdateGroups | undefined =
+    usePrevious(update_layers);
+  useEffect(() => {
+    //console.log("Updated", prevUpdateLayers, update_layers)
+    if (prevUpdateLayers == undefined) return;
+    let p: LayersUpdateGroups = prevUpdateLayers;
 
-  const prevUpdateLayers: LayersUpdateGroups | undefined = usePrevious(update_layers);
-  useEffect(()=> {
-      //console.log("Updated", prevUpdateLayers, update_layers)
-      if (prevUpdateLayers == undefined) return;
-      let p: LayersUpdateGroups = prevUpdateLayers
+    let new_pairs: string[][] = [];
+    let old_pairs: string[][] = [];
 
-      let new_pairs: string[][] = [];
-      let old_pairs: string[][] = [];
-
-      for (let [group, names] of Object.entries(update_layers)) {
-        for (let name of names) {
-            new_pairs.push([group, name])
-        }
+    for (let [group, names] of Object.entries(update_layers)) {
+      for (let name of names) {
+        new_pairs.push([group, name]);
       }
+    }
 
-      for (let [group, names] of Object.entries(prevUpdateLayers as any)) {
-        for (let name of names as any) {
-            old_pairs.push([group, name])
-        }
+    for (let [group, names] of Object.entries(prevUpdateLayers as any)) {
+      for (let name of names as any) {
+        old_pairs.push([group, name]);
       }
+    }
 
-      let toAdd: string[][] = new_pairs.filter((x: string[]) => {
-          if (p[x[0]])
-            return !p[x[0]].includes(x[1])
-          else return true
-      });
-      let toRemove: string[][] = old_pairs.filter((x: string[]) => {
-          if (update_layers[x[0]])
-            return !update_layers[x[0]].includes(x[1])
-          else return true
-      });
-      
-      for (let layer of toAdd) {
-        dispatch(
-            call({
-                target: ServerCallTargets.GetLayer,
-                args: [layer[0], layer[1]],
-                onSuccessAction: upsertLayer,
-            } as CallModel<string[], InsertLayerModel, void, void, void>)
-        )
-      }
+    let toAdd: string[][] = new_pairs.filter((x: string[]) => {
+      if (p[x[0]]) return !p[x[0]].includes(x[1]);
+      else return true;
+    });
+    let toRemove: string[][] = old_pairs.filter((x: string[]) => {
+      if (update_layers[x[0]]) return !update_layers[x[0]].includes(x[1]);
+      else return true;
+    });
 
-      for (let layer of toRemove) {
-        dispatch(
-            removeLayer({
-                group: layer[0],
-                name: layer[1]
-            } as RemoveLayerModel)
-        )
-      }
+    for (let layer of toAdd) {
+      dispatch(
+        call({
+          target: ServerCallTargets.GetLayer,
+          args: [layer[0], layer[1]],
+          onSuccessAction: upsertLayer,
+        } as CallModel<string[], InsertLayerModel, void, void, void>)
+      );
+    }
 
-  }, [prevUpdateLayers, update_layers])
-  /*
-  <TileLayer
-          attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-  */
+    for (let layer of toRemove) {
+      dispatch(
+        removeLayer({
+          group: layer[0],
+          name: layer[1],
+        } as RemoveLayerModel)
+      );
+    }
+  }, [prevUpdateLayers, update_layers]);
   return (
     <LayersControl position="bottomleft">
       <LayersControl.BaseLayer checked name={capitalize(t('osm'))}>
-      <TileLayer
+        <TileLayer
           attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
