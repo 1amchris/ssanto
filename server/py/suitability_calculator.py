@@ -29,7 +29,8 @@ class SuitabilityCalculator:
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
 
         print("x,y = ", x, y)
-        print("Analysis shape = ", self.objectives_arrays_dict["ANALYSIS"].shape)
+        print("Analysis shape = ",
+              self.objectives_arrays_dict["ANALYSIS"].shape)
 
         cell_values = {}
         for key in self.objectives_arrays_dict:
@@ -125,7 +126,7 @@ class SuitabilityCalculator:
         input_path = os.path.join(self.path, input)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
-
+        print("categories", categories)
         categories_dic = dict(zip(categories, categories_value))
         self.objectives[objective_name].add_categorical_file(
             id,
@@ -134,8 +135,8 @@ class SuitabilityCalculator:
             output_path,
             weight,
             scaling_function,
-            categories_dic,
             missing_data_default_val,
+            categories_dic,
             field_name,
         )
 
@@ -180,7 +181,8 @@ class SuitabilityCalculator:
 
         inDs = gdal.Open(study_area_path)
         driver = inDs.GetDriver()
-        outDs = driver.Create(output_path, len(matrix[0]), len(matrix), 1, GDT_Int16)
+        outDs = driver.Create(output_path, len(
+            matrix[0]), len(matrix), 1, GDT_Int16)
         # write the data
         outBand = outDs.GetRasterBand(1)
         outBand.WriteArray(matrix, 0, 0)
@@ -209,7 +211,8 @@ class SuitabilityCalculator:
                 )
             )
             geoms = list(results)
-            gpd_polygonized_raster = gp.GeoDataFrame.from_features(geoms, crs=c)
+            gpd_polygonized_raster = gp.GeoDataFrame.from_features(
+                geoms, crs=c)
             # gpd_polygonized_raster = gpd_polygonized_raster[gpd_polygonized_raster['NDVI'] > 0]
             # gpd_polygonized_raster.to_file('temp/dataframe.geojson', driver='GeoJSON')
 
@@ -218,7 +221,8 @@ class SuitabilityCalculator:
                 4326
             )  # Where these numbers come from?
             output_geojson_name = "analysis.geojson"
-            gpd_polygonized_raster.to_file(os.path.join(self.path, output_geojson_name))
+            gpd_polygonized_raster.to_file(
+                os.path.join(self.path, output_geojson_name))
             return gpd_polygonized_raster
 
     def process_data(self):
@@ -227,7 +231,8 @@ class SuitabilityCalculator:
         output_matrix = np.zeros(self.study_area.as_array.shape)
         total_weight = 0
         for obj in self.objectives:
-            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix()
+            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix(
+            )
             partial_missing_mask_dict = self.objectives[obj].get_missing_mask()
             self.missing_mask_dict.update(partial_missing_mask_dict)
             objective_weight = self.objectives[obj].weight

@@ -381,6 +381,10 @@ class CategoricalFeature(ContinuousFeature):
 
     def categorize_values(self):
         df = geopandas.read_file(self.path)
+        print('df', df.head())
+        print('df', self.field_name)
+        print('df', df[self.field_name])
+        print(self.categorized_value)
         df["cal_value"] = (
             df[self.field_name].map(
                 self.categorized_value).fillna(0.0).astype(float)

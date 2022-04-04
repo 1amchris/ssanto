@@ -2,6 +2,7 @@ export default interface ValueScalingProperties {
   valueScalingFunction: string;
   distribution: number[] | string[];
   distribution_value: number[];
+  missingDataSuitability: number;
 }
 
 export default interface DatasetModel {
@@ -21,6 +22,7 @@ export const DefaultValueScalingProperties = {
   valueScalingFunction: 'x',
   distribution: [] as number[],
   distribution_value: [] as number[],
+  missingDataSuitability: 0 as number,
 };
 
 export const DefaultDataset = {

@@ -247,12 +247,14 @@ class Analysis(Serializable):
                             int(y_) for y_ in list(y)
                         ]
 
-                        self.subjects_manager.update("objectives", new_objectives_data)
+                        self.subjects_manager.update(
+                            "objectives", new_objectives_data)
 
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
         if calculator := self.suitability_calculator:
-            base.objectives = calculator.get_informations_at(cursor.lat, cursor.long)
+            base.objectives = calculator.get_informations_at(
+                cursor.lat, cursor.long)
         return base
 
     def update(self, subject, data):
@@ -301,14 +303,16 @@ class Analysis(Serializable):
             )
             self.suitability_calculator.set_cell_size(cell_size)
             self.suitability_calculator.set_crs("epsg:3857")
-            self.suitability_calculator.set_study_area_input(self.study_area.value())
+            self.suitability_calculator.set_study_area_input(
+                self.study_area.value())
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"],
                 data["primaries"]["weights"],
                 data["primaries"]["secondaries"],
             ):
-                self.suitability_calculator.add_objective(primary, int(weight_primary))
+                self.suitability_calculator.add_objective(
+                    primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(
                     zip(
                         secondaries["secondary"],
@@ -320,11 +324,14 @@ class Analysis(Serializable):
                     file_name = attributes["datasets"][0]["name"]
                     column_type = attributes["datasets"][0]["type"]
                     column_name = attributes["datasets"][0]["column"]
-                    is_calculated = bool(attributes["datasets"][0]["isCalculated"])
+                    is_calculated = bool(
+                        attributes["datasets"][0]["isCalculated"])
                     scaling_function = attributes["datasets"][0]["properties"][
                         "valueScalingFunction"
                     ]
-                    missing_data_default_value = 0
+                    missing_data_default_value = attributes["datasets"][0]["properties"][
+                        "missingDataSuitability"
+                    ]
 
                     input_file = file_name
                     if not is_calculated and column_type == "Boolean":
@@ -363,9 +370,9 @@ class Analysis(Serializable):
                             input_file,
                             int(weight_secondary),
                             scaling_function,
-                            missing_data_default_value,
                             categories,
                             categories_value,
+                            missing_data_default_value,
                             column_name,
                         )
 
