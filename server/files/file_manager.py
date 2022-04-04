@@ -149,6 +149,7 @@ class FilesManager:
             shp.add_file(file)
 
         self.add_shapefile(shp)
+        shp.set_feature(self.get_writer_path())
         self.__notify_metadatas()
 
     # files: { name: string; size: number; content: string (base64); }[]
