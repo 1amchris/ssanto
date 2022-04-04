@@ -160,6 +160,7 @@ function Main() {
         </aside>
         <main className="shadow w-100 position-relative" style={{ zIndex: 1 }}>
           <InteractiveMapContainer
+            id="map"
             style={{ zIndex: 0 }}
             className="w-100 h-100 position-absolute top-0 left-0"
           />

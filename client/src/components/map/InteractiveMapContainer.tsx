@@ -8,10 +8,13 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
+import React from 'react';
 
-function InteractiveMapContainer({ className, style }: any) {
+function InteractiveMapContainer({ className, style, id }: any) {
   const { location, zoom, cursor } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();
+
+  const printRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
   const MapEvents = () => {
     useMapEvents({
@@ -35,6 +38,7 @@ function InteractiveMapContainer({ className, style }: any) {
 
   return (
     <MapContainer
+      id={id}
       key={JSON.stringify([location.lat, location.long])}
       center={[location.lat, location.long]}
       crs={L.CRS.EPSG3857}
