@@ -66,13 +66,14 @@ function ValueScaling({ t }: any) {
             attributeIndex++
           ) {
             let dataset = attributes.datasets[attributeIndex];
-            localAttributes.push({
-              primaryIndex: primaryIndex,
-              secondaryIndex: secondaryIndex,
-              attributeIndex: attributeIndex,
-              attribute: attributes.attribute[attributeIndex],
-              dataset: dataset,
-            });
+            if (!(dataset.type == 'Boolean' && !dataset.isCalculated))
+              localAttributes.push({
+                primaryIndex: primaryIndex,
+                secondaryIndex: secondaryIndex,
+                attributeIndex: attributeIndex,
+                attribute: attributes.attribute[attributeIndex],
+                dataset: dataset,
+              });
           }
         }
       }
@@ -133,11 +134,6 @@ function ValueScaling({ t }: any) {
       (attributeIndex: number, maxSuitability: number) => (e: any) => {
         e.persist();
         let newMissingDataSuitability: number = e.target.value;
-        newMissingDataSuitability =
-          newMissingDataSuitability <= maxSuitability
-            ? newMissingDataSuitability
-            : maxSuitability;
-
         let newValueScaling = JSON.parse(
           JSON.stringify(localValueScaling)
         ) as typeof localValueScaling;

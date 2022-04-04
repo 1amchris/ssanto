@@ -91,7 +91,7 @@ class Shapefile(File):
         column_types.append("Boolean")
         minimums.append(min)
         maximums.append(max)
-        categories[column_name] = ['0', '1']
+        categories[column_name] = ['1']
 
         columns = {'column_names': column_names, 'type': column_types,
                    'minimums': minimums, 'maximums': maximums, 'categories': categories}
