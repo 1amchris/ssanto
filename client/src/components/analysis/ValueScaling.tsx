@@ -133,11 +133,6 @@ function ValueScaling({ t }: any) {
       (attributeIndex: number, maxSuitability: number) => (e: any) => {
         e.persist();
         let newMissingDataSuitability: number = e.target.value;
-        newMissingDataSuitability =
-          newMissingDataSuitability <= maxSuitability
-            ? newMissingDataSuitability
-            : maxSuitability;
-
         let newValueScaling = JSON.parse(
           JSON.stringify(localValueScaling)
         ) as typeof localValueScaling;
