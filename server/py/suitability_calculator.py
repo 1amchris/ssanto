@@ -1,3 +1,4 @@
+from pandas import array
 from .objective import Objective
 from osgeo import gdal, osr
 import numpy as np
@@ -21,14 +22,22 @@ class SuitabilityCalculator:
         self.missing_mask_dict = {}
         self.path = working_path
         self.cell_size = 20
-        self.crs = "epsg:32188"
+        self.crs = "epsg:3857"
         self.output_matrix = None
 
     def get_informations_at(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
+
+        print("x,y = ", x, y)
+        print("Analysis shape = ", self.objectives_arrays_dict["ANALYSIS"].shape)
+
         cell_values = {}
         for key in self.objectives_arrays_dict:
-            cell_values[key] = self.objectives_arrays_dict[key][y, x]
+            obj = self.objectives_arrays_dict[key]
+            if y >= 0 and y < obj.shape[0] and x >= 0 and x < obj.shape[1]:
+                cell_values[key] = obj[y, x]
+            else:
+                return {}
         print(self.get_missing(latitude, longitude))
         return cell_values
 
@@ -52,10 +61,11 @@ class SuitabilityCalculator:
         projection = osr.SpatialReference(wkt=src.GetProjection())
         target_epsg = int(projection.GetAttrValue("AUTHORITY", 1))
 
-        x, y = convert_projection(4326, target_epsg, latitude, longitude)
+        print("target_epsg = ", target_epsg)
+        x, y = convert_projection(4326, 3857, latitude, longitude)
 
         cx = int((x - ulx) // self.cell_size)
-        cy = -int((y - uly) // self.cell_size)
+        cy = -int((y - uly) // self.cell_size) - 1
         return cx, cy
 
     def set_cell_size(self, cell_size):
