@@ -1,6 +1,7 @@
 import { selectMap } from 'store/reducers/map';
 import { useAppSelector } from 'store/hooks';
 import { Bar } from 'react-chartjs-2';
+import { colors, bgColors, horizontalBarHeight } from 'consts/graph';
 
 function MapCursorInformation() {
   const { suitabilityCategories } = useAppSelector(selectMap);
@@ -17,7 +18,7 @@ function MapCursorInformation() {
     //   )),
     suitabilityCategories && (
       <Bar
-        height={Object.keys(suitabilityCategories).length * 50}
+        height={Object.keys(suitabilityCategories).length * horizontalBarHeight}
         options={{
           scales: {
             y: {
@@ -43,8 +44,12 @@ function MapCursorInformation() {
             {
               label: 'Objective suitability',
               data: Object.values(suitabilityCategories),
-              backgroundColor: ['rgba(54, 162, 235, 0.2)'],
-              borderColor: ['rgb(54, 162, 235)'],
+              backgroundColor: bgColors.map(
+                ([r, g, b, a]) => `rgba(${r}, ${g}, ${b}, ${a})`
+              ),
+              borderColor: colors.map(
+                ([r, g, b, a]) => `rgba(${r}, ${g}, ${b}, ${a})`
+              ),
               borderWidth: 1,
             },
           ],
