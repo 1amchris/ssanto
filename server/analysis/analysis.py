@@ -248,7 +248,6 @@ class Analysis(Serializable):
 
         analysis_data = data["analysis"]
         self.parameters.notify(analysis_data["parameters"])
-        self.study_area.notify(analysis_data["study_area"])
         self.nbs.notify(analysis_data["nbs"])
         self.objectives.notify(analysis_data["objectives"])
         self.value_scaling.notify(analysis_data["value_scaling"])
@@ -257,6 +256,8 @@ class Analysis(Serializable):
         files_data = data["files"]
         for name, data in files_data.items():
             self.files_manager.add_shapefile_from_save(name, data)
+
+        self.receive_study_area(analysis_data["study_area"])
 
     def compute_suitability(self):
         if self.study_area.value():
