@@ -134,7 +134,7 @@ function Main() {
               disabled={!objectiveHierarchyIsEnabled()}
             >
               <ObjectiveHierarchy
-                key={'oh' + ohIsLoading}
+                key={`${ohIsLoading}`}
                 disabled={!objectiveHierarchyIsEnabled()}
               />
             </Collapsible>
@@ -143,7 +143,7 @@ function Main() {
               disabled={!weightsAreEnabled()}
             >
               <Weighting
-                key={'weighting' + ohIsLoading}
+                key={`${ohIsLoading}`}
                 disabled={!weightsAreEnabled()}
               />
             </Collapsible>
@@ -152,7 +152,7 @@ function Main() {
               disabled={!valueScalingIsEnabled()}
             >
               <ValueScaling
-                key={'value_scaling' + ohIsLoading}
+                key={`${ohIsLoading}`}
                 disabled={!valueScalingIsEnabled()}
               />
             </Collapsible>

@@ -1,5 +1,4 @@
-import { createRef, ReactElement, RefObject, useState } from 'react';
-import { capitalize } from 'lodash';
+import { capitalize, max, sum } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
@@ -17,288 +16,182 @@ import {
   injectSetErrorCreator,
 } from 'store/reducers/analysis';
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
-import React from 'react';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 
+type ObjectivesHierarchy = {
+  main: string;
+  primaries: {
+    primary: string[];
+    weights: number[];
+    secondaries: {
+      secondary: string[];
+      weights: number[];
+      attributes: {
+        attribute: string[];
+        weights: number[];
+      }[];
+    }[];
+  };
+};
+
+type WeightsHierarchy = {
+  primaries: {
+    weights: number[];
+    secondaries: {
+      weights: number[];
+      attributes: {
+        weights: number[];
+      }[];
+    }[];
+  };
+};
+
+const merge = (
+  objectives: ObjectivesHierarchy,
+  weights: WeightsHierarchy
+): ObjectivesHierarchy => ({
+  ...objectives,
+  primaries: {
+    ...objectives.primaries,
+    weights: weights.primaries.weights,
+    secondaries: objectives.primaries.secondaries.map(
+      (secondaries, sindex) => ({
+        ...secondaries,
+        weights: weights.primaries.secondaries[sindex]
+          ? weights.primaries.secondaries[sindex].weights
+          : secondaries.weights,
+        attributes: secondaries.attributes.map((attributes, aindex) => ({
+          ...attributes,
+          weights: weights.primaries.secondaries[sindex].attributes
+            ? weights.primaries.secondaries[sindex].attributes[aindex].weights
+            : attributes.weights,
+        })),
+      })
+    ),
+  },
+});
+
+function normalizeWeights({ primaries }: WeightsHierarchy): WeightsHierarchy {
+  function normalize(weights: number[]): number[] {
+    const total = sum([0, ...weights]);
+    if (total === 0) return [...weights];
+
+    return weights.map(weight => max([0, weight / total])!);
+  }
+
+  return {
+    primaries: {
+      weights: normalize(primaries.weights),
+      secondaries: primaries.secondaries?.map(secondaries => ({
+        weights: normalize(secondaries.weights),
+        attributes: secondaries.attributes?.map(attributes => ({
+          weights: normalize(attributes.weights),
+        })),
+      })),
+    },
+  };
+}
+
 function Weighting({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
-  const objectives = selector.properties.objectives;
+  const objectives = selector.properties.objectives as ObjectivesHierarchy;
   const dispatch = useAppDispatch();
 
   const getErrors = selector.properties.objectivesError;
   const isLoading = selector.properties.objectivesLoading;
 
-  const [localObjectives, setLocalObjectives] = useState({
-    ...objectives,
-    update: true,
-  } as { main: string; update: boolean; primaries: { primary: string[]; weights: number[]; secondaries: { secondary: string[]; weights: number[]; attributes: { attribute: string[]; weights: number[]; datasets: { name: string; id: string }[] }[] }[] } });
-
   let controls = [];
-  if (
-    localObjectives !== undefined &&
-    localObjectives.primaries !== undefined
-  ) {
-    const getPrimary = () => {
-      return localObjectives.primaries.primary;
-    };
-
-    const getSecondary = (primaryIndex: number) => {
-      return localObjectives.primaries.secondaries[primaryIndex].secondary;
-    };
-
-    const getAttribute = (primaryIndex: number, secondaryIndex: number) => {
-      return localObjectives.primaries.secondaries[primaryIndex].attributes[
-        secondaryIndex
-      ].attribute;
-    };
-
-    const primaryName = (index: number) => {
-      return localObjectives.primaries.primary[index];
-    };
-
-    const secondaryName = (primaryIndex: number, secondaryIndex: number) => {
-      return localObjectives.primaries.secondaries[primaryIndex].secondary[
-        secondaryIndex
-      ];
-    };
-    const copyLocalObjective = () => {
-      return JSON.parse(
-        JSON.stringify(localObjectives)
-      ) as typeof localObjectives;
-    };
-
-    const onChangePrimary = (primaryIndex: number) => (value: any) => {
-      let newObjectives = copyLocalObjective();
-      newObjectives.primaries.weights[primaryIndex] = value;
-      newObjectives.update = !localObjectives.update;
-      setLocalObjectives(newObjectives);
-    };
-
-    const onChangeSecondary =
-      (primaryIndex: number, secondaryIndex: number) => (value: any) => {
-        let newObjectives = copyLocalObjective();
-        newObjectives.primaries.secondaries[primaryIndex].weights[
-          secondaryIndex
-        ] = value;
-        newObjectives.update = !localObjectives.update;
-        setLocalObjectives(newObjectives);
-      };
-
-    const onChangeAttribute =
-      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
-      (value: any) => {
-        let newObjectives = copyLocalObjective();
-        newObjectives.primaries.secondaries[primaryIndex].attributes[
-          secondaryIndex
-        ].weights[attributeIndex] = value;
-        newObjectives.update = !localObjectives.update;
-        setLocalObjectives(newObjectives);
-      };
-
-    const weightAttributeFactory = ({
-      name,
-      key,
-      orderIndex,
-      primaryIndex,
-      secondaryIndex,
-      defaultAttribute,
-    }: FactoryProps): ReactElement | ReactElement[] => {
-      const weightRef: RefObject<HTMLSpanElement> = createRef();
+  if (objectives !== undefined && objectives.primaries !== undefined) {
+    const attributesFactory = ({ name, key, label, weight }: FactoryProps) => {
       return [
         <Control
-          key={key('attribute') + localObjectives.update}
-          label={defaultAttribute}
-          className="small position-relative d-flex"
-          name={name('attribute')}
-          suffix={
-            <React.Fragment>
-              <span ref={weightRef}>
-                {
-                  localObjectives.primaries.secondaries[primaryIndex]
-                    .attributes[secondaryIndex].weights[orderIndex]
-                }
-              </span>
-            </React.Fragment>
-          }
-          defaultValue={
-            localObjectives.primaries.secondaries[primaryIndex].attributes[
-              secondaryIndex
-            ].weights[orderIndex]
-          }
-          onChange={({ target: { value } }: { target: HTMLInputElement }) => {
-            if (weightRef.current?.textContent) {
-              weightRef.current.textContent = value;
-              onChangeAttribute(
-                primaryIndex,
-                secondaryIndex,
-                orderIndex
-              )(value);
-            }
-          }}
+          key={key('attribute')}
+          label={label}
+          name={name('weights')}
+          defaultValue={weight}
           type="number"
-          //tooltip={t('the cell size is ...')}
         />,
       ];
     };
 
-    const weightSecondaryFactory = ({
+    const secondariesFactory = ({
       name,
       key,
-      orderIndex,
-      defaultValue,
-      secondaryIndex,
-      primaryIndex,
-      childrenValues: attributes,
-    }: FactoryProps): ReactElement | ReactElement[] => {
-      const weightRef: RefObject<HTMLSpanElement> = createRef();
-
-      const controls = [
+      label,
+      weight,
+      attributes,
+    }: FactoryProps) => {
+      return [
         <Control
-          key={key('secondary') + localObjectives.update}
-          label={secondaryName(primaryIndex, orderIndex)}
-          className="small position-relative d-flex"
-          name={name('secondary')}
-          suffix={
-            <React.Fragment>
-              <span ref={weightRef}>
-                {
-                  localObjectives.primaries.secondaries[primaryIndex].weights[
-                    orderIndex
-                  ]
-                }
-              </span>
-            </React.Fragment>
-          }
-          defaultValue={
-            localObjectives.primaries.secondaries[primaryIndex].weights[
-              orderIndex
-            ]
-          }
-          onChange={({ target: { value } }: { target: HTMLInputElement }) => {
-            if (weightRef.current?.textContent) {
-              weightRef.current.textContent = value;
-              onChangeSecondary(primaryIndex, orderIndex)(value);
-            }
-          }}
+          key={key('secondary')}
+          label={label}
+          name={name('weights')}
+          defaultValue={weight}
           type="number"
-          //tooltip={t('the cell size is ...')}
         />,
-      ];
-      if (
-        localObjectives.primaries.secondaries[primaryIndex].attributes[
-          secondaryIndex
-        ].attribute.length > 1
-      ) {
-        controls.push(
+        attributes.attribute.length > 1 && (
           <SimpleList
             hideLabel
-            key={key('secondaries') + localObjectives.update}
+            key={key('attributes')}
+            name={name('attributes')}
+            factory={attributesFactory}
+            controls={attributes.attribute.map((_: any, index: number) => ({
+              label: attributes.attribute[index],
+              weight: attributes.weights[index],
+            }))}
+          />
+        ),
+      ];
+    };
+
+    const primariesFactory = ({
+      name,
+      key,
+      label,
+      weight,
+      secondaries,
+    }: FactoryProps) => {
+      return [
+        <Control
+          label={label}
+          key={key('primary')}
+          name={name('weights')}
+          defaultValue={weight}
+          type="number"
+        />,
+        (secondaries.secondary.length > 1 ||
+          (secondaries.secondary.length === 1 &&
+            secondaries.attributes[0].attribute.length > 1)) && (
+          <SimpleList
+            hideLabel
+            key={key('secondaries')}
             name={name('secondaries')}
-            factory={weightAttributeFactory}
-            controls={getAttribute(primaryIndex, secondaryIndex).map(
-              (defaultAttribute: string, index: number) => ({
-                defaultAttribute,
-                primaryIndex,
-                secondaryIndex,
-                attributeIndex: index,
-                attributeOptions: attributes.attributeOptions,
-              })
-            )}
+            factory={secondariesFactory}
+            controls={secondaries.secondary.map((_: any, index: number) => ({
+              label: secondaries.secondary[index],
+              weight: secondaries.weights[index],
+              attributes: secondaries.attributes[index],
+            }))}
           />
-        );
-      }
-
-      return controls;
-    };
-
-    const weightPrimaryFactory = ({
-      name,
-      key,
-      primaryIndex,
-      orderIndex,
-      primary,
-      childrenValues: secondaries,
-    }: FactoryProps): ReactElement | ReactElement[] => {
-      const weightRef: RefObject<HTMLSpanElement> = createRef();
-
-      const controls = [
-        <Control
-          label={primaryName(orderIndex)}
-          key={key('primary') + localObjectives.update}
-          name={name('primary')}
-          className="small position-relative d-flex"
-          suffix={
-            <React.Fragment>
-              <span ref={weightRef}>
-                {localObjectives.primaries.weights[orderIndex]}
-              </span>
-            </React.Fragment>
-          }
-          defaultValue={localObjectives.primaries.weights[orderIndex]}
-          onChange={({ target: { value } }: { target: HTMLInputElement }) => {
-            if (weightRef.current?.textContent) {
-              weightRef.current.textContent = value;
-              onChangePrimary(orderIndex)(+value);
-            }
-          }}
-          type="number"
-          //tooltip={t('the cell size is ...')}
-        />,
+        ),
       ];
-
-      // There is more than one secondary objective
-      // OR
-      // There is one secondary objective with many attributes
-      if (
-        localObjectives.primaries.secondaries[primaryIndex].secondary.length >
-          1 ||
-        (localObjectives.primaries.secondaries[primaryIndex].secondary.length ==
-          1 &&
-          localObjectives.primaries.secondaries[primaryIndex].attributes[0]
-            .attribute.length > 1)
-      ) {
-        controls.push(
-          <SimpleList
-            hideLabel
-            name={name('primaries')}
-            key={key('primaries') + localObjectives.update}
-            factory={weightSecondaryFactory}
-            controls={getSecondary(orderIndex).map(
-              (defaultValueSecondary: string, index: number) => ({
-                defaultValue: defaultValueSecondary,
-                primaryIndex,
-                secondaryIndex: index,
-                primary,
-                childrenValues: getAttribute(orderIndex, index),
-              })
-            )}
-          />
-        );
-      }
-
-      return controls;
     };
 
-    const mainControls = [
-      <div>
-        <SimpleList
-          key={'weights-primary' + isLoading}
-          name={'weights'}
-          hideLabel
-          factory={weightPrimaryFactory}
-          controls={getPrimary().map((primary: string, index: number) => ({
-            primary,
-            primaryIndex: index,
-            childrenValues: getSecondary(index),
-          }))}
-        />
-      </div>,
-    ];
     controls = [
-      ...mainControls,
+      <SimpleList
+        label={objectives.main}
+        key={'primaries'}
+        name={'primaries'}
+        factory={primariesFactory}
+        controls={objectives.primaries.primary.map((_: any, index: number) => ({
+          label: objectives.primaries.primary[index],
+          weight: objectives.primaries.weights[index],
+          secondaries: objectives.primaries.secondaries[index],
+        }))}
+      />,
       <Spacer />,
       <Button variant="outline-primary" loading={isLoading}>
         {capitalize(t('apply'))}
@@ -313,18 +206,18 @@ function Weighting({ t, disabled }: any) {
       controls={controls}
       errors={getErrors}
       disabled={isLoading || disabled}
-      key={'weight_form'}
-      onSubmit={() => {
+      onSubmit={(fields: WeightsHierarchy) => {
         dispatch(
           injectSetLoadingCreator({
             value: property,
             isLoading: true,
           } as LoadingValue<string>)()
         );
+
         dispatch(
           call({
             target: ServerCallTargets.Update,
-            args: [property, localObjectives],
+            args: [property, merge(objectives, normalizeWeights(fields))],
             onSuccessAction: injectSetLoadingCreator({
               value: property,
               isLoading: false,
