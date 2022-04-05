@@ -91,7 +91,7 @@ class Analysis(Serializable):
             study_area = self.suitability_calculator.get_study_area()
             self.suitability_categories.notify(
                 {
-                    "00-10%": GraphMaker.compute_fraction_in_range(study_area, array, 00, 10),
+                    "00-10%": 1 - GraphMaker.compute_fraction_above_threshold(study_area, array, 10),
                     "10-20%": GraphMaker.compute_fraction_in_range(study_area, array, 10, 20),
                     "20-30%": GraphMaker.compute_fraction_in_range(study_area, array, 20, 30),
                     "30-40%": GraphMaker.compute_fraction_in_range(study_area, array, 30, 40),
@@ -100,7 +100,7 @@ class Analysis(Serializable):
                     "60-70%": GraphMaker.compute_fraction_in_range(study_area, array, 60, 70),
                     "70-80%": GraphMaker.compute_fraction_in_range(study_area, array, 70, 80),
                     "80-90%": GraphMaker.compute_fraction_in_range(study_area, array, 80, 90),
-                    "90-100%": GraphMaker.compute_fraction_in_range(study_area, array, 90, 101),
+                    "90-100%": GraphMaker.compute_fraction_above_threshold(study_area, array, 90),
                 }
             )
         else:

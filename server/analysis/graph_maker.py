@@ -14,16 +14,10 @@ class GraphMaker:
 
     @staticmethod
     def compute_fraction_above_threshold(study_area: StudyArea, array, threshold):
-        return np.count_nonzero(array > threshold) / np.count_nonzero(
-            study_area.as_array > 0
-        )
+        return np.count_nonzero(array >= threshold) / np.count_nonzero(study_area.as_array > 0)
 
     @staticmethod
     def compute_fraction_in_range(study_area, array, min_threshold, max_threshold):
-        above_max = GraphMaker.compute_fraction_above_threshold(
-            study_area, array, max_threshold
-        )
-        above_min = GraphMaker.compute_fraction_above_threshold(
-            study_area, array, min_threshold
-        )
+        above_max = GraphMaker.compute_fraction_above_threshold(study_area, array, max_threshold)
+        above_min = GraphMaker.compute_fraction_above_threshold(study_area, array, min_threshold)
         return above_min - above_max
