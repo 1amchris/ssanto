@@ -39,6 +39,7 @@ function MenuBar() {
       /> */}
       <Import
         label="open project"
+        accept=".sproj"
         onFileImported={(file: File) =>
           FilesUtils.extractContentFromFiles([file]).then(file =>
             dispatch(

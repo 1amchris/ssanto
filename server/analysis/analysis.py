@@ -91,7 +91,7 @@ class Analysis(Serializable):
             study_area = self.suitability_calculator.get_study_area()
             self.suitability_categories.notify(
                 {
-                    "00-10%": GraphMaker.compute_fraction_in_range(study_area, array, 00, 10),
+                    "00-10%": 1 - GraphMaker.compute_fraction_above_threshold(study_area, array, 10),
                     "10-20%": GraphMaker.compute_fraction_in_range(study_area, array, 10, 20),
                     "20-30%": GraphMaker.compute_fraction_in_range(study_area, array, 20, 30),
                     "30-40%": GraphMaker.compute_fraction_in_range(study_area, array, 30, 40),
@@ -100,7 +100,7 @@ class Analysis(Serializable):
                     "60-70%": GraphMaker.compute_fraction_in_range(study_area, array, 60, 70),
                     "70-80%": GraphMaker.compute_fraction_in_range(study_area, array, 70, 80),
                     "80-90%": GraphMaker.compute_fraction_in_range(study_area, array, 80, 90),
-                    "90-100%": GraphMaker.compute_fraction_in_range(study_area, array, 90, 101),
+                    "90-100%": GraphMaker.compute_fraction_above_threshold(study_area, array, 90),
                 }
             )
         else:
@@ -248,7 +248,6 @@ class Analysis(Serializable):
 
         analysis_data = data["analysis"]
         self.parameters.notify(analysis_data["parameters"])
-        self.study_area.notify(analysis_data["study_area"])
         self.nbs.notify(analysis_data["nbs"])
         self.objectives.notify(analysis_data["objectives"])
         self.value_scaling.notify(analysis_data["value_scaling"])
@@ -257,6 +256,8 @@ class Analysis(Serializable):
         files_data = data["files"]
         for name, data in files_data.items():
             self.files_manager.add_shapefile_from_save(name, data)
+
+        self.receive_study_area(analysis_data["study_area"])
 
     def compute_suitability(self):
         if self.study_area.value():

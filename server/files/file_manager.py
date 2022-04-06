@@ -1,45 +1,34 @@
 from base64 import b64decode
+from importlib.resources import path
 import json
 from geojson_rewind import rewind
-import shapefile as ShpLoader
 import os
 import shutil
+import geopandas as gpd
 
 from files.file_metadata import FileMetaData
 from files.file import File
 from files.shapefile import Shapefile
 
-from files.serializable import Serializable
 from network.server_socket import CallException
 
 
 class FileParser:
     @staticmethod
-    def load(file):
-        # We only accept shp file groups for now
+    def load(file: File, path: str):
+        # This is an instance of the Open-Closed Principle being violated
+        # This is fine for now since shapefiles are the only files being loaded
         if isinstance(file, Shapefile):
-            shp = file.get_file_by_ext('shp')
-            shx = file.get_file_by_ext('shx')
-            return FileParser.__load_shp(shp.get_file_descriptor(), shx.get_file_descriptor())
+            shp = file.get_file_by_ext("shp")
+            return FileParser.__load_shp(shp, path)
         # elif ext == '...'
 
         return None
 
     @staticmethod
-    def __load_shp(shp_file, shx_file):
-        reader = ShpLoader.Reader(shp=shp_file, shx=shx_file)
-
-        features = []
-        for shp in reader.shapes():
-            feature = {
-                "type": "Feature",
-                "geometry": shp.__geo_interface__,
-            }
-            features.append(feature)
-
-        geojson = {"type": "FeatureCollection", "features": features}
-        data_str = json.dumps(rewind(geojson))
-        return bytes(data_str, 'ascii')
+    def __load_shp(shp_file: File, path: str):
+        gdf = gpd.read_file(os.path.join(path, shp_file.name)).to_crs("epsg:4326")
+        return bytes(gdf.to_json(), "ascii")
 
 
 class FilesWriter:
@@ -55,7 +44,7 @@ class FilesWriter:
     def save_file(self, name, content):
         path = os.path.join(self.main_dir, name)
         is_overwritten = os.path.exists(path)
-        with open(path, 'wb') as file:
+        with open(path, "wb") as file:
             file.write(content)
         return is_overwritten
 
@@ -72,9 +61,7 @@ class FilesManager:
         self.files_content = dict()
         self.files = self.subjects_manager.create("file_manager.files", dict())
         self.writer = FilesWriter()
-        self.shapefiles = self.subjects_manager.create(
-            "file_manager.shapefiles", dict()
-        )
+        self.shapefiles = self.subjects_manager.create("file_manager.shapefiles", dict())
         self.shapefiles_content = dict()
 
     def serialize(self) -> dict:
@@ -145,13 +132,13 @@ class FilesManager:
     def add_shapefile_from_save(self, name, data):
         shp = Shapefile(name)
         content = data["content"]
-        shp.content = b64decode(content.encode('ascii'))
-        for file_data in data['files']:
-            file = File(file_data['name'], b64decode(
-                file_data["content"].encode('ascii')))
+        shp.content = b64decode(content.encode("ascii"))
+        for file_data in data["files"]:
+            file = File(file_data["name"], b64decode(file_data["content"].encode("ascii")))
             shp.add_file(file)
 
         self.add_shapefile(shp)
+        shp.content = FileParser.load(shp, self.get_writer_path())
         shp.set_feature(self.get_writer_path())
         self.__notify_metadatas()
 
@@ -169,8 +156,7 @@ class FilesManager:
         shapefiles = dict()
         for file in created.values():
             if Shapefile.is_shapefile_ext(file.extension):
-                shapefile = shapefiles.setdefault(
-                    file.stem, Shapefile(file.stem+'.shp'))
+                shapefile = shapefiles.setdefault(file.stem, Shapefile(file.stem + ".shp"))
                 # TODO: Check if there is already a file with the extension added
                 shapefile.add_file(file)
             else:
@@ -181,11 +167,11 @@ class FilesManager:
             if not shapefile.is_complete():
                 contains_invalid_shapefile = True
                 continue
-            is_already_added = True if shapefile.name in self.files_content else False
+            is_already_added = shapefile.name in self.files_content
             self.add_shapefile(shapefile)
-            shapefile.content = FileParser.load(shapefile)
+            shapefile.content = FileParser.load(shapefile, self.get_writer_path())
             shapefile.set_feature(self.get_writer_path())
-            if (not is_already_added):
+            if not is_already_added:
                 appended.append(shapefile)
 
         self.__notify_metadatas()

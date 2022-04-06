@@ -42,7 +42,7 @@ namespace LayersUtils {
     ) {
       delete layersGroups[group][name];
 
-      if (Object.keys(layersGroups[group]).length == 0) {
+      if (Object.keys(layersGroups[group]).length === 0) {
         delete layersGroups[group];
       }
     }

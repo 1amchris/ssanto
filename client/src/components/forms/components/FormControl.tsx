@@ -34,7 +34,7 @@ class FormControl extends FormComponent {
     return (
       <Form.Group
         key={this.key}
-        className={`w-100 ${className} ${
+        className={`w-100 ${className ? className : ''} ${
           visuallyHidden ? 'visually-hidden' : ''
         }`}
       >

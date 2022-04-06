@@ -19,7 +19,6 @@ export const mapSlice = createSlice({
   } as MapStateModel,
   reducers: {
     updateLocation: (state, { payload: location }: PayloadAction<LatLong>) => {
-      console.log('location', location);
       if (isNaN(location?.lat) || isNaN(location?.long))
         console.error('Received invalid map location coordinates: ', location);
       else state.map_center = location;

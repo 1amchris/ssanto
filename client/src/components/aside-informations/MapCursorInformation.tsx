@@ -2,13 +2,10 @@ import { selectMap } from 'store/reducers/map';
 import { useAppSelector } from 'store/hooks';
 import { Bar } from 'react-chartjs-2';
 import { capitalize } from 'lodash';
+import { colors, bgColors, horizontalBarHeight } from 'consts/graph';
 
 function MapCursorInformation() {
   const { cursorInformations } = useAppSelector(selectMap);
-
-  const defaultTransparency = 0.2;
-
-  const colors = [[54, 162, 235]];
 
   const rows = [
     // <div>
@@ -32,7 +29,10 @@ function MapCursorInformation() {
     cursorInformations?.objectives &&
       Object.keys(cursorInformations.objectives).length > 0 && (
         <Bar
-          height={Object.keys(cursorInformations.objectives).length * 75}
+          height={
+            Object.keys(cursorInformations.objectives).length *
+            horizontalBarHeight
+          }
           options={{
             scales: {
               y: {
@@ -68,21 +68,18 @@ function MapCursorInformation() {
                 data: Object.values(cursorInformations.objectives),
                 backgroundColor: Object.keys(cursorInformations.objectives).map(
                   (objective, index) => {
-                    const [r, g, b] = colors[index % colors.length];
+                    const [r, g, b, a] = bgColors[index % bgColors.length];
                     return `rgba(${r}, ${g}, ${b}, ${
                       Array.from(cursorInformations.missings).includes(
                         objective
                       )
                         ? 0
-                        : defaultTransparency
+                        : a
                     })`;
                   }
                 ),
-                borderColor: Object.keys(cursorInformations.objectives).map(
-                  (_, index) => {
-                    const [r, g, b] = colors[index % colors.length];
-                    return `rgba(${r}, ${g}, ${b})`;
-                  }
+                borderColor: colors.map(
+                  ([r, g, b, a]) => `rgba(${r}, ${g}, ${b}, ${a})`
                 ),
                 borderWidth: 1,
               },
