@@ -113,26 +113,24 @@ class FormScalingGraph extends FormComponent {
             )}
           </small>
         </Form.Label>
-        <this.Overlay>
-          {type == 'Continuous' ||
-          (type == 'Boolean' && (isCalculated as Boolean)) ? (
-            <div style={{ width: 200, height: 200 }}>
-              <Line
-                key={`${this.key}/graph`}
-                options={options}
-                data={generateData(distribution, distribution_value)}
-              />
-            </div>
-          ) : (
-            <div style={{ width: 200, height: 200 }}>
-              <Bar
-                key={`${this.key}/graph`}
-                options={options}
-                data={generateData(distribution, distribution_value)}
-              />
-            </div>
-          )}
-        </this.Overlay>
+        {type == 'Continuous' ||
+        (type == 'Boolean' && (isCalculated as Boolean)) ? (
+          <div style={{ width: 200, height: 200 }}>
+            <Line
+              key={`${this.key}/graph`}
+              options={options}
+              data={generateData(distribution, distribution_value)}
+            />
+          </div>
+        ) : (
+          <div style={{ width: 200, height: 200 }}>
+            <Bar
+              key={`${this.key}/graph`}
+              options={options}
+              data={generateData(distribution, distribution_value)}
+            />
+          </div>
+        )}
       </Form.Group>
     );
   };

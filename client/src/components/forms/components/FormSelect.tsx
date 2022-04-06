@@ -47,11 +47,9 @@ class FormSelect extends FormComponent {
             )}
           </small>
         </Form.Label>
-        <this.Overlay>
-          <Form.Select {...props} id={this.id} size="sm">
-            {options?.map(this.getOption)}
-          </Form.Select>
-        </this.Overlay>
+        <Form.Select {...props} id={this.id} size="sm">
+          {options?.map(this.getOption)}
+        </Form.Select>
       </Form.Group>
     );
   };
