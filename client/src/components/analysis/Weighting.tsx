@@ -20,7 +20,7 @@ import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 
-type ObjectivesHierarchy = {
+interface ObjectivesHierarchy {
   main: string;
   primaries: {
     primary: string[];
@@ -34,9 +34,9 @@ type ObjectivesHierarchy = {
       }[];
     }[];
   };
-};
+}
 
-type WeightsHierarchy = {
+interface WeightsHierarchy {
   primaries: {
     weights: number[];
     secondaries: {
@@ -46,32 +46,36 @@ type WeightsHierarchy = {
       }[];
     }[];
   };
-};
+}
 
 const merge = (
   objectives: ObjectivesHierarchy,
   weights: WeightsHierarchy
-): ObjectivesHierarchy => ({
-  ...objectives,
-  primaries: {
-    ...objectives.primaries,
-    weights: weights.primaries.weights,
-    secondaries: objectives.primaries.secondaries.map(
-      (secondaries, sindex) => ({
-        ...secondaries,
-        weights: weights.primaries.secondaries[sindex]
-          ? weights.primaries.secondaries[sindex].weights
-          : secondaries.weights,
-        attributes: secondaries.attributes.map((attributes, aindex) => ({
-          ...attributes,
-          weights: weights.primaries.secondaries[sindex].attributes
-            ? weights.primaries.secondaries[sindex].attributes[aindex].weights
-            : attributes.weights,
-        })),
-      })
-    ),
-  },
-});
+): ObjectivesHierarchy => {
+  const res = JSON.parse(JSON.stringify(objectives));
+  const newWeights = weights.primaries.weights;
+  if (newWeights) res.primaries.weights = newWeights;
+
+  res.primaries.secondaries.forEach((secondary: any, index: number) => {
+    const newSecondaries = weights.primaries.secondaries;
+    if (!newSecondaries) return;
+
+    const newSecondary = newSecondaries[index];
+    const newWeights = newSecondary?.weights;
+    if (newWeights) secondary.weights = newWeights;
+
+    secondary.attributes.forEach((attribute: any, index: number) => {
+      const newAttributes = newSecondary?.attributes;
+      if (!newAttributes) return;
+
+      const newAttribute = newAttributes[index];
+      const newWeights = newAttribute?.weights;
+      if (newWeights) attribute.weights = newWeights;
+    });
+  });
+
+  return res;
+};
 
 function normalizeWeights({ primaries }: WeightsHierarchy): WeightsHierarchy {
   function normalize(weights: number[]): number[] {
@@ -129,6 +133,7 @@ function Weighting({ t, disabled }: any) {
           key={key('secondary')}
           label={label}
           name={name('weights')}
+          suffix={weight}
           defaultValue={weight}
           type="number"
         />,
@@ -159,6 +164,7 @@ function Weighting({ t, disabled }: any) {
           label={label}
           key={key('primary')}
           name={name('weights')}
+          suffix={weight}
           defaultValue={weight}
           type="number"
         />,
