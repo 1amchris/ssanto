@@ -19,6 +19,7 @@ class SuitabilityCalculator:
         self.cell_size = 20
         self.crs = "epsg:3857"
         self.output_matrix = None
+        self.study_area = None
 
     def get_informations_at(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)

@@ -80,6 +80,7 @@ class ContinuousFeature(Feature):
             self.path,
             self.output_tiff,
             field_name=self.field_name,
+            study_area=self.study_area,
         )
         self.as_array = self.process_raster_as_array()
 
@@ -373,6 +374,7 @@ class CategoricalFeature(ContinuousFeature):
             self.path,
             self.output_tiff,
             field_name="cal_value",
+            study_area=self.study_area,
         )
         self.as_array = self.process_raster_as_array()
 

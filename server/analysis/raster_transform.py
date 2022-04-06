@@ -38,10 +38,18 @@ def get_center_latitude_longitude(shape_file_path):
 
 
 def shape_to_Raster(
-    cell_size, input, output, field_name=False, empty_data_value=DEFAULT_EMPTY_VAL
+    cell_size,
+    input,
+    output,
+    field_name=False,
+    empty_data_value=DEFAULT_EMPTY_VAL,
+    study_area=None,
 ):
     gdf = geopandas.read_file(input)
     gdf = gdf.to_crs({"init": "epsg:3857"})
+    if study_area != None:
+        gdf = geopandas.clip(gdf, study_area.as_gdf)
+
     gdf.to_file(input)
 
     input_driver = ogr.GetDriverByName("ESRI Shapefile")
@@ -92,10 +100,12 @@ def shape_to_Raster(
     return output
 
 
-def process_raster(cell_size, crs, input, output, field_name=False):
+def process_raster(cell_size, crs, input, output, field_name=False, study_area=None):
     print("process_raster", input, "****", output)
     if input.endswith(".shp"):
-        shape_to_Raster(cell_size, input, output, field_name=field_name)
+        shape_to_Raster(
+            cell_size, input, output, field_name=field_name, study_area=study_area
+        )
 
         # --- Convert to Mercantor ---
         file_raster = gdal.Open(output)
