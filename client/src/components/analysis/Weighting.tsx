@@ -19,22 +19,7 @@ import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
-
-interface ObjectivesHierarchy {
-  main: string;
-  primaries: {
-    primary: string[];
-    weights: number[];
-    secondaries: {
-      secondary: string[];
-      weights: number[];
-      attributes: {
-        attribute: string[];
-        weights: number[];
-      }[];
-    }[];
-  };
-}
+import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 
 interface WeightsHierarchy {
   primaries: {
@@ -49,9 +34,9 @@ interface WeightsHierarchy {
 }
 
 const merge = (
-  objectives: ObjectivesHierarchy,
+  objectives: ObjectivesHierarchyModel,
   weights: WeightsHierarchy
-): ObjectivesHierarchy => {
+): ObjectivesHierarchyModel => {
   const res = JSON.parse(JSON.stringify(objectives));
   const newWeights = weights.primaries.weights;
   if (newWeights) res.primaries.weights = newWeights;
@@ -101,7 +86,7 @@ function normalizeWeights({ primaries }: WeightsHierarchy): WeightsHierarchy {
 function Weighting({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
-  const objectives = selector.properties.objectives as ObjectivesHierarchy;
+  const objectives = selector.properties.objectives as ObjectivesHierarchyModel;
   const dispatch = useAppDispatch();
 
   const getErrors = selector.properties.objectivesError;
