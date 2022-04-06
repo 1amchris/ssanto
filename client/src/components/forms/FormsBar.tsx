@@ -4,7 +4,6 @@ import { withTranslation } from 'react-i18next';
 import { call } from 'store/reducers/server';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
-  analysisSuccess,
   injectSetErrorCreator,
   injectSetLoadingCreator,
   selectAnalysis,
@@ -48,7 +47,7 @@ function FormsBar({ children, className, t }: any, key?: string) {
         style={{ background: 'white' }}
       >
         <div className="py-3 w-100">
-          <Button
+          {/* <Button
             tooltipHeader={capitalize(t('Confirm action'))}
             tooltip={
               <div onClick={closeOverlay}>
@@ -95,6 +94,29 @@ function FormsBar({ children, className, t }: any, key?: string) {
             loading={isLoading}
           >
             {capitalize(t('compute suitability'))}
+          </Button> */}
+
+          <Button
+            variant="primary"
+            className="mb-2"
+            onClick={() => {
+              dispatch(
+                injectSetLoadingCreator({
+                  value: 'analysis',
+                  isLoading: true,
+                } as LoadingValue<string>)()
+              );
+              dispatch(
+                call({
+                  target: ServerCallTargets.ComputeSuitability,
+                  onErrorAction: injectSetErrorCreator('analysis'),
+                } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
+              );
+            }}
+            loading={isLoading}
+            disabled={isLoading}
+          >
+            {capitalize(t('analyze'))}
           </Button>
         </div>
       </div>

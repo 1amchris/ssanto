@@ -25,25 +25,23 @@ class FormButton extends FormComponent {
     } = this.getFilteredProps();
 
     return (
-      <this.Overlay>
-        <Button
-          {...props}
-          className={`w-100 ${className} ${
-            visuallyHidden ? 'visually-hidden' : ''
-          }`}
-          variant={variant || 'none'}
-          size={size}
-          id={this.id}
-          key={this.key}
-          type={type}
-        >
-          {loading ? (
-            <Spinner animation="border" size="sm" className="mx-1" />
-          ) : (
-            children
-          )}
-        </Button>
-      </this.Overlay>
+      <Button
+        {...props}
+        className={`w-100 ${className} ${
+          visuallyHidden ? 'visually-hidden' : ''
+        }`}
+        variant={variant || 'none'}
+        size={size}
+        id={this.id}
+        key={this.key}
+        type={type}
+      >
+        {loading ? (
+          <Spinner animation="border" size="sm" className="mx-1" />
+        ) : (
+          children
+        )}
+      </Button>
     );
   };
 }
