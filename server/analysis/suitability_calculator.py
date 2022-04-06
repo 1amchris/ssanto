@@ -22,19 +22,20 @@ class SuitabilityCalculator:
 
     def get_informations_at(self, latitude, longitude):
         x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
-
-        print("x,y = ", x, y)
-        print("Analysis shape = ",
-              self.objectives_arrays_dict["ANALYSIS"].shape)
-
         cell_values = {}
         for key in self.objectives_arrays_dict:
             obj = self.objectives_arrays_dict[key]
-            if y >= 0 and y < obj.shape[0] and x >= 0 and x < obj.shape[1]:
+            if (
+                y >= 0
+                and y < obj.shape[0]
+                and x >= 0
+                and x < obj.shape[1]
+                and self.study_area.as_array[y, x] != DEFAULT_EMPTY_VAL
+            ):
+
                 cell_values[key] = obj[y, x]
             else:
                 return {}
-        print(self.get_missing_at(latitude, longitude))
         return cell_values
 
     def get_array(self):
@@ -54,12 +55,7 @@ class SuitabilityCalculator:
     def geo_coordinate_to_matrix_coordinate(self, latitude, longitude):
         src = gdal.Open(os.path.join(self.path, "output_study_area.tiff"))
         ulx, _, _, uly, _, _ = src.GetGeoTransform()
-        projection = osr.SpatialReference(wkt=src.GetProjection())
-        target_epsg = int(projection.GetAttrValue("AUTHORITY", 1))
-
-        print("target_epsg = ", target_epsg)
         x, y = convert_projection(4326, 3857, latitude, longitude)
-
         cx = int((x - ulx) // self.cell_size)
         cy = -int((y - uly) // self.cell_size) - 1
         return cx, cy
@@ -121,7 +117,7 @@ class SuitabilityCalculator:
         input_path = os.path.join(self.path, input)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
-        print("categories", categories)
+
         categories_dic = dict(zip(categories, categories_value))
         self.objectives[objective_name].add_categorical_file(
             id,
@@ -176,8 +172,7 @@ class SuitabilityCalculator:
 
         inDs = gdal.Open(study_area_path)
         driver = inDs.GetDriver()
-        outDs = driver.Create(output_path, len(
-            matrix[0]), len(matrix), 1, GDT_Int16)
+        outDs = driver.Create(output_path, len(matrix[0]), len(matrix), 1, GDT_Int16)
         # write the data
         outBand = outDs.GetRasterBand(1)
         outBand.WriteArray(matrix, 0, 0)
@@ -206,8 +201,7 @@ class SuitabilityCalculator:
                 )
             )
             geoms = list(results)
-            gpd_polygonized_raster = gp.GeoDataFrame.from_features(
-                geoms, crs=c)
+            gpd_polygonized_raster = gp.GeoDataFrame.from_features(geoms, crs=c)
             # gpd_polygonized_raster = gpd_polygonized_raster[gpd_polygonized_raster['NDVI'] > 0]
             # gpd_polygonized_raster.to_file('temp/dataframe.geojson', driver='GeoJSON')
 
@@ -216,8 +210,7 @@ class SuitabilityCalculator:
                 4326
             )  # Where these numbers come from?
             output_geojson_name = "analysis.geojson"
-            gpd_polygonized_raster.to_file(
-                os.path.join(self.path, output_geojson_name))
+            gpd_polygonized_raster.to_file(os.path.join(self.path, output_geojson_name))
             return gpd_polygonized_raster
 
     def process_data(self):
@@ -226,8 +219,7 @@ class SuitabilityCalculator:
         output_matrix = np.zeros(self.study_area.as_array.shape)
         total_weight = 0
         for obj in self.objectives:
-            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix(
-            )
+            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix()
             partial_missing_mask_dict = self.objectives[obj].get_missing_mask()
             self.missing_mask_dict.update(partial_missing_mask_dict)
             objective_weight = self.objectives[obj].weight
@@ -238,8 +230,6 @@ class SuitabilityCalculator:
 
         output_matrix = output_matrix / total_weight * 100
         mask = self.study_area.as_array == DEFAULT_EMPTY_VAL
-        print(self.study_area.as_array)
-        print("MASK", mask)
         output_matrix[mask] = -1
         self.output_matrix = output_matrix
         self.objectives_arrays_dict["ANALYSIS"] = output_matrix / 100
