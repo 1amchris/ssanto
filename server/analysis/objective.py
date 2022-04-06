@@ -17,7 +17,7 @@ class Objective:
 
     def add_file(
         self,
-        id,
+        attribute_index,
         file_name,
         path,
         output_tiff,
@@ -26,8 +26,8 @@ class Objective:
         missing_data_default_value,
         field_name=False,
     ):
-        self.subobjective[id] = ContinuousFeature(
-            id,
+        self.subobjective[attribute_index] = ContinuousFeature(
+            attribute_index,
             file_name,
             path,
             output_tiff,
@@ -43,7 +43,7 @@ class Objective:
     # TODO
     def add_categorical_file(
         self,
-        id,
+        attribute_index,
         file_name,
         path,
         output_tiff,
@@ -56,8 +56,8 @@ class Objective:
         """
         categories est un dict : {category: value}
         """
-        self.subobjective[id] = CategoricalFeature(
-            id,
+        self.subobjective[attribute_index] = CategoricalFeature(
+            attribute_index,
             file_name,
             path,
             output_tiff,
@@ -73,7 +73,7 @@ class Objective:
 
     def add_distance_file(
         self,
-        id,
+        attribute_index,
         file_name,
         path,
         output_tiff,
@@ -87,8 +87,8 @@ class Objective:
         threshold=0.8,
         field_name=False,
     ):
-        self.subobjective[id] = DistanceFeature(
-            id,
+        self.subobjective[attribute_index] = DistanceFeature(
+            attribute_index,
             file_name,
             path,
             output_tiff,
@@ -110,7 +110,7 @@ class Objective:
         new_objective = Objective(
             name, weight, self.cell_size, self.crs, self.study_area
         )
-        self.subobjective[id] = new_objective
+        self.subobjective[name] = new_objective
 
     def process_value_matrix(self):
         total_weight = 0
@@ -124,7 +124,8 @@ class Objective:
                 file
             ].process_value_matrix()
 
-            subobjective_missing_mask = self.subobjective[file].get_missing_mask()
+            subobjective_missing_mask = self.subobjective[file].get_missing_mask(
+            )
 
             subobjective_arrays_dict[self.subobjective[file].name] = value_matrix
             subobjective_arrays_dict.update(subsubobjective_arrays_dict)
