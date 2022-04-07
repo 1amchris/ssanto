@@ -24,7 +24,7 @@ function FormsBar({ children, className, t }: any, key?: string) {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const confirmActionModal = (
-    <Modal show={showConfirmDialog} centered>
+    <Modal show={showConfirmDialog} centered animation={false}>
       <Modal.Header>
         <Modal.Title>{capitalize(t('confirm action'))}</Modal.Title>
       </Modal.Header>
