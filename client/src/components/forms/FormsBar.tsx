@@ -14,24 +14,6 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import LoadingValue from 'models/LoadingValue';
 import { Modal } from 'react-bootstrap';
 
-interface ModalModel {
-  header: React.ReactElement | string | number;
-  body: React.ReactElement | string | number;
-  footer: React.ReactElement | string | number;
-}
-
-function VerticallyCenteredModal({ header, body, footer, ...props }: any) {
-  return (
-    <Modal {...props} aria-labelledby="contained-modal-title-vcenter" centered>
-      <Modal.Header>
-        <Modal.Title>{header}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>{body}</Modal.Body>
-      <Modal.Footer>{footer}</Modal.Footer>
-    </Modal>
-  );
-}
-
 function FormsBar({ children, className, t }: any, key?: string) {
   const selector = useAppSelector(selectAnalysis);
   const dispatch = useAppDispatch();
@@ -41,46 +23,53 @@ function FormsBar({ children, className, t }: any, key?: string) {
 
   const [showDialog, setShowDialog] = useState(false);
 
-  const modalOptions = {
-    header: capitalize(t('confirm action')),
-    body: (
-      <p className="d-flex flex-wrap">
-        This action will require recomputation, which in turn will take time.
-        Any unsaved results will be overwritten by this operation. <br />{' '}
-        Proceed anyway?
-      </p>
-    ),
-    footer: (
-      <React.Fragment>
-        <Button
-          variant="outline-primary"
-          loading={isLoading}
-          disabled={isLoading}
-          onClick={() => {
-            dispatch(
-              injectSetLoadingCreator({
-                value: 'analysis',
-                isLoading: true,
-              } as LoadingValue<string>)()
-            );
-            dispatch(
-              call({
-                target: ServerCallTargets.ComputeSuitability,
-                onErrorAction: injectSetErrorCreator('analysis'),
-              } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
-            );
-            setShowDialog(false);
-          }}
-        >
-          {capitalize(t('proceed'))}
-        </Button>
-        <Button variant="danger" onClick={() => setShowDialog(false)}>
-          {capitalize(t('cancel'))}
-        </Button>
-      </React.Fragment>
-    ),
-    show: showDialog,
-  };
+  const confirmActionModal = (
+    <Modal show={showDialog} centered>
+      <Modal.Header>
+        <Modal.Title>{capitalize(t('confirm action'))}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {
+          <p className="d-flex flex-wrap">
+            This action will require recomputation, which in turn will take
+            time. Any unsaved results will be overwritten by this operation.{' '}
+            <br /> Proceed anyway?
+          </p>
+        }
+      </Modal.Body>
+      <Modal.Footer>
+        {
+          <React.Fragment>
+            <Button
+              variant="outline-primary"
+              loading={isLoading}
+              disabled={isLoading}
+              onClick={() => {
+                dispatch(
+                  injectSetLoadingCreator({
+                    value: 'analysis',
+                    isLoading: true,
+                  } as LoadingValue<string>)()
+                );
+                dispatch(
+                  call({
+                    target: ServerCallTargets.ComputeSuitability,
+                    onErrorAction: injectSetErrorCreator('analysis'),
+                  } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
+                );
+                setShowDialog(false);
+              }}
+            >
+              {capitalize(t('proceed'))}
+            </Button>
+            <Button variant="danger" onClick={() => setShowDialog(false)}>
+              {capitalize(t('cancel'))}
+            </Button>
+          </React.Fragment>
+        }
+      </Modal.Footer>
+    </Modal>
+  );
 
   return (
     <div
@@ -122,7 +111,7 @@ function FormsBar({ children, className, t }: any, key?: string) {
         </div>
       </div>
 
-      <VerticallyCenteredModal {...modalOptions} />
+      {confirmActionModal}
     </div>
   );
 }
