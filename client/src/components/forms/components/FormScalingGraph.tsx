@@ -95,7 +95,7 @@ class FormScalingGraph extends FormComponent {
       guide_hash = '',
       ...props
     } = this.getFilteredProps();
-    console.log('isCalculated', isCalculated, isCalculated as Boolean);
+    // console.log('isCalculated', isCalculated, isCalculated as Boolean);
 
     return (
       <Form.Group
