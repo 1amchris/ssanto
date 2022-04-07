@@ -21,10 +21,10 @@ function FormsBar({ children, className, t }: any, key?: string) {
   const isLoading = selector.properties.analysisLoading;
   const error = selector.properties.analysisError;
 
-  const [showDialog, setShowDialog] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const confirmActionModal = (
-    <Modal show={showDialog} centered>
+    <Modal show={showConfirmDialog} centered>
       <Modal.Header>
         <Modal.Title>{capitalize(t('confirm action'))}</Modal.Title>
       </Modal.Header>
@@ -57,12 +57,15 @@ function FormsBar({ children, className, t }: any, key?: string) {
                     onErrorAction: injectSetErrorCreator('analysis'),
                   } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
                 );
-                setShowDialog(false);
+                setShowConfirmDialog(false);
               }}
             >
               {capitalize(t('proceed'))}
             </Button>
-            <Button variant="danger" onClick={() => setShowDialog(false)}>
+            <Button
+              variant="danger"
+              onClick={() => setShowConfirmDialog(false)}
+            >
               {capitalize(t('cancel'))}
             </Button>
           </React.Fragment>
@@ -101,7 +104,7 @@ function FormsBar({ children, className, t }: any, key?: string) {
             variant="primary"
             className="mb-2"
             onClick={() => {
-              setShowDialog(true);
+              setShowConfirmDialog(true);
             }}
             loading={isLoading}
             disabled={isLoading}
