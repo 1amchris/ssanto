@@ -86,6 +86,10 @@ class Analysis(Serializable):
     def __repr__(self) -> str:
         return json.dumps(self.serialize())
 
+    def update_suitability_threshold(self, value):
+        self.suitability_threshold.notify(value)
+        self.compute_suitability_above_threshold()
+
     def compute_suitability_categories(self):
         if self.suitability_calculator is not None and (array := self.suitability_calculator.get_array()).any():
             study_area = self.suitability_calculator.get_study_area()
@@ -116,7 +120,7 @@ class Analysis(Serializable):
                 GraphMaker.compute_fraction_above_threshold(
                     self.suitability_calculator.study_area,
                     array,
-                    min(1, max(0, threshold)),
+                    min(100, max(0, threshold)),
                 )
             )
         else:
