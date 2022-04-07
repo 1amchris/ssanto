@@ -5,7 +5,7 @@ import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
 import ShapefileModel, { DefaultShapefile } from 'models/ShapefileModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
-import objectivesData from 'data/objectives.json';
+//import objectivesData from 'data/objectives.json';
 import { call } from 'store/reducers/server';
 
 import {
@@ -59,6 +59,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
+  const objectivesData = selector.properties.objectives_data;
   const dispatch = useAppDispatch();
   const files =
     selector.properties['shapefiles'].length > 0
@@ -114,7 +115,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
     const getAllMainOptions = () => {
       let options: string[] = [];
-      objectivesData?.mains.map((json: { main: string }) => {
+      objectivesData.mains.map((json: { main: string }) => {
         options.push(json.main);
       });
       return options;
@@ -123,7 +124,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const getAllPrimaryOptions = (main: string) => {
       let options: string[] = [];
 
-      objectivesData.mains.map(json => {
+      objectivesData.mains.map((json: { main: string; primaries: any[] }) => {
         if (json.main == main) {
           json.primaries?.map(json => {
             options.push(json.primary);
@@ -135,29 +136,33 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
     const getAllSecondaryOptions = (primary: string) => {
       let options: string[] = [];
-      objectivesData?.mains[0]?.primaries?.map(json => {
-        if (json.primary == primary) {
-          json.secondaries.map(json => {
-            options.push(json.secondary);
-          });
+      objectivesData?.mains[0]?.primaries?.map(
+        (json: { primary: string; secondaries: any[] }) => {
+          if (json.primary == primary) {
+            json.secondaries.map(json => {
+              options.push(json.secondary);
+            });
+          }
         }
-      });
+      );
       return options;
     };
 
     const getAllAttributesOptions = (primary: string, secondary: string) => {
       let options: string[] = [];
-      objectivesData?.mains[0]?.primaries?.map(json => {
-        if (json.primary == primary) {
-          json.secondaries.map(json => {
-            if (json.secondary == secondary) {
-              json.attributes.map(json => {
-                options.push(json.attribute);
-              });
-            }
-          });
+      objectivesData?.mains[0]?.primaries?.map(
+        (json: { primary: string; secondaries: any[] }) => {
+          if (json.primary == primary) {
+            json.secondaries.map(json => {
+              if (json.secondary == secondary) {
+                json.attributes.map((json: { attribute: string }) => {
+                  options.push(json.attribute);
+                });
+              }
+            });
+          }
         }
-      });
+      );
       return options;
     };
 

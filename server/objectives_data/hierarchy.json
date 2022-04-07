@@ -1,0 +1,423 @@
+{
+  "name": "ObjectivesHierarchy",
+  "mains": [
+    {
+      "main": "Needs",
+      "primaries": [
+        {
+          "primary": "Biophysical",
+          "secondaries": [
+            {
+              "secondary": "Soil Type",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Hydraulic Conductivity",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Contamination",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Landfill Distance",
+               
+              "nbs": [
+                4,
+                0,
+                2,
+                5,
+                6
+              ]
+            },
+            {
+              "secondary": "Slope",
+               
+              "nbs": [
+                0,
+                4,
+                2,
+                6
+              ]
+            },
+            {
+              "secondary": "Building Footprints",
+              "otherName": "Building foundations",
+               
+              "nbs": [
+                0,
+                2,
+                3,
+                5,
+                1,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Soil Salinity",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Groundwater Table",
+               
+              "nbs": [2]
+            },
+            {
+              "secondary": "Greenery",
+               
+              "nbs": [
+                0,
+                2,
+                3,
+                6,
+                4
+              ]
+            },
+            {
+              "secondary": "Rainfall Variability",
+               
+              "nbs": [1, 3]
+            },
+            {
+              "secondary": "Surface Water",
+               
+              "nbs": [1, 2]
+            },
+            {
+              "secondary": "Waterways Distance to",
+               
+              "nbs": [4, 0, 5, 6]
+            },
+            {
+              "secondary": "Pre-human Wetland Structure",
+               
+              "nbs": [0, 5, 6]
+            }
+          ]
+        },
+        {
+          "primary": "Socio-Economic",
+          "secondaries": [
+            {
+              "secondary": "Education Level",
+               
+              "nbs": [
+                0,
+                1,
+                4,
+                2,
+                3,
+                6
+              ]
+            },
+            {
+              "secondary": "Relative Wealth",
+               
+              "nbs": [1]
+            },
+            {
+              "secondary": "Environmental Awareness",
+               
+              "nbs": [
+                1,
+                4,
+                0,
+                2,
+                3,
+                6
+              ]
+            },
+            {
+              "secondary": "Sense of Community",
+               
+              "nbs": [
+                4,
+                0,
+                2,
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "primary": "Urban Form",
+          "secondaries": [
+            {
+              "secondary": "Airports Distance to",
+               
+              "nbs": [5, 6]
+            },
+            {
+              "secondary": "Capital Works Program",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Utility Infrastructure",
+               
+              "nbs": [
+                0,
+                2,
+                5,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Drainage Infrastructure Distance",
+               
+              "nbs": [
+                4,
+                0,
+                2,
+                3,
+                5,
+                6
+              ]
+            },
+            {
+              "secondary": "Street width/type",
+               
+              "nbs": [4, 0, 5, 6]
+            },
+            {
+              "secondary": "Planned (re)Developments",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Cultural Heritage Sites",
+               
+              "nbs": [
+                4,
+                0,
+                2,
+                3,
+                5,
+                6
+              ]
+            },
+            {
+              "secondary": "Natural Heritage Sites",
+               
+              "nbs": [
+                4,
+                0,
+                2,
+                5,
+                6
+              ]
+            },
+            {
+              "secondary": "Geological Heritage Sites",
+               
+              "nbs": [
+                4,
+                0,
+                2,
+                5,
+                6
+              ]
+            },
+            {
+              "secondary": "Land Value",
+               
+              "nbs": [
+                0,
+                3,
+                5,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Land Ownership",
+               
+              "nbs": [4, 0, 2]
+            },
+            {
+              "secondary": "Lot Size",
+               
+              "nbs": [5, 6]
+            },
+            {
+              "secondary": "Land Use Type",
+               
+              "nbs": [
+                0,
+                2,
+                3,
+                5,
+                4,
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "primary": "Provisioning",
+          "secondaries": [
+            {
+              "secondary": "Irrigation Demand Distance",
+              "otherName": "Proximity to water demand",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Current Rainwater Harvesting",
+               
+              "nbs": []
+            }
+          ]
+        },
+        {
+          "primary": "Regulating",
+          "secondaries": [
+            {
+              "secondary": "Heat Vulnerability",
+               
+              "nbs": [
+                0,
+                2,
+                3,
+                5,
+                1,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Urban Heat Island Effect",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Effective Imperviousness",
+               
+              "nbs": [
+                0,
+                2,
+                3,
+                5,
+                1,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Total Imperviousness",
+               
+              "nbs": [
+                0,
+                2,
+                3,
+                5,
+                1,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Current WSUD",
+               
+              "nbs": [
+                1,
+                0,
+                2,
+                3,
+                5,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Floods",
+               
+              "nbs": [
+                0,
+                2,
+                3,
+                5,
+                1,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Flood Risk",
+               
+              "nbs": []
+            }
+          ]
+        },
+        {
+          "primary": "Cultural",
+          "secondaries": [
+            {
+              "secondary": "Visibility",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Visibility Distance ",
+               
+              "nbs": [
+                0,
+                2,
+                3,
+                5,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Green Cover",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Recreation",
+               
+              "nbs": [5, 6]
+            },
+            {
+              "secondary": "Social Cohesion",
+               
+              "nbs": [0, 5, 6]
+            }
+          ]
+        },
+        {
+          "primary": "Habitat",
+          "secondaries": [
+            {
+              "secondary": "Biodiversity",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Connectedness",
+              "otherName": "Connected impervious area",
+               
+              "nbs": []
+            },
+            {
+              "secondary": "Total Habitat",
+               
+              "nbs": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "main": "opportunities",
+      "primaries": []
+    }
+  ]
+}

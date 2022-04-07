@@ -9,6 +9,7 @@ enum ServerSubscriptionTargets {
   AnalysisParameters = 'parameters',
   AnalysisStudyArea = 'study_area',
   AnalysisNbsSystem = 'nbs_system',
+  AnalysisObjectivesData = 'objectives_data',
   AnalysisObjectives = 'objectives',
   AnalysisValueScaling = 'value_scaling',
   AnalysisDefaultMissingData = 'default_missing_data',

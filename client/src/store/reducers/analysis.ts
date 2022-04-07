@@ -23,7 +23,10 @@ export const analysisSlice = createSlice({
       files: [] as FileMetadataModel[],
       shapefiles: [],
       default_missing_data: 0,
-
+      objectives_data: {
+        name: 'ObjectivesHierarchy',
+        mains: [] as any,
+      },
       objectives: {
         main: 'Needs',
         primaries: {

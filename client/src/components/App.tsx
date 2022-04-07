@@ -92,6 +92,12 @@ function App() {
     );
     dispatch(
       subscribe({
+        subject: ServerSubscriptionTargets.AnalysisObjectivesData,
+        onAction: injectReceivePropertiesCreator('objectives_data'),
+      } as SubscriptionModel<string, string>)
+    );
+    dispatch(
+      subscribe({
         subject: ServerSubscriptionTargets.AnalysisObjectives,
         onAction: injectReceivePropertiesCreator('objectives'),
       } as SubscriptionModel<string, string>)
