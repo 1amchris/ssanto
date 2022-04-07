@@ -49,6 +49,17 @@ namespace LayersUtils {
 
     return layersGroups;
   }
+
+  export function removeGroup(
+    layersGroups: LayersGroups,
+    group: string
+  ): LayersGroups {
+    if (layersGroups.hasOwnProperty(group)) {
+      delete layersGroups[group];
+    }
+
+    return layersGroups;
+  }
 }
 
 export default LayersUtils;

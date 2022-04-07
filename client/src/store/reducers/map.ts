@@ -65,7 +65,7 @@ export const mapSlice = createSlice({
     },
     cleanAnalysisLayers: state => {
       console.log('cleanAnalysisLayers');
-      //state.layers = LayersUtils.removeGroup(state.layers, 'analysis');
+      state.layers = LayersUtils.removeGroup(state.layers, 'sub_analysis');
     },
     upsertLayer: (
       state,

@@ -48,7 +48,7 @@ const AnalysisMiddleware: Middleware =
           if (area == undefined) return;
           dispatch(
             upsertLayer({
-              group: 'analysis',
+              group: 'sub_analysis',
               name: file_name,
               geojson: JSON.parse(area),
             } as InsertLayerModel)
