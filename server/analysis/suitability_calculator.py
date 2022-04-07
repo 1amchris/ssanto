@@ -241,6 +241,22 @@ class SuitabilityCalculator:
         output_matrix[mask] = -1
         self.output_matrix = output_matrix
         self.objectives_arrays_dict["ANALYSIS"] = output_matrix / 100
-        path = self.matrix_to_raster(output_matrix)
-        analysis_df = self.tiff_to_geojson(path)
-        return analysis_df.to_json()
+  
+        #self.objectives_arrays_dict[]
+
+        return output_matrix
+
+
+    def process_sub_objectives(self):
+        sub_objectives_json ={}
+        for key in self.objectives_arrays_dict:
+            if key != 'ANALYSIS':
+                output_matrix = self.objectives_arrays_dict[key]*100
+                mask = self.study_area.as_array == DEFAULT_EMPTY_VAL
+                output_matrix[mask] = -1
+                path = self.matrix_to_raster(output_matrix)
+                analysis_df = self.tiff_to_geojson(path)
+                sub_objectives_json[key]={'file_name':key, 'area': analysis_df.to_json()}
+
+        return sub_objectives_json
+        

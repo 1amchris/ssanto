@@ -73,6 +73,7 @@ class Analysis(Serializable):
         self.layers = subjects_manager.create("layers", {})
 
         self.analysis = subjects_manager.create("analysis", {})
+        self.sub_analysis = subjects_manager.create("sub_analysis", [])
 
         # suitability categories: ([0-10[, [10-20[, [20-30[, [30-40[, [40-50[, [50-60[, [60-70[, [70-80[, [80-90[, [90-100]) or None
         self.suitability_categories = subjects_manager.create(
@@ -367,14 +368,20 @@ class Analysis(Serializable):
                     # self.suitability_calculator.objectives[primary].add_file(
                     #    index, path, "output.tiff", int(weight_secondary), scaling_function)
 
-            geo_json = self.suitability_calculator.process_data()
+            output_matrix = self.suitability_calculator.process_data()
+            path = self.suitability_calculator.matrix_to_raster(output_matrix)
+            analysis_df = self.suitability_calculator.tiff_to_geojson(path)
+
+            sub_objectives_json = self.suitability_calculator.process_sub_objectives()
 
             self.compute_suitability_above_threshold()
             self.compute_suitability_categories()
 
-            return_value = {"file_name": "current analysis", "area": geo_json}
+            return_value = {"file_name": "current analysis",
+                            "area": analysis_df.to_json()}
             # return {"file_name": "current analysis", "area": geo_json}
         else:
             return_value = {"file_name": "current analysis", "area": {}}
         print("end of analysis")
+        self.sub_analysis.notify(sub_objectives_json)
         self.analysis.notify(return_value)

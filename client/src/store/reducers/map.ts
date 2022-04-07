@@ -63,6 +63,10 @@ export const mapSlice = createSlice({
     updateLayers: (state, { payload: layers }: PayloadAction<any>) => {
       state.update_layers = layers;
     },
+    cleanAnalysisLayers: state => {
+      console.log('cleanAnalysisLayers');
+      //state.layers = LayersUtils.removeGroup(state.layers, 'analysis');
+    },
     upsertLayer: (
       state,
       { payload: layer }: PayloadAction<InsertLayerModel>
@@ -84,6 +88,7 @@ export const {
   updateCursorInformations,
   updateZoom,
   updateLayers,
+  cleanAnalysisLayers,
   upsertLayer,
   removeLayer,
   updateSuitabilityThreshold,
