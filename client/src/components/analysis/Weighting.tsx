@@ -92,105 +92,100 @@ function Weighting({ t, disabled }: any) {
   const getErrors = selector.properties.objectivesError;
   const isLoading = selector.properties.objectivesLoading;
 
-  let controls = [];
-  if (objectives !== undefined && objectives.primaries !== undefined) {
-    const attributesFactory = ({ name, key, label, weight }: FactoryProps) => {
-      return [
-        <Control
-          key={key('attribute')}
-          label={label}
-          name={name('weights')}
-          defaultValue={weight}
-          type="number"
-        />,
-      ];
-    };
-
-    const secondariesFactory = ({
-      name,
-      key,
-      label,
-      weight,
-      attributes,
-    }: FactoryProps) => {
-      return [
-        <Control
-          key={key('secondary')}
-          label={label}
-          name={name('weights')}
-          suffix={weight}
-          defaultValue={weight}
-          type="number"
-        />,
-        attributes.attribute.length > 1 && (
-          <SimpleList
-            hideLabel
-            key={key('attributes')}
-            name={name('attributes')}
-            factory={attributesFactory}
-            controls={attributes.attribute.map((_: any, index: number) => ({
-              label: attributes.attribute[index],
-              weight: attributes.weights[index],
-            }))}
-          />
-        ),
-      ];
-    };
-
-    const primariesFactory = ({
-      name,
-      key,
-      label,
-      weight,
-      secondaries,
-    }: FactoryProps) => {
-      return [
-        <Control
-          label={label}
-          key={key('primary')}
-          name={name('weights')}
-          suffix={weight}
-          defaultValue={weight}
-          type="number"
-        />,
-        (secondaries.secondary.length > 1 ||
-          (secondaries.secondary.length === 1 &&
-            secondaries.attributes[0].attribute.length > 1)) && (
-          <SimpleList
-            hideLabel
-            key={key('secondaries')}
-            name={name('secondaries')}
-            factory={secondariesFactory}
-            controls={secondaries.secondary.map((_: any, index: number) => ({
-              label: secondaries.secondary[index],
-              weight: secondaries.weights[index],
-              attributes: secondaries.attributes[index],
-            }))}
-          />
-        ),
-      ];
-    };
-
-    controls = [
-      <SimpleList
-        label={objectives.main}
-        key={'primaries'}
-        name={'primaries'}
-        factory={primariesFactory}
-        controls={objectives.primaries.primary.map((_: any, index: number) => ({
-          label: objectives.primaries.primary[index],
-          weight: objectives.primaries.weights[index],
-          secondaries: objectives.primaries.secondaries[index],
-        }))}
+  const attributesFactory = ({ name, key, label, weight }: FactoryProps) => {
+    return [
+      <Control
+        key={key('attribute')}
+        label={label}
+        name={name('weights')}
+        defaultValue={weight}
+        type="number"
       />,
-      <Spacer />,
-      <Button variant="outline-primary" loading={isLoading}>
-        {capitalize(t('apply'))}
-      </Button>,
     ];
-  } else {
-    controls = [<></>];
-  }
+  };
+
+  const secondariesFactory = ({
+    name,
+    key,
+    label,
+    weight,
+    attributes,
+  }: FactoryProps) => {
+    return [
+      <Control
+        key={key('secondary')}
+        label={label}
+        name={name('weights')}
+        suffix={weight}
+        defaultValue={weight}
+        type="number"
+      />,
+      attributes.attribute.length > 1 && (
+        <SimpleList
+          hideLabel
+          key={key('attributes')}
+          name={name('attributes')}
+          factory={attributesFactory}
+          controls={attributes.attribute.map((_: any, index: number) => ({
+            label: attributes.attribute[index],
+            weight: attributes.weights[index],
+          }))}
+        />
+      ),
+    ];
+  };
+
+  const primariesFactory = ({
+    name,
+    key,
+    label,
+    weight,
+    secondaries,
+  }: FactoryProps) => {
+    return [
+      <Control
+        label={label}
+        key={key('primary')}
+        name={name('weights')}
+        suffix={weight}
+        defaultValue={weight}
+        type="number"
+      />,
+      (secondaries.secondary.length > 1 ||
+        (secondaries.secondary.length === 1 &&
+          secondaries.attributes[0].attribute.length > 1)) && (
+        <SimpleList
+          hideLabel
+          key={key('secondaries')}
+          name={name('secondaries')}
+          factory={secondariesFactory}
+          controls={secondaries.secondary.map((_: any, index: number) => ({
+            label: secondaries.secondary[index],
+            weight: secondaries.weights[index],
+            attributes: secondaries.attributes[index],
+          }))}
+        />
+      ),
+    ];
+  };
+
+  const controls = [
+    <SimpleList
+      label={objectives.main}
+      key={'primaries'}
+      name={'primaries'}
+      factory={primariesFactory}
+      controls={objectives.primaries.primary.map((_: any, index: number) => ({
+        label: objectives.primaries.primary[index],
+        weight: objectives.primaries.weights[index],
+        secondaries: objectives.primaries.secondaries[index],
+      }))}
+    />,
+    <Spacer />,
+    <Button variant="outline-primary" loading={isLoading}>
+      {capitalize(t('apply'))}
+    </Button>,
+  ];
 
   return (
     <Form
