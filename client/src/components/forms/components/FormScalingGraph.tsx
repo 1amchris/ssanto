@@ -116,10 +116,11 @@ class FormScalingGraph extends FormComponent {
         )}
         {type === 'Categorical' && distribution_value && (
           <Bar
+            // For some reason, this Bar chart's height appears 1.6 times thicker?
+            height={(distribution_value.length * horizontalBarHeight) / 1.6}
             width="200"
             options={barOptions}
             key={`${this.key}/graph`}
-            // height={distribution.length * horizontalBarHeight}
             data={generateBarData(distribution, distribution_value)}
           />
         )}
