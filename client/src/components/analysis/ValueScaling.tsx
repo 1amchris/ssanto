@@ -9,7 +9,6 @@ import {
   Spacer,
   Control,
   SimpleList,
-  ScalingGraph,
 } from 'components/forms/components';
 import {
   selectAnalysis,
@@ -22,7 +21,6 @@ import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 import Collapsible from 'components/Collapsible';
-import React from 'react';
 
 interface ScalesHierarchy {
   primaries: {
@@ -109,13 +107,6 @@ function ValueScaling({ t, disabled }: any) {
             })
           )}
         />
-        <ScalingGraph
-          key={key('graph')}
-          distribution={dataset.properties.distribution}
-          distribution_value={dataset.properties.distribution_value}
-          type={dataset.type}
-          isCalculated={dataset.isCalculated}
-        />
       </Collapsible>
     );
   };
@@ -140,13 +131,6 @@ function ValueScaling({ t, disabled }: any) {
           prefix={<span>f(x) =</span>}
           required
         />
-        <ScalingGraph
-          key={key('graph')}
-          distribution={dataset.properties.distribution}
-          distribution_value={dataset.properties.distribution_value}
-          type={dataset.type}
-          isCalculated={dataset.isCalculated}
-        />
       </Collapsible>
     );
   };
@@ -168,7 +152,7 @@ function ValueScaling({ t, disabled }: any) {
     label,
     attributes,
   }: FactoryProps) => {
-    return [
+    return (
       <SimpleList
         hideLabel
         hideArrow
@@ -180,8 +164,8 @@ function ValueScaling({ t, disabled }: any) {
           label: attributes.attribute[index],
           dataset: attributes.datasets[index],
         }))}
-      />,
-    ];
+      />
+    );
   };
 
   const primariesFactory = ({
@@ -190,7 +174,7 @@ function ValueScaling({ t, disabled }: any) {
     label,
     secondaries,
   }: FactoryProps) => {
-    return [
+    return (
       <SimpleList
         hideLabel
         hideArrow
@@ -202,8 +186,8 @@ function ValueScaling({ t, disabled }: any) {
           label: secondaries.secondary[index],
           attributes: secondaries.attributes[index],
         }))}
-      />,
-    ];
+      />
+    );
   };
 
   const controls = [
