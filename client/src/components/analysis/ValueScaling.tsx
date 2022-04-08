@@ -1,4 +1,4 @@
-import { capitalize } from 'lodash';
+import { capitalize, cloneDeep } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
@@ -46,7 +46,7 @@ const merge = (
   const getDatasets = (sindex: number, aindex: number) =>
     scales.primaries.secondaries[sindex].attributes[aindex]?.datasets;
 
-  const res = JSON.parse(JSON.stringify(objectives));
+  const res = cloneDeep(objectives);
   res.primaries.secondaries.forEach(({ attributes }: any, sindex: number) => {
     attributes.forEach(({ datasets }: any, aindex: number) => {
       datasets.forEach(({ properties }: any, dindex: number) => {
