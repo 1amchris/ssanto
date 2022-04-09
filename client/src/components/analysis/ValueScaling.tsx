@@ -1,322 +1,217 @@
-import { createRef, ReactElement, RefObject, useState } from 'react';
-import { capitalize, values } from 'lodash';
+import { capitalize, cloneDeep } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import FormSelectOptionModel from '../../models/form/FormSelectOptionModel';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import Form from 'components/forms/Form';
+import { call } from 'store/reducers/server';
 
 import {
-  injectSetErrorCreator,
-  injectSetLoadingCreator,
-  selectAnalysis,
-} from '../../store/reducers/analysis';
-import React from 'react';
-import {
   Button,
-  Control,
-  ScalingGraph,
-  SimpleList,
   Spacer,
+  Control,
+  SimpleList,
 } from 'components/forms/components';
-import { FactoryProps } from 'components/forms/components/FormList';
-import Collapsible from 'components/Collapsible';
-import Form from 'components/forms/Form';
+import {
+  selectAnalysis,
+  injectSetLoadingCreator,
+  injectSetErrorCreator,
+} from 'store/reducers/analysis';
+import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import LoadingValue from 'models/LoadingValue';
-import { call } from 'store/reducers/server';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
-import ValueScalingModel from 'models/ValueScalingModel';
+import Collapsible from 'components/Collapsible';
 
-function ValueScaling({ t }: any) {
+interface ScalesHierarchy {
+  primaries: {
+    secondaries: {
+      attributes: {
+        datasets: {
+          properties: {
+            missingDataSuitability: string;
+            distribution_value: string[];
+          };
+        }[];
+      }[];
+    }[];
+  };
+}
+
+const merge = (
+  objectives: ObjectivesHierarchyModel,
+  scales: ScalesHierarchy
+): ObjectivesHierarchyModel => {
+  const getDatasets = (sindex: number, aindex: number) =>
+    scales.primaries.secondaries[sindex].attributes[aindex]?.datasets;
+
+  const res = cloneDeep(objectives);
+  res.primaries.secondaries.forEach(({ attributes }: any, sindex: number) => {
+    attributes.forEach(({ datasets }: any, aindex: number) => {
+      datasets.forEach(({ properties }: any, dindex: number) => {
+        const datasets = getDatasets(sindex, aindex);
+        if (datasets && datasets[dindex] && datasets[dindex].properties)
+          Object.entries(datasets[dindex].properties).forEach(
+            ([key, value]) => (properties[key] = value)
+          );
+      });
+    });
+  });
+
+  return res;
+};
+
+function ValueScaling({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
-  const objectives = selector.properties[property] as ObjectivesHierarchyModel;
-  const localDefaultMissingData = selector.properties[
-    'default_missing_data'
-  ] as number;
-  const getErrors = selector.properties['objectivesError'];
-  const isLoading = selector.properties['objectivesLoading'];
-
+  const objectives = selector.properties.objectives as ObjectivesHierarchyModel;
   const dispatch = useAppDispatch();
-  const maxSuitabilityValue = 100;
-  //const getErrors = selector.properties.value_scalingError;
-  //const isLoading = selector.properties.value_scalingLoading;
 
-  const extractAttributeFromOH = () => {
-    let localAttributes: any = [];
+  const getErrors = selector.properties.objectivesError;
+  const isLoading = selector.properties.objectivesLoading;
 
-    if (objectives.primaries.primary.length == 0) {
-      return localAttributes;
-    } else {
-      for (
-        let primaryIndex = 0;
-        primaryIndex < objectives.primaries.primary.length;
-        primaryIndex++
-      ) {
-        let secondaries = objectives.primaries.secondaries[primaryIndex];
-        for (
-          let secondaryIndex = 0;
-          secondaryIndex < secondaries.secondary.length;
-          secondaryIndex++
-        ) {
-          let attributes = secondaries.attributes[secondaryIndex];
-          for (
-            let attributeIndex = 0;
-            attributeIndex < attributes.attribute.length;
-            attributeIndex++
-          ) {
-            let dataset = attributes.datasets[attributeIndex];
-            if (!(dataset.type == 'Boolean' && !dataset.isCalculated))
-              localAttributes.push({
-                primaryIndex: primaryIndex,
-                secondaryIndex: secondaryIndex,
-                attributeIndex: attributeIndex,
-                attribute: attributes.attribute[attributeIndex],
-                dataset: dataset,
-              });
-          }
-        }
-      }
-      return localAttributes as ValueScalingModel;
-    }
+  const categoryRowFactory = ({ name, key, label, value }: FactoryProps) => {
+    return [
+      <Control
+        label={label}
+        key={key('properties.distribution_value')}
+        name={name('properties.distribution_value')}
+        defaultValue={value}
+        type="number"
+      />,
+    ];
   };
 
-  const injectAttributeInOH = () => {
-    let newObjectivesHierarchy = JSON.parse(
-      JSON.stringify(objectives)
-    ) as typeof objectives;
-    localValueScaling.forEach((attribute: ValueScalingModel) => {
-      newObjectivesHierarchy.primaries.secondaries[
-        attribute.primaryIndex
-      ].attributes[attribute.secondaryIndex].datasets[
-        attribute.attributeIndex
-      ] = attribute.dataset;
-    });
-    console.log('newObjectivesHierarchy', newObjectivesHierarchy);
-    return newObjectivesHierarchy;
-  };
-
-  const [localValueScaling, setLocalValueScaling] = useState(
-    extractAttributeFromOH() as ValueScalingModel[]
-  );
-  let controls = [];
-
-  if (localValueScaling !== undefined && localValueScaling.length > 0) {
-    console.log('localValueScaling', localValueScaling);
-    const onChangeValueScalingFunction =
-      (attributeIndex: number) => (e: any) => {
-        e.persist();
-        let newFunction = e.target.value;
-        console.log(newFunction);
-
-        let newValueScaling = JSON.parse(
-          JSON.stringify(localValueScaling)
-        ) as typeof localValueScaling;
-        newValueScaling[
-          attributeIndex
-        ].dataset.properties.valueScalingFunction = newFunction;
-        setLocalValueScaling(newValueScaling);
-      };
-    const onChangeCategoryValue =
-      (attributeIndex: number, categoryIndex: number) => (e: any) => {
-        e.persist();
-        let newCategoryValue = e.target.value;
-        let newValueScaling = JSON.parse(
-          JSON.stringify(localValueScaling)
-        ) as typeof localValueScaling;
-        newValueScaling[attributeIndex].dataset.properties.distribution_value[
-          categoryIndex
-        ] = newCategoryValue;
-        setLocalValueScaling(newValueScaling);
-      };
-
-    const onChangeMissingData =
-      (attributeIndex: number, maxSuitability: number) => (e: any) => {
-        e.persist();
-        let newMissingDataSuitability: number = e.target.value;
-        let newValueScaling = JSON.parse(
-          JSON.stringify(localValueScaling)
-        ) as typeof localValueScaling;
-        newValueScaling[
-          attributeIndex
-        ].dataset.properties.missingDataSuitability = newMissingDataSuitability;
-        setLocalValueScaling(newValueScaling);
-      };
-
-    const categoricalRowFactory = ({
-      key,
-      category,
-      categoryIndex,
-      attributeIndex,
-    }: FactoryProps): ReactElement | ReactElement[] => {
-      return [
+  const categoryFactory = ({ name, key, label, dataset }: FactoryProps) => {
+    return (
+      <Collapsible title={label}>
         <Control
-          key={key('categorical_row')}
-          label={category.toString().substring(0, 8).concat('...')}
-          className="small position-relative d-flex"
-          defaultValue={
-            localValueScaling[attributeIndex].dataset.properties
-              .distribution_value[categoryIndex]
-          }
-          onChange={onChangeCategoryValue(attributeIndex, categoryIndex)}
+          label="missing data suitability"
+          key={key('datasets') + '.properties.missingDataSuitability'}
+          name={name('datasets') + '.properties.missingDataSuitability'}
+          defaultValue={dataset.properties.missingDataSuitability}
           type="number"
-          tooltip={category}
-        />,
-      ];
-    };
-
-    const ScalingBoxFactory = ({
-      value,
-      attributeIndex,
-      key,
-    }: FactoryProps): ReactElement | ReactElement[] => {
-      if (
-        value.dataset.type == 'Continuous' ||
-        (value.dataset.type == 'Boolean' && value.dataset.isCalculated)
-      ) {
-        return (
-          <Collapsible key={key('scalingBox')} title={value.attribute}>
-            <Control
-              key={key('missing_data_suitability')}
-              label="missing data suitability"
-              name="missing_data_suitability"
-              defaultValue={
-                localValueScaling[attributeIndex].dataset.properties
-                  .missingDataSuitability
-              }
-              type="number"
-              required
-              onChange={onChangeMissingData(
-                attributeIndex,
-                maxSuitabilityValue
-              )}
-              tooltip={t(
-                'indicate the default suitability value that will be use if data are missing for a cell.'
-              )}
-            />
-            <Control
-              key={key('continuous')}
-              label="value scaling function"
-              name="continuous"
-              defaultValue={
-                localValueScaling[attributeIndex].dataset.properties
-                  .valueScalingFunction
-              }
-              required
-              prefix={
-                <React.Fragment>
-                  <small className="me-1">y =</small>
-                </React.Fragment>
-              }
-              onChange={onChangeValueScalingFunction(attributeIndex)}
-              tooltip={t('')}
-            />
-            <ScalingGraph
-              key={key('scaling_graph')}
-              distribution={
-                localValueScaling[attributeIndex].dataset.properties
-                  .distribution
-              }
-              distribution_value={
-                localValueScaling[attributeIndex].dataset.properties
-                  .distribution_value
-              }
-              type={value.dataset.type}
-              isCalculated={value.dataset.isCalculated}
-            />
-          </Collapsible>
-        );
-      } else {
-        return (
-          <Collapsible key={key('scalingBox')} title={value.attribute}>
-            <Control
-              key={key('missing_data_suitability')}
-              label="missing data suitability"
-              name="missing_data_suitability"
-              defaultValue={
-                localValueScaling[attributeIndex].dataset.properties
-                  .missingDataSuitability
-              }
-              type="number"
-              required
-              onChange={onChangeMissingData(
-                attributeIndex,
-                maxSuitabilityValue
-              )}
-              tooltip={t(
-                'indicate the default suitability value that will be use if data are missing for a cell.'
-              )}
-            />
-            <SimpleList
-              key={key('categorical')}
-              name={'weights'}
-              hideLabel
-              factory={categoricalRowFactory}
-              controls={value.dataset.properties.distribution.map(
-                (category: any, index: number) => ({
-                  category,
-                  categoryIndex: index,
-                  attributeIndex,
-                })
-              )}
-            />
-            <ScalingGraph
-              key={key('scaling_graph')}
-              distribution={
-                localValueScaling[attributeIndex].dataset.properties
-                  .distribution
-              }
-              distribution_value={
-                localValueScaling[attributeIndex].dataset.properties
-                  .distribution_value
-              }
-              type={value.dataset.type}
-              isCalculated={value.dataset.isCalculated}
-            />
-          </Collapsible>
-        );
-      }
-    };
-
-    const mainControls = [];
-
-    mainControls.push(
-      localValueScaling.length > 0 ? (
+          required
+          // tooltip={t(
+          //   'indicate the default suitability value that will be use if data are missing for a cell.'
+          // )}
+        />
         <SimpleList
-          key={'attributes_vs' + isLoading}
-          name={'attributes_vs'}
           hideLabel
-          factory={ScalingBoxFactory}
-          controls={localValueScaling.map(
-            (value: ValueScalingModel, index: number) => ({
-              value,
-              attributeIndex: index,
+          key={key('datasets')}
+          name={name('datasets')}
+          factory={categoryRowFactory}
+          controls={dataset.properties.distribution.map(
+            (_: any, index: number) => ({
+              label: dataset.properties.distribution[index],
+              value: dataset.properties.distribution_value[index],
             })
           )}
         />
-      ) : (
-        <></>
-      )
+      </Collapsible>
     );
-    controls = [
-      ...mainControls,
-      <Spacer />,
-      <Button variant="outline-primary" loading={isLoading}>
-        {capitalize(t('apply'))}
-      </Button>,
-    ];
-  } else {
-    controls = [<Spacer></Spacer>];
-  }
+  };
+
+  const functionFactory = ({ name, key, label, dataset }: FactoryProps) => {
+    return (
+      <Collapsible title={label}>
+        <Control
+          label="missing data suitability"
+          key={key('datasets') + '.properties.missingDataSuitability'}
+          name={name('datasets') + '.properties.missingDataSuitability'}
+          defaultValue={dataset.properties.missingDataSuitability}
+          type="number"
+          required
+        />
+        <Spacer />
+        <Control
+          label="value scaling function"
+          key={key('datasets') + '.properties.valueScalingFunction'}
+          name={name('datasets') + '.properties.valueScalingFunction'}
+          defaultValue={dataset.properties.valueScalingFunction}
+          prefix={<span>f(x) =</span>}
+          required
+        />
+      </Collapsible>
+    );
+  };
+
+  const attributesFactory = (props: FactoryProps) => {
+    const {
+      dataset: { type, isCalculated },
+    } = props;
+    if (type === 'Continuous' || (type === 'Boolean' && isCalculated)) {
+      return functionFactory(props);
+    } else if (type === 'Categorical') {
+      return categoryFactory(props);
+    }
+  };
+
+  const secondariesFactory = ({
+    name,
+    key,
+    label,
+    attributes,
+  }: FactoryProps) => {
+    return (
+      <SimpleList
+        hideLabel
+        hideArrow
+        label={label}
+        key={key('attributes')}
+        name={name('attributes')}
+        factory={attributesFactory}
+        controls={attributes.attribute.map((_: any, index: number) => ({
+          label: attributes.attribute[index],
+          dataset: attributes.datasets[index],
+        }))}
+      />
+    );
+  };
+
+  const primariesFactory = ({
+    name,
+    key,
+    label,
+    secondaries,
+  }: FactoryProps) => {
+    return (
+      <SimpleList
+        hideLabel
+        hideArrow
+        label={label}
+        key={key('secondaries')}
+        name={name('secondaries')}
+        factory={secondariesFactory}
+        controls={secondaries.secondary.map((_: any, index: number) => ({
+          label: secondaries.secondary[index],
+          attributes: secondaries.attributes[index],
+        }))}
+      />
+    );
+  };
+
+  const controls = [
+    <SimpleList
+      label={objectives.main}
+      name={'primaries'}
+      factory={primariesFactory}
+      controls={objectives.primaries.primary.map((_: any, index: number) => ({
+        label: objectives.primaries.primary[index],
+        secondaries: objectives.primaries.secondaries[index],
+      }))}
+    />,
+    <Spacer />,
+    <Button variant="outline-primary" loading={isLoading}>
+      {capitalize(t('apply'))}
+    </Button>,
+  ];
 
   return (
     <Form
       controls={controls}
       errors={getErrors}
-      disabled={isLoading}
-      key={'value_scaling_form'}
-      onSubmit={(fields: any) => {
-        console.log('ON SUBMIT', fields);
+      disabled={isLoading || disabled}
+      onSubmit={(fields: ScalesHierarchy) => {
         dispatch(
           injectSetLoadingCreator({
             value: property,
@@ -326,18 +221,7 @@ function ValueScaling({ t }: any) {
         dispatch(
           call({
             target: ServerCallTargets.Update,
-            args: [property, injectAttributeInOH()],
-            onSuccessAction: injectSetLoadingCreator({
-              value: property,
-              isLoading: false,
-            } as LoadingValue<string>),
-            onErrorAction: injectSetErrorCreator('default_missing_data'),
-          } as CallModel)
-        );
-        dispatch(
-          call({
-            target: ServerCallTargets.Update,
-            args: ['default_missing_data', fields['missing_data_default']],
+            args: [property, merge(objectives, fields)],
             onSuccessAction: injectSetLoadingCreator({
               value: property,
               isLoading: false,

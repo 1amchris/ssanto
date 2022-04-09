@@ -22,6 +22,7 @@ export interface FactoryProps extends PropsModel {
 class Row extends React.Component<{
   parentId: string;
   index: number;
+  hideArrow: boolean;
 }> {
   key?: string;
   state = {
@@ -34,18 +35,24 @@ class Row extends React.Component<{
   }
 
   render = () => {
-    const { parentId, index, children } = this.props;
+    const { parentId, index, children, hideArrow = false } = this.props;
+
+    const rowParams = hideArrow
+      ? {}
+      : {
+          className: 'mt-2 d-grid',
+          style: { gridTemplateColumns: '1.75rem auto' },
+          onMouseEnter: () => this.setState({ isHovered: true }),
+          onMouseLeave: () => this.setState({ isHovered: false }),
+        };
+
     return (
-      <li
-        key={this.key}
-        className="mt-2 d-grid"
-        style={{ gridTemplateColumns: '1.75rem auto' }}
-        onMouseEnter={() => this.setState({ isHovered: true })}
-        onMouseLeave={() => this.setState({ isHovered: false })}
-      >
-        <div className="mb-auto" key={`${parentId}/container-${index}`}>
-          <MdSubdirectoryArrowRight style={{ marginBottom: '3px' }} />
-        </div>
+      <li key={this.key} {...rowParams}>
+        {!hideArrow && (
+          <div className="mb-auto" key={`${parentId}/container-${index}`}>
+            <MdSubdirectoryArrowRight style={{ marginBottom: '3px' }} />
+          </div>
+        )}
         <div key={`${parentId}/wrapper-${index}`}>{children}</div>
       </li>
     );
@@ -83,7 +90,7 @@ class FormExpandableList extends FormComponent {
   }
 
   render = () => {
-    const { t, label, name, guide_hash = '' } = this.props;
+    const { t, label, name, guide_hash = '', hideArrow = false } = this.props;
     return (
       <React.Fragment>
         <label
@@ -106,6 +113,7 @@ class FormExpandableList extends FormComponent {
               key={`${this.id}/row-${index}`}
               parentId={this.id}
               index={index}
+              hideArrow={hideArrow}
             >
               {this.factory({
                 ...control,

@@ -344,65 +344,57 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       (primaryIndex: number, secondaryIndex: number) => () => {
         //let unused = getUnusedAttribute(primaryIndex, secondaryIndex);
         //let newDefault = unused.length > 0 ? unused[0] : undefined;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].attribute.push('');
+        const defaultShapefile = files.length > 0 ? files[0] : DefaultShapefile;
+        const defaultColumn =
+          defaultShapefile.column_names.length > 0
+            ? defaultShapefile.column_names[0]
+            : DefaultDataset.column;
 
-        if (
-          localObjectives.primaries.secondaries[primaryIndex].attributes[
-            secondaryIndex
-          ].attribute.length == 0
-        ) {
-          let newObjectives = copyLocalObjective();
-          newObjectives.primaries.secondaries[primaryIndex].attributes[
-            secondaryIndex
-          ].attribute.push('');
-          const defaultShapefile =
-            files.length > 0 ? files[0] : DefaultShapefile;
-          const defaultColumn =
-            defaultShapefile.column_names.length > 0
-              ? defaultShapefile.column_names[0]
-              : DefaultDataset.column;
+        console.log('OH');
+        const defaultProperties = {
+          ...DefaultValueScalingProperties,
+          distribution:
+            defaultColumn in defaultShapefile.categories
+              ? defaultShapefile.categories[defaultColumn]
+              : [],
+          distribution_value:
+            defaultColumn in defaultShapefile.categories
+              ? new Array<number>(
+                  defaultShapefile.categories[defaultColumn].length
+                ).fill(0)
+              : [],
+        };
+        let defaultDataset = {
+          ...DefaultDataset,
+          name: defaultShapefile.name,
+          column: defaultColumn,
+          type:
+            defaultShapefile.type.length > 0
+              ? defaultShapefile.type[0]
+              : DefaultDataset.type,
+          properties: defaultProperties,
+          max_value:
+            defaultShapefile.max_value.length > 0
+              ? defaultShapefile.max_value[0]
+              : DefaultDataset.max_value,
+          min_value:
+            defaultShapefile.min_value.length > 0
+              ? defaultShapefile.min_value[0]
+              : DefaultDataset.min_value,
+        } as DatasetModel;
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets.push(defaultDataset as DatasetModel);
 
-          console.log('OH');
-          const defaultProperties = {
-            ...DefaultValueScalingProperties,
-            distribution:
-              defaultColumn in defaultShapefile.categories
-                ? defaultShapefile.categories[defaultColumn]
-                : [],
-            distribution_value:
-              defaultColumn in defaultShapefile.categories
-                ? new Array<number>(
-                    defaultShapefile.categories[defaultColumn].length
-                  ).fill(0)
-                : [],
-          };
-          let defaultDataset = {
-            ...DefaultDataset,
-            name: defaultShapefile.name,
-            column: defaultColumn,
-            type:
-              defaultShapefile.type.length > 0
-                ? defaultShapefile.type[0]
-                : DefaultDataset.type,
-            properties: defaultProperties,
-            max_value:
-              defaultShapefile.max_value.length > 0
-                ? defaultShapefile.max_value[0]
-                : DefaultDataset.max_value,
-            min_value:
-              defaultShapefile.min_value.length > 0
-                ? defaultShapefile.min_value[0]
-                : DefaultDataset.min_value,
-          } as DatasetModel;
-          newObjectives.primaries.secondaries[primaryIndex].attributes[
-            secondaryIndex
-          ].datasets.push(defaultDataset as DatasetModel);
-
-          newObjectives.primaries.secondaries[primaryIndex].attributes[
-            secondaryIndex
-          ].weights.push(1);
-          newObjectives.update = !localObjectives.update;
-          setLocalObjectives(newObjectives);
-        }
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].weights.push(1);
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
       };
 
     const onRemovePrimary = () => (primaryIndex: number) => {

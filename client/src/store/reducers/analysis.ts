@@ -78,6 +78,9 @@ export const analysisSlice = createSlice({
 
       analysisLoading: false,
       analysisError: '',
+
+      subAnalysisLoading: false,
+      subAnalysisError: '',
     },
   },
   reducers: {
@@ -140,6 +143,9 @@ export const analysisSlice = createSlice({
     analysisSuccess: (state, _: PayloadAction<any>) => {
       state.properties.analysisLoading = false;
     },
+    subAnalysisSuccess: (state, _: PayloadAction<any>) => {
+      state.properties.subAnalysisLoading = false;
+    },
   },
 });
 
@@ -157,8 +163,12 @@ export const injectReceivePropertiesCreator = createActionCreatorSyringe<
   any
 >(analysisSlice.actions.receiveProperties);
 
-export const { updateObjectives, studyAreaReceived, analysisSuccess } =
-  analysisSlice.actions;
+export const {
+  updateObjectives,
+  studyAreaReceived,
+  analysisSuccess,
+  subAnalysisSuccess,
+} = analysisSlice.actions;
 
 export const selectAnalysis = (state: RootState) => state.analysis;
 

@@ -18,6 +18,8 @@ import { selectMap } from 'store/reducers/map';
 import MapCursorInformation from 'components/aside-informations/MapCursorInformation';
 import MapSuitabilityCategories from 'components/aside-informations/MapSuitabilityCategories';
 import MapSuitabilityAboveThreshold from 'components/aside-informations/MapSuitabilityAboveThreshold';
+import ValueScalingFunctionGraphs from './aside-informations/ValueScalingFunctionGraphs';
+import { flatten } from 'flattenizer';
 
 function Main() {
   const analysis = useAppSelector(selectAnalysis);
@@ -174,6 +176,15 @@ function Main() {
             className="position-absolute top-0 end-0 mh-100 py-3 pe-3 overflow-scroll"
             style={{ width: '270px' }}
           >
+            {Object.keys(flatten(analysis.properties.objectives)!).filter(key =>
+              /\.properties\.distribution_value\.\d+/.test(key)
+            ).length > 0 && (
+              <InformationCard>
+                <Collapsible title={'value scales'}>
+                  <ValueScalingFunctionGraphs />
+                </Collapsible>
+              </InformationCard>
+            )}
             {cursorInformations?.objectives &&
               Object.keys(cursorInformations.objectives).length > 0 && (
                 <InformationCard>
