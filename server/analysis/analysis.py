@@ -57,6 +57,7 @@ class Analysis(Serializable):
                 'mains': []
             },
         )
+        self.objectives_data_update()
 
         self.objectives = subjects_manager.create(
             "objectives",
