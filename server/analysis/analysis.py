@@ -55,10 +55,6 @@ class Analysis(Serializable):
             },
         )
 
-        self.default_missing_data = subjects_manager.create(
-            "default_missing_data",
-            100,
-        )
         self.suggested_map_center = subjects_manager.create(
             # "map.center", LatLng(45.56, -76.9))
             "map.center",
@@ -75,10 +71,12 @@ class Analysis(Serializable):
         self.analysis = subjects_manager.create("analysis", {})
 
         # suitability categories: ([0-10[, [10-20[, [20-30[, [30-40[, [40-50[, [50-60[, [60-70[, [70-80[, [80-90[, [90-100]) or None
-        self.suitability_categories = subjects_manager.create("analysis.visualization.suitability_categories", None)
+        self.suitability_categories = subjects_manager.create(
+            "analysis.visualization.suitability_categories", None)
 
         # suitability : [0, 100] or None
-        self.suitability_threshold = subjects_manager.create("analysis.visualization.suitability_threshold", 50)
+        self.suitability_threshold = subjects_manager.create(
+            "analysis.visualization.suitability_threshold", 50)
         self.suitability_above_threshold = subjects_manager.create(
             "analysis.visualization.suitability_above_threshold", None
         )
@@ -192,7 +190,8 @@ class Analysis(Serializable):
             for (secondary_index, attributes) in enumerate(secondaries["attributes"]):
                 for (attribute_index, datasets) in enumerate(attributes["datasets"]):
                     continuousCondition = datasets["type"] == "Continuous"
-                    booleanCondition = datasets["type"] == "Boolean" and bool(datasets["isCalculated"])
+                    booleanCondition = datasets["type"] == "Boolean" and bool(
+                        datasets["isCalculated"])
                     if continuousCondition or booleanCondition:
                         string_function = datasets["properties"]["valueScalingFunction"]
                         if continuousCondition:
@@ -217,12 +216,14 @@ class Analysis(Serializable):
                             "datasets"
                         ][attribute_index]["properties"]["distribution_value"] = [int(y_) for y_ in list(y)]
 
-                        self.subjects_manager.update("objectives", new_objectives_data)
+                        self.subjects_manager.update(
+                            "objectives", new_objectives_data)
 
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
         if calculator := self.suitability_calculator:
-            base.objectives = calculator.get_informations_at(cursor.lat, cursor.long)
+            base.objectives = calculator.get_informations_at(
+                cursor.lat, cursor.long)
         return base
 
     def update(self, subject, data):
@@ -269,17 +270,20 @@ class Analysis(Serializable):
             cell_size = self.parameters.value().get("cell_size")
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
 
-            self.suitability_calculator = SuitabilityCalculator(self.files_manager.get_writer_path())
+            self.suitability_calculator = SuitabilityCalculator(
+                self.files_manager.get_writer_path())
             self.suitability_calculator.set_cell_size(cell_size)
             self.suitability_calculator.set_crs("epsg:3857")
-            self.suitability_calculator.set_study_area_input(self.study_area.value())
+            self.suitability_calculator.set_study_area_input(
+                self.study_area.value())
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"],
                 data["primaries"]["weights"],
                 data["primaries"]["secondaries"],
             ):
-                self.suitability_calculator.add_objective(primary, int(weight_primary))
+                self.suitability_calculator.add_objective(
+                    primary, int(weight_primary))
                 for (index, (secondary, weight_secondary, attributes)) in enumerate(
                     zip(
                         secondaries["secondary"],
@@ -291,7 +295,8 @@ class Analysis(Serializable):
                     file_name = attributes["datasets"][0]["name"]
                     column_type = attributes["datasets"][0]["type"]
                     column_name = attributes["datasets"][0]["column"]
-                    is_calculated = bool(attributes["datasets"][0]["isCalculated"])
+                    is_calculated = bool(
+                        attributes["datasets"][0]["isCalculated"])
                     scaling_function = attributes["datasets"][0]["properties"]["valueScalingFunction"]
                     missing_data_default_value = attributes["datasets"][0]["properties"]["missingDataSuitability"]
                     input_file = file_name
@@ -334,7 +339,6 @@ class Analysis(Serializable):
                         )
 
                     else:
-
                         self.suitability_calculator.add_file_to_objective(
                             secondary,
                             primary,

@@ -115,13 +115,6 @@ function App() {
         onAction: updateSuitabilityCategories,
       } as SubscriptionModel<SuitabilityCategoriesModel>)
     );
-
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisDefaultMissingData,
-        onAction: injectReceivePropertiesCreator('default_missing_data'),
-      } as SubscriptionModel<string, any>)
-    );
   });
 
   return (
