@@ -17,6 +17,7 @@ namespace LayersUtils {
       name: layer.name,
       label: layer.label || layer.name,
       geojson: layer.geojson,
+      activated: layer.activated ? layer.activated : false,
     } as Layer;
 
     if (!layersGroups.hasOwnProperty(group)) {

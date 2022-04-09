@@ -34,6 +34,7 @@ const AnalysisMiddleware: Middleware =
             group: 'analysis',
             name: file_name,
             geojson: JSON.parse(area),
+            activated: true,
           } as InsertLayerModel)
         );
         return next(action);
@@ -51,6 +52,7 @@ const AnalysisMiddleware: Middleware =
               group: 'sub_analysis',
               name: file_name,
               geojson: JSON.parse(area),
+              activated: false,
             } as InsertLayerModel)
           );
         }
