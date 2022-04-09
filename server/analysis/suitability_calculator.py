@@ -81,7 +81,8 @@ class SuitabilityCalculator:
         self,
         file_name,
         objective_name,
-        id,
+        subobjective_name,
+        attribute_index,
         input,
         weight,
         scaling_function,
@@ -91,8 +92,8 @@ class SuitabilityCalculator:
         input_path = os.path.join(self.path, input)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
-        self.objectives[objective_name].add_file(
-            id,
+        self.objectives[objective_name].subobjective[subobjective_name].add_file(
+            attribute_index,
             file_name,
             input_path,
             output_path,
@@ -106,7 +107,8 @@ class SuitabilityCalculator:
         self,
         file_name,
         objective_name,
-        id,
+        subobjective_name,
+        attribute_index,
         input,
         weight,
         scaling_function,
@@ -120,8 +122,8 @@ class SuitabilityCalculator:
         output_path = os.path.join(self.path, output_name)
 
         categories_dic = dict(zip(categories, categories_value))
-        self.objectives[objective_name].add_categorical_file(
-            id,
+        self.objectives[objective_name].subobjective[subobjective_name].add_categorical_file(
+            attribute_index,
             file_name,
             input_path,
             output_path,
@@ -136,7 +138,8 @@ class SuitabilityCalculator:
         self,
         file_name,
         objective_name,
-        id,
+        subobjective_name,
+        attribute_index,
         input,
         weight,
         scaling_function,
@@ -147,8 +150,8 @@ class SuitabilityCalculator:
         input_path = os.path.join(self.path, input)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
-        self.objectives[objective_name].add_distance_file(
-            id,
+        self.objectives[objective_name].subobjective[subobjective_name].add_distance_file(
+            attribute_index,
             file_name,
             input_path,
             output_path,
@@ -173,7 +176,8 @@ class SuitabilityCalculator:
 
         inDs = gdal.Open(study_area_path)
         driver = inDs.GetDriver()
-        outDs = driver.Create(output_path, len(matrix[0]), len(matrix), 1, GDT_Int16)
+        outDs = driver.Create(output_path, len(
+            matrix[0]), len(matrix), 1, GDT_Int16)
         # write the data
         outBand = outDs.GetRasterBand(1)
         outBand.WriteArray(matrix, 0, 0)
@@ -202,7 +206,8 @@ class SuitabilityCalculator:
                 )
             )
             geoms = list(results)
-            gpd_polygonized_raster = gp.GeoDataFrame.from_features(geoms, crs=c)
+            gpd_polygonized_raster = gp.GeoDataFrame.from_features(
+                geoms, crs=c)
             # gpd_polygonized_raster = gpd_polygonized_raster[gpd_polygonized_raster['NDVI'] > 0]
             # gpd_polygonized_raster.to_file('temp/dataframe.geojson', driver='GeoJSON')
 
@@ -211,7 +216,8 @@ class SuitabilityCalculator:
                 4326
             )  # Where these numbers come from?
             output_geojson_name = "analysis.geojson"
-            gpd_polygonized_raster.to_file(os.path.join(self.path, output_geojson_name))
+            gpd_polygonized_raster.to_file(
+                os.path.join(self.path, output_geojson_name))
             return gpd_polygonized_raster
 
     def process_data(self):
@@ -220,7 +226,8 @@ class SuitabilityCalculator:
         output_matrix = np.zeros(self.study_area.as_array.shape)
         total_weight = 0
         for obj in self.objectives:
-            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix()
+            data, sub_objective_array_dict = self.objectives[obj].process_value_matrix(
+            )
             partial_missing_mask_dict = self.objectives[obj].get_missing_mask()
             self.missing_mask_dict.update(partial_missing_mask_dict)
             objective_weight = self.objectives[obj].weight
@@ -234,6 +241,22 @@ class SuitabilityCalculator:
         output_matrix[mask] = -1
         self.output_matrix = output_matrix
         self.objectives_arrays_dict["ANALYSIS"] = output_matrix / 100
-        path = self.matrix_to_raster(output_matrix)
-        analysis_df = self.tiff_to_geojson(path)
-        return analysis_df.to_json()
+  
+        #self.objectives_arrays_dict[]
+
+        return output_matrix
+
+
+    def process_sub_objectives(self):
+        sub_objectives_json ={}
+        for key in self.objectives_arrays_dict:
+            if key != 'ANALYSIS':
+                output_matrix = self.objectives_arrays_dict[key]*100
+                mask = self.study_area.as_array == DEFAULT_EMPTY_VAL
+                output_matrix[mask] = -1
+                path = self.matrix_to_raster(output_matrix)
+                analysis_df = self.tiff_to_geojson(path)
+                sub_objectives_json[key]={'file_name':key, 'area': analysis_df.to_json()}
+
+        return sub_objectives_json
+        

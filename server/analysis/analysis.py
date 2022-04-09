@@ -69,6 +69,7 @@ class Analysis(Serializable):
         self.layers = subjects_manager.create("layers", {})
 
         self.analysis = subjects_manager.create("analysis", {})
+        self.sub_analysis = subjects_manager.create("sub_analysis", [])
 
         # suitability categories: ([0-10[, [10-20[, [20-30[, [30-40[, [40-50[, [50-60[, [60-70[, [70-80[, [80-90[, [90-100]) or None
         self.suitability_categories = subjects_manager.create(
@@ -284,83 +285,103 @@ class Analysis(Serializable):
             ):
                 self.suitability_calculator.add_objective(
                     primary, int(weight_primary))
-                for (index, (secondary, weight_secondary, attributes)) in enumerate(
+                for (secondary_index, (secondary, weight_secondary, attributes)) in enumerate(
                     zip(
                         secondaries["secondary"],
                         secondaries["weights"],
                         secondaries["attributes"],
                     )
                 ):
+                    self.suitability_calculator.objectives[primary].add_subobjective(
+                        secondary, secondary_index, weight_secondary)
+                    for (attribute_index, (attribute, weight_attribute, dataset)) in enumerate(
+                        zip(
+                            attributes["attribute"],
+                            attributes["weights"],
+                            attributes["datasets"]
 
-                    file_name = attributes["datasets"][0]["name"]
-                    column_type = attributes["datasets"][0]["type"]
-                    column_name = attributes["datasets"][0]["column"]
-                    is_calculated = bool(
-                        attributes["datasets"][0]["isCalculated"])
-                    scaling_function = attributes["datasets"][0]["properties"]["valueScalingFunction"]
-                    missing_data_default_value = attributes["datasets"][0]["properties"]["missingDataSuitability"]
-                    input_file = file_name
-                    if not is_calculated and column_type == "Boolean":
-                        self.suitability_calculator.add_file_to_objective(
-                            secondary,
-                            primary,
-                            index,
-                            input_file,
-                            int(weight_secondary),
-                            scaling_function,
-                            missing_data_default_value,
                         )
-                    elif is_calculated and column_type == "Boolean":
-                        self.suitability_calculator.add_file_to_calculated_objective(
-                            secondary,
-                            primary,
-                            index,
-                            input_file,
-                            int(weight_secondary),
-                            scaling_function,
-                            missing_data_default_value,
-                            attributes["datasets"][0]["calculationDistance"],
-                        )
-                    elif column_type == "Categorical":
-                        categories = attributes["datasets"][0]["properties"]["distribution"]
-                        categories_value = attributes["datasets"][0]["properties"]["distribution_value"]
+                    ):
+                        file_name = dataset["name"]
+                        column_type = dataset["type"]
+                        column_name = dataset["column"]
+                        is_calculated = bool(
+                            dataset["isCalculated"])
+                        scaling_function = dataset["properties"]["valueScalingFunction"]
+                        missing_data_default_value = dataset["properties"]["missingDataSuitability"]
+                        input_file = file_name
+                        if not is_calculated and column_type == "Boolean":
+                            self.suitability_calculator.add_file_to_objective(
+                                attribute,
+                                primary,
+                                secondary,
+                                attribute_index,
+                                input_file,
+                                int(weight_secondary),
+                                scaling_function,
+                                missing_data_default_value,
+                            )
+                        elif is_calculated and column_type == "Boolean":
+                            self.suitability_calculator.add_file_to_calculated_objective(
+                                attribute,
+                                primary,
+                                secondary,
+                                attribute_index,
+                                input_file,
+                                int(weight_secondary),
+                                scaling_function,
+                                missing_data_default_value,
+                                dataset["calculationDistance"],
+                            )
+                        elif column_type == "Categorical":
+                            categories = dataset["properties"]["distribution"]
+                            categories_value = dataset["properties"]["distribution_value"]
 
-                        self.suitability_calculator.add_file_to_categorical_objective(
-                            secondary,
-                            primary,
-                            index,
-                            input_file,
-                            int(weight_secondary),
-                            scaling_function,
-                            missing_data_default_value,
-                            categories,
-                            categories_value,
-                            column_name,
-                        )
+                            self.suitability_calculator.add_file_to_categorical_objective(
+                                attribute,
+                                primary,
+                                secondary,
+                                attribute_index,
+                                input_file,
+                                int(weight_secondary),
+                                scaling_function,
+                                missing_data_default_value,
+                                categories,
+                                categories_value,
+                                column_name,
+                            )
 
-                    else:
-                        self.suitability_calculator.add_file_to_objective(
-                            secondary,
-                            primary,
-                            index,
-                            input_file,
-                            int(weight_secondary),
-                            scaling_function,
-                            missing_data_default_value,
-                            column_name,
-                        )
+                        else:
+
+                            self.suitability_calculator.add_file_to_objective(
+                                attribute,
+                                primary,
+                                secondary,
+                                attribute_index,
+                                input_file,
+                                int(weight_secondary),
+                                scaling_function,
+                                missing_data_default_value,
+                                column_name,
+                            )
 
                     # self.suitability_calculator.objectives[primary].add_file(
                     #    index, path, "output.tiff", int(weight_secondary), scaling_function)
 
-            geo_json = self.suitability_calculator.process_data()
+            output_matrix = self.suitability_calculator.process_data()
+            path = self.suitability_calculator.matrix_to_raster(output_matrix)
+            analysis_df = self.suitability_calculator.tiff_to_geojson(path)
+
+            sub_objectives_json = self.suitability_calculator.process_sub_objectives()
 
             self.compute_suitability_above_threshold()
             self.compute_suitability_categories()
 
-            return_value = {"file_name": "current analysis", "area": geo_json}
+            return_value = {"file_name": "current analysis",
+                            "area": analysis_df.to_json()}
             # return {"file_name": "current analysis", "area": geo_json}
         else:
             return_value = {"file_name": "current analysis", "area": {}}
         print("end of analysis")
+        self.sub_analysis.notify(sub_objectives_json)
         self.analysis.notify(return_value)

@@ -37,7 +37,6 @@ class Feature:
 
     def process_missing_mask(self, array):
         self.missing_mask = array == DEFAULT_EMPTY_VAL
-        print(self.missing_data_default_val)
         array[self.missing_mask] = self.missing_data_default_val
         return array
 

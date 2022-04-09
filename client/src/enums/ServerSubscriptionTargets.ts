@@ -6,6 +6,7 @@ enum ServerSubscriptionTargets {
   MapCenter = 'map.center',
   Layer = 'layers',
   AnalysisResult = 'analysis',
+  SubAnalysisResult = 'sub_analysis',
   AnalysisParameters = 'parameters',
   AnalysisStudyArea = 'study_area',
   AnalysisNbsSystem = 'nbs_system',

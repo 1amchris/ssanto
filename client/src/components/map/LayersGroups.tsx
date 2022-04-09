@@ -137,7 +137,7 @@ const LayersGroups = ({ t }: any) => {
         >
           {Object.entries(layers).map(([name, layer]: [string, Layer]) => (
             <LayersControl.Overlay
-              checked
+              checked={layer.activated as boolean}
               name={capitalize(t(layer.label || name))}
               key={layer.identifier}
             >
