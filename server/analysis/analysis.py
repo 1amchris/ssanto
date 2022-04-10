@@ -303,7 +303,7 @@ class Analysis(Serializable):
                 data["primaries"]["secondaries"],
             ):
                 self.suitability_calculator.add_objective(
-                    primary, int(weight_primary))
+                    primary, float(weight_primary))
                 for (secondary_index, (secondary, weight_secondary, attributes)) in enumerate(
                     zip(
                         secondaries["secondary"],
@@ -312,7 +312,7 @@ class Analysis(Serializable):
                     )
                 ):
                     self.suitability_calculator.objectives[primary].add_subobjective(
-                        secondary, secondary_index, weight_secondary)
+                        secondary, secondary_index, float(weight_secondary))
                     for (attribute_index, (attribute, weight_attribute, dataset)) in enumerate(
                         zip(
                             attributes["attribute"],
@@ -329,6 +329,7 @@ class Analysis(Serializable):
                         scaling_function = dataset["properties"]["valueScalingFunction"]
                         missing_data_default_value = dataset["properties"]["missingDataSuitability"]
                         input_file = file_name
+                        print("WEIGHT", weight_attribute)
                         if not is_calculated and column_type == "Boolean":
                             self.suitability_calculator.add_file_to_objective(
                                 attribute,
@@ -336,7 +337,7 @@ class Analysis(Serializable):
                                 secondary,
                                 attribute_index,
                                 input_file,
-                                int(weight_secondary),
+                                int(weight_attribute),
                                 scaling_function,
                                 missing_data_default_value,
                             )
@@ -347,7 +348,7 @@ class Analysis(Serializable):
                                 secondary,
                                 attribute_index,
                                 input_file,
-                                int(weight_secondary),
+                                float(weight_attribute),
                                 scaling_function,
                                 missing_data_default_value,
                                 dataset["calculationDistance"],
@@ -362,7 +363,7 @@ class Analysis(Serializable):
                                 secondary,
                                 attribute_index,
                                 input_file,
-                                int(weight_secondary),
+                                float(weight_attribute),
                                 scaling_function,
                                 missing_data_default_value,
                                 categories,
@@ -378,7 +379,7 @@ class Analysis(Serializable):
                                 secondary,
                                 attribute_index,
                                 input_file,
-                                int(weight_secondary),
+                                float(weight_attribute),
                                 scaling_function,
                                 missing_data_default_value,
                                 column_name,

@@ -67,7 +67,7 @@ function normalizeWeights({ primaries }: WeightsHierarchy): WeightsHierarchy {
     const total = sum([0, ...weights]);
     if (total === 0) return [...weights];
 
-    return weights.map(weight => max([0, weight / total])!);
+    return weights.map(weight => +max([0, weight / total])?.toFixed(3)!);
   }
 
   return {
