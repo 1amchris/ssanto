@@ -7,7 +7,6 @@ class Hierarchy:
         self.hierarchy_json = json.load(open(self.path, 'r'))
         self.objective_hierarchy = {}
         self.nbs_system = None
-        print('hierarchy', self.hierarchy_json)
 
     def filter(self, nbs_system):
         self.nbs_system = nbs_system

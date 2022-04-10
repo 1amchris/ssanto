@@ -145,8 +145,11 @@ class SuitabilityCalculator:
         scaling_function,
         missing_data_default_val,
         max_distance,
+        granularity = 10,
+        centroid=True,
         field_name=False,
     ):
+        print("entroi", centroid)
         input_path = os.path.join(self.path, input)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)
@@ -160,8 +163,8 @@ class SuitabilityCalculator:
             missing_data_default_val,
             maximize_distance=True,
             max_distance=max_distance,
-            centroid=True,
-            granularity=20,
+            centroid=centroid,
+            granularity=granularity,
             threshold=0.8,
             field_name=False,
         )

@@ -7,6 +7,7 @@ import ExpandableList from './FormExpandableList';
 import List from './FormList';
 import SimpleList from './FormSimpleList';
 import ScalingGraph from './FormScalingGraph';
+import CheckBox from './FormCheckBox';
 
 export {
   Alert,
@@ -18,4 +19,5 @@ export {
   List,
   SimpleList,
   ScalingGraph,
+  CheckBox,
 };

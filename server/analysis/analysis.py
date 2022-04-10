@@ -340,6 +340,7 @@ class Analysis(Serializable):
                                 missing_data_default_value,
                             )
                         elif is_calculated and column_type == "Boolean":
+                            print("dataset[centroid]", dataset["centroid"])
                             self.suitability_calculator.add_file_to_calculated_objective(
                                 attribute,
                                 primary,
@@ -349,7 +350,9 @@ class Analysis(Serializable):
                                 int(weight_secondary),
                                 scaling_function,
                                 missing_data_default_value,
-                                dataset["calculationDistance"],
+                                max_distance=dataset["calculationDistance"],
+                                granularity=int(dataset["granularity"]),
+                                centroid=bool(dataset["centroid"])
                             )
                         elif column_type == "Categorical":
                             categories = dataset["properties"]["distribution"]

@@ -14,6 +14,7 @@ import {
   Select,
   ExpandableList,
   Control,
+  CheckBox,
 } from 'components/forms/components';
 import {
   selectAnalysis,
@@ -30,6 +31,7 @@ import DatasetModel, {
   DefaultDataset,
   DefaultValueScalingProperties,
 } from 'models/DatasetModel';
+import ValueScalingProperties from 'models/DatasetModel';
 
 function isValidOH(objectiveHierarchy: ObjectivesHierarchyModel) {
   let primaryHasSecondary = true;
@@ -367,7 +369,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
                   defaultShapefile.categories[defaultColumn].length
                 ).fill(0)
               : [],
-        };
+        } as ValueScalingProperties;
         let defaultDataset = {
           ...DefaultDataset,
           name: defaultShapefile.name,
@@ -385,7 +387,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
             defaultShapefile.min_value.length > 0
               ? defaultShapefile.min_value[0]
               : DefaultDataset.min_value,
-        } as DatasetModel;
+        } as unknown;
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets.push(defaultDataset as DatasetModel);
@@ -521,7 +523,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
                 ? newDatasetShapefile.categories[defaultColumn]
                 : [],
           },
-        } as DatasetModel;
+        } as unknown as DatasetModel;
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex] = defaultDataset;
@@ -609,6 +611,30 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
+    const onChangeGranularity =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (e: any) => {
+        let newGranularity = e.target.value as number;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].granularity = newGranularity;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
+    const onChangeCentroid =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (e: any) => {
+        console.log('onChangeCentroid', e);
+        let newIsCentroid = e.target.checked;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].centroid = newIsCentroid;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
 
     /* Fin **************/
 
@@ -670,6 +696,47 @@ function ObjectiveHierarchy({ t, disabled }: any) {
             tooltip={t('meter')}
           />
         );
+        if (
+          localObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].datasets[orderIndex].isCalculated
+        ) {
+          continuousOptions.push(
+            <Control
+              key={key('granularity') + localObjectives.update}
+              label={'granularity'}
+              className="small position-relative d-flex"
+              name={name('granularity')}
+              defaultValue={
+                localObjectives.primaries.secondaries[primaryIndex].attributes[
+                  secondaryIndex
+                ].datasets[orderIndex].granularity
+              }
+              onChange={onChangeGranularity(
+                primaryIndex,
+                secondaryIndex,
+                orderIndex
+              )}
+              type="number"
+            />,
+            <CheckBox
+              key={key('centroid') + localObjectives.update}
+              label={'centroid'}
+              className="small position-relative d-flex"
+              name={name('centroid')}
+              checked={
+                localObjectives.primaries.secondaries[primaryIndex].attributes[
+                  secondaryIndex
+                ].datasets[orderIndex].centroid
+              }
+              onChange={onChangeCentroid(
+                primaryIndex,
+                secondaryIndex,
+                orderIndex
+              )}
+            />
+          );
+        }
       }
 
       return [
