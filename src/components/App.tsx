@@ -1,6 +1,6 @@
 import { useEffectOnce } from 'hooks';
 import { useAppDispatch } from 'store/hooks';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Main from 'components/Main';
 import Guide from 'components/guide/Guide';
 import { subscribe, openConnection } from 'store/reducers/server';
@@ -125,12 +125,12 @@ function App() {
   });
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/guide" element={<Guide />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

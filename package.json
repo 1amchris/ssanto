@@ -15,7 +15,7 @@
     "eject": "react-scripts eject",
     "start-web": "cross-env BROWSER=none npm run start:react",
     "start-electron": "electron .",
-    "build:electron": "electron-packager . --platform=linux --arch=x64 --icon=/icon.png --no-asar --prune=true --ignore=/others --ignore=/public --ignore=/src --overwrite --out=./release",
+    "build:electron": "electron-packager . --platform=win32 --arch=x64 --icon=/icon.png --no-asar --prune=true --ignore='(README.md|tsconfig.json|.git*|.prettier*|.eslint*|.husky|/node_modules|/public|/src)' --overwrite --out=./release",
     "prepare": "husky install"
   },
   "dependencies": {
