@@ -149,7 +149,6 @@ class SuitabilityCalculator:
         centroid=True,
         field_name=False,
     ):
-        print("entroi", centroid)
         input_path = os.path.join(self.path, input)
         output_name = "output.tiff"
         output_path = os.path.join(self.path, output_name)

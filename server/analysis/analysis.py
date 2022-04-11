@@ -317,7 +317,6 @@ class Analysis(Serializable):
                             attributes["attribute"],
                             attributes["weights"],
                             attributes["datasets"]
-
                         )
                     ):
                         file_name = dataset["name"]
@@ -340,7 +339,6 @@ class Analysis(Serializable):
                                 missing_data_default_value,
                             )
                         elif is_calculated and column_type == "Boolean":
-                            print("dataset[centroid]", dataset["centroid"])
                             self.suitability_calculator.add_file_to_calculated_objective(
                                 attribute,
                                 primary,

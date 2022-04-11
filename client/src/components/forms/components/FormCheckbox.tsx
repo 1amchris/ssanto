@@ -6,12 +6,12 @@ import { HashLink } from 'react-router-hash-link';
 import FormComponent from './FormComponent';
 
 /**
- * FormCheckBox
+ * FormCheckbox
  * @param props .prefix is a ReactElement which will be prepended to the input control
  *              .suffix is a ReactElement which will be appended to the input control
  * @returns an augmented input control
  */
-class FormCheckBox extends FormComponent {
+class FormCheckbox extends FormComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/checkbox-'), key);
   }
@@ -48,15 +48,10 @@ class FormCheckBox extends FormComponent {
             )}
           </small>
         </Form.Label>
-        <input
-          {...props}
-          type={'checkbox'}
-          id={this.id}
-          //label={`default ${type}`}
-        />
+        <input {...props} type={'checkbox'} id={this.id} />
       </Form.Group>
     );
   };
 }
 
-export default withTranslation()(FormCheckBox);
+export default withTranslation()(FormCheckbox);

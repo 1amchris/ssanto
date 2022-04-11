@@ -1,4 +1,4 @@
-import { capitalize, max, sum } from 'lodash';
+import { capitalize, max, round, sum } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
@@ -67,7 +67,7 @@ function normalizeWeights({ primaries }: WeightsHierarchy): WeightsHierarchy {
     const total = sum([0, ...weights]);
     if (total === 0) return [...weights];
 
-    return weights.map(weight => max([0, weight / total])!);
+    return weights.map(weight => max([0, round(weight / total, 3)])!);
   }
 
   return {
@@ -189,6 +189,7 @@ function Weighting({ t, disabled }: any) {
 
   return (
     <Form
+      noValidate
       controls={controls}
       errors={getErrors}
       disabled={isLoading || disabled}

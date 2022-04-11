@@ -14,7 +14,7 @@ import {
   Select,
   ExpandableList,
   Control,
-  CheckBox,
+  Checkbox,
 } from 'components/forms/components';
 import {
   selectAnalysis,
@@ -626,7 +626,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const onChangeCentroid =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
-        console.log('onChangeCentroid', e);
         let newIsCentroid = e.target.checked;
         let newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
@@ -719,7 +718,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
               )}
               type="number"
             />,
-            <CheckBox
+
+            <Checkbox
               key={key('centroid') + localObjectives.update}
               label={'centroid'}
               className="small position-relative d-flex"
@@ -729,11 +729,9 @@ function ObjectiveHierarchy({ t, disabled }: any) {
                   secondaryIndex
                 ].datasets[orderIndex].centroid
               }
-              onChange={onChangeCentroid(
-                primaryIndex,
-                secondaryIndex,
-                orderIndex
-              )}
+              onChange={(e: any) =>
+                onChangeCentroid(primaryIndex, secondaryIndex, orderIndex)(e)
+              }
             />
           );
         }
