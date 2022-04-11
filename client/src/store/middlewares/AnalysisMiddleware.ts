@@ -41,10 +41,8 @@ const AnalysisMiddleware: Middleware =
       }
 
       case subAnalysisSuccess.type: {
-        console.log('subAnalysisSuccess', action.payload);
         dispatch(cleanAnalysisLayers());
         for (const subAnalysis in action.payload) {
-          console.log('subAnalysis', action.payload[subAnalysis]);
           const { file_name, area } = action.payload[subAnalysis];
           if (area == undefined) return;
           dispatch(
