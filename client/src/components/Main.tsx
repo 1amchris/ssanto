@@ -19,6 +19,7 @@ import MapCursorInformation from 'components/aside-informations/MapCursorInforma
 import MapSuitabilityCategories from 'components/aside-informations/MapSuitabilityCategories';
 import MapSuitabilityAboveThreshold from 'components/aside-informations/MapSuitabilityAboveThreshold';
 import ValueScalingFunctionGraphs from './aside-informations/ValueScalingFunctionGraphs';
+import MapLegend from './aside-informations/MapLegend';
 import { flatten } from 'flattenizer';
 
 function Main() {
@@ -176,6 +177,11 @@ function Main() {
             className="position-absolute top-0 end-0 mh-100 py-3 pe-3 overflow-scroll"
             style={{ width: '270px' }}
           >
+            <InformationCard>
+              <Collapsible title={'Legend'}>
+                <MapLegend />
+              </Collapsible>
+            </InformationCard>
             {Object.keys(flatten(analysis.properties.objectives)!).filter(key =>
               /\.properties\.distribution_value\.\d+/.test(key)
             ).length > 0 && (

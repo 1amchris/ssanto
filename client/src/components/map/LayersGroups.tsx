@@ -10,6 +10,7 @@ import { call } from 'store/reducers/server';
 import CallModel from 'models/server-coms/CallModel';
 import { InsertLayerModel } from 'models/map/InsertLayerModel';
 import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
+import ColorScaleUtils from 'utils/color-scale-utils';
 
 const usePrevious = (value: any) => {
   const ref = useRef();
@@ -23,27 +24,12 @@ const LayersGroups = ({ t }: any) => {
   const { layers, update_layers } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();
 
-  const perc2color = (perc: number) => {
-    var r,
-      g,
-      b = 0;
-    if (perc < 50) {
-      r = 255;
-      g = Math.round(5.1 * perc);
-    } else {
-      g = 255;
-      r = Math.round(510 - 5.1 * perc);
-    }
-    var h = r * 0x10000 + g * 0x100 + b * 0x1;
-    return '#' + ('000000' + h.toString(16)).slice(-6);
-  };
-
   const style = (feature: any) => {
     if (
       feature.properties !== undefined &&
       feature.properties.sutability >= 0
     ) {
-      let color = perc2color(feature.properties.sutability);
+      let color = ColorScaleUtils.greenToRed(feature.properties.sutability);
       return {
         color: color,
         fillColor: color,
@@ -71,7 +57,6 @@ const LayersGroups = ({ t }: any) => {
   const prevUpdateLayers: LayersUpdateGroups | undefined =
     usePrevious(update_layers);
   useEffect(() => {
-    //console.log("Updated", prevUpdateLayers, update_layers)
     if (prevUpdateLayers == undefined) return;
     let p: LayersUpdateGroups = prevUpdateLayers;
 
