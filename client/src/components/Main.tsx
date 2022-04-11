@@ -144,6 +144,7 @@ function Main() {
             <Collapsible
               title={'objectives weighting'}
               disabled={!weightsAreEnabled()}
+              guide_hash="analysis/weighting"
             >
               <Weighting
                 key={`${ohIsLoading}`}
