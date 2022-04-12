@@ -86,7 +86,7 @@ class Shapefile(File):
                 categories[column_name] = self.getCategories(
                     column_name, df)
 
-        column_name = "None (boolean)"
+        column_name = "[None]"
         column_names.append(column_name)
         column_types.append("Boolean")
         minimums.append(min)
