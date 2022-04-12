@@ -28,11 +28,8 @@ class Logger:
 
     def write(self, msg):
         if self.debug:
-            printed_msg = (
-                msg
-                if self.max_line_length < 0
-                else self.truncate_middle(msg, self.max_line_length)
-            )
+            printed_msg = msg if self.max_line_length < 0 else self.truncate_middle(
+                msg, self.max_line_length)
             self.stdout.write(printed_msg)
         if self.log:
             self.logging_file.write(msg)

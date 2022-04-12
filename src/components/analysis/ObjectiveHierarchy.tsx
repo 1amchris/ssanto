@@ -5,7 +5,7 @@ import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
 import ShapefileModel, { DefaultShapefile } from 'models/ShapefileModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
-import objectivesData from 'data/objectives.json';
+//import objectivesData from 'data/objectives.json';
 import { call } from 'store/reducers/server';
 
 import {
@@ -14,6 +14,7 @@ import {
   Select,
   ExpandableList,
   Control,
+  Checkbox,
 } from 'components/forms/components';
 import {
   selectAnalysis,
@@ -30,6 +31,7 @@ import DatasetModel, {
   DefaultDataset,
   DefaultValueScalingProperties,
 } from 'models/DatasetModel';
+import ValueScalingProperties from 'models/DatasetModel';
 
 function isValidOH(objectiveHierarchy: ObjectivesHierarchyModel) {
   let primaryHasSecondary = true;
@@ -59,6 +61,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives;
+  const objectivesData = selector.properties.objectives_data;
   const dispatch = useAppDispatch();
   const files =
     selector.properties['shapefiles'].length > 0
@@ -114,7 +117,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
     const getAllMainOptions = () => {
       let options: string[] = [];
-      objectivesData?.mains.map((json: { main: string }) => {
+      objectivesData.mains.map((json: { main: string }) => {
         options.push(json.main);
       });
       return options;
@@ -123,7 +126,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const getAllPrimaryOptions = (main: string) => {
       let options: string[] = [];
 
-      objectivesData.mains.map(json => {
+      objectivesData.mains.map((json: { main: string; primaries: any[] }) => {
         if (json.main == main) {
           json.primaries?.map(json => {
             options.push(json.primary);
@@ -135,29 +138,33 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
     const getAllSecondaryOptions = (primary: string) => {
       let options: string[] = [];
-      objectivesData?.mains[0]?.primaries?.map(json => {
-        if (json.primary == primary) {
-          json.secondaries.map(json => {
-            options.push(json.secondary);
-          });
+      objectivesData?.mains[0]?.primaries?.map(
+        (json: { primary: string; secondaries: any[] }) => {
+          if (json.primary == primary) {
+            json.secondaries.map(json => {
+              options.push(json.secondary);
+            });
+          }
         }
-      });
+      );
       return options;
     };
 
     const getAllAttributesOptions = (primary: string, secondary: string) => {
       let options: string[] = [];
-      objectivesData?.mains[0]?.primaries?.map(json => {
-        if (json.primary == primary) {
-          json.secondaries.map(json => {
-            if (json.secondary == secondary) {
-              json.attributes.map(json => {
-                options.push(json.attribute);
-              });
-            }
-          });
+      objectivesData?.mains[0]?.primaries?.map(
+        (json: { primary: string; secondaries: any[] }) => {
+          if (json.primary == primary) {
+            json.secondaries.map(json => {
+              if (json.secondary == secondary) {
+                json.attributes.map((json: { attribute: string }) => {
+                  options.push(json.attribute);
+                });
+              }
+            });
+          }
         }
-      });
+      );
       return options;
     };
 
@@ -339,65 +346,57 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       (primaryIndex: number, secondaryIndex: number) => () => {
         //let unused = getUnusedAttribute(primaryIndex, secondaryIndex);
         //let newDefault = unused.length > 0 ? unused[0] : undefined;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].attribute.push('');
+        const defaultShapefile = files.length > 0 ? files[0] : DefaultShapefile;
+        const defaultColumn =
+          defaultShapefile.column_names.length > 0
+            ? defaultShapefile.column_names[0]
+            : DefaultDataset.column;
 
-        if (
-          localObjectives.primaries.secondaries[primaryIndex].attributes[
-            secondaryIndex
-          ].attribute.length == 0
-        ) {
-          let newObjectives = copyLocalObjective();
-          newObjectives.primaries.secondaries[primaryIndex].attributes[
-            secondaryIndex
-          ].attribute.push('');
-          const defaultShapefile =
-            files.length > 0 ? files[0] : DefaultShapefile;
-          const defaultColumn =
-            defaultShapefile.column_names.length > 0
-              ? defaultShapefile.column_names[0]
-              : DefaultDataset.column;
+        console.log('OH');
+        const defaultProperties = {
+          ...DefaultValueScalingProperties,
+          distribution:
+            defaultColumn in defaultShapefile.categories
+              ? defaultShapefile.categories[defaultColumn]
+              : [],
+          distribution_value:
+            defaultColumn in defaultShapefile.categories
+              ? new Array<number>(
+                  defaultShapefile.categories[defaultColumn].length
+                ).fill(0)
+              : [],
+        } as ValueScalingProperties;
+        let defaultDataset = {
+          ...DefaultDataset,
+          name: defaultShapefile.name,
+          column: defaultColumn,
+          type:
+            defaultShapefile.type.length > 0
+              ? defaultShapefile.type[0]
+              : DefaultDataset.type,
+          properties: defaultProperties,
+          max_value:
+            defaultShapefile.max_value.length > 0
+              ? defaultShapefile.max_value[0]
+              : DefaultDataset.max_value,
+          min_value:
+            defaultShapefile.min_value.length > 0
+              ? defaultShapefile.min_value[0]
+              : DefaultDataset.min_value,
+        } as unknown;
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets.push(defaultDataset as DatasetModel);
 
-          console.log('OH');
-          const defaultProperties = {
-            ...DefaultValueScalingProperties,
-            distribution:
-              defaultColumn in defaultShapefile.categories
-                ? defaultShapefile.categories[defaultColumn]
-                : [],
-            distribution_value:
-              defaultColumn in defaultShapefile.categories
-                ? new Array<number>(
-                    defaultShapefile.categories[defaultColumn].length
-                  ).fill(0)
-                : [],
-          };
-          let defaultDataset = {
-            ...DefaultDataset,
-            name: defaultShapefile.name,
-            column: defaultColumn,
-            type:
-              defaultShapefile.type.length > 0
-                ? defaultShapefile.type[0]
-                : DefaultDataset.type,
-            properties: defaultProperties,
-            max_value:
-              defaultShapefile.max_value.length > 0
-                ? defaultShapefile.max_value[0]
-                : DefaultDataset.max_value,
-            min_value:
-              defaultShapefile.min_value.length > 0
-                ? defaultShapefile.min_value[0]
-                : DefaultDataset.min_value,
-          } as DatasetModel;
-          newObjectives.primaries.secondaries[primaryIndex].attributes[
-            secondaryIndex
-          ].datasets.push(defaultDataset as DatasetModel);
-
-          newObjectives.primaries.secondaries[primaryIndex].attributes[
-            secondaryIndex
-          ].weights.push(1);
-          newObjectives.update = !localObjectives.update;
-          setLocalObjectives(newObjectives);
-        }
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].weights.push(1);
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
       };
 
     const onRemovePrimary = () => (primaryIndex: number) => {
@@ -524,7 +523,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
                 ? newDatasetShapefile.categories[defaultColumn]
                 : [],
           },
-        } as DatasetModel;
+        } as unknown as DatasetModel;
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex] = defaultDataset;
@@ -612,6 +611,29 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         newObjectives.update = !localObjectives.update;
         setLocalObjectives(newObjectives);
       };
+    const onChangeGranularity =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (e: any) => {
+        let newGranularity = e.target.value as number;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].granularity = newGranularity;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
+
+    const onChangeCentroid =
+      (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
+      (e: any) => {
+        let newIsCentroid = e.target.checked;
+        let newObjectives = copyLocalObjective();
+        newObjectives.primaries.secondaries[primaryIndex].attributes[
+          secondaryIndex
+        ].datasets[attributeIndex].centroid = newIsCentroid;
+        newObjectives.update = !localObjectives.update;
+        setLocalObjectives(newObjectives);
+      };
 
     /* Fin **************/
 
@@ -673,6 +695,46 @@ function ObjectiveHierarchy({ t, disabled }: any) {
             tooltip={t('meter')}
           />
         );
+        if (
+          localObjectives.primaries.secondaries[primaryIndex].attributes[
+            secondaryIndex
+          ].datasets[orderIndex].isCalculated
+        ) {
+          continuousOptions.push(
+            <Control
+              key={key('granularity') + localObjectives.update}
+              label={'granularity'}
+              className="small position-relative d-flex"
+              name={name('granularity')}
+              defaultValue={
+                localObjectives.primaries.secondaries[primaryIndex].attributes[
+                  secondaryIndex
+                ].datasets[orderIndex].granularity
+              }
+              onChange={onChangeGranularity(
+                primaryIndex,
+                secondaryIndex,
+                orderIndex
+              )}
+              type="number"
+            />,
+
+            <Checkbox
+              key={key('centroid') + localObjectives.update}
+              label={'centroid'}
+              className="small position-relative d-flex"
+              name={name('centroid')}
+              checked={
+                localObjectives.primaries.secondaries[primaryIndex].attributes[
+                  secondaryIndex
+                ].datasets[orderIndex].centroid
+              }
+              onChange={(e: any) =>
+                onChangeCentroid(primaryIndex, secondaryIndex, orderIndex)(e)
+              }
+            />
+          );
+        }
       }
 
       return [

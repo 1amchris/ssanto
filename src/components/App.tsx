@@ -7,6 +7,7 @@ import { subscribe, openConnection } from 'store/reducers/server';
 import {
   analysisSuccess,
   injectReceivePropertiesCreator,
+  subAnalysisSuccess,
 } from 'store/reducers/analysis';
 import SubscriptionModel from 'models/server-coms/SubscriptionModel';
 import {
@@ -72,6 +73,14 @@ function App() {
         onAction: analysisSuccess,
       } as SubscriptionModel<LayersGroups, void>)
     );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTargets.SubAnalysisResult,
+        onAction: subAnalysisSuccess,
+      } as SubscriptionModel<LayersGroups[], void>)
+    );
+
     dispatch(
       subscribe({
         subject: ServerSubscriptionTargets.AnalysisParameters,
@@ -88,6 +97,12 @@ function App() {
       subscribe({
         subject: ServerSubscriptionTargets.AnalysisNbsSystem,
         onAction: injectReceivePropertiesCreator('nbs_system'),
+      } as SubscriptionModel<string, string>)
+    );
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTargets.AnalysisObjectivesData,
+        onAction: injectReceivePropertiesCreator('objectives_data'),
       } as SubscriptionModel<string, string>)
     );
     dispatch(
@@ -114,13 +129,6 @@ function App() {
         subject: ServerSubscriptionTargets.AnalysisGraphSuitabilityCategories,
         onAction: updateSuitabilityCategories,
       } as SubscriptionModel<SuitabilityCategoriesModel>)
-    );
-
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisDefaultMissingData,
-        onAction: injectReceivePropertiesCreator('default_missing_data'),
-      } as SubscriptionModel<string, any>)
     );
   });
 

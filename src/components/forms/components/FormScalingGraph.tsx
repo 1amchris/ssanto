@@ -2,78 +2,73 @@ import { capitalize, uniqueId } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormComponent from './FormComponent';
 import { Form } from 'react-bootstrap';
-
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import { Bar } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import { FiInfo } from 'react-icons/fi';
 import { HashLink } from 'react-router-hash-link';
+import { bgColors, colors, horizontalBarHeight } from 'consts/graph';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-export const options = {
-  maintainAspectRatio: false,
+const barOptions = {
   scales: {
     y: {
       beginAtZero: true,
-      suggestedMax: 100,
     },
   },
-  //responsive: true,
+  indexAxis: 'y' as const,
   plugins: {
     legend: {
       display: false,
     },
-    title: {
+  },
+};
+
+const lineOptions = {
+  plugins: {
+    legend: {
       display: false,
-      text: 'Chart.js Line Chart',
     },
   },
 };
 
-const generateData = (distribution: number[], distribution_value: number[]) => {
-  const data = {
-    labels: distribution.map(d =>
-      d.toString().length < 10
-        ? d.toString()
-        : d.toString().substring(0, 8).concat('...')
+const maxLabelLength = 15;
+
+const generateBarData = (categories: string[], values: number[]) => {
+  return {
+    labels: categories?.map(c =>
+      c.length > maxLabelLength ? c.slice(0, maxLabelLength - 2) + '...' : c
     ),
     datasets: [
       {
-        label: 'suitability',
-        data: distribution_value,
-        backgroundColor: '#0D6EFD',
-        tension: 0.4,
+        data: values,
+        backgroundColor: bgColors.map(
+          ([r, g, b, a]) => `rgba(${r}, ${g}, ${b}, ${a})`
+        ),
+        borderColor: colors.map(
+          ([r, g, b, a]) => `rgba(${r}, ${g}, ${b}, ${a})`
+        ),
+        borderWidth: 1,
       },
     ],
   };
-  return data;
 };
 
-/**
- * FormScalingGraph
- * @param props
- * @returns an augmented input control
- */
+const generateLineData = (labels: string[], values: number[]) => {
+  return {
+    labels: labels?.map(l =>
+      l.length > maxLabelLength ? l.slice(0, maxLabelLength - 2) + '...' : l
+    ),
+    datasets: [
+      {
+        data: values,
+        borderColor: colors.map(
+          ([r, g, b, a]) => `rgba(${r}, ${g}, ${b}, ${a})`
+        )[0],
+        tension: 0.5,
+        pointRadius: 0,
+      },
+    ],
+  };
+};
+
 class FormScalingGraph extends FormComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/control-'), key);
@@ -82,8 +77,6 @@ class FormScalingGraph extends FormComponent {
   render = () => {
     const {
       t,
-      i18n,
-      tReady,
       hideLabel,
       visuallyHidden,
       className,
@@ -93,9 +86,7 @@ class FormScalingGraph extends FormComponent {
       type,
       isCalculated,
       guide_hash = '',
-      ...props
     } = this.getFilteredProps();
-    console.log('isCalculated', isCalculated, isCalculated as Boolean);
 
     return (
       <Form.Group
@@ -113,23 +104,25 @@ class FormScalingGraph extends FormComponent {
             )}
           </small>
         </Form.Label>
-        {type == 'Continuous' ||
-        (type == 'Boolean' && (isCalculated as Boolean)) ? (
-          <div style={{ width: 200, height: 200 }}>
-            <Line
-              key={`${this.key}/graph`}
-              options={options}
-              data={generateData(distribution, distribution_value)}
-            />
-          </div>
-        ) : (
-          <div style={{ width: 200, height: 200 }}>
-            <Bar
-              key={`${this.key}/graph`}
-              options={options}
-              data={generateData(distribution, distribution_value)}
-            />
-          </div>
+        {(type === 'Continuous' ||
+          (type === 'Boolean' && isCalculated === true)) && (
+          <Line
+            height="200"
+            width="200"
+            key={`${this.key}/graph`}
+            options={lineOptions}
+            data={generateLineData(distribution, distribution_value)}
+          />
+        )}
+        {type === 'Categorical' && distribution_value && (
+          <Bar
+            // For some reason, this Bar chart's height appears 1.6 times thicker?
+            height={(distribution_value.length * horizontalBarHeight) / 1.6}
+            width="200"
+            options={barOptions}
+            key={`${this.key}/graph`}
+            data={generateBarData(distribution, distribution_value)}
+          />
         )}
       </Form.Group>
     );

@@ -5,26 +5,25 @@ export default interface ValueScalingProperties {
   missingDataSuitability: number;
 }
 
+export const DefaultValueScalingProperties = {
+  valueScalingFunction: 'x',
+  distribution: [] as number[],
+  distribution_value: [] as number[],
+  missingDataSuitability: 0 as number,
+} as ValueScalingProperties;
+
 export default interface DatasetModel {
   name: string;
   column: string;
   type: string;
   max_value: number;
   min_value: number;
-  //columns: string[];
-  //head: string[];
   properties: ValueScalingProperties;
   isCalculated: boolean;
+  granularity: number;
+  centroid: boolean;
   calculationDistance: number;
 }
-
-export const DefaultValueScalingProperties = {
-  valueScalingFunction: 'x',
-  distribution: [] as number[],
-  distribution_value: [] as number[],
-  missingDataSuitability: 0 as number,
-};
-
 export const DefaultDataset = {
   name: '',
   column: '',
@@ -33,5 +32,7 @@ export const DefaultDataset = {
   min_value: 0,
   max_value: 100,
   isCalculated: false,
+  granularity: 5,
+  centroid: true,
   calculationDistance: 0,
 };

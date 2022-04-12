@@ -1,31 +1,75 @@
 import { selectMap } from 'store/reducers/map';
-import { useAppSelector } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 import React from 'react';
-import { Control } from 'components/forms/components';
+import { Button, Control, Spacer } from 'components/forms/components';
 import Form from 'components/forms/Form';
-import { round } from 'lodash';
+import { capitalize, round } from 'lodash';
+import { withTranslation } from 'react-i18next';
+import { call } from 'store/reducers/server';
+import ServerCallTargets from 'enums/ServerCallTargets';
+import CallModel from 'models/server-coms/CallModel';
 
-function MapSuitabilityAboveThreshold() {
+function MapSuitabilityAboveThreshold({ t }: any) {
   const { suitabilityAboveThreshold, suitabilityThreshold } =
     useAppSelector(selectMap);
+  const dispatch = useAppDispatch();
+
+  const controls = [
+    suitabilityAboveThreshold && (
+      <Control
+        label={`suitability above: ${suitabilityThreshold}%`}
+        value={`${round(suitabilityAboveThreshold * 100, 2)}%`}
+        disabled
+      />
+    ),
+    <Control
+      label="suitability threshold"
+      guide_hash="suitability-threshold"
+      name="suitability_threshold"
+      suffix={'%'}
+      defaultValue={suitabilityThreshold}
+      type="number"
+      min="0"
+      max="100"
+      tooltip={t('the suitability threshold is ...')}
+    />,
+    <Spacer />,
+    <Button
+      variant="outline-primary"
+      type="submit"
+      // loading={isLoading}
+    >
+      {capitalize(t('apply'))}
+    </Button>,
+  ];
 
   const rows = [
     suitabilityAboveThreshold && (
       <Form
-        controls={[
-          <Control
-            label={`suitability above: ${suitabilityThreshold}%`}
-            value={`${round(suitabilityAboveThreshold * 100, 2)}%`}
-            disabled
-          />,
-        ]}
+        controls={controls}
+        // disabled={isLoading || disabled}
+        // errors={getErrors}
+        onSubmit={(fields: any) => {
+          // dispatch(
+          //   injectSetLoadingCreator({
+          //     value: property,
+          //     isLoading: true,
+          //   } as LoadingValue<string>)()
+          // );
+          dispatch(
+            call({
+              target: ServerCallTargets.UpdateSuitabilityThreshold,
+              args: [fields.suitability_threshold],
+              // onSuccessAction: injectSetLoadingCreator({
+              //   value: property,
+              //   isLoading: false,
+              // } as LoadingValue<string>),
+              // onErrorAction: injectSetErrorCreator(property),
+              // } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
+            } as CallModel<[number]>)
+          );
+        }}
       />
-
-      // <div className="bg-light border rounded p-2 mb-1">
-      //   <code>
-      //     Suitability above {suitabilityThreshold}: {suitabilityAboveThreshold}
-      //   </code>
-      // </div>
     ),
   ];
 
@@ -40,4 +84,4 @@ function MapSuitabilityAboveThreshold() {
   );
 }
 
-export default MapSuitabilityAboveThreshold;
+export default withTranslation()(MapSuitabilityAboveThreshold);

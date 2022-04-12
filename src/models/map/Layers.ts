@@ -5,6 +5,7 @@ export interface Layer {
   label: string;
   name: string;
   geojson: GeoJSON;
+  activated: Boolean;
 }
 
 export interface Layers {
@@ -16,5 +17,5 @@ export interface LayersGroups {
 }
 
 export interface LayersUpdateGroups {
-    [name: string]: string[];
+  [name: string]: string[];
 }
