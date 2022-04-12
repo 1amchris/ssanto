@@ -12,6 +12,11 @@ import { call } from 'store/reducers/server';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
+import { selectMap } from 'store/reducers/map';
+import React, { useEffect, useState } from 'react';
+import { Modal } from 'react-bootstrap';
+import FileContentModel from 'models/file/FileContentModel';
+import { exportData } from 'store/reducers/export';
 
 function StudyArea({ t, disabled }: any) {
   const property = 'study_area';
@@ -27,6 +32,99 @@ function StudyArea({ t, disabled }: any) {
   const getErrors = selector.properties.study_areaError;
   const isLoading = selector.properties.study_areaLoading;
 
+  const { layers } = useAppSelector(selectMap);
+
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [fields, setfields] = useState(undefined);
+
+  const onFormSubmit = (fields: any) => {
+    setShowConfirmDialog(true);
+    setfields(fields);
+  };
+  const dispatchStudyArea = (fields: any) => {
+    dispatch(
+      injectSetLoadingCreator({
+        value: property,
+        isLoading: true,
+      } as LoadingValue<string>)()
+    );
+
+    dispatch(
+      call({
+        target: ServerCallTargets.UpdateStudyAreaFiles,
+        args: [fields.study_area_file],
+        onSuccessAction: injectSetLoadingCreator({
+          value: property,
+          isLoading: false,
+        } as LoadingValue<string>),
+        onErrorAction: injectSetErrorCreator(property),
+      } as CallModel<string[], any, void, string, string>)
+    );
+    console.log('4');
+  };
+  const confirmActionModal = (fields: any) => {
+    if (layers['analysis'] !== undefined) {
+      return (
+        <Modal show={showConfirmDialog} centered animation={false}>
+          <Modal.Header>
+            <Modal.Title>{capitalize(t('confirm action'))}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {
+              <p className="d-flex flex-wrap">
+                Do you want to save your current work before changing the study
+                area?
+              </p>
+            }
+          </Modal.Body>
+          <Modal.Footer>
+            {
+              <React.Fragment>
+                <Button
+                  variant="outline-primary"
+                  onClick={() => {
+                    dispatch(
+                      call({
+                        target: ServerCallTargets.SaveProject,
+                        onSuccessAction: exportData,
+                        // TODO: There should probably be an "onErrorAction"
+                      } as CallModel<void, FileContentModel<string>, void, string, string>)
+                    );
+                    dispatchStudyArea(fields);
+                    setShowConfirmDialog(false);
+                  }}
+                >
+                  {capitalize(t('save'))}
+                </Button>
+                <Button
+                  variant="outline-secondary"
+                  loading={isLoading}
+                  disabled={isLoading}
+                  onClick={() => {
+                    dispatchStudyArea(fields);
+                    setShowConfirmDialog(false);
+                  }}
+                >
+                  {capitalize(t('proceed without saving'))}
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => {
+                    setShowConfirmDialog(false);
+                  }}
+                >
+                  {capitalize(t('cancel'))}
+                </Button>
+              </React.Fragment>
+            }
+          </Modal.Footer>
+        </Modal>
+      );
+    } else if (showConfirmDialog) {
+      dispatchStudyArea(fields);
+      setShowConfirmDialog(false);
+    }
+  };
   const controls = [
     <Control
       visuallyHidden={!properties}
@@ -48,30 +146,17 @@ function StudyArea({ t, disabled }: any) {
   ];
 
   return (
-    <Form
-      disabled={isLoading || disabled}
-      controls={controls}
-      errors={getErrors}
-      onSubmit={(fields: any) => {
-        dispatch(
-          injectSetLoadingCreator({
-            value: property,
-            isLoading: true,
-          } as LoadingValue<string>)()
-        );
-        dispatch(
-          call({
-            target: ServerCallTargets.UpdateStudyAreaFiles,
-            args: [fields.study_area_file],
-            onSuccessAction: injectSetLoadingCreator({
-              value: property,
-              isLoading: false,
-            } as LoadingValue<string>),
-            onErrorAction: injectSetErrorCreator(property),
-          } as CallModel<string[], any, void, string, string>)
-        );
-      }}
-    />
+    <div>
+      <Form
+        disabled={isLoading || disabled}
+        controls={controls}
+        errors={getErrors}
+        onSubmit={(fields: any) => {
+          onFormSubmit(fields);
+        }}
+      />
+      {confirmActionModal(fields)}
+    </div>
   );
 }
 
