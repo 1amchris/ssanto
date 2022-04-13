@@ -6,9 +6,8 @@ import math
 
 
 class Shapefile(File):
-    MANDATORY_EXT = {'shp', 'shx', 'dbf'}
-    OPTIONAL_EXT = {'prj',
-                    'sbn', 'sbx',
+    MANDATORY_EXT = {'shp', 'shx', 'dbf', 'prj'}
+    OPTIONAL_EXT = {'sbn', 'sbx',
                     'fbn', 'fbx',
                     'ain', 'aih',
                     'ixs', 'mxs',

@@ -4,6 +4,7 @@ import { capitalize } from 'lodash';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Table } from 'react-bootstrap';
+import { HashLink } from 'react-router-hash-link';
 
 const generateId = (name: string) =>
   name.toLowerCase().replaceAll(' ', '-').replaceAll("'", '');
@@ -24,6 +25,7 @@ const markdownOptions = {
     h2: ({ children }: any) => <h2 id={generateId(children[0])}>{children}</h2>,
     h3: ({ children }: any) => <h3 id={generateId(children[0])}>{children}</h3>,
     h4: ({ children }: any) => <h4 id={generateId(children[0])}>{children}</h4>,
+    a: ({ children, href }: any) => <HashLink to={`${href}`}>{children}</HashLink>,
   },
 };
 

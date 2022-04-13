@@ -12,6 +12,8 @@ import json
 from .graph_maker import GraphMaker
 from .raster_transform import *
 
+from network.server_socket import CallException
+
 
 class Analysis(Serializable):
     @staticmethod
@@ -193,12 +195,29 @@ class Analysis(Serializable):
         }
 
     def add_files(self, *files):
-        added = self.files_manager.add_files(*files)
+        error_msg = ""
+        added, rejected, invalided = self.files_manager.add_files(*files)
         for shapefile in added:
             self.add_layer("normal", shapefile.name)
+        
+        if len(rejected) > 0:
+            error_msg += "The following shapefiles were incomplete: " 
+            error_msg += ", ".join(rejected)
+            error_msg += ". You must at least have a '.shp', '.shx', '.dbf' and a '.prj'. "
+
+        if len(invalided) > 0:
+            error_msg += "The following files were not accepted: " 
+            error_msg += ", ".join(invalided)
+            error_msg += ". Only the shapefile format is accepted. "
+
+        if len(rejected) > 0 or len(invalided) > 0:
+            raise CallException(error_msg)
+        
 
     def remove_file(self, name):
-        self.files_manager.remove_file(name)
+        popped_file = self.files_manager.remove_file(name)
+        if self.study_area.value() == popped_file.name:
+            self.study_area.notify("")
         self.remove_layer(name)
 
     def add_layer(self, group, name):
@@ -274,14 +293,6 @@ class Analysis(Serializable):
         self.__post_update(subject, data)
 
     def receive_study_area(self, shp_name):
-        """
-        study_area = { 'file_name': '', 'area': None }
-        if shp_name != '':
-            shapefile = self.files_manager.get_file(shp_name)
-            geojson = FileParser.load(
-                self.files_manager, shapefile.get_shp(), shapefile.get_shx())
-            study_area = {"file_name": shp_name, "area": geojson}
-        """
         study_area_path = self.files_manager.get_shp_path(shp_name)
         lat_long = get_center_latitude_longitude(study_area_path)
         self.study_area.notify(shp_name)
