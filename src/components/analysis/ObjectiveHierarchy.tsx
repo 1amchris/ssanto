@@ -136,35 +136,22 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       return options;
     };
 
-    const getAllSecondaryOptions = (primary: string) => {
+    const getAllSecondaryOptions = (main: string, primary: string) => {
       let options: string[] = [];
-      objectivesData?.mains[0]?.primaries?.map(
-        (json: { primary: string; secondaries: any[] }) => {
-          if (json.primary == primary) {
-            json.secondaries.map(json => {
-              options.push(json.secondary);
-            });
-          }
-        }
-      );
-      return options;
-    };
-
-    const getAllAttributesOptions = (primary: string, secondary: string) => {
-      let options: string[] = [];
-      objectivesData?.mains[0]?.primaries?.map(
-        (json: { primary: string; secondaries: any[] }) => {
-          if (json.primary == primary) {
-            json.secondaries.map(json => {
-              if (json.secondary == secondary) {
-                json.attributes.map((json: { attribute: string }) => {
-                  options.push(json.attribute);
+      objectivesData?.mains.map((json: { main: string; primaries: any[] }) => {
+        if (json.main == main) {
+          json.primaries.map(
+            (json: { primary: string; secondaries: any[] }) => {
+              if (json.primary == primary) {
+                json.secondaries.map(json => {
+                  options.push(json.secondary);
                 });
               }
-            });
-          }
+            }
+          );
         }
-      );
+      });
+
       return options;
     };
 
@@ -194,9 +181,12 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       });
       return unused;
     };
-    const getUnusedSecondary = (primaryIndex: number) => {
+    const getUnusedSecondary = (main: string, primaryIndex: number) => {
       let unused: string[] = [];
-      getAllSecondaryOptions(primaryName(primaryIndex)).map(secondary => {
+      getAllSecondaryOptions(
+        localObjectives.main,
+        primaryName(primaryIndex)
+      ).map(secondary => {
         if (
           !localObjectives.primaries.secondaries[
             primaryIndex
@@ -223,7 +213,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         localObjectives.primaries.secondaries[primaryIndex].secondary[
           secondaryIndex
         ],
-        ...getUnusedSecondary(primaryIndex),
+        ...getUnusedSecondary(localObjectives.main, primaryIndex),
       ];
 
       return formatOptions(options);
@@ -326,7 +316,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const onAddSecondary = (primaryIndex: number) => () => {
-      let unused = getUnusedSecondary(primaryIndex);
+      let unused = getUnusedSecondary(localObjectives.main, primaryIndex);
       let newDefault = unused.length > 0 ? unused[0] : undefined;
       if (newDefault !== undefined) {
         let newObjectives = copyLocalObjective();

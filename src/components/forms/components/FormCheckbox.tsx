@@ -30,7 +30,6 @@ class FormCheckbox extends FormComponent {
       guide_hash = '',
       ...props
     } = this.getFilteredProps();
-    console.log('FormCheckBox', { ...props });
     return (
       <Form.Group
         key={this.key}
