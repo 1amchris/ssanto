@@ -514,12 +514,12 @@
             "secondary": "Irrigation Demand Distance",
             "otherName": "Proximity to water demand",
              
-            "default_hierarchy" : [],"allowed_nbs": []
+            "default_hierarchy" : [4, 5 ],"allowed_nbs": [0, 1, 2, 3, 4, 5, 6]
           },
           {
             "secondary": "Current Rainwater Harvesting",
              
-            "default_hierarchy" : [],"allowed_nbs": []
+            "default_hierarchy" : [1, 2],"allowed_nbs": [0, 1, 2]
           }
         ]
       }
