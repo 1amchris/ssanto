@@ -10,8 +10,6 @@ from files.file_metadata import FileMetaData
 from files.file import File
 from files.shapefile import Shapefile
 
-from network.server_socket import CallException
-
 
 class FileParser:
     @staticmethod
@@ -102,6 +100,7 @@ class FilesManager:
         return self.files_content.keys()
 
     def remove_file(self, name):
+        # TODO: Popped might be None if there is no files corresponding and generate an error
         popped = self.files_content.pop(name)
         # It is not elegant, but we need to implement composite in the self.files_content
         if isinstance(popped, Shapefile):
@@ -145,8 +144,9 @@ class FilesManager:
     # files: { name: string; size: number; content: string (base64); }[]
 
     def add_files(self, *files):
-        appended = []
-        contains_invalid_file = False
+        added = []
+        rejected = []
+        invalided = []
 
         created = {}
         for file in files:
@@ -160,31 +160,22 @@ class FilesManager:
                 # TODO: Check if there is already a file with the extension added
                 shapefile.add_file(file)
             else:
-                contains_invalid_file = True
+                invalided.append(file.name)
 
-        contains_invalid_shapefile = False
         for shapefile in shapefiles.values():
             if not shapefile.is_complete():
-                contains_invalid_shapefile = True
+                rejected.append(shapefile.name)
                 continue
             is_already_added = shapefile.name in self.files_content
             self.add_shapefile(shapefile)
             shapefile.content = FileParser.load(shapefile, self.get_writer_path())
             shapefile.set_feature(self.get_writer_path())
             if not is_already_added:
-                appended.append(shapefile)
+                added.append(shapefile)
 
         self.__notify_metadatas()
 
-        error = ""
-        if contains_invalid_shapefile:
-            error += "At least one of the provided shapefile is not complete. You must at least have a '.shp', '.shx' and '.dbf'."
-        if contains_invalid_file:
-            error += "At least one of the provided file is not accepted. Only the shapefile format is accepted."
-        if contains_invalid_shapefile or contains_invalid_file:
-            raise CallException(error)
-
-        return appended
+        return added, rejected, invalided
 
     def __notify_metadatas(self):
         metadatas = self.get_files_metadatas()
