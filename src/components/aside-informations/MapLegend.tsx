@@ -63,6 +63,10 @@ const generateLegendData = () => {
 function MapLegend() {
   const lineOptions = {
     plugins: {
+      title: {
+        display: false,
+        text: 'Suitability',
+      },
       legend: {
         display: false,
       },

@@ -1,11 +1,10 @@
 import { ReactElement, useState } from 'react';
-import { capitalize } from 'lodash';
+import _, { capitalize, uniq } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
 import ShapefileModel, { DefaultShapefile } from 'models/ShapefileModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
-//import objectivesData from 'data/objectives.json';
 import { call } from 'store/reducers/server';
 
 import {
@@ -32,29 +31,45 @@ import DatasetModel, {
   DefaultValueScalingProperties,
 } from 'models/DatasetModel';
 import ValueScalingProperties from 'models/DatasetModel';
+import { flatten } from 'flattenizer';
 
 function isValidOH(objectiveHierarchy: ObjectivesHierarchyModel) {
+  const atLeastOnePrimary = objectiveHierarchy.primaries.primary.length > 0;
   let primaryHasSecondary = true;
   let secondaryHasAttribute = true;
   let attributeHasName = true;
-  let attLeastOnePrimary = objectiveHierarchy.primaries.primary.length > 0;
-  objectiveHierarchy.primaries.secondaries.map(json => {
-    primaryHasSecondary = primaryHasSecondary && json.secondary.length > 0;
-    json.attributes.map(json => {
-      secondaryHasAttribute =
-        secondaryHasAttribute && json.attribute.length > 0;
-      json.attribute.map(
-        attributeName =>
-          (attributeHasName = attributeHasName && attributeName.length > 0)
-      );
+  objectiveHierarchy.primaries.secondaries.forEach(secondaries => {
+    primaryHasSecondary &&= secondaries.secondary.length > 0;
+    secondaries.attributes.forEach(attributes => {
+      secondaryHasAttribute &&= attributes.attribute.length > 0;
+      attributes.attribute.forEach(attribute => {
+        attributeHasName &&= attribute.length > 0;
+      });
     });
   });
+
   return (
-    attLeastOnePrimary &&
+    atLeastOnePrimary &&
     primaryHasSecondary &&
     secondaryHasAttribute &&
     attributeHasName
   );
+}
+
+function findDuplicateAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
+  let attributes: string[] = Object.entries(flatten(objectiveHierarchy)!)
+    .filter(([key]) =>
+      /primaries\.(?:primary|secondaries\.\d+\.(?:secondary|attributes\.\d+\.attribute))/.test(
+        key
+      )
+    )
+    .map(([_, value]) => `${value}`);
+
+  return _(attributes)
+    .groupBy()
+    .pickBy(attribute => attribute.length > 1)
+    .keys()
+    .value();
 }
 
 function ObjectiveHierarchy({ t, disabled }: any) {
@@ -67,13 +82,18 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     selector.properties['shapefiles'].length > 0
       ? (selector.properties['shapefiles'] as ShapefileModel[])
       : ([] as ShapefileModel[]);
-  const getErrors = selector.properties['objectivesError'];
-  const isLoading = selector.properties['objectivesLoading'];
+  const getErrors = selector.properties.objectivesError;
+  const isLoading = selector.properties.objectivesLoading;
 
   const [localObjectives, setLocalObjectives] = useState({
     ...(objectives as ObjectivesHierarchyModel),
     update: true,
   });
+
+  const logError = (message: string) => {
+    console.error(message);
+    dispatch(injectSetErrorCreator(property)(message));
+  };
 
   /* Début refactor ***************/
   let controls = [];
@@ -87,12 +107,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
     const primaryName = (index: number) => {
       return localObjectives.primaries.primary[index];
-    };
-
-    const secondaryName = (primaryIndex: number, secondaryIndex: number) => {
-      return localObjectives.primaries.secondaries[primaryIndex].secondary[
-        secondaryIndex
-      ];
     };
 
     const getPrimary = () => {
@@ -929,8 +943,15 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       errors={getErrors}
       disabled={isLoading || disabled}
       onSubmit={() => {
+        const { update, ...oh } = localObjectives;
+        const duplicates = findDuplicateAttributes(oh);
+
         //ajouter la validation de la OH
-        if (isValidOH(localObjectives)) {
+        if (!isValidOH(oh)) {
+          logError('Invalid objective hierarchy');
+        } else if (duplicates.length > 0) {
+          logError(`Duplicate objectives: ${duplicates}`);
+        } else {
           dispatch(
             injectSetLoadingCreator({
               value: property,
@@ -940,7 +961,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           dispatch(
             call({
               target: ServerCallTargets.Update,
-              args: [property, localObjectives],
+              args: [property, oh],
               onSuccessAction: injectSetLoadingCreator({
                 value: property,
                 isLoading: false,
@@ -948,8 +969,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
               onErrorAction: injectSetErrorCreator(property),
             } as CallModel)
           );
-        } else {
-          console.warn('Invalid objective hierarchy');
         }
       }}
     />

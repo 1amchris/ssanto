@@ -179,7 +179,7 @@ function Main() {
             style={{ width: '270px' }}
           >
             <InformationCard>
-              <Collapsible title={'Legend'}>
+              <Collapsible title={'Suitability'}>
                 <MapLegend />
               </Collapsible>
             </InformationCard>
