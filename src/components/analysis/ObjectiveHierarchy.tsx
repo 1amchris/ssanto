@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react';
-import _, { capitalize, uniq } from 'lodash';
+import _, { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
 import ShapefileModel, { DefaultShapefile } from 'models/ShapefileModel';
@@ -39,15 +39,17 @@ function isValidOH(objectiveHierarchy: ObjectivesHierarchyModel) {
   let secondaryHasAttribute = true;
   let attributeHasName = true;
   objectiveHierarchy.primaries.secondaries.forEach(secondaries => {
-    primaryHasSecondary &&= secondaries.secondary.length > 0;
+    primaryHasSecondary =
+      primaryHasSecondary && secondaries.secondary.length > 0;
     secondaries.attributes.forEach(attributes => {
-      secondaryHasAttribute &&= attributes.attribute.length > 0;
-      attributes.attribute.forEach(attribute => {
-        attributeHasName &&= attribute.length > 0;
-      });
+      secondaryHasAttribute =
+        secondaryHasAttribute && attributes.attribute.length > 0;
+      attributes.attribute.forEach(
+        attributeName =>
+          (attributeHasName = attributeHasName && attributeName.length > 0)
+      );
     });
   });
-
   return (
     atLeastOnePrimary &&
     primaryHasSecondary &&
@@ -64,7 +66,6 @@ function findDuplicateAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
       )
     )
     .map(([_, value]) => `${value}`);
-
   return _(attributes)
     .groupBy()
     .pickBy(attribute => attribute.length > 1)
@@ -109,6 +110,12 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       return localObjectives.primaries.primary[index];
     };
 
+    const secondaryName = (primaryIndex: number, secondaryIndex: number) => {
+      return localObjectives.primaries.secondaries[primaryIndex].secondary[
+        secondaryIndex
+      ];
+    };
+
     const getPrimary = () => {
       return localObjectives.primaries.primary;
     };
@@ -150,35 +157,22 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       return options;
     };
 
-    const getAllSecondaryOptions = (primary: string) => {
+    const getAllSecondaryOptions = (main: string, primary: string) => {
       let options: string[] = [];
-      objectivesData?.mains[0]?.primaries?.map(
-        (json: { primary: string; secondaries: any[] }) => {
-          if (json.primary == primary) {
-            json.secondaries.map(json => {
-              options.push(json.secondary);
-            });
-          }
-        }
-      );
-      return options;
-    };
-
-    const getAllAttributesOptions = (primary: string, secondary: string) => {
-      let options: string[] = [];
-      objectivesData?.mains[0]?.primaries?.map(
-        (json: { primary: string; secondaries: any[] }) => {
-          if (json.primary == primary) {
-            json.secondaries.map(json => {
-              if (json.secondary == secondary) {
-                json.attributes.map((json: { attribute: string }) => {
-                  options.push(json.attribute);
+      objectivesData?.mains.map((json: { main: string; primaries: any[] }) => {
+        if (json.main == main) {
+          json.primaries.map(
+            (json: { primary: string; secondaries: any[] }) => {
+              if (json.primary == primary) {
+                json.secondaries.map(json => {
+                  options.push(json.secondary);
                 });
               }
-            });
-          }
+            }
+          );
         }
-      );
+      });
+
       return options;
     };
 
@@ -208,9 +202,12 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       });
       return unused;
     };
-    const getUnusedSecondary = (primaryIndex: number) => {
+    const getUnusedSecondary = (main: string, primaryIndex: number) => {
       let unused: string[] = [];
-      getAllSecondaryOptions(primaryName(primaryIndex)).map(secondary => {
+      getAllSecondaryOptions(
+        localObjectives.main,
+        primaryName(primaryIndex)
+      ).map(secondary => {
         if (
           !localObjectives.primaries.secondaries[
             primaryIndex
@@ -237,7 +234,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         localObjectives.primaries.secondaries[primaryIndex].secondary[
           secondaryIndex
         ],
-        ...getUnusedSecondary(primaryIndex),
+        ...getUnusedSecondary(localObjectives.main, primaryIndex),
       ];
 
       return formatOptions(options);
@@ -340,7 +337,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const onAddSecondary = (primaryIndex: number) => () => {
-      let unused = getUnusedSecondary(primaryIndex);
+      let unused = getUnusedSecondary(localObjectives.main, primaryIndex);
       let newDefault = unused.length > 0 ? unused[0] : undefined;
       if (newDefault !== undefined) {
         let newObjectives = copyLocalObjective();
@@ -946,7 +943,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         const { update, ...oh } = localObjectives;
         const duplicates = findDuplicateAttributes(oh);
 
-        //ajouter la validation de la OH
         if (!isValidOH(oh)) {
           logError('Invalid objective hierarchy');
         } else if (duplicates.length > 0) {
