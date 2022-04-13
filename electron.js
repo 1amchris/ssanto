@@ -1,18 +1,22 @@
 const electron = require('electron');
-// const url = require('url');
+// const url = require('url'); // PROD
 const path = require('path');
 
 const {spawn} = require('child_process');
 
+// Windows: path.join(__dirname, '\\Python39-32\\python.exe')
 const PYTHON_PATH = 'python3';
-const python = spawn(PYTHON_PATH, ['-u', './main.py'], {
-  cwd: path.join(__dirname, 'server'),
+const PYTHON_CWD = 'server'; // Prod: '../server'; Dev: // 'server'
+const PYTHON_MAIN = './main.py';
+
+const python = spawn(PYTHON_PATH, ['-u', PYTHON_MAIN], {
+  cwd: path.join(__dirname, PYTHON_CWD),
 });
 
 let loadCompleted = false;
 
 python.stdout.on('data', (data) => {
-  if (data == 'STARTUP_FINISH\n') {
+  if (data.includes('STARTUP_FINISH')) {
     while (!loadCompleted) {}
     createWindow();
     return;
@@ -59,16 +63,17 @@ function createWindow() {
   });
 
   mainWindow.loadURL(
-      'http://localhost:3000',
+      'http://localhost:3000', // DEV
+      // PROD
       /* url.format({
-              pathname: path.join(__dirname, './index.html'),
+              pathname: path.join(__dirname, 'build/index.html'),
               protocol: "file:",
               slashes: true
-          })*/
+          }),*/
       {},
   );
   mainWindow.setMenuBarVisibility(false);
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   mainWindow.maximize();
   mainWindow.show();
 

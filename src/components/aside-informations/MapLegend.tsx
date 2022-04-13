@@ -23,8 +23,13 @@ const getGradient = (
 };
 
 const generateLegendData = () => {
+  let labels = [];
+  for (let x = 0; x <= 5; x++) {
+    labels.push(x / 5);
+  }
+
   return {
-    labels: Array.from(Array(10).keys()).map(x => (x + 10) / 100),
+    labels: labels,
     datasets: [
       {
         data: Array.from(Array(100).keys()).map(x => 1),
