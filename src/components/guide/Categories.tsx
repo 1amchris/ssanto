@@ -3,6 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { capitalize, concat } from 'lodash';
 import CategoryModel from 'models/guide/CategoryModel';
 import Category from 'components/guide/Category';
+import { HashLink } from 'react-router-hash-link';
 
 function Categories({ t, children: categories }: any) {
   return (
@@ -15,9 +16,9 @@ function Categories({ t, children: categories }: any) {
       <p className="text-secondary text-center border-top pt-2">
         {capitalize(t("you've reached the end of the documentation."))}
         <br />
-        <a href={`#${categories[0].name}`} className="text-reset">
-          {capitalize(t('Go back to the top'))}
-        </a>
+        <HashLink to={`#${categories[0].name}`} className="text-reset">
+            {capitalize(t('Go back to the top'))}
+        </HashLink>
       </p>
     </React.Fragment>
   );
