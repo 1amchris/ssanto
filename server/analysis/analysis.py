@@ -57,7 +57,6 @@ class Analysis(Serializable):
                 'mains': []
             },
         )
-        self.objectives_data_update()
 
         self.objectives = subjects_manager.create(
             "objectives",
@@ -67,6 +66,7 @@ class Analysis(Serializable):
                 # ...
             },
         )
+        self.objectives_data_update()
 
         self.suggested_map_center = subjects_manager.create(
             # "map.center", LatLng(45.56, -76.9))
@@ -198,8 +198,12 @@ class Analysis(Serializable):
         return {"group": group, "name": name, "geojson": geojson}
 
     def objectives_data_update(self):
-        new_hierarchy = self.hierarchy.filter(self.nbs.value()["system_type"])
+        new_hierarchy = self.hierarchy.filter_master_list(
+            self.nbs.value()["system_type"])
+        default_objectives_hierarchy = self.hierarchy.get_default_hierarchy(
+            self.nbs.value()["system_type"])
         self.objectives_data.notify(new_hierarchy)
+        self.objectives.notify(default_objectives_hierarchy)
 
     def distribution_update(self):
         objectives_data = self.objectives.value()
