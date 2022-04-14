@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import _, { capitalize, cloneDeep } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
@@ -54,6 +54,19 @@ function isValidOH(objectiveHierarchy: ObjectivesHierarchyModel) {
     secondaryHasAttribute &&
     attributeHasName
   );
+}
+
+function findMissingAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
+  return objectiveHierarchy.primaries.secondaries
+    .map((secondaries, sindex) =>
+      secondaries.attributes.map((attributes, aindex) =>
+        attributes.attribute.length === 0
+          ? `"${objectiveHierarchy.primaries.primary[sindex]}/${secondaries.secondary[aindex]}"`
+          : undefined
+      )
+    )
+    .flat()
+    .filter(attribute => attribute !== undefined);
 }
 
 function findDuplicateAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
@@ -652,40 +665,18 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         ].datasets[orderIndex].type == 'Boolean'
       ) {
         continuousOptions.push(
-          <Control
-            key={key('calculated_distance') + localObjectives.update}
-            label={'calculated distance'}
-            className="small position-relative d-flex"
-            name={name('calculated_distance')}
-            prefix={
-              <React.Fragment>
-                <input
-                  type="checkbox"
-                  checked={
-                    localObjectives.primaries.secondaries[primaryIndex]
-                      .attributes[secondaryIndex].datasets[orderIndex]
-                      .isCalculated
-                  }
-                  onChange={onChangeIsCalculated(
-                    primaryIndex,
-                    secondaryIndex,
-                    orderIndex
-                  )}
-                />
-              </React.Fragment>
-            }
-            defaultValue={
+          <Checkbox
+            label={'use calculated distance'}
+            key={key('isCalculated')}
+            name={name('isCalculated')}
+            checked={
               localObjectives.primaries.secondaries[primaryIndex].attributes[
                 secondaryIndex
-              ].datasets[orderIndex].calculationDistance
+              ].datasets[orderIndex].isCalculated
             }
-            onChange={onChangeDistance(
-              primaryIndex,
-              secondaryIndex,
-              orderIndex
-            )}
-            type="number"
-            tooltip={t('meter')}
+            onChange={(e: any) =>
+              onChangeIsCalculated(primaryIndex, secondaryIndex, orderIndex)(e)
+            }
           />
         );
         if (
@@ -694,28 +685,9 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           ].datasets[orderIndex].isCalculated
         ) {
           continuousOptions.push(
-            <Control
-              key={key('granularity') + localObjectives.update}
-              label={'granularity'}
-              className="small position-relative d-flex"
-              name={name('granularity')}
-              defaultValue={
-                localObjectives.primaries.secondaries[primaryIndex].attributes[
-                  secondaryIndex
-                ].datasets[orderIndex].granularity
-              }
-              onChange={onChangeGranularity(
-                primaryIndex,
-                secondaryIndex,
-                orderIndex
-              )}
-              type="number"
-            />,
-
             <Checkbox
               key={key('centroid') + localObjectives.update}
-              label={'centroid'}
-              className="small position-relative d-flex"
+              label={'use centroid'}
               name={name('centroid')}
               checked={
                 localObjectives.primaries.secondaries[primaryIndex].attributes[
@@ -725,6 +697,39 @@ function ObjectiveHierarchy({ t, disabled }: any) {
               onChange={(e: any) =>
                 onChangeCentroid(primaryIndex, secondaryIndex, orderIndex)(e)
               }
+            />,
+            <Control
+              key={key('calculated_distance') + localObjectives.update}
+              label={'distance'}
+              name={name('calculated_distance')}
+              defaultValue={
+                localObjectives.primaries.secondaries[primaryIndex].attributes[
+                  secondaryIndex
+                ].datasets[orderIndex].calculationDistance
+              }
+              onBlur={onChangeDistance(
+                primaryIndex,
+                secondaryIndex,
+                orderIndex
+              )}
+              type="number"
+              tooltip={t('meter')}
+            />,
+            <Control
+              label={'granularity'}
+              key={key('granularity')}
+              name={name('granularity')}
+              defaultValue={
+                localObjectives.primaries.secondaries[primaryIndex].attributes[
+                  secondaryIndex
+                ].datasets[orderIndex].granularity
+              }
+              onBlur={onChangeGranularity(
+                primaryIndex,
+                secondaryIndex,
+                orderIndex
+              )}
+              type="number"
             />
           );
         }
@@ -732,27 +737,28 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
       return [
         <Control
+          hideLabel
           label="attribute"
-          key={key('attribute_') + localObjectives.update}
-          name="attribute"
+          placeholder="Attribute name"
+          key={key('attribute')}
+          name={name('attribute')}
           defaultValue={
             localObjectives.primaries.secondaries[primaryIndex].attributes[
               secondaryIndex
             ].attribute[orderIndex]
           }
           required
-          onChange={onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)}
+          onBlur={onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)}
         />,
         <Select
+          label="dataset"
           key={key('dataset') + localObjectives.update}
           name={name('dataset')}
-          className="small position-relative d-flex"
           defaultValue={
             localObjectives.primaries.secondaries[primaryIndex].attributes[
               secondaryIndex
             ].datasets[orderIndex].name
           }
-          label={`dataset`}
           onChange={(e: any) => {
             onChangeDataset(primaryIndex, secondaryIndex, orderIndex)(e);
           }}
@@ -763,10 +769,9 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           )}
         />,
         <Select
+          label="column"
           key={key('column') + localObjectives.update}
           name={name('column')}
-          className="small position-relative d-flex"
-          label={`column`}
           defaultValue={
             localObjectives.primaries.secondaries[primaryIndex].attributes[
               secondaryIndex
@@ -915,9 +920,14 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       disabled={isLoading || disabled}
       onSubmit={() => {
         const { update, ...oh } = cloneDeep(localObjectives);
+        const missings = findMissingAttributes(oh);
         const duplicates = findDuplicateAttributes(oh);
 
-        if (!isValidOH(oh)) {
+        if (missings.length > 0) {
+          logError(
+            `Missing attributes for objectives: ${missings}. You can remove the objectives from the tree, or set the missing attributes.`
+          );
+        } else if (!isValidOH(oh)) {
           logError('Invalid objective hierarchy');
         } else if (duplicates.length > 0) {
           logError(`Duplicate objectives: ${duplicates}`);

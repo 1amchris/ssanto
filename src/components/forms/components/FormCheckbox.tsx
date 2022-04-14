@@ -8,9 +8,7 @@ import FormComponent from './FormComponent';
 
 /**
  * FormCheckbox
- * @param props .prefix is a ReactElement which will be prepended to the input control
- *              .suffix is a ReactElement which will be appended to the input control
- * @return an augmented input control
+ * @return an augmented checkbox control
  */
 class FormCheckbox extends FormComponent {
   constructor(props: any, key?: string) {
@@ -26,29 +24,31 @@ class FormCheckbox extends FormComponent {
       visuallyHidden,
       className,
       label,
-      suffix,
-      prefix,
       guideHash = '',
       ...props
     } = this.getFilteredProps();
     return (
       <Form.Group
         key={this.key}
-        className={`w-100 ${className ? className : ''} ${
+        className={`w-100 pt-1 ${className ? className : ''} ${
           visuallyHidden ? 'visually-hidden' : ''
         }`}
       >
-        <Form.Label visuallyHidden={hideLabel}>
-          <small>
-            {capitalize(t(label || this.props.name))}{' '}
-            {guideHash?.length > 0 && (
-              <HashLink to={`/guide#${guideHash}`}>
-                <FiInfo />
-              </HashLink>
-            )}
-          </small>
-        </Form.Label>
-        <input {...props} type={'checkbox'} id={this.id} />
+        <Form.Check
+          type="checkbox"
+          id={this.id}
+          label={
+            <small>
+              {capitalize(t(label || this.props.name))}{' '}
+              {guideHash?.length > 0 && (
+                <HashLink to={`/guide#${guideHash}`}>
+                  <FiInfo />
+                </HashLink>
+              )}{' '}
+            </small>
+          }
+          {...props}
+        />
       </Form.Group>
     );
   };

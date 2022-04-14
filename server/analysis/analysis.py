@@ -32,7 +32,8 @@ class Analysis(Serializable):
         self.files_manager = files_manager
         self.suitability_calculator = None
         self.hierarchy = Hierarchy(
-            os.path.join(os.path.join(os.getcwd(), "objectives_data"), "hierarchy.json")
+            os.path.join(os.path.join(
+                os.getcwd(), "objectives_data"), "hierarchy.json")
         )
 
         self.parameters = subjects_manager.create(
@@ -128,7 +129,8 @@ class Analysis(Serializable):
 
         def visit(value):
             if value in visited:
-                raise ValueError(f"Duplicate values: {value} is used more than once!")
+                raise ValueError(
+                    f"Duplicate values: {value} is used more than once!")
             else:
                 visited.add(value)
 
@@ -323,15 +325,16 @@ class Analysis(Serializable):
                         ][secondary_index]["datasets"][attribute_index]["properties"][
                             "distribution_value"
                         ] = [
-                            int(y_) for y_ in list(y)
+                            float(y_) for y_ in list(y)
                         ]
-
-                        self.subjects_manager.update("objectives", new_objectives_data)
+                        self.subjects_manager.update(
+                            "objectives", new_objectives_data)
 
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
         if calculator := self.suitability_calculator:
-            base.objectives = calculator.get_informations_at(cursor.lat, cursor.long)
+            base.objectives = calculator.get_informations_at(
+                cursor.lat, cursor.long)
         return base
 
     def update(self, subject, data):
@@ -375,7 +378,8 @@ class Analysis(Serializable):
             )
             self.suitability_calculator.set_cell_size(cell_size)
             self.suitability_calculator.set_crs("epsg:3857")
-            self.suitability_calculator.set_study_area_input(self.study_area.value())
+            self.suitability_calculator.set_study_area_input(
+                self.study_area.value())
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"],
@@ -421,7 +425,8 @@ class Analysis(Serializable):
                         minimum = dataset["min_value"]
                         maximum = dataset["max_value"]
                         missing_data_default_value = (
-                            missing_data_default_value * (maximum - minimum) + minimum
+                            missing_data_default_value *
+                            (maximum - minimum) + minimum
                         )
                         input_file = file_name
                         print("WEIGHT", weight_attribute)

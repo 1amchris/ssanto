@@ -12,6 +12,10 @@ const barOptions = {
   scales: {
     y: {
       beginAtZero: true,
+      display: true,
+    },
+    x: {
+      display: true,
     },
   },
   indexAxis: 'y' as const,
@@ -23,6 +27,14 @@ const barOptions = {
 };
 
 const lineOptions = {
+  scales: {
+    x: {
+      display: true,
+    },
+    y: {
+      display: true,
+    },
+  },
   plugins: {
     legend: {
       display: false,
@@ -84,6 +96,8 @@ class FormScalingGraph extends FormComponent {
       label,
       distribution,
       distribution_value: distributionValue,
+      xAxis,
+      yAxis,
       type,
       isCalculated,
       guideHash = '',
@@ -111,7 +125,26 @@ class FormScalingGraph extends FormComponent {
             height="200"
             width="200"
             key={`${this.key}/graph`}
-            options={lineOptions}
+            options={{
+              ...lineOptions,
+              scales: {
+                ...lineOptions.scales,
+                x: {
+                  ...lineOptions.scales.x,
+                  title: {
+                    display: xAxis !== undefined,
+                    text: xAxis,
+                  },
+                },
+                y: {
+                  ...lineOptions.scales.y,
+                  title: {
+                    display: xAxis !== undefined,
+                    text: yAxis,
+                  },
+                },
+              },
+            }}
             data={generateLineData(distribution, distributionValue)}
           />
         )}
@@ -120,7 +153,28 @@ class FormScalingGraph extends FormComponent {
             // For some reason, this Bar chart's height appears 1.6 times thicker?
             height={(distributionValue.length * horizontalBarHeight) / 1.6}
             width="200"
-            options={barOptions}
+            options={{
+              ...barOptions,
+              scales: {
+                ...barOptions.scales,
+                x: {
+                  ...barOptions.scales.x,
+                  title: {
+                    // y because the axis are inverted
+                    display: yAxis !== undefined,
+                    text: yAxis,
+                  },
+                },
+                y: {
+                  ...barOptions.scales.y,
+                  title: {
+                    // x because the axis are inverted
+                    display: xAxis !== undefined,
+                    text: xAxis,
+                  },
+                },
+              },
+            }}
             key={`${this.key}/graph`}
             data={generateBarData(distribution, distributionValue)}
           />

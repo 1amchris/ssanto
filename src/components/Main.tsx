@@ -30,6 +30,7 @@ function Main() {
     suitabilityCategories,
     suitabilityAboveThreshold,
   } = useAppSelector(selectMap);
+  const objectives = analysis.properties.objectives;
   const ohIsLoading = analysis.properties.objectivesLoading;
 
   function parametersIsValid() {
@@ -105,7 +106,7 @@ function Main() {
       <header>
         <MenuBar />
       </header>
-      <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
+      <div className="d-grid" style={{ gridTemplateColumns: '300px auto' }}>
         <aside id="left-aside">
           <FormsBar>
             <Collapsible
@@ -138,7 +139,7 @@ function Main() {
               disabled={!objectiveHierarchyIsEnabled()}
             >
               <ObjectiveHierarchy
-                key={`${ohIsLoading}`}
+                key={JSON.stringify(objectives)}
                 disabled={!objectiveHierarchyIsEnabled()}
               />
             </Collapsible>

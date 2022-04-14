@@ -9,7 +9,8 @@ class GraphMaker:
     def compute_scaling_graph(scaling_function, min_, max_, num=50):
         equation = compile(scaling_function, "", "eval")
         x = np.linspace(min_, max_, num=num)
-        y = list(map(lambda x_i: eval(equation, MATH_OPERATION, {"x": x_i}), x))
+        y = list(map(lambda x_i: eval(
+            equation, MATH_OPERATION, {"x": x_i}), x))
         minimum = min(y)
         maximum = max(y)
         y = list(map(lambda y_i: (y_i - minimum) / (maximum - minimum), y))
