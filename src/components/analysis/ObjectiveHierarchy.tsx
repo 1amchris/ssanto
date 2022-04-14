@@ -56,6 +56,19 @@ function isValidOH(objectiveHierarchy: ObjectivesHierarchyModel) {
   );
 }
 
+function findMissingAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
+  return objectiveHierarchy.primaries.secondaries
+    .map((secondaries, sindex) =>
+      secondaries.attributes.map((attributes, aindex) =>
+        attributes.attribute.length === 0
+          ? `"${objectiveHierarchy.primaries.primary[sindex]}/${secondaries.secondary[aindex]}"`
+          : undefined
+      )
+    )
+    .flat()
+    .filter(attribute => attribute !== undefined);
+}
+
 function findDuplicateAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
   const attributes: string[] = Object.entries(flatten(objectiveHierarchy)!)
     .filter(([key]) =>
@@ -915,9 +928,14 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       disabled={isLoading || disabled}
       onSubmit={() => {
         const { update, ...oh } = cloneDeep(localObjectives);
+        const missings = findMissingAttributes(oh);
         const duplicates = findDuplicateAttributes(oh);
 
-        if (!isValidOH(oh)) {
+        if (missings.length > 0) {
+          logError(
+            `Missing attributes for objectives: ${missings}. You can remove the objectives from the tree, or set the missing attributes.`
+          );
+        } else if (!isValidOH(oh)) {
           logError('Invalid objective hierarchy');
         } else if (duplicates.length > 0) {
           logError(`Duplicate objectives: ${duplicates}`);
