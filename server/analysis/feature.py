@@ -88,8 +88,9 @@ class ContinuousFeature(Feature):
         file_array = file_band.ReadAsArray()
         file_array = self.process_missing_mask(file_array)
         file_array = self.clip_matrix(file_array)
-        file_array = self.apply_value_scaling(file_array)
         file_array = self.default_normalize_matrix(file_array)
+        file_array = self.apply_value_scaling(file_array)
+        file_array = np.clip(file_array, 0, 1)
         return file_array
 
     def apply_value_scaling(self, file_array):
@@ -215,8 +216,9 @@ class DistanceFeature(ContinuousFeature):
             * self.max_distance
             * self.cell_size
         )
-        self.distance_matrix = self.apply_value_scaling(self.distance_matrix)
         self.distance_matrix = self.default_normalize_matrix(self.distance_matrix)
+        self.distance_matrix = self.apply_value_scaling(self.distance_matrix)
+        self.distance_matrix = np.clip(self.distance_matrix, 0, 1)
 
     def get_value_matrix(self):
         return self.distance_matrix

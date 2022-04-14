@@ -1,4 +1,5 @@
 import signal
+import platform
 
 import asyncio
 
@@ -37,6 +38,7 @@ async def main():
     server_socket.bind_command("analysis.set_study_area", analysis.receive_study_area)
     server_socket.bind_command("analysis.save_project", analysis.export_project_save)
     server_socket.bind_command("analysis.open_project", analysis.import_project_save)
+    server_socket.bind_command("analysis.export_tiff", analysis.export_tiff)
 
     map = Map(subjects_manager, analysis.get_informations_at_position)
     server_socket.bind_command("map.set_cursor", map.set_cursor)
@@ -47,8 +49,10 @@ async def main():
     # Main loop
     loop = asyncio.get_running_loop()
     stop = loop.create_future()
-    loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
-    loop.add_signal_handler(signal.SIGINT, stop.set_result, None)
+    # Windows dont implement these...
+    if platform.system() != "Windows":
+        loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
+        loop.add_signal_handler(signal.SIGINT, stop.set_result, None)
 
     # DO NOT DELETE. It is used to open the window.
     print("STARTUP_FINISH")
