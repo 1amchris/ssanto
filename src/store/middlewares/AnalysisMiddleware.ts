@@ -26,8 +26,8 @@ const AnalysisMiddleware: Middleware =
       case subAnalysisSuccess.type: {
         dispatch(cleanAnalysisLayers());
         for (const subAnalysis in action.payload) {
-          const { file_name: fileName, area } = action.payload[subAnalysis];
-          if (area !== undefined) {
+          if (action.payload[subAnalysis].area !== undefined) {
+            const { file_name: fileName, area } = action.payload[subAnalysis];
             dispatch(
               upsertLayer({
                 group: 'sub_analysis',

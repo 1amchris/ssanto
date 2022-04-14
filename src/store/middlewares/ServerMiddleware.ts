@@ -11,6 +11,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import CallModel from 'models/server-coms/CallModel';
 import SubscriptionModel from 'models/server-coms/SubscriptionModel';
 
+// eslint-disable-next-line new-cap
 const ServerComMiddleware: () => Middleware = () => {
   const serverCom = new ServerCom();
   return ({ dispatch }: MiddlewareAPI) =>
@@ -43,4 +44,5 @@ const ServerComMiddleware: () => Middleware = () => {
     };
 };
 
+// eslint-disable-next-line new-cap
 export default ServerComMiddleware();

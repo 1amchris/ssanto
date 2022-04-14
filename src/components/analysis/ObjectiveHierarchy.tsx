@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import _, { capitalize, cloneDeep } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
@@ -108,7 +108,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
   };
 
   /* Début refactor ***************/
-  let controls = [];
+  const controls = [];
   if (
     !(localObjectives === undefined || localObjectives.primaries === undefined)
   ) {
@@ -194,7 +194,9 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const generateOptionsMain = () => {
       const options = [localObjectives.main];
       getAllMainOptions().map(main => {
-        if (main != localObjectives.main) options.push(main);
+        if (main != localObjectives.main) {
+          options.push(main);
+        }
       });
       return formatOptions(options);
     };
@@ -737,6 +739,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         }
       }
 
+      /* eslint-disable react/jsx-key */
       return [
         <Control
           hideLabel
@@ -790,6 +793,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         />,
         ...continuousOptions,
       ];
+      /* eslint-enable react/jsx-key */
     };
 
     /**
@@ -839,6 +843,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         onRemoveControl={onRemoveAttribute(primaryIndex, secondaryIndex)}
       />,
     ];
+
     const primaryObjectivesFactory = ({
       name,
       key,
@@ -878,6 +883,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       />,
     ];
 
+    /* eslint-disable react/jsx-key */
     const mainControls = [
       <Select
         key={'main' + localObjectives.update}
@@ -904,23 +910,24 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         onRemoveControl={onRemovePrimary()}
       />,
     ];
+    /* eslint-enable react/jsx-key */
 
-    controls = [
+    controls.push(
       ...mainControls,
       <Spacer />,
       <Button variant="outline-primary" loading={isLoading}>
         {capitalize(t('apply'))}
-      </Button>,
-    ];
-  } else {
-    controls = [<></>];
+      </Button>
+    );
   }
+
   return (
     <Form
       controls={controls}
       errors={getErrors}
       disabled={isLoading || disabled}
       onSubmit={() => {
+        // eslint-disable-next-line no-unused-vars
         const { update, ...oh } = cloneDeep(localObjectives);
         const missings = findMissingAttributes(oh);
         const duplicates = findDuplicateAttributes(oh);

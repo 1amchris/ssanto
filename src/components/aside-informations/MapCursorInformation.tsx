@@ -9,24 +9,6 @@ function MapCursorInformation() {
   const { cursorInformations } = useAppSelector(selectMap);
 
   const rows = [
-    // <div>
-    //   <small>Latitude/Longitude</small>
-    //   <div className="bg-light border rounded p-2">
-    //     <code className="d-block">{cursor?.lat}</code>
-    //     <code className="d-block">{cursor?.long}</code>
-    //   </div>
-    // </div>,
-    // cursorInformations?.objectives &&
-    //   Object.keys(cursorInformations.objectives).length > 0 &&
-    //   Object.entries(cursorInformations?.objectives).map(
-    //     ([objective, suitability]) => (
-    //       <div className="bg-light border rounded p-2 mb-1">
-    //         <code>
-    //           {objective}: {suitability}
-    //         </code>
-    //       </div>
-    //     )
-    //   ),
     cursorInformations?.objectives &&
       Object.keys(cursorInformations.objectives).length > 0 && (
         <Bar

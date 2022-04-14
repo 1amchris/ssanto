@@ -28,6 +28,7 @@ function StudyArea({ t, disabled }: any) {
   const getErrors = selector.properties.study_areaError;
   const isLoading = selector.properties.study_areaLoading;
 
+  /* eslint-disable react/jsx-key */
   const controls = [
     <Control
       visuallyHidden={!properties}
@@ -48,6 +49,7 @@ function StudyArea({ t, disabled }: any) {
       {capitalize(t('apply'))}
     </Button>,
   ];
+  /* eslint-enable react/jsx-key */
 
   return (
     <Form

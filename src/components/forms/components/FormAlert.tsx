@@ -3,11 +3,6 @@ import { uniqueId } from 'lodash';
 import { Alert } from 'react-bootstrap';
 import FormComponent from './FormComponent';
 
-/**
- * FormAlert
- * @param props .children will be displayed as the body of the alert
- * @return an augmented alert
- */
 class FormAlert extends FormComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/alert-'), key);

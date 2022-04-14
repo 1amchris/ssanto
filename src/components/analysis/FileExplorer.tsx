@@ -51,6 +51,7 @@ function FileExplorer({ t, disabled }: any) {
   const getErrors = selector.properties.filesError;
   const isLoading = selector.properties.filesLoading;
 
+  /* eslint-disable react/jsx-key */
   const controls = [
     <Control
       label="Select files"
@@ -97,6 +98,7 @@ function FileExplorer({ t, disabled }: any) {
       />
     ),
   ];
+  /* eslint-enable react/jsx-key */
 
   return (
     <Form

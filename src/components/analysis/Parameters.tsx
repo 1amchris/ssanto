@@ -24,6 +24,8 @@ function Parameters({ t, disabled }: any) {
   const isLoading = selector.properties.parametersLoading;
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
+
+  /* eslint-disable react/jsx-key */
   const controls = [
     <Control
       label="analysis name"
@@ -67,6 +69,7 @@ function Parameters({ t, disabled }: any) {
       {capitalize(t('reset'))}
     </Button>,
   ];
+  /* eslint-enable react/jsx-key */
 
   return (
     <Form

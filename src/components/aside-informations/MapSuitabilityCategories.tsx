@@ -8,15 +8,6 @@ function MapCursorInformation() {
   const { suitabilityCategories } = useAppSelector(selectMap);
 
   const rows = [
-    // suitabilityCategories &&
-    //   Object.keys(suitabilityCategories).length > 0 &&
-    //   Object.entries(suitabilityCategories).map(([objective, suitability]) => (
-    //     <div className="bg-light border rounded p-2 mb-1">
-    //       <code>
-    //         {objective}: {suitability}
-    //       </code>
-    //     </div>
-    //   )),
     suitabilityCategories && (
       <Bar
         height={Object.keys(suitabilityCategories).length * horizontalBarHeight}

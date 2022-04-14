@@ -24,6 +24,7 @@ function NbsSystem({ t, disabled }: any) {
   const getErrors = selector.properties.nbs_systemError;
   const isLoading = selector.properties.nbs_systemLoading;
 
+  /* eslint-disable react/jsx-key */
   const controls = [
     <Select
       label="NBS system type"
@@ -50,6 +51,7 @@ function NbsSystem({ t, disabled }: any) {
       {capitalize(t('reset'))}
     </Button>,
   ];
+  /* eslint-enable react/jsx-key */
 
   return (
     <Form

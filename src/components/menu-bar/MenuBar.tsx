@@ -14,6 +14,7 @@ function MenuBar() {
   const mapLayers = useAppSelector(selectMap).layers;
   const dispatch = useAppDispatch();
 
+  /* eslint-disable react/jsx-key */
   const getMenus = () => [
     <Menu label="project">
       <Import
@@ -68,6 +69,7 @@ function MenuBar() {
       <Link label="show guide" targetUrl="/guide" />
     </Menu>,
   ];
+  /* eslint-enable react/jsx-key */
 
   return (
     <nav

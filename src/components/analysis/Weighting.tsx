@@ -169,6 +169,7 @@ function Weighting({ t, disabled }: any) {
     ];
   };
 
+  /* eslint-disable react/jsx-key */
   const controls = [
     <SimpleList
       label={objectives.main}
@@ -186,6 +187,7 @@ function Weighting({ t, disabled }: any) {
       {capitalize(t('apply'))}
     </Button>,
   ];
+  /* eslint-enable react/jsx-key */
 
   return (
     <Form

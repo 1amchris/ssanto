@@ -6,16 +6,13 @@ import { FiInfo } from 'react-icons/fi';
 import { HashLink } from 'react-router-hash-link';
 import FormComponent from './FormComponent';
 
-/**
- * FormCheckbox
- * @return an augmented checkbox control
- */
 class FormCheckbox extends FormComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/checkbox-'), key);
   }
 
   render = () => {
+    /* eslint-disable no-unused-vars */
     const {
       t,
       i18n,

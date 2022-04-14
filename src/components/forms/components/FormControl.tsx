@@ -6,18 +6,13 @@ import { FiInfo } from 'react-icons/fi';
 import { HashLink } from 'react-router-hash-link';
 import FormComponent from './FormComponent';
 
-/**
- * FormControl
- * @param props .prefix is a ReactElement which will be prepended to the input control
- *              .suffix is a ReactElement which will be appended to the input control
- *  an augmented input control
- */
 class FormControl extends FormComponent {
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/control-'), key);
   }
 
   render = () => {
+    /* eslint-disable no-unused-vars */
     const {
       t,
       i18n,
