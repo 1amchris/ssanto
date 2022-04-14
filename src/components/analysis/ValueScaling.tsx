@@ -137,15 +137,23 @@ function ValueScaling({ t, disabled }: any) {
   const functionFactory = ({ name, key, label, dataset }: FactoryProps) => {
     return (
       <Collapsible title={label}>
-        <Control
-          label="missing data suitability"
-          key={key('datasets') + '.properties.missingDataSuitability'}
-          name={name('datasets') + '.properties.missingDataSuitability'}
-          defaultValue={dataset.properties.missingDataSuitability}
-          type="number"
-          required
-        />
-        <Spacer />
+        {dataset.type == 'Continuous' ? (
+          <div>
+            {' '}
+            <Control
+              label="missing data suitability"
+              key={key('datasets') + '.properties.missingDataSuitability'}
+              name={name('datasets') + '.properties.missingDataSuitability'}
+              defaultValue={dataset.properties.missingDataSuitability}
+              type="number"
+              required
+            />
+            <Spacer />
+          </div>
+        ) : (
+          <></>
+        )}
+
         <Control
           label="value scaling function"
           key={key('datasets') + '.properties.valueScalingFunction'}
