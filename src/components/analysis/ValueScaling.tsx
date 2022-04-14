@@ -95,6 +95,9 @@ function ValueScaling({ t, disabled }: any) {
   const categoryRowFactory = ({ name, key, label, value }: FactoryProps) => {
     return [
       <Control
+        max={1}
+        min={0}
+        step={0.01}
         label={label}
         key={key('properties.distribution_value')}
         name={name('properties.distribution_value')}
@@ -108,6 +111,9 @@ function ValueScaling({ t, disabled }: any) {
     return (
       <Collapsible title={label}>
         <Control
+          max={1}
+          min={0}
+          step={0.01}
           label="missing data suitability"
           key={key('datasets') + '.properties.missingDataSuitability'}
           name={name('datasets') + '.properties.missingDataSuitability'}
@@ -141,6 +147,9 @@ function ValueScaling({ t, disabled }: any) {
           <div>
             {' '}
             <Control
+              max={1}
+              min={0}
+              step={0.01}
               label="missing data suitability"
               key={key('datasets') + '.properties.missingDataSuitability'}
               name={name('datasets') + '.properties.missingDataSuitability'}
@@ -241,6 +250,7 @@ function ValueScaling({ t, disabled }: any) {
 
   return (
     <Form
+      // noValidate
       controls={controls}
       errors={getErrors}
       disabled={isLoading || disabled}
