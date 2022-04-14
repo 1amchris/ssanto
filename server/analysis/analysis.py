@@ -488,9 +488,10 @@ class Analysis(Serializable):
                     #    index, path, "output.tiff", int(weight_secondary), scaling_function)
 
             output_matrix = self.suitability_calculator.process_data()
+
             path = self.suitability_calculator.matrix_to_raster(output_matrix)
             analysis_df = self.suitability_calculator.tiff_to_geojson(path)
-
+            tiff = open(path, "rb")
             sub_objectives_json = self.suitability_calculator.process_sub_objectives()
 
             self.compute_suitability_above_threshold()
@@ -499,6 +500,7 @@ class Analysis(Serializable):
             return_value = {
                 "file_name": "current analysis",
                 "area": analysis_df.to_json(),
+                "tiff_file": tiff,
             }
             # return {"file_name": "current analysis", "area": geo_json}
         else:
