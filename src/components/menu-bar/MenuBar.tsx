@@ -63,14 +63,6 @@ function MenuBar() {
           )
         }
       />
-
-      {/* <Action
-        label="Export analysis as .TIFF"
-        onClick={(event: any) => {
-          createTIFF();
-          console.log('analysis.tiff', event);
-        }}
-      /> */}
     </Menu>,
     <Menu label="help">
       <Link label="show guide" targetUrl="/guide" />
