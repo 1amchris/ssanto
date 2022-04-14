@@ -1,3 +1,4 @@
+import React from 'react';
 import MenuBar from 'components/menu-bar/MenuBar';
 import FormsBar from 'components/forms/FormsBar';
 import Collapsible from 'components/Collapsible';
@@ -109,31 +110,31 @@ function Main() {
           <FormsBar>
             <Collapsible
               title={'file explorer'}
-              guide_hash="analysis/file-explorer"
+              guideHash="analysis/file-explorer"
               collapsed
             >
               <FileExplorer />
             </Collapsible>
-            <Collapsible title={'parameters'} guide_hash="analysis/parameters">
+            <Collapsible title={'parameters'} guideHash="analysis/parameters">
               <Parameters />
             </Collapsible>
             <Collapsible
               title={'study area'}
-              guide_hash="analysis/study-area"
+              guideHash="analysis/study-area"
               disabled={!studyAreaIsEnabled()}
             >
               <StudyArea disabled={!studyAreaIsEnabled()} />
             </Collapsible>
             <Collapsible
               title={'system type'}
-              guide_hash="analysis/nbs-system"
+              guideHash="analysis/nbs-system"
               disabled={!systemTypeIsEnabled()}
             >
               <NbsSystem disabled={!systemTypeIsEnabled()} />
             </Collapsible>
             <Collapsible
               title={'objective hierarchy'}
-              guide_hash="analysis/objectives-hierarchy"
+              guideHash="analysis/objectives-hierarchy"
               disabled={!objectiveHierarchyIsEnabled()}
             >
               <ObjectiveHierarchy
@@ -144,7 +145,7 @@ function Main() {
             <Collapsible
               title={'objectives weighting'}
               disabled={!weightsAreEnabled()}
-              guide_hash="analysis/weighting"
+              guideHash="analysis/weighting"
             >
               <Weighting
                 key={`${ohIsLoading}`}

@@ -1,5 +1,5 @@
 import React from 'react';
-// import { OverlayTrigger, Popover } from 'react-bootstrap';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
 
 /**
  * FormComponent
@@ -41,16 +41,31 @@ abstract class FormComponent extends React.Component {
     return rest;
   }
 
-  Overlay = ({ children }: any) => {
-    // const {
-    //   tooltipTrigger = ['hover', 'focus'],
-    //   tooltipPlacement = 'right',
-    //   tooltipDelay = 750,
-    //   tooltip,
-    //   tooltipHeader,
-    // } = this.props;
+  addOverlay = (children: any) => {
+    const {
+      tooltipTrigger = ['hover', 'focus'],
+      tooltipPlacement = 'right',
+      tooltipDelay = 650,
+      tooltip,
+    } = this.props;
     return (
-      // <OverlayTrigger
+      <OverlayTrigger
+        trigger={tooltipTrigger}
+        placement={tooltipPlacement}
+        delay={tooltipDelay}
+        overlay={
+          tooltip ? (
+            <Popover id={`tooltip/${this.id}`}>
+              <Popover.Body>{tooltip}</Popover.Body>
+            </Popover>
+          ) : (
+            <></>
+          )
+        }
+      >
+        {children}
+      </OverlayTrigger>
+
       //   rootClose
       //   key={this.key}
       //   trigger={tooltipTrigger}
@@ -69,7 +84,6 @@ abstract class FormComponent extends React.Component {
       //     )
       //   }
       // >
-      children
       // </OverlayTrigger>
     );
   };

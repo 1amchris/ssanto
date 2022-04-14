@@ -19,7 +19,6 @@ function FormsBar({ children, className, t }: any, key?: string) {
   const dispatch = useAppDispatch();
 
   const isLoading = selector.properties.analysisLoading;
-  const error = selector.properties.analysisError;
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 

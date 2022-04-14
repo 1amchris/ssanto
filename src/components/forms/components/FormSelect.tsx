@@ -1,3 +1,4 @@
+import React from 'react';
 import { capitalize, uniqueId } from 'lodash';
 import { Form } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
@@ -9,7 +10,7 @@ import { FiInfo } from 'react-icons/fi';
 /**
  * FormSelect
  * @param props .options: Are FormSelectOptions to be chosen from by the user
- * @returns an augmented select
+ * @return an augmented select
  */
 class FormSelect extends FormComponent {
   constructor(props: any, key?: string) {
@@ -26,7 +27,7 @@ class FormSelect extends FormComponent {
       visuallyHidden,
       className,
       label,
-      guide_hash = '',
+      guideHash = '',
       ...props
     } = this.getFilteredProps();
 
@@ -40,8 +41,8 @@ class FormSelect extends FormComponent {
         <Form.Label visuallyHidden={hideLabel}>
           <small>
             {capitalize(t(label || this.props.name))}{' '}
-            {guide_hash?.length > 0 && (
-              <HashLink to={`/guide#${guide_hash}`}>
+            {guideHash?.length > 0 && (
+              <HashLink to={`/guide#${guideHash}`}>
                 <FiInfo />
               </HashLink>
             )}

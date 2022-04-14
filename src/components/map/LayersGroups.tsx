@@ -1,3 +1,4 @@
+import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { TileLayer, LayersControl, GeoJSON, LayerGroup } from 'react-leaflet';
@@ -21,7 +22,7 @@ const usePrevious = (value: any) => {
 };
 
 const LayersGroups = ({ t }: any) => {
-  const { layers, update_layers } = useAppSelector(selectMap);
+  const { layers, update_layers: updateLayers } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();
 
   const style = (feature: any) => {
@@ -29,19 +30,11 @@ const LayersGroups = ({ t }: any) => {
       feature.properties !== undefined &&
       feature.properties.sutability >= 0
     ) {
-      let color = ColorScaleUtils.greenToRed(feature.properties.sutability);
+      const color = ColorScaleUtils.greenToRed(feature.properties.sutability);
       return {
         color: color,
         fillColor: color,
         fillOpacity: 0.65,
-        // the fillColor is adapted from a property which can be changed by the user (segment)
-        //fillColor: 'black',
-        //weight: 0.3,
-        //stroke-width: to have a constant width on the screen need to adapt with scale
-        //opacity: 1,
-        //color: 'black',
-        //dashArray: '3',
-        //fillOpacity: 0.5,
         weight: 0.35,
       };
     } else if (
@@ -55,36 +48,36 @@ const LayersGroups = ({ t }: any) => {
   };
 
   const prevUpdateLayers: LayersUpdateGroups | undefined =
-    usePrevious(update_layers);
+    usePrevious(updateLayers);
   useEffect(() => {
-    if (prevUpdateLayers == undefined) return;
-    let p: LayersUpdateGroups = prevUpdateLayers;
+    if (prevUpdateLayers === undefined) return;
+    const p: LayersUpdateGroups = prevUpdateLayers;
 
-    let new_pairs: string[][] = [];
-    let old_pairs: string[][] = [];
+    const newPairs: string[][] = [];
+    const oldPairs: string[][] = [];
 
-    for (let [group, names] of Object.entries(update_layers)) {
-      for (let name of names) {
-        new_pairs.push([group, name]);
+    for (const [group, names] of Object.entries(updateLayers)) {
+      for (const name of names) {
+        newPairs.push([group, name]);
       }
     }
 
-    for (let [group, names] of Object.entries(prevUpdateLayers as any)) {
-      for (let name of names as any) {
-        old_pairs.push([group, name]);
+    for (const [group, names] of Object.entries(prevUpdateLayers as any)) {
+      for (const name of names as any) {
+        oldPairs.push([group, name]);
       }
     }
 
-    let toAdd: string[][] = new_pairs.filter((x: string[]) => {
+    const toAdd: string[][] = newPairs.filter((x: string[]) => {
       if (p[x[0]]) return !p[x[0]].includes(x[1]);
       else return true;
     });
-    let toRemove: string[][] = old_pairs.filter((x: string[]) => {
-      if (update_layers[x[0]]) return !update_layers[x[0]].includes(x[1]);
+    const toRemove: string[][] = oldPairs.filter((x: string[]) => {
+      if (updateLayers[x[0]]) return !updateLayers[x[0]].includes(x[1]);
       else return true;
     });
 
-    for (let layer of toAdd) {
+    for (const layer of toAdd) {
       dispatch(
         call({
           target: ServerCallTargets.GetLayer,
@@ -94,7 +87,7 @@ const LayersGroups = ({ t }: any) => {
       );
     }
 
-    for (let layer of toRemove) {
+    for (const layer of toRemove) {
       dispatch(
         removeLayer({
           group: layer[0],
@@ -102,7 +95,7 @@ const LayersGroups = ({ t }: any) => {
         } as RemoveLayerModel)
       );
     }
-  }, [prevUpdateLayers, update_layers]);
+  }, [prevUpdateLayers, updateLayers]);
   return (
     <LayersControl position="bottomleft">
       <LayersControl.BaseLayer checked name={capitalize(t('osm'))}>

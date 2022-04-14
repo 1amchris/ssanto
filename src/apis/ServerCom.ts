@@ -45,14 +45,14 @@ export default class ServerCom {
     console.log(`Connected to ${this.client!.url}`);
 
     this.isOpen = true;
-    for (let message of this.messageBuffer) {
+    for (const message of this.messageBuffer) {
       this.client!.send(message);
     }
     this.messageBuffer = [];
   }
 
   private onMessage(message: MessageEvent) {
-    let received: ReceiveData = this.convertEventToObject(message);
+    const received: ReceiveData = this.convertEventToObject(message);
 
     // Debug purpose
     // console.log('onMessage subject', received);

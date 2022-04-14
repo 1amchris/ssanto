@@ -5,10 +5,10 @@ import { Alert } from './components';
 
 /**
  * Form
- * @param controls A list of controls which will be added to the form
- * @param onSubmit Specify what to do with the fields in the form upon submission
- * @param onReset [optional] Specify how to reset with the fields upon resetting
- * @returns a form as a ReactElement
+ * @param {ReactElement | ReactElement[]}controls A list of controls which will be added to the form
+ * @param {(e: Object) => void} onSubmit Specify what to do with the fields in the form upon submission
+ * @param {(e: Object) => void)} onReset [optional] Specify how to reset with the fields upon resetting
+ * @return a form as a ReactElement
  */
 function Form({
   controls,

@@ -10,7 +10,7 @@ function Collapsible({
   t,
   title,
   children,
-  guide_hash = '',
+  guideHash = '',
   collapsed = false,
   disabled = false,
 }: any) {
@@ -32,8 +32,8 @@ function Collapsible({
       >
         <h6 className="mb-0">
           {capitalize(t(title || 'collapsible-title'))}{' '}
-          {guide_hash?.length > 0 && (
-            <HashLink to={`/guide#${guide_hash}`}>
+          {guideHash?.length > 0 && (
+            <HashLink to={`/guide#${guideHash}`}>
               <FiInfo />
             </HashLink>
           )}

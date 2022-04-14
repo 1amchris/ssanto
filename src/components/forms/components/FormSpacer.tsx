@@ -1,9 +1,10 @@
+import React from 'react';
 import { uniqueId } from 'lodash';
 import FormComponent from './FormComponent';
 
 /**
  * FormSpacer
- * @returns space between two controls in a form
+ * @return space between two controls in a form
  */
 class FormSpacer extends FormComponent {
   constructor(props: any, key?: string) {

@@ -20,7 +20,7 @@ export interface FactoryProps extends PropsModel {
  * @param index the index at which the row is placed in a list
  * @param onDeleteControl [optional] Specifies what happens when the 'delete' button is clicked
  *                        Leave undefined to prevent the user from deleting the entry
- * @returns a row entry for the expandable list
+ * @return a row entry for the expandable list
  */
 class Row extends React.Component<{
   parentId: string;
@@ -76,7 +76,7 @@ class Row extends React.Component<{
  * @param props .factory is a generator function that, provided with a few props will return a ReactElement or a list of em
  *              .template is used to generate a new control object when the user asks to
  *              .controls is the existing controls upon generating the expandable list
- * @returns a list with variable length, to which the user can add elements and remove elements
+ * @return a list with variable length, to which the user can add elements and remove elements
  */
 class FormExpandableList extends FormComponent {
   private readonly template: PropsModel;
@@ -104,7 +104,7 @@ class FormExpandableList extends FormComponent {
   }
 
   render = () => {
-    const { t, label, name, guide_hash = '' } = this.props;
+    const { t, label, name, guideHash = '' } = this.props;
     return (
       <React.Fragment>
         <label
@@ -114,8 +114,8 @@ class FormExpandableList extends FormComponent {
           }`}
         >
           {capitalize(t(label || name))}{' '}
-          {guide_hash?.length > 0 && (
-            <HashLink to={`/guide#${guide_hash}`}>
+          {guideHash?.length > 0 && (
+            <HashLink to={`/guide#${guideHash}`}>
               <FiInfo />
             </HashLink>
           )}

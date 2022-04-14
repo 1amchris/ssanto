@@ -1,3 +1,4 @@
+import React from 'react';
 import { uniqueId } from 'lodash';
 import { Dropdown } from 'react-bootstrap';
 import MenuComponent from './MenuComponent';

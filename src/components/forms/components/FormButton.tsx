@@ -1,11 +1,12 @@
+import React from 'react';
 import { uniqueId } from 'lodash';
 import { Button, Spinner } from 'react-bootstrap';
 import FormComponent from './FormComponent';
 
 /**
  * FormButton
- * @param props .children will be displayed as the body of the button
- * @returns an augmented button
+ * @param {any} props .children will be displayed as the body of the button
+ * @return an augmented button
  */
 class FormButton extends FormComponent {
   constructor(props: any, key?: string) {
@@ -24,7 +25,7 @@ class FormButton extends FormComponent {
       ...props
     } = this.getFilteredProps();
 
-    return (
+    return this.addOverlay(
       <Button
         {...props}
         className={`w-100 ${className} ${

@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 
 function InformationCard({ title, children, className }: any, key?: string) {
   return (

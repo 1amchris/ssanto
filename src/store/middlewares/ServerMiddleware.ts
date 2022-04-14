@@ -12,7 +12,7 @@ import CallModel from 'models/server-coms/CallModel';
 import SubscriptionModel from 'models/server-coms/SubscriptionModel';
 
 const ServerComMiddleware: () => Middleware = () => {
-  let serverCom = new ServerCom();
+  const serverCom = new ServerCom();
   return ({ dispatch }: MiddlewareAPI) =>
     (next: Dispatch) =>
     <A extends PayloadAction<any>>(action: A) => {
