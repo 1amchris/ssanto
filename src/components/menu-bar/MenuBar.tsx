@@ -1,6 +1,6 @@
 import React from 'react';
 import FileContentModel from 'models/file/FileContentModel';
-import { useAppDispatch } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { exportData } from 'store/reducers/export';
 import { Action, Divider, Import, Link } from './components';
 import { call } from 'store/reducers/server';
@@ -8,29 +8,11 @@ import Menu from './Menu';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import FilesUtils from 'utils/files-utils';
-import html2canvas from 'html2canvas';
+import { selectMap } from 'store/reducers/map';
 
 function MenuBar() {
+  const mapLayers = useAppSelector(selectMap).layers;
   const dispatch = useAppDispatch();
-
-  const createTIFF = async () => {
-    const element = document.getElementById('map')!;
-    const canvas = await html2canvas(element);
-    const data = canvas.toDataURL('image/tiff');
-    const link = document.createElement('a');
-    const filename = 'analysis' + Date.now() + '.tiff';
-
-    if (typeof link.download === 'string') {
-      link.href = data;
-      link.download = filename;
-
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } else {
-      window.open(data);
-    }
-  };
 
   const getMenus = () => [
     <Menu label="project">
@@ -44,7 +26,7 @@ function MenuBar() {
                 target: ServerCallTargets.OpenProject,
                 args: [file[0].content],
                 // TODO: There should probably be an "onErrorAction"
-              } as CallModel<string[], FileContentModel<string>, void, string, string>)
+              } as CallModel<string[], FileContentModel<string>>)
             )
           )
         }
@@ -57,18 +39,38 @@ function MenuBar() {
               target: ServerCallTargets.SaveProject,
               onSuccessAction: exportData,
               // TODO: There should probably be an "onErrorAction"
-            } as CallModel<void, FileContentModel<string>, void, string, string>)
+            } as CallModel<void, FileContentModel<string>>)
           )
         }
       />
       <Divider />
       <Action
+        label="export analysis as tiff"
+        disabled={
+          !(
+            mapLayers?.analysis &&
+            mapLayers?.analysis['current analysis'] !== undefined
+          )
+        }
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerCallTargets.ExportTiff,
+              args: ['analysis'],
+              onSuccessAction: exportData,
+              // TODO: There should probably be an "onErrorAction"
+            } as CallModel<[string], FileContentModel<string>>)
+          )
+        }
+      />
+
+      {/* <Action
         label="Export analysis as .TIFF"
         onClick={(event: any) => {
           createTIFF();
           console.log('analysis.tiff', event);
         }}
-      />
+      /> */}
     </Menu>,
     <Menu label="help">
       <Link label="show guide" targetUrl="/guide" />

@@ -1,6 +1,7 @@
 enum ServerCallTargets {
   Update = 'update',
   UpdateSuitabilityThreshold = 'analysis.update_suitability_threshold',
+  ExportTiff = 'analysis.export_tiff',
   SaveProject = 'analysis.save_project',
   OpenProject = 'analysis.open_project',
   SaveWeights = 'analysis.save_weights',
