@@ -143,9 +143,8 @@ function ValueScaling({ t, disabled }: any) {
   const functionFactory = ({ name, key, label, dataset }: FactoryProps) => {
     return (
       <Collapsible title={label}>
-        {dataset.type == 'Continuous' ? (
-          <div>
-            {' '}
+        {dataset.isContinuous && (
+          <React.Fragment>
             <Control
               max={1}
               min={0}
@@ -158,11 +157,8 @@ function ValueScaling({ t, disabled }: any) {
               required
             />
             <Spacer />
-          </div>
-        ) : (
-          <></>
+          </React.Fragment>
         )}
-
         <Control
           label="value scaling function"
           key={key('datasets') + '.properties.valueScalingFunction'}

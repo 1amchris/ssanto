@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import _, { capitalize, cloneDeep } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
@@ -665,35 +665,18 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         ].datasets[orderIndex].type == 'Boolean'
       ) {
         continuousOptions.push(
-          <Control
-            key={key('calculated_distance')}
-            label={'calculated distance'}
-            name={name('calculated_distance')}
-            prefix={
-              <React.Fragment>
-                <input
-                  type="checkbox"
-                  checked={
-                    localObjectives.primaries.secondaries[primaryIndex]
-                      .attributes[secondaryIndex].datasets[orderIndex]
-                      .isCalculated
-                  }
-                  onChange={onChangeIsCalculated(
-                    primaryIndex,
-                    secondaryIndex,
-                    orderIndex
-                  )}
-                />
-              </React.Fragment>
-            }
-            defaultValue={
+          <Checkbox
+            label={'use calculated distance'}
+            key={key('isCalculated')}
+            name={name('isCalculated')}
+            checked={
               localObjectives.primaries.secondaries[primaryIndex].attributes[
                 secondaryIndex
-              ].datasets[orderIndex].calculationDistance
+              ].datasets[orderIndex].isCalculated
             }
-            onBlur={onChangeDistance(primaryIndex, secondaryIndex, orderIndex)}
-            type="number"
-            tooltip={t('meter')}
+            onChange={(e: any) =>
+              onChangeIsCalculated(primaryIndex, secondaryIndex, orderIndex)(e)
+            }
           />
         );
         if (
@@ -702,6 +685,36 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           ].datasets[orderIndex].isCalculated
         ) {
           continuousOptions.push(
+            <Checkbox
+              key={key('centroid') + localObjectives.update}
+              label={'use centroid'}
+              name={name('centroid')}
+              checked={
+                localObjectives.primaries.secondaries[primaryIndex].attributes[
+                  secondaryIndex
+                ].datasets[orderIndex].centroid
+              }
+              onChange={(e: any) =>
+                onChangeCentroid(primaryIndex, secondaryIndex, orderIndex)(e)
+              }
+            />,
+            <Control
+              key={key('calculated_distance') + localObjectives.update}
+              label={'distance'}
+              name={name('calculated_distance')}
+              defaultValue={
+                localObjectives.primaries.secondaries[primaryIndex].attributes[
+                  secondaryIndex
+                ].datasets[orderIndex].calculationDistance
+              }
+              onBlur={onChangeDistance(
+                primaryIndex,
+                secondaryIndex,
+                orderIndex
+              )}
+              type="number"
+              tooltip={t('meter')}
+            />,
             <Control
               label={'granularity'}
               key={key('granularity')}
@@ -717,19 +730,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
                 orderIndex
               )}
               type="number"
-            />,
-            <Checkbox
-              key={key('centroid') + localObjectives.update}
-              label={'centroid'}
-              name={name('centroid')}
-              checked={
-                localObjectives.primaries.secondaries[primaryIndex].attributes[
-                  secondaryIndex
-                ].datasets[orderIndex].centroid
-              }
-              onChange={(e: any) =>
-                onChangeCentroid(primaryIndex, secondaryIndex, orderIndex)(e)
-              }
             />
           );
         }
