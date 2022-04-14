@@ -22,6 +22,7 @@ import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 import Collapsible from 'components/Collapsible';
+import ValueScalingProperties from 'models/DatasetModel';
 
 interface ScalesHierarchy {
   primaries: {
@@ -37,6 +38,29 @@ interface ScalesHierarchy {
     }[];
   };
 }
+
+//TODO enelever de la liste si objectif boolean not calculated
+
+const hasScalableAttribute =
+  (objectives: ObjectivesHierarchyModel) =>
+  (element: any, index: number, _: any) => {
+    let primaryHasScalableAttribute = false;
+    objectives.primaries.secondaries[index].attributes.forEach(
+      (attributes: {
+        attribute: string[];
+        weights: number[];
+        datasets: ValueScalingProperties[];
+      }) => {
+        attributes.datasets.forEach(dataset => {
+          primaryHasScalableAttribute =
+            primaryHasScalableAttribute ||
+            !(dataset.type == 'Boolean' && !dataset.isCalculated);
+        });
+      }
+    );
+
+    return primaryHasScalableAttribute;
+  };
 
 const merge = (
   objectives: ObjectivesHierarchyModel,
@@ -196,10 +220,12 @@ function ValueScaling({ t, disabled }: any) {
       label={objectives.main}
       name={'primaries'}
       factory={primariesFactory}
-      controls={objectives.primaries.primary.map((_: any, index: number) => ({
-        label: objectives.primaries.primary[index],
-        secondaries: objectives.primaries.secondaries[index],
-      }))}
+      controls={objectives.primaries.primary
+        .filter(hasScalableAttribute(objectives))
+        .map((_: any, index: number) => ({
+          label: objectives.primaries.primary[index],
+          secondaries: objectives.primaries.secondaries[index],
+        }))}
     />,
     <Spacer />,
     <Button variant="outline-primary" loading={isLoading}>
