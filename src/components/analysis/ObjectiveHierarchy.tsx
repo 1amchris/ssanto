@@ -666,9 +666,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       ) {
         continuousOptions.push(
           <Control
-            key={key('calculated_distance') + localObjectives.update}
+            key={key('calculated_distance')}
             label={'calculated distance'}
-            className="small position-relative d-flex"
             name={name('calculated_distance')}
             prefix={
               <React.Fragment>
@@ -692,11 +691,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
                 secondaryIndex
               ].datasets[orderIndex].calculationDistance
             }
-            onChange={onChangeDistance(
-              primaryIndex,
-              secondaryIndex,
-              orderIndex
-            )}
+            onBlur={onChangeDistance(primaryIndex, secondaryIndex, orderIndex)}
             type="number"
             tooltip={t('meter')}
           />
@@ -708,27 +703,24 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         ) {
           continuousOptions.push(
             <Control
-              key={key('granularity') + localObjectives.update}
               label={'granularity'}
-              className="small position-relative d-flex"
+              key={key('granularity')}
               name={name('granularity')}
               defaultValue={
                 localObjectives.primaries.secondaries[primaryIndex].attributes[
                   secondaryIndex
                 ].datasets[orderIndex].granularity
               }
-              onChange={onChangeGranularity(
+              onBlur={onChangeGranularity(
                 primaryIndex,
                 secondaryIndex,
                 orderIndex
               )}
               type="number"
             />,
-
             <Checkbox
               key={key('centroid') + localObjectives.update}
               label={'centroid'}
-              className="small position-relative d-flex"
               name={name('centroid')}
               checked={
                 localObjectives.primaries.secondaries[primaryIndex].attributes[
@@ -745,27 +737,28 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
       return [
         <Control
+          hideLabel
           label="attribute"
-          key={key('attribute_') + localObjectives.update}
-          name="attribute"
+          placeholder="Attribute name"
+          key={key('attribute')}
+          name={name('attribute')}
           defaultValue={
             localObjectives.primaries.secondaries[primaryIndex].attributes[
               secondaryIndex
             ].attribute[orderIndex]
           }
           required
-          onChange={onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)}
+          onBlur={onChangeAttribute(primaryIndex, secondaryIndex, orderIndex)}
         />,
         <Select
+          label="dataset"
           key={key('dataset') + localObjectives.update}
           name={name('dataset')}
-          className="small position-relative d-flex"
           defaultValue={
             localObjectives.primaries.secondaries[primaryIndex].attributes[
               secondaryIndex
             ].datasets[orderIndex].name
           }
-          label={`dataset`}
           onChange={(e: any) => {
             onChangeDataset(primaryIndex, secondaryIndex, orderIndex)(e);
           }}
@@ -776,10 +769,9 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           )}
         />,
         <Select
+          label="column"
           key={key('column') + localObjectives.update}
           name={name('column')}
-          className="small position-relative d-flex"
-          label={`column`}
           defaultValue={
             localObjectives.primaries.secondaries[primaryIndex].attributes[
               secondaryIndex

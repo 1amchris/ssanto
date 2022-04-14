@@ -105,7 +105,7 @@ function Main() {
       <header>
         <MenuBar />
       </header>
-      <div className="d-grid" style={{ gridTemplateColumns: '270px auto' }}>
+      <div className="d-grid" style={{ gridTemplateColumns: '300px auto' }}>
         <aside id="left-aside">
           <FormsBar>
             <Collapsible
