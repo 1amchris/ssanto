@@ -14,7 +14,13 @@ function ValueScalingFunctionGraphs() {
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives as ObjectivesHierarchyModel;
 
-  const attributesFactory = ({ key, label, dataset }: FactoryProps) => {
+  const attributesFactory = ({
+    key,
+    label,
+    dataset,
+    xAxis,
+    yAxis,
+  }: FactoryProps) => {
     const showFunction =
       dataset.type === 'Continuous' ||
       (dataset.type === 'Boolean' && dataset.isCalculated === true);
@@ -32,9 +38,9 @@ function ValueScalingFunctionGraphs() {
       <ScalingGraph
         hideLabel={showFunction}
         label={label}
-        key={
-          key('graph') + JSON.stringify(dataset.properties.distribution_value)
-        }
+        xAxis={xAxis}
+        yAxis={yAxis}
+        key={key('graph') + JSON.stringify(dataset.properties)}
         distribution={dataset.properties.distribution}
         distribution_value={dataset.properties.distribution_value}
         isCalculated={dataset.isCalculated}
@@ -61,6 +67,8 @@ function ValueScalingFunctionGraphs() {
         controls={attributes.attribute.map((_: any, index: number) => ({
           label: attributes.attribute[index],
           dataset: attributes.datasets[index],
+          xAxis: attributes.datasets[index].column,
+          yAxis: 'Suitability',
         }))}
       />,
     ];
@@ -94,6 +102,7 @@ function ValueScalingFunctionGraphs() {
       hideLabel
       label={objectives.main}
       name={'primaries'}
+      key={JSON.stringify(objectives)}
       factory={primariesFactory}
       controls={objectives.primaries.primary.map((_: any, index: number) => ({
         label: objectives.primaries.primary[index],
