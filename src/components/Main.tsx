@@ -30,6 +30,7 @@ function Main() {
     suitabilityCategories,
     suitabilityAboveThreshold,
   } = useAppSelector(selectMap);
+  const objectives = analysis.properties.objectives;
   const ohIsLoading = analysis.properties.objectivesLoading;
 
   function parametersIsValid() {
@@ -138,7 +139,7 @@ function Main() {
               disabled={!objectiveHierarchyIsEnabled()}
             >
               <ObjectiveHierarchy
-                key={`${ohIsLoading}`}
+                key={JSON.stringify(objectives)}
                 disabled={!objectiveHierarchyIsEnabled()}
               />
             </Collapsible>
