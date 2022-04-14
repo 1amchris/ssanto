@@ -65,26 +65,6 @@ abstract class FormComponent extends React.Component {
       >
         {children}
       </OverlayTrigger>
-
-      //   rootClose
-      //   key={this.key}
-      //   trigger={tooltipTrigger}
-      //   placement={tooltipPlacement}
-      //   delay={tooltipDelay}
-      //   overlay={
-      //     tooltip ? (
-      //       <Popover id={`tooltip/${this.id}`}>
-      //         {tooltipHeader && (
-      //           <Popover.Header as="h3">{tooltipHeader}</Popover.Header>
-      //         )}
-      //         <Popover.Body>{tooltip}</Popover.Body>
-      //       </Popover>
-      //     ) : (
-      //       <></>
-      //     )
-      //   }
-      // >
-      // </OverlayTrigger>
     );
   };
 }
