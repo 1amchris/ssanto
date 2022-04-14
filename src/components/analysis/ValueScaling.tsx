@@ -39,8 +39,6 @@ interface ScalesHierarchy {
   };
 }
 
-//TODO enelever de la liste si objectif boolean not calculated
-
 const hasScalableAttribute =
   (objectives: ObjectivesHierarchyModel) =>
   (element: any, index: number, _: any) => {
