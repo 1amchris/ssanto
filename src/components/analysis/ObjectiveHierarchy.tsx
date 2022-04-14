@@ -702,6 +702,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
               key={key('calculated_distance') + localObjectives.update}
               label={'distance'}
               name={name('calculated_distance')}
+              min={1}
               defaultValue={
                 localObjectives.primaries.secondaries[primaryIndex].attributes[
                   secondaryIndex
@@ -719,6 +720,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
               label={'granularity'}
               key={key('granularity')}
               name={name('granularity')}
+              min={1}
               defaultValue={
                 localObjectives.primaries.secondaries[primaryIndex].attributes[
                   secondaryIndex
