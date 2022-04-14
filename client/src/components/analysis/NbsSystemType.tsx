@@ -31,9 +31,9 @@ function NbsSystem({ t, disabled }: any) {
   const { layers } = useAppSelector(selectMap);
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [fields, setfields] = useState(undefined);
+  const [fields, setFields] = useState(undefined);
 
-  const dispatchNBS = (fields: any) => {
+  const dispatchSystemType = (fields: any) => {
     dispatch(
       injectSetLoadingCreator({
         value: property,
@@ -52,71 +52,58 @@ function NbsSystem({ t, disabled }: any) {
       } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
     );
   };
-  const confirmActionModal = (fields: any) => {
-    if (layers['analysis'] !== undefined) {
-      return (
-        <Modal show={showConfirmDialog} centered animation={false}>
-          <Modal.Header>
-            <Modal.Title>{capitalize(t('confirm action'))}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {
-              <p className="d-flex flex-wrap">
-                Do you want to save your current work before changing the nbs
-                system?
-              </p>
-            }
-          </Modal.Body>
-          <Modal.Footer>
-            {
-              <React.Fragment>
-                <Button
-                  variant="outline-primary"
-                  onClick={() => {
-                    dispatch(
-                      call({
-                        target: ServerCallTargets.SaveProject,
-                        onSuccessAction: exportData,
-                        // TODO: There should probably be an "onErrorAction"
-                      } as CallModel<void, FileContentModel<string>, void, string, string>)
-                    );
-                    dispatchNBS(fields);
-                    setShowConfirmDialog(false);
-                  }}
-                >
-                  {capitalize(t('save'))}
-                </Button>
-                <Button
-                  variant="outline-secondary"
-                  loading={isLoading}
-                  disabled={isLoading}
-                  onClick={() => {
-                    dispatchNBS(fields);
-                    setShowConfirmDialog(false);
-                  }}
-                >
-                  {capitalize(t('proceed without saving'))}
-                </Button>
-                <Button
-                  variant="danger"
-                  loading={isLoading}
-                  disabled={isLoading}
-                  onClick={() => {
-                    setShowConfirmDialog(false);
-                  }}
-                >
-                  {capitalize(t('cancel'))}
-                </Button>
-              </React.Fragment>
-            }
-          </Modal.Footer>
-        </Modal>
-      );
-    } else if (showConfirmDialog) {
-      dispatchNBS(fields);
-      setShowConfirmDialog(false);
-    }
-  };
+
+  const confirmActionModal = (
+    <Modal show={showConfirmDialog} centered animation={false}>
+      <Modal.Header>
+        <Modal.Title>{capitalize(t('confirm action'))}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p className="d-flex flex-wrap">
+          Do you want to save your current work before changing the nbs system?
+        </p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="outline-primary"
+          onClick={() => {
+            dispatch(
+              call({
+                target: ServerCallTargets.SaveProject,
+                onSuccessAction: exportData,
+                // TODO: There should probably be an "onErrorAction"
+              } as CallModel<void, FileContentModel<string>>)
+            );
+            dispatchSystemType(fields);
+            setShowConfirmDialog(false);
+          }}
+        >
+          {capitalize(t('save'))}
+        </Button>
+        <Button
+          variant="outline-danger"
+          loading={isLoading}
+          disabled={isLoading}
+          onClick={() => {
+            dispatchSystemType(fields);
+            setShowConfirmDialog(false);
+          }}
+        >
+          {capitalize(t('proceed without saving'))}
+        </Button>
+        <Button
+          variant="danger"
+          loading={isLoading}
+          disabled={isLoading}
+          onClick={() => {
+            setShowConfirmDialog(false);
+          }}
+        >
+          {capitalize(t('cancel'))}
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 
   const controls = [
     <Select
@@ -146,18 +133,25 @@ function NbsSystem({ t, disabled }: any) {
   ];
 
   return (
-    <div>
+    <React.Fragment>
       <Form
         controls={controls}
         errors={getErrors}
         disabled={isLoading || disabled}
         onSubmit={(fields: any) => {
-          setShowConfirmDialog(true);
-          setfields(fields);
+          if (
+            layers?.analysis &&
+            layers?.analysis['current analysis'] !== undefined
+          ) {
+            setFields(fields);
+            setShowConfirmDialog(true);
+          } else {
+            dispatchSystemType(fields);
+          }
         }}
       />
-      {confirmActionModal(fields)}
-    </div>
+      {confirmActionModal}
+    </React.Fragment>
   );
 }
 

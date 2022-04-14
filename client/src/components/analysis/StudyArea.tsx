@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
@@ -13,7 +14,6 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import { selectMap } from 'store/reducers/map';
-import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import FileContentModel from 'models/file/FileContentModel';
 import { exportData } from 'store/reducers/export';
@@ -35,12 +35,8 @@ function StudyArea({ t, disabled }: any) {
   const { layers } = useAppSelector(selectMap);
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [fields, setfields] = useState(undefined);
+  const [fields, setFields] = useState(undefined);
 
-  const onFormSubmit = (fields: any) => {
-    setShowConfirmDialog(true);
-    setfields(fields);
-  };
   const dispatchStudyArea = (fields: any) => {
     dispatch(
       injectSetLoadingCreator({
@@ -48,7 +44,6 @@ function StudyArea({ t, disabled }: any) {
         isLoading: true,
       } as LoadingValue<string>)()
     );
-
     dispatch(
       call({
         target: ServerCallTargets.UpdateStudyAreaFiles,
@@ -60,71 +55,58 @@ function StudyArea({ t, disabled }: any) {
         onErrorAction: injectSetErrorCreator(property),
       } as CallModel<string[], any, void, string, string>)
     );
-    console.log('4');
   };
-  const confirmActionModal = (fields: any) => {
-    if (layers['analysis'] !== undefined) {
-      return (
-        <Modal show={showConfirmDialog} centered animation={false}>
-          <Modal.Header>
-            <Modal.Title>{capitalize(t('confirm action'))}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {
-              <p className="d-flex flex-wrap">
-                Do you want to save your current work before changing the study
-                area?
-              </p>
-            }
-          </Modal.Body>
-          <Modal.Footer>
-            {
-              <React.Fragment>
-                <Button
-                  variant="outline-primary"
-                  onClick={() => {
-                    dispatch(
-                      call({
-                        target: ServerCallTargets.SaveProject,
-                        onSuccessAction: exportData,
-                        // TODO: There should probably be an "onErrorAction"
-                      } as CallModel<void, FileContentModel<string>, void, string, string>)
-                    );
-                    dispatchStudyArea(fields);
-                    setShowConfirmDialog(false);
-                  }}
-                >
-                  {capitalize(t('save'))}
-                </Button>
-                <Button
-                  variant="outline-secondary"
-                  loading={isLoading}
-                  disabled={isLoading}
-                  onClick={() => {
-                    dispatchStudyArea(fields);
-                    setShowConfirmDialog(false);
-                  }}
-                >
-                  {capitalize(t('proceed without saving'))}
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => {
-                    setShowConfirmDialog(false);
-                  }}
-                >
-                  {capitalize(t('cancel'))}
-                </Button>
-              </React.Fragment>
-            }
-          </Modal.Footer>
-        </Modal>
-      );
-    } else if (showConfirmDialog) {
-      dispatchStudyArea(fields);
-      setShowConfirmDialog(false);
-    }
-  };
+
+  const confirmActionModal = (
+    <Modal show={showConfirmDialog} centered animation={false}>
+      <Modal.Header>
+        <Modal.Title>{capitalize(t('confirm action'))}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p className="d-flex flex-wrap">
+          Do you want to save your current work before changing the study area?
+        </p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="outline-primary"
+          onClick={() => {
+            dispatch(
+              call({
+                target: ServerCallTargets.SaveProject,
+                onSuccessAction: exportData,
+                // TODO: There should probably be an "onErrorAction"
+              } as CallModel<void, FileContentModel<string>>)
+            );
+            dispatchStudyArea(fields);
+            setShowConfirmDialog(false);
+          }}
+        >
+          {capitalize(t('save'))}
+        </Button>
+        <Button
+          variant="outline-danger"
+          loading={isLoading}
+          disabled={isLoading}
+          onClick={() => {
+            dispatchStudyArea(fields);
+            setShowConfirmDialog(false);
+          }}
+        >
+          {capitalize(t('proceed without saving'))}
+        </Button>
+        <Button
+          variant="danger"
+          onClick={() => {
+            setShowConfirmDialog(false);
+          }}
+        >
+          {capitalize(t('cancel'))}
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+
   const controls = [
     <Control
       visuallyHidden={!properties}
@@ -146,17 +128,25 @@ function StudyArea({ t, disabled }: any) {
   ];
 
   return (
-    <div>
+    <React.Fragment>
       <Form
         disabled={isLoading || disabled}
         controls={controls}
         errors={getErrors}
         onSubmit={(fields: any) => {
-          onFormSubmit(fields);
+          if (
+            layers?.analysis &&
+            layers?.analysis['current analysis'] !== undefined
+          ) {
+            setFields(fields);
+            setShowConfirmDialog(true);
+          } else {
+            dispatchStudyArea(fields);
+          }
         }}
       />
-      {confirmActionModal(fields)}
-    </div>
+      {confirmActionModal}
+    </React.Fragment>
   );
 }
 
