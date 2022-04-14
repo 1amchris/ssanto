@@ -1,3 +1,4 @@
+import React from 'react';
 import FileContentModel from 'models/file/FileContentModel';
 import { useAppDispatch } from 'store/hooks';
 import { exportData } from 'store/reducers/export';
@@ -33,10 +34,6 @@ function MenuBar() {
 
   const getMenus = () => [
     <Menu label="project">
-      {/* <Action
-        label="new project"
-        onClick={(event: any) => console.log('/file/new project', event)}
-      /> */}
       <Import
         label="open project"
         accept=".sproj"
@@ -72,36 +69,7 @@ function MenuBar() {
           console.log('analysis.tiff', event);
         }}
       />
-      {/* <Action
-        label="save project as"
-        onClick={() =>
-          dispatch(
-            call({
-              target: ServerCallTargets.SaveProject,
-              onSuccessAction: exportData,
-              // TODO: There should probably be an "onErrorAction"
-            } as CallModel<void, FileContentModel<string>, void, string, string>)
-          )
-        }
-      /> */}
     </Menu>,
-    // <Menu label="edit">
-    //   <Action
-    //     label="action"
-    //     onClick={(event: any) => console.log('/edit/action', event)}
-    //   />
-    //   <Action
-    //     label="another action"
-    //     onClick={(event: any) => console.log('/edit/another action', event)}
-    //   />
-    //   <Divider />
-    //   <Action
-    //     label="something else here"
-    //     onClick={(event: any) =>
-    //       console.log('/edit/something else here', event)
-    //     }
-    //   />
-    // </Menu>,
     <Menu label="help">
       <Link label="show guide" targetUrl="/guide" />
     </Menu>,

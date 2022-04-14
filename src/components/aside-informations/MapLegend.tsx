@@ -1,6 +1,9 @@
+import React from 'react';
 import { Line } from 'react-chartjs-2';
 import ColorScaleUtils from 'utils/color-scale-utils';
-let width: number, height: number, gradient: any;
+let width: number;
+let height: number;
+let gradient: any;
 
 const getGradient = (
   ctx: any,
@@ -23,7 +26,7 @@ const getGradient = (
 };
 
 const generateLegendData = () => {
-  let labels = [];
+  const labels = [];
   for (let x = 0; x <= 5; x++) {
     labels.push(x / 5);
   }

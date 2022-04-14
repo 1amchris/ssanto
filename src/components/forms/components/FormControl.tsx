@@ -1,3 +1,4 @@
+import React from 'react';
 import { capitalize, uniqueId } from 'lodash';
 import { Form, InputGroup } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
@@ -9,7 +10,7 @@ import FormComponent from './FormComponent';
  * FormControl
  * @param props .prefix is a ReactElement which will be prepended to the input control
  *              .suffix is a ReactElement which will be appended to the input control
- * @returns an augmented input control
+ *  an augmented input control
  */
 class FormControl extends FormComponent {
   constructor(props: any, key?: string) {
@@ -27,11 +28,11 @@ class FormControl extends FormComponent {
       label,
       suffix,
       prefix,
-      guide_hash = '',
+      guideHash = '',
       ...props
     } = this.getFilteredProps();
 
-    return (
+    return this.addOverlay(
       <Form.Group
         key={this.key}
         className={`w-100 ${className ? className : ''} ${
@@ -41,8 +42,8 @@ class FormControl extends FormComponent {
         <Form.Label visuallyHidden={hideLabel}>
           <small>
             {capitalize(t(label || this.props.name))}{' '}
-            {guide_hash?.length > 0 && (
-              <HashLink to={`/guide#${guide_hash}`}>
+            {guideHash?.length > 0 && (
+              <HashLink to={`/guide#${guideHash}`}>
                 <FiInfo />
               </HashLink>
             )}

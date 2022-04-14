@@ -1,12 +1,11 @@
-import { ReactElement, useState } from 'react';
-import _, { capitalize } from 'lodash';
+import React, { ReactElement, useState } from 'react';
+import _, { capitalize, cloneDeep } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
 import ShapefileModel, { DefaultShapefile } from 'models/ShapefileModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import Form from 'components/forms/Form';
 import { call } from 'store/reducers/server';
-
 import {
   Button,
   Spacer,
@@ -25,7 +24,6 @@ import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
-import React from 'react';
 import DatasetModel, {
   DefaultDataset,
   DefaultValueScalingProperties,
@@ -59,7 +57,7 @@ function isValidOH(objectiveHierarchy: ObjectivesHierarchyModel) {
 }
 
 function findDuplicateAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
-  let attributes: string[] = Object.entries(flatten(objectiveHierarchy)!)
+  const attributes: string[] = Object.entries(flatten(objectiveHierarchy)!)
     .filter(([key]) =>
       /primaries\.(?:primary|secondaries\.\d+\.(?:secondary|attributes\.\d+\.attribute))/.test(
         key
@@ -110,12 +108,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       return localObjectives.primaries.primary[index];
     };
 
-    const secondaryName = (primaryIndex: number, secondaryIndex: number) => {
-      return localObjectives.primaries.secondaries[primaryIndex].secondary[
-        secondaryIndex
-      ];
-    };
-
     const getPrimary = () => {
       return localObjectives.primaries.primary;
     };
@@ -137,7 +129,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const getAllMainOptions = () => {
-      let options: string[] = [];
+      const options: string[] = [];
       objectivesData.mains.map((json: { main: string }) => {
         options.push(json.main);
       });
@@ -145,7 +137,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const getAllPrimaryOptions = (main: string) => {
-      let options: string[] = [];
+      const options: string[] = [];
 
       objectivesData.mains.map((json: { main: string; primaries: any[] }) => {
         if (json.main == main) {
@@ -158,7 +150,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const getAllSecondaryOptions = (main: string, primary: string) => {
-      let options: string[] = [];
+      const options: string[] = [];
       objectivesData?.mains.map((json: { main: string; primaries: any[] }) => {
         if (json.main == main) {
           json.primaries.map(
@@ -187,7 +179,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const generateOptionsMain = () => {
-      let options = [localObjectives.main];
+      const options = [localObjectives.main];
       getAllMainOptions().map(main => {
         if (main != localObjectives.main) options.push(main);
       });
@@ -195,7 +187,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const getUnusedPrimary = () => {
-      let unused: string[] = [];
+      const unused: string[] = [];
       getAllPrimaryOptions(localObjectives.main).map(primary => {
         if (!localObjectives.primaries.primary.includes(primary))
           unused.push(primary);
@@ -203,7 +195,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       return unused;
     };
     const getUnusedSecondary = (main: string, primaryIndex: number) => {
-      let unused: string[] = [];
+      const unused: string[] = [];
       getAllSecondaryOptions(
         localObjectives.main,
         primaryName(primaryIndex)
@@ -219,7 +211,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const generateOptionsPrimary = (primaryIndex: number) => {
-      let options = [
+      const options = [
         localObjectives.primaries.primary[primaryIndex],
         ...getUnusedPrimary(),
       ];
@@ -230,7 +222,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       primaryIndex: number,
       secondaryIndex: number
     ) => {
-      let options = [
+      const options = [
         localObjectives.primaries.secondaries[primaryIndex].secondary[
           secondaryIndex
         ],
@@ -239,7 +231,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
       return formatOptions(options);
     };
-    let defaultSecondaries = {
+    const defaultSecondaries = {
       secondary: [] as string[],
       weights: [] as number[],
       attributes: [] as {
@@ -249,23 +241,23 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       }[],
     };
 
-    let defaultPrimaries = {
+    const defaultPrimaries = {
       primary: [] as string[],
       weights: [] as number[],
       secondaries: [],
     };
-    let defaultAttributes = { attribute: [], weights: [], datasets: [] };
+    const defaultAttributes = { attribute: [], weights: [], datasets: [] };
 
     const generateOptionsDataset = (
       primaryIndex: number,
       secondaryIndex: number,
       attributeIndex: number
     ) => {
-      let currentDataset =
+      const currentDataset =
         localObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex];
-      let options: ShapefileModel[] = [];
+      const options: ShapefileModel[] = [];
 
       if (files.length > 0) {
         files.map((f: ShapefileModel) => {
@@ -292,8 +284,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         localObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex];
-      let options: string[] = [];
-      let options_index: number[] = [];
+      const options: string[] = [];
+      const optionsIndex: number[] = [];
 
       if (files.length > 0) {
         files.forEach((f: any) => {
@@ -301,10 +293,10 @@ function ObjectiveHierarchy({ t, disabled }: any) {
             f.column_names.forEach((column: string, index: number) => {
               if (column != currentDataset.column) {
                 options.push(column);
-                options_index.push(index);
+                optionsIndex.push(index);
               } else {
                 options.unshift(currentDataset.column);
-                options_index.unshift(index);
+                optionsIndex.unshift(index);
               }
             });
           }
@@ -316,7 +308,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           ({
             value: `${JSON.stringify({
               column: column,
-              index: options_index[index],
+              index: optionsIndex[index],
             })}`,
             label: `${column}`,
           } as FormSelectOptionModel)
@@ -324,10 +316,10 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const onAddPrimary = () => () => {
-      let unused = getUnusedPrimary();
-      let newDefault = unused.length > 0 ? unused[0] : undefined;
+      const unused = getUnusedPrimary();
+      const newDefault = unused.length > 0 ? unused[0] : undefined;
       if (newDefault !== undefined) {
-        let newObjectives = copyLocalObjective();
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.primary.push(newDefault);
         newObjectives.primaries.secondaries.push(defaultSecondaries);
         newObjectives.primaries.weights.push(1);
@@ -337,10 +329,10 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const onAddSecondary = (primaryIndex: number) => () => {
-      let unused = getUnusedSecondary(localObjectives.main, primaryIndex);
-      let newDefault = unused.length > 0 ? unused[0] : undefined;
+      const unused = getUnusedSecondary(localObjectives.main, primaryIndex);
+      const newDefault = unused.length > 0 ? unused[0] : undefined;
       if (newDefault !== undefined) {
-        let newObjectives = copyLocalObjective();
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].secondary.push(
           newDefault
         );
@@ -355,9 +347,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
     const onAddAttribute =
       (primaryIndex: number, secondaryIndex: number) => () => {
-        //let unused = getUnusedAttribute(primaryIndex, secondaryIndex);
-        //let newDefault = unused.length > 0 ? unused[0] : undefined;
-        let newObjectives = copyLocalObjective();
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].attribute.push('');
@@ -381,7 +371,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
                 ).fill(0)
               : [],
         } as ValueScalingProperties;
-        let defaultDataset = {
+        const defaultDataset = {
           ...DefaultDataset,
           name: defaultShapefile.name,
           column: defaultColumn,
@@ -411,7 +401,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       };
 
     const onRemovePrimary = () => (primaryIndex: number) => {
-      let newObjectives = copyLocalObjective();
+      const newObjectives = copyLocalObjective();
       newObjectives.primaries.primary.splice(primaryIndex, 1);
       newObjectives.primaries.secondaries.splice(primaryIndex, 1);
       newObjectives.primaries.weights.splice(primaryIndex, 1);
@@ -420,7 +410,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
     const onRemoveSecondary =
       (primaryIndex: number) => (secondaryIndex: number) => {
-        let newObjectives = copyLocalObjective();
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].secondary.splice(
           secondaryIndex,
           1
@@ -440,7 +430,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const onRemoveAttribute =
       (primaryIndex: number, secondaryIndex: number) =>
       (attributeIndex: number) => {
-        let newObjectives = copyLocalObjective();
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].attribute.splice(attributeIndex, 1);
@@ -455,8 +445,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       };
 
     const onChangeMain = () => (e: any) => {
-      let newPrimary = e.target.value;
-      let newObjectives = copyLocalObjective();
+      const newPrimary = e.target.value;
+      const newObjectives = copyLocalObjective();
       newObjectives.main = newPrimary;
       newObjectives.primaries = defaultPrimaries;
       newObjectives.update = !localObjectives.update;
@@ -464,8 +454,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     };
 
     const onChangePrimary = (primaryIndex: number) => (e: any) => {
-      let newPrimary = e.target.value;
-      let newObjectives = copyLocalObjective();
+      const newPrimary = e.target.value;
+      const newObjectives = copyLocalObjective();
       newObjectives.primaries.primary[primaryIndex] = newPrimary;
       newObjectives.primaries.secondaries[primaryIndex] = defaultSecondaries;
       newObjectives.update = !localObjectives.update;
@@ -474,8 +464,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
     const onChangeSecondary =
       (primaryIndex: number, secondaryIndex: number) => (e: any) => {
-        let newSecondary = e.target.value;
-        let newObjectives = copyLocalObjective();
+        const newSecondary = e.target.value;
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].secondary[
           secondaryIndex
         ] = newSecondary;
@@ -490,9 +480,9 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (event: any) => {
         event.persist();
-        let value = event.target.value;
-        let newAttribute = value;
-        let newObjectives = copyLocalObjective();
+        const value = event.target.value;
+        const newAttribute = value;
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].attribute[attributeIndex] = newAttribute;
@@ -500,7 +490,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         setLocalObjectives(newObjectives);
       };
 
-    //DOING
     const onChangeDataset =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
@@ -519,7 +508,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           newDatasetShapefile.categories
         );
 
-        let defaultDataset = {
+        const defaultDataset = {
           ...DefaultDataset,
           name: newDatasetName,
           column: defaultColumn,
@@ -545,10 +534,10 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const onChangeColumn =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
-        let newColumn = JSON.parse(e.target.value).column;
-        let newIndex = JSON.parse(e.target.value).index;
+        const newColumn = JSON.parse(e.target.value).column;
+        const newIndex = JSON.parse(e.target.value).index;
 
-        let newObjectives = copyLocalObjective();
+        const newObjectives = copyLocalObjective();
 
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
@@ -558,12 +547,12 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           newObjectives.primaries.secondaries[primaryIndex].attributes[
             secondaryIndex
           ].datasets[attributeIndex];
-        //get les shapefiles selon id, get categories selon colonne
+
         const shapefile = getShapefiles(dataset.name);
 
-        let newType = shapefile[0].type[newIndex];
-        let newMax = shapefile[0].max_value[newIndex];
-        let newMin = shapefile[0].min_value[newIndex];
+        const newType = shapefile[0].type[newIndex];
+        const newMax = shapefile[0].max_value[newIndex];
+        const newMin = shapefile[0].min_value[newIndex];
 
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
@@ -595,8 +584,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const onChangeIsCalculated =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
-        let newIsCalculated = e.target.checked;
-        let newObjectives = copyLocalObjective();
+        const newIsCalculated = e.target.checked;
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex].isCalculated = newIsCalculated;
@@ -614,8 +603,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const onChangeDistance =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
-        let newDistance = e.target.value;
-        let newObjectives = copyLocalObjective();
+        const newDistance = e.target.value;
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex].calculationDistance = newDistance;
@@ -625,8 +614,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const onChangeGranularity =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
-        let newGranularity = e.target.value as number;
-        let newObjectives = copyLocalObjective();
+        const newGranularity = e.target.value as number;
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex].granularity = newGranularity;
@@ -637,8 +626,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const onChangeCentroid =
       (primaryIndex: number, secondaryIndex: number, attributeIndex: number) =>
       (e: any) => {
-        let newIsCentroid = e.target.checked;
-        let newObjectives = copyLocalObjective();
+        const newIsCentroid = e.target.checked;
+        const newObjectives = copyLocalObjective();
         newObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
         ].datasets[attributeIndex].centroid = newIsCentroid;
@@ -648,13 +637,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
     /* Fin **************/
 
-    /**
-     * A factory that generates the attributes inputs on demand
-     * @param props: name and key are generators, which require a string to generate the name and keys of the elements,
-     *               orderIndex is the index at which it will be placed in the list
-     *               any other parameters are parameters given in the "controls" field
-     * @returns A second order objective ReactElement
-     */
     const attributesFactory = ({
       name,
       key,
@@ -663,7 +645,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       secondaryIndex,
       defaultAttribute,
     }: FactoryProps): ReactElement | ReactElement[] => {
-      let continuousOptions: any[] = [];
+      const continuousOptions: any[] = [];
       if (
         localObjectives.primaries.secondaries[primaryIndex].attributes[
           secondaryIndex
@@ -798,7 +780,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
             secondaryIndex,
             orderIndex
           )}
-          //tooltip={localObjectives.primaries.secondaries[primaryIndex].attributes[secondaryIndex].datasets[orderIndex].head[??????]}
         />,
         ...continuousOptions,
       ];
@@ -809,7 +790,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
      * @param props: name and key are generators, which require a string to generate the name and keys of the elements,
      *               orderIndex is the index at which it will be placed in the list
      *               any other parameters are parameters given in the "controls" field
-     * @returns A second order objective ReactElement
+     * @return A second order objective ReactElement
      */
 
     const secondaryObjectivesFactory = ({
@@ -851,13 +832,6 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         onRemoveControl={onRemoveAttribute(primaryIndex, secondaryIndex)}
       />,
     ];
-    /**
-     * A factory that generates the primary objective inputs on demand
-     * @param props: name and key are generators, which require a string to generate the name and keys of the elements,
-     *               orderIndex is the index at which it will be placed in the list
-     *               any other parameters are parameters given in the "controls" field
-     * @returns A first order objective ReactElement
-     */
     const primaryObjectivesFactory = ({
       name,
       key,
@@ -940,7 +914,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       errors={getErrors}
       disabled={isLoading || disabled}
       onSubmit={() => {
-        const { update, ...oh } = localObjectives;
+        const { update, ...oh } = cloneDeep(localObjectives);
         const duplicates = findDuplicateAttributes(oh);
 
         if (!isValidOH(oh)) {

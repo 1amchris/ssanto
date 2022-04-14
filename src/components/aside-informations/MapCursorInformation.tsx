@@ -1,3 +1,4 @@
+import React from 'react';
 import { selectMap } from 'store/reducers/map';
 import { useAppSelector } from 'store/hooks';
 import { Bar } from 'react-chartjs-2';

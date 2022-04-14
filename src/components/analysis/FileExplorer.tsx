@@ -1,3 +1,4 @@
+import React from 'react';
 import { capitalize } from 'lodash';
 import { ReactElement } from 'react';
 import { withTranslation } from 'react-i18next';

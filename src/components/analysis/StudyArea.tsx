@@ -1,3 +1,4 @@
+import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
@@ -19,9 +20,9 @@ function StudyArea({ t, disabled }: any) {
   const dispatch = useAppDispatch();
   const properties = selector.properties[property];
   const files = selector.properties['files'];
-  let files_choices = [{ value: '', label: '' }];
+  const filesChoices = [{ value: '', label: '' }];
   for (let i = 0; i < files.length; i += 1) {
-    files_choices.push({ value: files[i].name, label: files[i].name });
+    filesChoices.push({ value: files[i].name, label: files[i].name });
   }
 
   const getErrors = selector.properties.study_areaError;
@@ -37,9 +38,10 @@ function StudyArea({ t, disabled }: any) {
     <Select
       label="select study area"
       name="study_area_file"
+      tooltip="Some tooltip"
       required
       defaultValue={properties}
-      options={files_choices}
+      options={filesChoices}
     />,
     <Spacer />,
     <Button variant="outline-primary" type="submit" loading={isLoading}>

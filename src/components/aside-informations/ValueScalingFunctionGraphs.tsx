@@ -1,3 +1,4 @@
+import React from 'react';
 import { useAppSelector } from 'store/hooks';
 import { selectAnalysis } from 'store/reducers/analysis';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';

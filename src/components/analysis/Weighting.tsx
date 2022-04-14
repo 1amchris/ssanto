@@ -1,3 +1,4 @@
+import React from 'react';
 import { capitalize, max, round, sum } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'store/hooks';

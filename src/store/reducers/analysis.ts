@@ -91,14 +91,12 @@ export const analysisSlice = createSlice({
       }: PayloadAction<InjectedPayload<string, any>>
     ) => {
       if (state.properties.hasOwnProperty(property)) {
-        let d: any = state.properties; // kinda hacky :/
+        const d: any = state.properties; // kinda hacky :/
         d[property] = data;
       }
     },
 
     studyAreaReceived: (state, { payload: data }: PayloadAction<any>) => {
-      //state.properties.studyArea.fileName = data.file_name;
-      //state.properties.studyArea.area = data.area;
       state.properties.study_areaLoading = false;
     },
 
@@ -107,8 +105,6 @@ export const analysisSlice = createSlice({
       { payload }: PayloadAction<AnalysisObjectivesModel>
     ) => {
       console.warn('No validation was performed on the objectives hierarchy');
-      /* TODO: add additional validation here */
-      //state.objectives = payload;
     },
 
     setError: (
@@ -117,7 +113,7 @@ export const analysisSlice = createSlice({
         payload: { injected: property, payload: error },
       }: PayloadAction<InjectedPayload<string, string>>
     ) => {
-      let temp: any = state.properties;
+      const temp: any = state.properties;
       temp[property + 'Error'] = error;
       temp[property + 'Loading'] = false;
 
@@ -135,7 +131,7 @@ export const analysisSlice = createSlice({
         },
       }: PayloadAction<InjectedPayload<LoadingValue<string>, void>>
     ) => {
-      let temp: any = state.properties;
+      const temp: any = state.properties;
       temp[property + 'Loading'] = isLoading;
       temp[property + 'Error'] = '';
     },

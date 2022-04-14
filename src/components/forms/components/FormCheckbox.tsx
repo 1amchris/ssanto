@@ -1,5 +1,6 @@
+import React from 'react';
 import { capitalize, uniqueId } from 'lodash';
-import { Form, InputGroup } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { withTranslation } from 'react-i18next';
 import { FiInfo } from 'react-icons/fi';
 import { HashLink } from 'react-router-hash-link';
@@ -9,7 +10,7 @@ import FormComponent from './FormComponent';
  * FormCheckbox
  * @param props .prefix is a ReactElement which will be prepended to the input control
  *              .suffix is a ReactElement which will be appended to the input control
- * @returns an augmented input control
+ * @return an augmented input control
  */
 class FormCheckbox extends FormComponent {
   constructor(props: any, key?: string) {
@@ -27,7 +28,7 @@ class FormCheckbox extends FormComponent {
       label,
       suffix,
       prefix,
-      guide_hash = '',
+      guideHash = '',
       ...props
     } = this.getFilteredProps();
     return (
@@ -40,8 +41,8 @@ class FormCheckbox extends FormComponent {
         <Form.Label visuallyHidden={hideLabel}>
           <small>
             {capitalize(t(label || this.props.name))}{' '}
-            {guide_hash?.length > 0 && (
-              <HashLink to={`/guide#${guide_hash}`}>
+            {guideHash?.length > 0 && (
+              <HashLink to={`/guide#${guideHash}`}>
                 <FiInfo />
               </HashLink>
             )}

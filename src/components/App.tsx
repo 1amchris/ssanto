@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffectOnce } from 'hooks';
 import { useAppDispatch } from 'store/hooks';
 import { HashRouter, Routes, Route } from 'react-router-dom';

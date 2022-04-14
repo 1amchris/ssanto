@@ -1,3 +1,4 @@
+import React from 'react';
 import { capitalize, uniqueId } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormComponent from './FormComponent';
@@ -82,10 +83,10 @@ class FormScalingGraph extends FormComponent {
       className,
       label,
       distribution,
-      distribution_value,
+      distribution_value: distributionValue,
       type,
       isCalculated,
-      guide_hash = '',
+      guideHash = '',
     } = this.getFilteredProps();
 
     return (
@@ -97,8 +98,8 @@ class FormScalingGraph extends FormComponent {
         <Form.Label visuallyHidden={hideLabel}>
           <small>
             {capitalize(t(label || this.props.name))}{' '}
-            {guide_hash?.length > 0 && (
-              <HashLink to={`/guide#${guide_hash}`}>
+            {guideHash?.length > 0 && (
+              <HashLink to={`/guide#${guideHash}`}>
                 <FiInfo />
               </HashLink>
             )}
@@ -111,17 +112,17 @@ class FormScalingGraph extends FormComponent {
             width="200"
             key={`${this.key}/graph`}
             options={lineOptions}
-            data={generateLineData(distribution, distribution_value)}
+            data={generateLineData(distribution, distributionValue)}
           />
         )}
-        {type === 'Categorical' && distribution_value && (
+        {type === 'Categorical' && distributionValue && (
           <Bar
             // For some reason, this Bar chart's height appears 1.6 times thicker?
-            height={(distribution_value.length * horizontalBarHeight) / 1.6}
+            height={(distributionValue.length * horizontalBarHeight) / 1.6}
             width="200"
             options={barOptions}
             key={`${this.key}/graph`}
-            data={generateBarData(distribution, distribution_value)}
+            data={generateBarData(distribution, distributionValue)}
           />
         )}
       </Form.Group>

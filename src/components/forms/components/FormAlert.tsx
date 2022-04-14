@@ -1,3 +1,4 @@
+import React from 'react';
 import { uniqueId } from 'lodash';
 import { Alert } from 'react-bootstrap';
 import FormComponent from './FormComponent';
@@ -5,7 +6,7 @@ import FormComponent from './FormComponent';
 /**
  * FormAlert
  * @param props .children will be displayed as the body of the alert
- * @returns an augmented alert
+ * @return an augmented alert
  */
 class FormAlert extends FormComponent {
   constructor(props: any, key?: string) {

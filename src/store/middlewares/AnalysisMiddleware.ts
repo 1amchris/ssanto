@@ -1,8 +1,4 @@
-import {
-  studyAreaReceived,
-  analysisSuccess,
-  subAnalysisSuccess,
-} from 'store/reducers/analysis';
+import { analysisSuccess, subAnalysisSuccess } from 'store/reducers/analysis';
 import { cleanAnalysisLayers, upsertLayer } from 'store/reducers/map';
 import { InsertLayerModel } from 'models/map/InsertLayerModel';
 import { PayloadAction } from '@reduxjs/toolkit';
@@ -13,26 +9,13 @@ const AnalysisMiddleware: Middleware =
   (next: Dispatch) =>
   <A extends PayloadAction<any>>(action: A) => {
     switch (action.type) {
-      case studyAreaReceived.type: {
-        const { area } = action.payload;
-        /*dispatch(
-          upsertLayer({
-            group: 'study area',
-            label: 'study area',
-            name: 'study area',
-            geojson: area,
-          } as InsertLayerModel)
-        );*/
-        return next(action);
-      }
-
       case analysisSuccess.type: {
-        const { file_name, area } = action.payload;
-        if (area == undefined) return;
+        const { file_name: fileName, area } = action.payload;
+        if (area === undefined) return;
         dispatch(
           upsertLayer({
             group: 'analysis',
-            name: file_name,
+            name: fileName,
             geojson: JSON.parse(area),
             activated: true,
           } as InsertLayerModel)
@@ -43,27 +26,18 @@ const AnalysisMiddleware: Middleware =
       case subAnalysisSuccess.type: {
         dispatch(cleanAnalysisLayers());
         for (const subAnalysis in action.payload) {
-          const { file_name, area } = action.payload[subAnalysis];
-          if (area == undefined) return;
-          dispatch(
-            upsertLayer({
-              group: 'sub_analysis',
-              name: file_name,
-              geojson: JSON.parse(area),
-              activated: false,
-            } as InsertLayerModel)
-          );
+          const { file_name: fileName, area } = action.payload[subAnalysis];
+          if (area !== undefined) {
+            dispatch(
+              upsertLayer({
+                group: 'sub_analysis',
+                name: fileName,
+                geojson: JSON.parse(area),
+                activated: false,
+              } as InsertLayerModel)
+            );
+          }
         }
-        /*
-        const { file_name, area } = action.payload;
-        if (area == undefined) return;
-        dispatch(
-          upsertLayer({
-            group: 'analysis',
-            name: file_name,
-            geojson: JSON.parse(area),
-          } as InsertLayerModel)
-        );*/
         return next(action);
       }
 
