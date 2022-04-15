@@ -128,7 +128,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
   };
 
   /* Début refactor ***************/
-  let controls = [];
+  const controls = [];
   if (
     !(localObjectives === undefined || localObjectives.primaries === undefined)
   ) {
@@ -214,7 +214,9 @@ function ObjectiveHierarchy({ t, disabled }: any) {
     const generateOptionsMain = () => {
       const options = [localObjectives.main];
       getAllMainOptions().map(main => {
-        if (main != localObjectives.main) options.push(main);
+        if (main != localObjectives.main) {
+          options.push(main);
+        }
       });
       return formatOptions(options);
     };
@@ -722,6 +724,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
               key={key('calculated_distance') + localObjectives.update}
               label={'distance'}
               name={name('calculated_distance')}
+              min={1}
               defaultValue={
                 localObjectives.primaries.secondaries[primaryIndex].attributes[
                   secondaryIndex
@@ -739,6 +742,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
               label={'granularity'}
               key={key('granularity')}
               name={name('granularity')}
+              min={1}
               defaultValue={
                 localObjectives.primaries.secondaries[primaryIndex].attributes[
                   secondaryIndex
@@ -857,6 +861,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
         onRemoveControl={onRemoveAttribute(primaryIndex, secondaryIndex)}
       />,
     ];
+
     const primaryObjectivesFactory = ({
       name,
       key,
@@ -923,16 +928,15 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       />,
     ];
 
-    controls = [
+    controls.push(
       ...mainControls,
       <Spacer key="spacer" />,
       <Button key="apply" variant="outline-primary" loading={isLoading}>
         {capitalize(t('apply'))}
-      </Button>,
-    ];
-  } else {
-    controls = [<></>];
+      </Button>
+    );
   }
+
   return (
     <Form
       controls={controls}

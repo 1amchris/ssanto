@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable no-unused-vars */
 enum SendType {
   SUBJECT = 0,
   CALL = 1,

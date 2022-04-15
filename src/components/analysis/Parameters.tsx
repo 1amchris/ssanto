@@ -29,6 +29,7 @@ function Parameters({ t, disabled }: any) {
   const isLoading = selector.properties.parametersLoading;
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
+
   const controls = [
     <Control
       key="name-control"

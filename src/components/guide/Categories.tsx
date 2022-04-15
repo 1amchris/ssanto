@@ -22,7 +22,7 @@ function Categories({ t, children: categories }: any) {
         {capitalize(t("you've reached the end of the documentation."))}
         <br />
         <HashLink to={`#${categories[0].name}`} className="text-reset">
-            {capitalize(t('Go back to the top'))}
+          {capitalize(t('Go back to the top'))}
         </HashLink>
       </p>
     </React.Fragment>

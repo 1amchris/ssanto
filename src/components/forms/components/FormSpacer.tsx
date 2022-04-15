@@ -4,6 +4,7 @@ import FormComponent from './FormComponent';
 
 /**
  * FormSpacer
+ * Adds space between two controls in a form
  * @return {JSX.Element} space between two controls in a form
  */
 class FormSpacer extends FormComponent {
@@ -16,6 +17,9 @@ class FormSpacer extends FormComponent {
     super(props, uniqueId('form/spacing-'), key);
   }
 
+  /**
+   * @override
+   */
   render = () => (
     <div
       {...this.props}

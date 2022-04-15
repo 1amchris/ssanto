@@ -26,18 +26,16 @@ const AnalysisMiddleware: Middleware =
       case subAnalysisSuccess.type: {
         dispatch(cleanAnalysisLayers());
         for (const subAnalysis in action.payload) {
-          if (Object.prototype.hasOwnProperty.call(action.payload, subAnalysis)) {
+          if (action.payload[subAnalysis].area !== undefined) {
             const { file_name: fileName, area } = action.payload[subAnalysis];
-            if (area !== undefined) {
-              dispatch(
-                upsertLayer({
-                  group: 'sub_analysis',
-                  name: fileName,
-                  geojson: JSON.parse(area),
-                  activated: false,
-                } as InsertLayerModel)
-              );
-            }
+            dispatch(
+              upsertLayer({
+                group: 'sub_analysis',
+                name: fileName,
+                geojson: JSON.parse(area),
+                activated: false,
+              } as InsertLayerModel)
+            );
           }
         }
         return next(action);

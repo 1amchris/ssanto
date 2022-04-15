@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
@@ -14,6 +14,10 @@ import { call } from 'store/reducers/server';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
+import { Modal } from 'react-bootstrap';
+import { selectMap } from 'store/reducers/map';
+import { exportData } from 'store/reducers/export';
+import FileContentModel from 'models/file/FileContentModel';
 
 /**
  * Nbs system component.
@@ -28,6 +32,83 @@ function NbsSystem({ t, disabled }: any) {
 
   const getErrors = selector.properties.nbs_systemError;
   const isLoading = selector.properties.nbs_systemLoading;
+
+  const { layers } = useAppSelector(selectMap);
+
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [fields, setFields] = useState(undefined);
+
+  const dispatchSystemType = (fields: any) => {
+    dispatch(
+      injectSetLoadingCreator({
+        value: property,
+        isLoading: true,
+      } as LoadingValue<string>)()
+    );
+    dispatch(
+      call({
+        target: ServerCallTargets.Update,
+        args: [property, fields],
+        onSuccessAction: injectSetLoadingCreator({
+          value: property,
+          isLoading: false,
+        } as LoadingValue<string>),
+        onErrorAction: injectSetErrorCreator(property),
+      } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
+    );
+  };
+
+  const confirmActionModal = (
+    <Modal show={showConfirmDialog} centered animation={false}>
+      <Modal.Header>
+        <Modal.Title>{capitalize(t('confirm action'))}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p className="d-flex flex-wrap">
+          Do you want to save your current work before changing the nbs system?
+        </p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="outline-primary"
+          onClick={() => {
+            dispatch(
+              call({
+                target: ServerCallTargets.SaveProject,
+                onSuccessAction: exportData,
+                // TODO: There should probably be an "onErrorAction"
+              } as CallModel<void, FileContentModel<string>>)
+            );
+            dispatchSystemType(fields);
+            setShowConfirmDialog(false);
+          }}
+        >
+          {capitalize(t('save'))}
+        </Button>
+        <Button
+          variant="outline-danger"
+          loading={isLoading}
+          disabled={isLoading}
+          onClick={() => {
+            dispatchSystemType(fields);
+            setShowConfirmDialog(false);
+          }}
+        >
+          {capitalize(t('proceed without saving'))}
+        </Button>
+        <Button
+          variant="danger"
+          loading={isLoading}
+          disabled={isLoading}
+          onClick={() => {
+            setShowConfirmDialog(false);
+          }}
+        >
+          {capitalize(t('cancel'))}
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 
   const controls = [
     <Select
@@ -58,30 +139,25 @@ function NbsSystem({ t, disabled }: any) {
   ];
 
   return (
-    <Form
-      controls={controls}
-      errors={getErrors}
-      disabled={isLoading || disabled}
-      onSubmit={(fields: any) => {
-        dispatch(
-          injectSetLoadingCreator({
-            value: property,
-            isLoading: true,
-          } as LoadingValue<string>)()
-        );
-        dispatch(
-          call({
-            target: ServerCallTargets.Update,
-            args: [property, fields],
-            onSuccessAction: injectSetLoadingCreator({
-              value: property,
-              isLoading: false,
-            } as LoadingValue<string>),
-            onErrorAction: injectSetErrorCreator(property),
-          } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
-        );
-      }}
-    />
+    <React.Fragment>
+      <Form
+        controls={controls}
+        errors={getErrors}
+        disabled={isLoading || disabled}
+        onSubmit={(fields: any) => {
+          if (
+            layers?.analysis &&
+            layers?.analysis['current analysis'] !== undefined
+          ) {
+            setFields(fields);
+            setShowConfirmDialog(true);
+          } else {
+            dispatchSystemType(fields);
+          }
+        }}
+      />
+      {confirmActionModal}
+    </React.Fragment>
   );
 }
 

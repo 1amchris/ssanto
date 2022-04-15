@@ -2,7 +2,7 @@ const electron = require('electron');
 // const url = require('url'); // PROD
 const path = require('path');
 
-const {spawn} = require('child_process');
+const { spawn } = require('child_process');
 
 // Windows: path.join(__dirname, '\\Python39-32\\python.exe')
 const PYTHON_PATH = 'python3';
@@ -15,7 +15,7 @@ const python = spawn(PYTHON_PATH, ['-u', PYTHON_MAIN], {
 
 let loadCompleted = false;
 
-python.stdout.on('data', (data) => {
+python.stdout.on('data', data => {
   if (data.includes('STARTUP_FINISH')) {
     while (!loadCompleted) {}
     createWindow();
@@ -24,15 +24,15 @@ python.stdout.on('data', (data) => {
   process.stdout.write(`[Python][stdout] ${data}`);
 });
 
-python.stderr.on('data', (data) => {
+python.stderr.on('data', data => {
   console.log(`[Python][stderr] ${data}`);
 });
 
-python.on('error', (error) => {
+python.on('error', error => {
   console.log(`[Python][error] Error: ${error}`);
 });
 
-python.on('close', (code) => {
+python.on('close', code => {
   console.log(`[Python][close] Code: ${code}`);
 });
 
@@ -42,7 +42,7 @@ python.on('exit', (code, signal) => {
 
 /* ----------------------*/
 
-const {app, BrowserWindow} = electron;
+const { app, BrowserWindow } = electron;
 
 let mainWindow = null;
 
@@ -63,14 +63,14 @@ function createWindow() {
   });
 
   mainWindow.loadURL(
-      'http://localhost:3000', // DEV
-      // PROD
-      /* url.format({
+    'http://localhost:3000', // DEV
+    // PROD
+    /* url.format({
               pathname: path.join(__dirname, 'build/index.html'),
               protocol: "file:",
               slashes: true
           }),*/
-      {},
+    {}
   );
   mainWindow.setMenuBarVisibility(false);
   // mainWindow.webContents.openDevTools();

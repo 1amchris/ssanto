@@ -26,7 +26,6 @@
     "chart.js": "^3.7.1",
     "file-saver": "^2.0.5",
     "flattenizer": "^1.1.1",
-    "html2canvas": "^1.4.1",
     "i18next": "^21.6.10",
     "jquery": "^3.6.0",
     "leaflet": "^1.7.1",

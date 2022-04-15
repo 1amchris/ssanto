@@ -54,25 +54,11 @@ function MapSuitabilityAboveThreshold({ t }: any) {
     suitabilityAboveThreshold && (
       <Form
         controls={controls}
-        // disabled={isLoading || disabled}
-        // errors={getErrors}
         onSubmit={(fields: any) => {
-          // dispatch(
-          //   injectSetLoadingCreator({
-          //     value: property,
-          //     isLoading: true,
-          //   } as LoadingValue<string>)()
-          // );
           dispatch(
             call({
               target: ServerCallTargets.UpdateSuitabilityThreshold,
               args: [fields.suitability_threshold],
-              // onSuccessAction: injectSetLoadingCreator({
-              //   value: property,
-              //   isLoading: false,
-              // } as LoadingValue<string>),
-              // onErrorAction: injectSetErrorCreator(property),
-              // } as CallModel<[string, Object], void, LoadingValue<string>, string, string>)
             } as CallModel<[number]>)
           );
         }}
