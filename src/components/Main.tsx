@@ -190,7 +190,10 @@ function Main() {
               /\.properties\.distribution_value\.\d+/.test(key)
             ).length > 0 && (
               <InformationCard>
-                <Collapsible title={'value scales'}>
+                <Collapsible
+                  title={'value scales'}
+                  guideHash="results-and-visualization/value-scaling-visualization"
+                >
                   <ValueScalingFunctionGraphs />
                 </Collapsible>
               </InformationCard>
