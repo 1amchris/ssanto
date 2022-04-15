@@ -3,6 +3,11 @@ import { concat } from 'lodash';
 import TopicModel from 'models/guide/TopicModel';
 import TopicLink from 'components/guide/TopicLink';
 
+/**
+ * Topic links component.
+ * @param {any} param0 Parameters for the topic links.
+ * @return {JSX.Element} Html.
+ */
 function TopicLinks({ categoryName, children: topics }: any) {
   return (
     <ul className="list-unstyled ps-2">

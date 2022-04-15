@@ -15,7 +15,7 @@ from guide_builder import GuideBuilder
 
 
 async def main():
-    server_socket = ServerSocket("localhost", 6969)
+    server_socket = ServerSocket("localhost", 15649)
     subjects_manager = SubjectsManager(server_socket)
     files_manager = FilesManager(subjects_manager)
 

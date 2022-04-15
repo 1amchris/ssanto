@@ -8,9 +8,14 @@ import FormComponent from './FormComponent';
 
 /**
  * FormCheckbox
- * @return an augmented checkbox control
+ * @return {JSX.Element} An augmented checkbox control
  */
 class FormCheckbox extends FormComponent {
+  /**
+   * @constructor 
+   * @param {any} props .children will be displayed as the body of the checkbox
+   * @param {string} [key] Key name
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/checkbox-'), key);
   }
@@ -18,9 +23,9 @@ class FormCheckbox extends FormComponent {
   render = () => {
     const {
       t,
-      i18n,
-      tReady,
-      hideLabel,
+      // i18n,
+      // tReady,
+      // hideLabel,
       visuallyHidden,
       className,
       label,

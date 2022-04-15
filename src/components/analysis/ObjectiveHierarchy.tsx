@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import _, { capitalize, cloneDeep } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import FormSelectOptionModel from 'models/form/FormSelectOptionModel';
@@ -31,6 +31,11 @@ import DatasetModel, {
 import ValueScalingProperties from 'models/DatasetModel';
 import { flatten } from 'flattenizer';
 
+/**
+ * Check if the objective hierarchy is valid.
+ * @param {ObjectivesHierarchyModel} objectiveHierarchy Objectives hierarchy model
+ * @return {boolean} True if valid, otherwise False
+ */
 function isValidOH(objectiveHierarchy: ObjectivesHierarchyModel) {
   const atLeastOnePrimary = objectiveHierarchy.primaries.primary.length > 0;
   let primaryHasSecondary = true;
@@ -56,6 +61,11 @@ function isValidOH(objectiveHierarchy: ObjectivesHierarchyModel) {
   );
 }
 
+/**
+ * Find the missing attributes in the objectives hierarchy.
+ * @param {ObjectivesHierarchyModel} objectiveHierarchy Objectives hierarchy model
+ * @return {(string | undefined)[]} Missing attributes
+ */
 function findMissingAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
   return objectiveHierarchy.primaries.secondaries
     .map((secondaries, sindex) =>
@@ -69,6 +79,11 @@ function findMissingAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
     .filter(attribute => attribute !== undefined);
 }
 
+/**
+ * Find the duplicates attributes in the objectives hierarchy.
+ * @param {ObjectivesHierarchyModel} objectiveHierarchy Objectives hierarchy model
+ * @return {string[]} Duplicates attributes
+ */
 function findDuplicateAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
   const attributes: string[] = Object.entries(flatten(objectiveHierarchy)!)
     .filter(([key]) =>
@@ -84,6 +99,11 @@ function findDuplicateAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
     .value();
 }
 
+/**
+ * Objectives hierarchy component.
+ * @param {any} param0 Parameters for the objectives hierarchy.
+ * @return {JSX.Element} Html.
+ */
 function ObjectiveHierarchy({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
@@ -905,8 +925,8 @@ function ObjectiveHierarchy({ t, disabled }: any) {
 
     controls = [
       ...mainControls,
-      <Spacer />,
-      <Button variant="outline-primary" loading={isLoading}>
+      <Spacer key="spacer" />,
+      <Button key="apply" variant="outline-primary" loading={isLoading}>
         {capitalize(t('apply'))}
       </Button>,
     ];
@@ -919,7 +939,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
       errors={getErrors}
       disabled={isLoading || disabled}
       onSubmit={() => {
-        const { update, ...oh } = cloneDeep(localObjectives);
+        const { /* update, */ ...oh } = cloneDeep(localObjectives);
         const missings = findMissingAttributes(oh);
         const duplicates = findDuplicateAttributes(oh);
 

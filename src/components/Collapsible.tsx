@@ -6,6 +6,12 @@ import { capitalize, uniqueId } from 'lodash';
 import { Collapse, Button } from 'react-bootstrap';
 import { HashLink } from 'react-router-hash-link';
 
+/**
+ * Collapsible component.
+ * It is used as a section in the side bar.
+ * @param {any} param0 Parameters for the collapsible.
+ * @return {JSX.Element} Html.
+ */
 function Collapsible({
   t,
   title,

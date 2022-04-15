@@ -1,3 +1,4 @@
+/* eslint-disable */
 enum ServerSubscriptionTargets {
   FileManagerFiles = 'file_manager.files',
   FileManagerShapefiles = 'file_manager.shapefiles',

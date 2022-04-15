@@ -15,6 +15,11 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
+/**
+ * Nbs system component.
+ * @param {any} param0 Parameters for the nbs system.
+ * @return {JSX.Element} Html.
+ */
 function NbsSystem({ t, disabled }: any) {
   const property = 'nbs_system';
   const selector = useAppSelector(selectAnalysis);
@@ -26,6 +31,7 @@ function NbsSystem({ t, disabled }: any) {
 
   const controls = [
     <Select
+      key="nbs-select"
       label="NBS system type"
       name="system_type"
       defaultValue={properties.system_type}
@@ -42,11 +48,11 @@ function NbsSystem({ t, disabled }: any) {
       }
       tooltip={t('the selected NBS system type ...')}
     />,
-    <Spacer />,
-    <Button variant="outline-primary" type="submit" loading={isLoading}>
+    <Spacer key="nbs-spacer"/>,
+    <Button key="nbs-submit-button" variant="outline-primary" type="submit" loading={isLoading}>
       {capitalize(t('apply'))}
     </Button>,
-    <Button variant="outline-danger" type="reset">
+    <Button key="nbs-reset-button" variant="outline-danger" type="reset">
       {capitalize(t('reset'))}
     </Button>,
   ];

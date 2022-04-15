@@ -8,11 +8,15 @@ import FormComponent from './FormComponent';
 
 /**
  * FormControl
- * @param props .prefix is a ReactElement which will be prepended to the input control
- *              .suffix is a ReactElement which will be appended to the input control
- *  an augmented input control
+ * @return {JSX.Element} an augmented input control
  */
 class FormControl extends FormComponent {
+  /**
+   * @constructor
+   * @param {any} props .prefix is a ReactElement which will be prepended to the input control
+   *              .suffix is a ReactElement which will be appended to the input control
+   * @param {string} [key] Key name
+   */  
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/control-'), key);
   }
@@ -20,8 +24,8 @@ class FormControl extends FormComponent {
   render = () => {
     const {
       t,
-      i18n,
-      tReady,
+      // i18n,
+      // tReady,
       hideLabel,
       visuallyHidden,
       className,

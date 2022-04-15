@@ -9,10 +9,14 @@ import { FiInfo } from 'react-icons/fi';
 
 /**
  * FormSelect
- * @param props .options: Are FormSelectOptions to be chosen from by the user
- * @return an augmented select
+ * @return {JSX.Element} an augmented select
  */
 class FormSelect extends FormComponent {
+  /**
+   * @constructor
+   * @param {any} props .options: Are FormSelectOptions to be chosen from by the user
+   * @param {string} [key] Key name.
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/select-'), key);
   }
@@ -20,8 +24,8 @@ class FormSelect extends FormComponent {
   render = () => {
     const {
       t,
-      i18n,
-      tReady,
+      // i18n,
+      // tReady,
       options,
       hideLabel,
       visuallyHidden,

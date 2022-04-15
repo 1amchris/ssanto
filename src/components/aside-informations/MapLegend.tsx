@@ -63,6 +63,10 @@ const generateLegendData = () => {
   };
 };
 
+/**
+ * Map legend component.
+ * @return {JSX.Element} Html.
+ */
 function MapLegend() {
   const lineOptions = {
     plugins: {

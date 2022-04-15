@@ -2,6 +2,11 @@ import React from 'react';
 import CategoryModel from 'models/guide/CategoryModel';
 import CategoryLink from 'components/guide/CategoryLink';
 
+/**
+ * Category links component.
+ * @param {any} param0 Parameters for the category links.
+ * @return {JSX.Element} Html.
+ */
 function CategoryLinks({ children: categories, style }: any) {
   return (
     <ul

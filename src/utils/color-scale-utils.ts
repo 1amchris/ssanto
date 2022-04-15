@@ -1,4 +1,9 @@
 namespace ColorScaleUtils {
+  /**
+   * Convert a percentage into a green to red color scale
+   * @param {number} perc Percentage
+   * @return {string} An html color tag
+   */
   export function greenToRed(perc: number) {
     let r = 0;
     let g = 0;

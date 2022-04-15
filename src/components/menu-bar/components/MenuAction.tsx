@@ -4,13 +4,29 @@ import { capitalize, uniqueId } from 'lodash';
 import MenuComponent from './MenuComponent';
 import { Dropdown } from 'react-bootstrap';
 
+/**
+ * Menu action component.
+ * @return {JSX.Element} Html.
+ */
 class MenuAction extends MenuComponent {
+  /**
+   * @constructor
+   * @param {any} props Props. TODO
+   * @param {string} [key] Key name.
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('menu/action-'), key);
   }
 
   render = () => {
-    const { t, i18n, tReady, className, label, ...rest } = this.props;
+    const {
+        t,
+        // i18n,
+        // tReady,
+        className,
+        label,
+        ...rest
+     } = this.props;
 
     return (
       <Dropdown.Item

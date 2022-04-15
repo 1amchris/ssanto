@@ -10,6 +10,12 @@ import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 
+
+/**
+ * Interactive map container component.
+ * @param {any} param0 Parameters for the interactive map container.
+ * @return {JSX.Element} Html.
+ */
 function InteractiveMapContainer({ className, style, id }: any) {
   const { map_center: mapCenter, zoom, cursor } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();

@@ -43,4 +43,4 @@ const ServerComMiddleware: () => Middleware = () => {
     };
 };
 
-export default ServerComMiddleware();
+export default ServerComMiddleware(); // eslint-disable-line

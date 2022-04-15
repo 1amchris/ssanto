@@ -5,10 +5,14 @@ import FormComponent from './FormComponent';
 
 /**
  * FormButton
- * @param {any} props .children will be displayed as the body of the button
- * @return an augmented button
+ * @return {JSX.Element} An augmented button
  */
 class FormButton extends FormComponent {
+  /**
+   * @constructor 
+   * @param {any} props .children will be displayed as the body of the button
+   * @param {string} [key] Key name
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/button-'), key);
   }

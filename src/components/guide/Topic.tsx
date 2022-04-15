@@ -29,6 +29,11 @@ const markdownOptions = {
   },
 };
 
+/**
+ * Topic component.
+ * @param {any} param0 Parameters for the topic.
+ * @return {JSX.Element} Html.
+ */
 function Topic({ t, id, children: topic }: any) {
   return (
     <section id={id}>

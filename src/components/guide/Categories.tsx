@@ -5,6 +5,11 @@ import CategoryModel from 'models/guide/CategoryModel';
 import Category from 'components/guide/Category';
 import { HashLink } from 'react-router-hash-link';
 
+/**
+ * Categories component.
+ * @param {any} param0 Parameters for the categories.
+ * @return {JSX.Element} Html.
+ */
 function Categories({ t, children: categories }: any) {
   return (
     <React.Fragment>

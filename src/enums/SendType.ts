@@ -1,3 +1,4 @@
+/* eslint-disable */
 enum SendType {
   SUBJECT = 0,
   CALL = 1,

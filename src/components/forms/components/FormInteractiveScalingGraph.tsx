@@ -11,7 +11,7 @@ type Coordinates = {
   y: number;
 };
 
-//Ceci doit être fait dans le serveur en fait
+// This must be done in the server indeed.
 function parseFunction(stringFunction: string) {
   const parsedFunction = (x: number) => -x + 150;
   return parsedFunction;

@@ -5,6 +5,10 @@ import { Bar } from 'react-chartjs-2';
 import { capitalize } from 'lodash';
 import { colors, bgColors, horizontalBarHeight } from 'consts/graph';
 
+/**
+ * Map cursor information component.
+ * @return {JSX.Element} Html.
+ */
 function MapCursorInformation() {
   const { cursorInformations } = useAppSelector(selectMap);
 

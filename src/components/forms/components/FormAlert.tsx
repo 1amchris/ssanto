@@ -5,10 +5,14 @@ import FormComponent from './FormComponent';
 
 /**
  * FormAlert
- * @param props .children will be displayed as the body of the alert
- * @return an augmented alert
+ * @return {JSX.Element} An augmented alert
  */
 class FormAlert extends FormComponent {
+  /**
+   * @constructor
+   * @param {any} props .children will be displayed as the body of the alert
+   * @param {string} [key] Key name
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/alert-'), key);
   }

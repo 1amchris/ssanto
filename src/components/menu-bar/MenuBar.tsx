@@ -10,6 +10,11 @@ import CallModel from 'models/server-coms/CallModel';
 import FilesUtils from 'utils/files-utils';
 import html2canvas from 'html2canvas';
 
+/**
+ * Menu bar component.
+ * @param {any} param0 Parameters for the menu bar.
+ * @return {JSX.Element} Html.
+ */
 function MenuBar() {
   const dispatch = useAppDispatch();
 
@@ -33,8 +38,9 @@ function MenuBar() {
   };
 
   const getMenus = () => [
-    <Menu label="project">
+    <Menu key="menu-project" label="project">
       <Import
+        key="import"
         label="open project"
         accept=".sproj"
         onFileImported={(file: File) =>
@@ -50,6 +56,7 @@ function MenuBar() {
         }
       />
       <Action
+        key="action"
         label="save project"
         onClick={() =>
           dispatch(
@@ -70,7 +77,7 @@ function MenuBar() {
         }}
       />
     </Menu>,
-    <Menu label="help">
+    <Menu key="menu-help" label="help">
       <Link label="show guide" targetUrl="/guide" />
     </Menu>,
   ];

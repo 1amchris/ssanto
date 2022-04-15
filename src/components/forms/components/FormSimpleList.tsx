@@ -15,9 +15,9 @@ export interface FactoryProps extends PropsModel {
 
 /**
  * Row
- * @param parentId the id of the calling parent
- * @param index the index at which the row is placed in a list
- * @return a row entry for the expandable list
+ * @param {string} parentId the id of the calling parent
+ * @param {number} index the index at which the row is placed in a list
+ * @return {JSX.Element} a row entry for the expandable list
  */
 class Row extends React.Component<{
   parentId: string;
@@ -29,6 +29,11 @@ class Row extends React.Component<{
     isHovered: false,
   };
 
+  /**
+   * @constructor
+   * @param {any} props Props. TODO
+   * @param {string} [key] Key name
+   */
   constructor(props: any, key?: string) {
     super(props);
     this.key = key;
@@ -62,9 +67,9 @@ class Row extends React.Component<{
 /**
  * TODO: [optional] add the ability to reorder the elements in the list
  * FormSimpleList
- * @param props .factory is a generator function that, provided with a few props will return a ReactElement or a list of em
+ * @param {FactoryProps} props .factory is a generator function that, provided with a few props will return a ReactElement or a list of em
  *              .controls is the existing controls upon generating the expandable list
- * @return a list with variable length, to which the user can add elements and remove elements
+ * @return {JSX.Element} a list with variable length, to which the user can add elements and remove elements
  */
 class FormExpandableList extends FormComponent {
   private readonly factory: (
@@ -77,6 +82,11 @@ class FormExpandableList extends FormComponent {
   onAddControl: () => void;
   onRemoveControl?: (index: number) => void;
 
+  /**
+   * @constructor
+   * @param {any} props Props. TODO
+   * @param {string} [key] Key name.
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/expandable-list-'), key);
     this.factory = this.props.factory;

@@ -1,3 +1,4 @@
+/* eslint-disable */
 enum ServerCallTargets {
   Update = 'update',
   UpdateSuitabilityThreshold = 'analysis.update_suitability_threshold',

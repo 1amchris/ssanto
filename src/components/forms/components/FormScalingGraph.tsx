@@ -82,7 +82,16 @@ const generateLineData = (labels: string[], values: number[]) => {
   };
 };
 
+/**
+ * Form scaling graph component.
+ * @return {JSX.Element} Html.
+ */
 class FormScalingGraph extends FormComponent {
+  /**
+   * @constructor
+   * @param {any} props Props. TODO
+   * @param {string} [key] Key name.
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/control-'), key);
   }

@@ -83,6 +83,11 @@ const merge = (
   return res;
 };
 
+/**
+ * Value scaling component.
+ * @param {any} param0 Parameters for the value scaling.
+ * @return {JSX.Element} Html.
+ */
 function ValueScaling({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
@@ -228,6 +233,7 @@ function ValueScaling({ t, disabled }: any) {
 
   const controls = [
     <SimpleList
+      key="list"
       label={objectives.main}
       name={'primaries'}
       factory={primariesFactory}
@@ -238,8 +244,8 @@ function ValueScaling({ t, disabled }: any) {
           secondaries: objectives.primaries.secondaries[index],
         }))}
     />,
-    <Spacer />,
-    <Button variant="outline-primary" loading={isLoading}>
+    <Spacer key="spacer"/>,
+    <Button key="apply" variant="outline-primary" loading={isLoading}>
       {capitalize(t('apply'))}
     </Button>,
   ];
