@@ -25,7 +25,6 @@ function MapSuitabilityAboveThreshold({ t }: any) {
     ),
     <Control
       label="suitability threshold"
-      guideHash="suitability-threshold"
       name="suitability_threshold"
       suffix={'%'}
       defaultValue={suitabilityThreshold}

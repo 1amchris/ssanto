@@ -198,21 +198,30 @@ function Main() {
             {cursorInformations?.objectives &&
               Object.keys(cursorInformations.objectives).length > 0 && (
                 <InformationCard>
-                  <Collapsible title={'cursor informations'}>
+                  <Collapsible
+                    title={'cursor informations'}
+                    guideHash="results-for-a-specific-cell"
+                  >
                     <MapCursorInformation />
                   </Collapsible>
                 </InformationCard>
               )}
             {suitabilityAboveThreshold && (
               <InformationCard>
-                <Collapsible title={'% of suitability above threshold'}>
+                <Collapsible
+                  title={'% of suitability above threshold'}
+                  guideHash="suitability-threshold"
+                >
                   <MapSuitabilityAboveThreshold />
                 </Collapsible>
               </InformationCard>
             )}
             {suitabilityCategories && (
               <InformationCard>
-                <Collapsible title={'suitability ranges'}>
+                <Collapsible
+                  title={'suitability ranges'}
+                  guideHash="suitability-range"
+                >
                   <MapSuitabilityCategories />
                 </Collapsible>
               </InformationCard>
