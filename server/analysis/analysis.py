@@ -376,12 +376,14 @@ class Analysis(Serializable):
                         is_calculated = bool(dataset["isCalculated"])
                         scaling_function = dataset["properties"]["valueScalingFunction"]
                         missing_data_default_value = dataset["properties"]["missingDataSuitability"]
+
                         minimum = dataset["min_value"]
                         maximum = dataset["max_value"]
+                        # TODO Ne semble pas fonctionner
                         missing_data_default_value = missing_data_default_value * \
                             (maximum - minimum) + minimum
+
                         input_file = file_name
-                        print("WEIGHT", weight_attribute)
                         if not is_calculated and column_type == "Boolean":
                             self.suitability_calculator.add_file_to_objective(
                                 attribute,
