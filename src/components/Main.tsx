@@ -155,6 +155,7 @@ function Main() {
             </Collapsible>
             <Collapsible
               title={'value scaling'}
+              guideHash="analysis/value-scaling"
               disabled={!valueScalingIsEnabled()}
             >
               <ValueScaling
