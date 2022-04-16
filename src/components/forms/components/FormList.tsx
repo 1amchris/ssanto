@@ -13,6 +13,20 @@ export interface FactoryProps extends PropsModel {
   name: (infix: string) => string;
 }
 
+/**
+ * @callback onDeleteCallback
+ * @param  {number} index Index of the element.
+ * @return {void}
+ */
+
+/**
+ * Row
+ * @param {string} parentId the id of the calling parent
+ * @param {number} index the index at which the row is placed in a list
+ * @param {onDeleteCallback} onDeleteControl [optional] Specifies what happens when the 'delete' button is clicked
+ *                        Leave undefined to prevent the user from deleting the entry
+ * @return {JSX.Element} a row entry for the expandable list
+ */
 class Row extends React.Component<{
   parentId: string;
   index: number;
@@ -23,6 +37,11 @@ class Row extends React.Component<{
     isHovered: false,
   };
 
+  /**
+   * @constructor
+   * @param {any} props Props. TODO
+   * @param {string} [key] Key name.
+   */
   constructor(props: any, key?: string) {
     super(props);
     this.key = key;
@@ -69,6 +88,11 @@ class Row extends React.Component<{
   };
 }
 
+/**
+ * TODO: [optional] add the ability to reorder the elements in the list
+ * FormExpandableList
+ * @return {JSX.Element} a list with variable length, to which the user can add elements and remove elements
+ */
 class FormList extends FormComponent {
   private readonly template: PropsModel;
   private readonly factory: (
@@ -80,6 +104,13 @@ class FormList extends FormComponent {
     controls: [],
   };
 
+  /**
+   * @constructor
+   * @param {any} props .factory is a generator function that, provided with a few props will return a ReactElement or a list of em
+   *              .template is used to generate a new control object when the user asks to
+   *              .controls is the existing controls upon generating the expandable list
+   * @param {string} [key] Key name.
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/expandable-list-'), key);
     this.factory = this.props.factory;

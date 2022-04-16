@@ -3,6 +3,19 @@ import { uniqueId } from 'lodash';
 import { unflatten } from 'flattenizer';
 import { Alert } from './components';
 
+
+/**
+   * @callback onCallback
+   * @param {Object} e Data
+   * @return {void}
+   */
+/**
+ * Form
+ * @param {ReactElement | ReactElement[]} controls A list of controls which will be added to the form
+ * @param {onCallback} onSubmit Specify what to do with the fields in the form upon submission
+ * @param {onCallback} onReset [optional] Specify how to reset with the fields upon resetting
+ * @return {JSX.Element} A form as a ReactElement
+ */
 function Form({
   controls,
   disabled,

@@ -25,6 +25,11 @@ export type ActionCreatorWithPayloadSyringe<InjectionType, PayloadType> = (
 
 // Generates injectable callback-able actions (so they can be passed around)
 //  Injecting a function means it can be parameterised before passing it (a kind of higher-order-action)
+/**
+ * Create an action creator syringe.
+ * @param {InjectableActionCreatorWithPayload<InjectionType, PayloadType>} actionCreator Creator
+ * @return {ActionCreatorWithPayloadSyringe<InjectionType, PayloadType>} Injector
+ */
 export function createActionCreatorSyringe<InjectionType, PayloadType>(
   actionCreator: InjectableActionCreatorWithPayload<InjectionType, PayloadType>
 ): ActionCreatorWithPayloadSyringe<InjectionType, PayloadType> {

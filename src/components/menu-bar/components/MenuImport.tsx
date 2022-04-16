@@ -4,7 +4,24 @@ import { capitalize, first, uniqueId } from 'lodash';
 import MenuComponent from './MenuComponent';
 import { Dropdown } from 'react-bootstrap';
 
+
+/**
+ * @callback fileChangeCallback
+ * @param {File} file The file that change
+ * @return {void}
+ */
+
+/**
+ * Menu import component.
+ * @param {fileChangeCallback} onFileChanged Callback on file change
+ * @return {JSX.Element} Html.
+ */
 class MenuImport extends MenuComponent {
+  /**
+   * @constructor
+   * @param {any} props Props. TODO
+   * @param {string} [key] Key name
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('menu/import-'), key);
   }

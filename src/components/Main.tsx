@@ -23,6 +23,11 @@ import ValueScalingFunctionGraphs from './aside-informations/ValueScalingFunctio
 import MapLegend from './aside-informations/MapLegend';
 import { flatten } from 'flattenizer';
 
+/**
+ * Main component.
+ * Contains the main app.
+ * @return {JSX.Element} Html.
+ */
 function Main() {
   const analysis = useAppSelector(selectAnalysis);
   const {
@@ -33,6 +38,10 @@ function Main() {
   const objectives = analysis.properties.objectives;
   const ohIsLoading = analysis.properties.objectivesLoading;
 
+  /**
+   * Check if the parameters are valid.
+   * @return {boolean} True if the parameters are valid, otherwise False.
+   */
   function parametersIsValid() {
     return (
       analysis.properties.parameters.analysis_name?.length > 0 &&
@@ -44,10 +53,18 @@ function Main() {
     );
   }
 
+  /**
+   * Check if the study area is enabled.
+   * @return {boolean} True if the study area is enabled, otherwise False.
+   */
   function studyAreaIsEnabled() {
     return parametersIsValid();
   }
 
+  /**
+   * Check if the study area is valid.
+   * @return {boolean} True if the study area is valid, otherwise False.
+   */
   function studyAreaIsValid() {
     return (
       analysis.properties.study_area.length > 0 &&
@@ -57,10 +74,18 @@ function Main() {
     );
   }
 
+  /**
+   * Check if the systemType is enabled.
+   * @return {boolean} True if the systemType is enabled, otherwise False.
+   */
   function systemTypeIsEnabled() {
     return parametersIsValid() && studyAreaIsValid();
   }
 
+  /**
+   * Check if the systemType is valid.
+   * @return {boolean} True if the systemType is valid, otherwise False.
+   */
   function systemTypeIsValid() {
     return (
       analysis.properties.nbs_system &&
@@ -70,10 +95,18 @@ function Main() {
     );
   }
 
+  /**
+   * Check if the objectiveHierarchy is enabled.
+   * @return {boolean} True if the objectiveHierarchy is enabled, otherwise False.
+   */
   function objectiveHierarchyIsEnabled() {
     return parametersIsValid() && studyAreaIsValid() && systemTypeIsValid();
   }
 
+  /**
+   * Check if the objectiveHierarchy is valid.
+   * @return {boolean} True if the objectiveHierarchy is valid, otherwise False.
+   */
   function objectiveHierarchyIsValid() {
     return (
       analysis.properties.objectives &&
@@ -83,6 +116,10 @@ function Main() {
     );
   }
 
+  /**
+   * Check if the weights are enabled.
+   * @return {boolean} True if the weights is enabled, otherwise False.
+   */
   function weightsAreEnabled() {
     return (
       parametersIsValid() &&
@@ -92,6 +129,10 @@ function Main() {
     );
   }
 
+  /**
+   * Check if the valueScaling is enabled.
+   * @return {boolean} True if the valueScaling is enabled, otherwise False.
+   */
   function valueScalingIsEnabled() {
     return (
       parametersIsValid() &&

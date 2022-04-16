@@ -63,7 +63,18 @@ const merge = (
   return res;
 };
 
+/**
+ * Normalize the weight between 0 and 1.
+ * @param {WeightsHierarchy} param0 Input weight.
+ * @return {WeightsHierarchy} The normalized weight.
+ */
 function normalizeWeights({ primaries }: WeightsHierarchy): WeightsHierarchy {
+
+  /**
+   * Normalization function.
+   * @param {number[]} weights Input weights.
+   * @return {number[]} Normalize weights.
+   */
   function normalize(weights: number[]): number[] {
     const total = sum([0, ...weights]);
     if (total === 0) return [...weights];
@@ -83,6 +94,11 @@ function normalizeWeights({ primaries }: WeightsHierarchy): WeightsHierarchy {
   };
 }
 
+/**
+ * Weighting component.
+ * @param {any} param0 Parameters for the weighting.
+ * @return {JSX.Element} Html.
+ */
 function Weighting({ t, disabled }: any) {
   const property = 'objectives';
   const selector = useAppSelector(selectAnalysis);
@@ -169,7 +185,6 @@ function Weighting({ t, disabled }: any) {
     ];
   };
 
-  /* eslint-disable react/jsx-key */
   const controls = [
     <SimpleList
       label={objectives.main}
@@ -182,12 +197,11 @@ function Weighting({ t, disabled }: any) {
         secondaries: objectives.primaries.secondaries[index],
       }))}
     />,
-    <Spacer />,
-    <Button variant="outline-primary" loading={isLoading}>
+    <Spacer key="spacer" />,
+    <Button key="apply" variant="outline-primary" loading={isLoading}>
       {capitalize(t('apply'))}
     </Button>,
   ];
-  /* eslint-enable react/jsx-key */
 
   return (
     <Form

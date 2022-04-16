@@ -9,12 +9,16 @@ import { call } from 'store/reducers/server';
 import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 
+/**
+ * Map suitability above threshold component.
+ * @param {any} param0 Parameters for the map suitability above threshold.
+ * @return {JSX.Element} Html.
+ */
 function MapSuitabilityAboveThreshold({ t }: any) {
   const { suitabilityAboveThreshold, suitabilityThreshold } =
     useAppSelector(selectMap);
   const dispatch = useAppDispatch();
 
-  /* eslint-disable react/jsx-key */
   const controls = [
     suitabilityAboveThreshold && (
       <Control
@@ -24,6 +28,7 @@ function MapSuitabilityAboveThreshold({ t }: any) {
       />
     ),
     <Control
+      key="control"
       label="suitability threshold"
       name="suitability_threshold"
       suffix={'%'}
@@ -33,8 +38,9 @@ function MapSuitabilityAboveThreshold({ t }: any) {
       max="100"
       tooltip={t('the suitability threshold is ...')}
     />,
-    <Spacer />,
+    <Spacer key="spacer" />,
     <Button
+      key="apply"
       variant="outline-primary"
       type="submit"
       // loading={isLoading}
@@ -58,7 +64,6 @@ function MapSuitabilityAboveThreshold({ t }: any) {
       />
     ),
   ];
-  /* eslint-enable react/jsx-key */
 
   return (
     <React.Fragment>

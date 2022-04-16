@@ -18,6 +18,11 @@ import { Modal } from 'react-bootstrap';
 import FileContentModel from 'models/file/FileContentModel';
 import { exportData } from 'store/reducers/export';
 
+/**
+ * Study area component.
+ * @param {any} param0 Parameters for the study area.
+ * @return {JSX.Element} Html.
+ */
 function StudyArea({ t, disabled }: any) {
   const property = 'study_area';
   const selector = useAppSelector(selectAnalysis);
@@ -109,12 +114,14 @@ function StudyArea({ t, disabled }: any) {
 
   const controls = [
     <Control
+      key="study-area-control"
       visuallyHidden={!properties}
       label="selected file"
       value={`${properties}`}
       disabled
     />,
     <Select
+      key="study-area-select"
       label="select study area"
       name="study_area_file"
       tooltip="Some tooltip"
@@ -122,12 +129,11 @@ function StudyArea({ t, disabled }: any) {
       defaultValue={properties}
       options={filesChoices}
     />,
-    <Spacer />,
-    <Button variant="outline-primary" type="submit" loading={isLoading}>
+    <Spacer key="spacer" />,
+    <Button key="apply" variant="outline-primary" type="submit" loading={isLoading}>
       {capitalize(t('apply'))}
     </Button>,
   ];
-  /* eslint-enable react/jsx-key */
 
   return (
     <React.Fragment>

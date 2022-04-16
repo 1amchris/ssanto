@@ -4,6 +4,11 @@ import { concat } from 'lodash';
 import TopicModel from 'models/guide/TopicModel';
 import Topic from 'components/guide/Topic';
 
+/**
+ * Topics component.
+ * @param {any} param0 Parameters for the topics.
+ * @return {JSX.Element} Html.
+ */
 function Topics({ categoryName, children: topics }: any) {
   return (
     <React.Fragment>

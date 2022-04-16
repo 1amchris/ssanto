@@ -13,6 +13,11 @@ import { useEffectOnce } from 'hooks';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTargets from 'enums/ServerCallTargets';
 
+/**
+ * Guide component.
+ * @param {any} param0 Parameters for the guide.
+ * @return {JSX.Element} Html.
+ */
 function Guide({ t }: any) {
   const categories = useAppSelector(selectGuide).categories;
   const dispatch = useAppDispatch();
@@ -42,8 +47,9 @@ function Guide({ t }: any) {
           <nav>
             <ul className="list-unstyled py-3 mb-0">
               {
-                /* eslint-disable react/jsx-key */ [
+                [
                   <Link
+                    key="link"
                     to="/"
                     className="text-decoration-none text-muted small"
                   >
@@ -70,7 +76,6 @@ function Guide({ t }: any) {
                       {child}
                     </li>
                   ))
-                /* eslint-enable react/jsx-key */
               }
             </ul>
           </nav>

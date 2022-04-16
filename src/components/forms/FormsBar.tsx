@@ -14,6 +14,12 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import LoadingValue from 'models/LoadingValue';
 import { Modal } from 'react-bootstrap';
 
+/**
+ * Forms bar component.
+ * @param {any} param0 Parameters for the forms bar.
+ * @param {string} [key] Key name
+ * @return {JSX.Element} Html.
+ */
 function FormsBar({ children, className, t }: any, key?: string) {
   const selector = useAppSelector(selectAnalysis);
   const dispatch = useAppDispatch();

@@ -26,6 +26,11 @@ import SuitabilityCategoriesModel from 'models/map/SuitabilityCategoriesModel';
 import ServerSubscriptionTargets from 'enums/ServerSubscriptionTargets';
 import { LayersGroups } from 'models/map/Layers';
 
+/**
+ * App component.
+ * It initialise the page and the subscribers.
+ * @return {JSX.Element} Html.
+ */
 function App() {
   const dispatch = useAppDispatch();
   useEffectOnce(() => {

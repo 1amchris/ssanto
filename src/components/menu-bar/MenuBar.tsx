@@ -9,30 +9,44 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import FilesUtils from 'utils/files-utils';
 import { selectMap } from 'store/reducers/map';
+import { loadingFileComplete, resetError } from 'store/reducers/analysis';
 
+/**
+ * Menu bar component.
+ * @param {any} param0 Parameters for the menu bar.
+ * @return {JSX.Element} Html.
+ */
 function MenuBar() {
   const mapLayers = useAppSelector(selectMap).layers;
   const dispatch = useAppDispatch();
 
-  /* eslint-disable react/jsx-key */
   const getMenus = () => [
-    <Menu label="project">
+    <Menu key="menu-project" label="project">
       <Import
+        key="import"
         label="open project"
         accept=".sproj"
-        onFileImported={(file: File) =>
-          FilesUtils.extractContentFromFiles([file]).then(file =>
-            dispatch(
-              call({
-                target: ServerCallTargets.OpenProject,
-                args: [file[0].content],
-                // TODO: There should probably be an "onErrorAction"
-              } as CallModel<string[], FileContentModel<string>>)
-            )
-          )
+        onFileImported={(file: File) => {
+            dispatch(resetError());
+            FilesUtils.extractContentFromFiles([file]).then(file => {
+                dispatch(
+                    call({
+                      target: ServerCallTargets.OpenProject,
+                      args: [file[0].content],
+                      onSuccessAction: loadingFileComplete,
+                      onErrorAction: loadingFileComplete
+                      // TODO: There should probably be an "onErrorAction"
+                    } as CallModel<string[], FileContentModel<string>>)
+                  )
+            }
+                
+            );
+        }
+          
         }
       />
       <Action
+        key="action"
         label="save project"
         onClick={() =>
           dispatch(
@@ -65,11 +79,10 @@ function MenuBar() {
         }
       />
     </Menu>,
-    <Menu label="help">
+    <Menu key="menu-help" label="help">
       <Link label="show guide" targetUrl="/guide" />
     </Menu>,
   ];
-  /* eslint-enable react/jsx-key */
 
   return (
     <nav

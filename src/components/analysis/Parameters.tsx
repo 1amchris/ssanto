@@ -14,6 +14,11 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
+/**
+ * Parameters component.
+ * @param {any} param0 Parameters for the parameters.
+ * @return {JSX.Element} Html.
+ */
 function Parameters({ t, disabled }: any) {
   const property = 'parameters';
   const selector = useAppSelector(selectAnalysis);
@@ -25,9 +30,9 @@ function Parameters({ t, disabled }: any) {
 
   const cellSizeRef: RefObject<HTMLSpanElement> = createRef();
 
-  /* eslint-disable react/jsx-key */
   const controls = [
     <Control
+      key="name-control"
       label="analysis name"
       guideHash="analysis-name"
       name="analysis_name"
@@ -36,6 +41,7 @@ function Parameters({ t, disabled }: any) {
       tooltip={t('the given name will be used to identify the saved project.')}
     />,
     <Control
+      key="modeler-control"
       label="name of the modeler"
       guideHash="modeler-name"
       name="modeler_name"
@@ -44,6 +50,7 @@ function Parameters({ t, disabled }: any) {
       tooltip={t('the given name will be used to identify the modeler.')}
     />,
     <Control
+      key="cell-control"
       label="cell size"
       guideHash="cell-size"
       name="cell_size"
@@ -61,15 +68,14 @@ function Parameters({ t, disabled }: any) {
       type="number"
       tooltip={t('the cell size is ...')}
     />,
-    <Spacer />,
-    <Button variant="outline-primary" type="submit" loading={isLoading}>
+    <Spacer key="spacer"/>,
+    <Button key="apply-button" variant="outline-primary" type="submit" loading={isLoading}>
       {capitalize(t('apply'))}
     </Button>,
-    <Button variant="outline-danger" type="reset">
+    <Button key="reset-button" variant="outline-danger" type="reset">
       {capitalize(t('reset'))}
     </Button>,
   ];
-  /* eslint-enable react/jsx-key */
 
   return (
     <Form

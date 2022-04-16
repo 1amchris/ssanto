@@ -3,7 +3,16 @@ import { uniqueId } from 'lodash';
 import { Button, Spinner } from 'react-bootstrap';
 import FormComponent from './FormComponent';
 
+/**
+ * FormButton
+ * @return {JSX.Element} An augmented button
+ */
 class FormButton extends FormComponent {
+  /**
+   * @constructor 
+   * @param {any} props .children will be displayed as the body of the button
+   * @param {string} [key] Key name
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/button-'), key);
   }

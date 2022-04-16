@@ -6,6 +6,12 @@ import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
 namespace LayersUtils {
   const DEFAULT_GROUP = 'default';
 
+  /**
+   * Add a new layer to a layers groups
+   * @param {LayersGroups} layersGroups The layers groups to append the layer on
+   * @param {InsertLayerModel} layer The layer to append
+   * @return {LayersGroups} The updated layers groups
+   */
   export function add(
     layersGroups: LayersGroups,
     layer: InsertLayerModel
@@ -28,6 +34,12 @@ namespace LayersUtils {
     return layersGroups;
   }
 
+  /**
+   * Remove a layer to a layers groups
+   * @param {LayersGroups} layersGroups The layers groups to append the layer on
+   * @param {RemoveLayerModel} layer The layer to remove
+   * @return {LayersGroups} The updated layers groups
+   */
   export function remove(
     layersGroups: LayersGroups,
     layer: RemoveLayerModel
@@ -51,6 +63,12 @@ namespace LayersUtils {
     return layersGroups;
   }
 
+  /**
+   * Remove a group to a layers groups
+   * @param {LayersGroups} layersGroups The layers groups to append the layer on
+   * @param {string} group The group to remove
+   * @return {LayersGroups} The updated layers groups
+   */
   export function removeGroup(
     layersGroups: LayersGroups,
     group: string

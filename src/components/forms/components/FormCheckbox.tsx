@@ -6,7 +6,16 @@ import { FiInfo } from 'react-icons/fi';
 import { HashLink } from 'react-router-hash-link';
 import FormComponent from './FormComponent';
 
+/**
+ * FormCheckbox
+ * @return {JSX.Element} An augmented checkbox control
+ */
 class FormCheckbox extends FormComponent {
+  /**
+   * @constructor 
+   * @param {any} props .children will be displayed as the body of the checkbox
+   * @param {string} [key] Key name
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/checkbox-'), key);
   }

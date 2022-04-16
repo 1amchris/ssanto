@@ -10,6 +10,11 @@ import {
 } from 'components/forms/components';
 import { FactoryProps } from 'components/forms/components/FormSimpleList';
 
+/**
+ * Value scaling function component.
+ * @param {any} param0 Parameters for the value scaling function.
+ * @return {JSX.Element} Html.
+ */
 function ValueScalingFunctionGraphs() {
   const selector = useAppSelector(selectAnalysis);
   const objectives = selector.properties.objectives as ObjectivesHierarchyModel;

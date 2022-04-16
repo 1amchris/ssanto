@@ -42,6 +42,12 @@ const FileRowFactory = ({
   </div>
 );
 
+/**
+ * File explorer component.
+ * Used to upload and visualise the files in the system.
+ * @param {any} param0 Parameters for the file explorer.
+ * @return {JSX.Element} Html.
+ */
 function FileExplorer({ t, disabled }: any) {
   const property = 'files';
   const selector = useAppSelector(selectAnalysis);
@@ -51,9 +57,9 @@ function FileExplorer({ t, disabled }: any) {
   const getErrors = selector.properties.filesError;
   const isLoading = selector.properties.filesLoading;
 
-  /* eslint-disable react/jsx-key */
   const controls = [
     <Control
+      key="input-control"
       label="Select files"
       name="files"
       type="file"
@@ -63,7 +69,7 @@ function FileExplorer({ t, disabled }: any) {
         t('the selected files will be uploaded to the server for further use.')
       )}
     />,
-    <Button variant="outline-primary" type="submit" loading={isLoading}>
+    <Button key="add-button" variant="outline-primary" type="submit" loading={isLoading}>
       {capitalize(t('add'))}
     </Button>,
     files?.length > 0 && <Spacer />,
@@ -98,7 +104,6 @@ function FileExplorer({ t, disabled }: any) {
       />
     ),
   ];
-  /* eslint-enable react/jsx-key */
 
   return (
     <Form

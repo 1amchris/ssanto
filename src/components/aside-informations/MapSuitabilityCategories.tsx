@@ -4,6 +4,11 @@ import { useAppSelector } from 'store/hooks';
 import { Bar } from 'react-chartjs-2';
 import { colors, bgColors, horizontalBarHeight } from 'consts/graph';
 
+/**
+ * Map cursor information component.
+ * @param {any} param0 Parameters for the map cursor information.
+ * @return {JSX.Element} Html.
+ */
 function MapCursorInformation() {
   const { suitabilityCategories } = useAppSelector(selectMap);
 

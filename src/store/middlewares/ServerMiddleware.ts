@@ -44,5 +44,4 @@ const ServerComMiddleware: () => Middleware = () => {
     };
 };
 
-// eslint-disable-next-line new-cap
-export default ServerComMiddleware();
+export default ServerComMiddleware(); // eslint-disable-line new-cap

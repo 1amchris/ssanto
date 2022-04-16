@@ -7,7 +7,16 @@ import FormComponent from './FormComponent';
 import { HashLink } from 'react-router-hash-link';
 import { FiInfo } from 'react-icons/fi';
 
+/**
+ * FormSelect
+ * @return {JSX.Element} an augmented select
+ */
 class FormSelect extends FormComponent {
+  /**
+   * @constructor
+   * @param {any} props .options: Are FormSelectOptions to be chosen from by the user
+   * @param {string} [key] Key name.
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/select-'), key);
   }

@@ -142,6 +142,42 @@ export const analysisSlice = createSlice({
     subAnalysisSuccess: (state, _: PayloadAction<any>) => {
       state.properties.subAnalysisLoading = false;
     },
+
+    resetError: (state) => {
+        state.properties.parametersLoading = true;
+        state.properties.parametersError = '';
+
+        state.properties.nbs_systemLoading = true;
+        state.properties.nbs_systemError = '';
+
+        state.properties.study_areaLoading = true;
+        state.properties.study_areaError = '';
+
+        state.properties.filesLoading = true;
+        state.properties.filesError = '';
+
+        state.properties.objectivesError = '';
+        state.properties.objectivesLoading = true;
+
+        state.properties.value_scalingError = '';
+        state.properties.value_scalingLoading = true;
+
+        state.properties.analysisLoading = true;
+        state.properties.analysisError = '';
+
+        state.properties.subAnalysisLoading = true;
+        state.properties.subAnalysisError = '';
+    },
+    loadingFileComplete: (state, _:PayloadAction<any>) => {
+        state.properties.parametersLoading = false;
+        state.properties.nbs_systemLoading = false;
+        state.properties.study_areaLoading = false;
+        state.properties.filesLoading = false;
+        state.properties.objectivesLoading = false;
+        state.properties.value_scalingLoading = false;
+        state.properties.analysisLoading = false;
+        state.properties.subAnalysisLoading = false;
+    }
   },
 });
 
@@ -164,6 +200,8 @@ export const {
   studyAreaReceived,
   analysisSuccess,
   subAnalysisSuccess,
+  resetError,
+  loadingFileComplete
 } = analysisSlice.actions;
 
 export const selectAnalysis = (state: RootState) => state.analysis;
