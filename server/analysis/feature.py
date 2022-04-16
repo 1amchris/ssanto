@@ -37,6 +37,7 @@ class Feature:
 
     def process_missing_mask(self, array):
         self.missing_mask = array == DEFAULT_EMPTY_VAL
+        print('process_missing_mask', self.missing_data_default_val)
         array[self.missing_mask] = self.missing_data_default_val
         return array
 
@@ -108,23 +109,26 @@ class ContinuousFeature(Feature):
         )
 
         offset = offset = (
-            -int((origin_file[1] - self.study_area.origin[1]) // self.cell_size),
-            int((origin_file[0] - self.study_area.origin[0]) // self.cell_size),
+            -int((origin_file[1] - self.study_area.origin[1]
+                  ) // self.cell_size),
+            int((origin_file[0] - self.study_area.origin[0]) //
+                self.cell_size),
         )
         return self.balance_matrix(file, self.study_area.as_array, offset)
 
     def balance_matrix(self, input_matrix, study_area, offset):
-        output_matrix = np.zeros(study_area.shape)
+        output_matrix = np.zeros(study_area.shape) + \
+            self.missing_data_default_val
         output_matrix[
-            max(offset[0], 0) : max(
+            max(offset[0], 0): max(
                 min(len(input_matrix) + offset[0], len(study_area)), 0
             ),
-            max(offset[1], 0) : max(
+            max(offset[1], 0): max(
                 min(len(input_matrix[0]) + offset[1], len(study_area[0])), 0
             ),
         ] = input_matrix[
-            max(0, -offset[0]) : max(len(study_area) - offset[0], 0),
-            max(0, -offset[1]) : max(len(study_area[0]) - offset[1], 0),
+            max(0, -offset[0]): max(len(study_area) - offset[0], 0),
+            max(0, -offset[1]): max(len(study_area[0]) - offset[1], 0),
         ]
         return output_matrix
 
@@ -216,7 +220,8 @@ class DistanceFeature(ContinuousFeature):
             * self.max_distance
             * self.cell_size
         )
-        self.distance_matrix = self.default_normalize_matrix(self.distance_matrix)
+        self.distance_matrix = self.default_normalize_matrix(
+            self.distance_matrix)
         self.distance_matrix = self.apply_value_scaling(self.distance_matrix)
         self.distance_matrix = np.clip(self.distance_matrix, 0, 1)
 
@@ -383,6 +388,7 @@ class CategoricalFeature(ContinuousFeature):
 
         df = geopandas.read_file(self.path)
         df["cal_value"] = (
-            df[self.field_name].map(self.categorized_value).fillna(0.0).astype(float)
+            df[self.field_name].map(
+                self.categorized_value).fillna(0.0).astype(float)
         )
         df.to_file(self.path)
