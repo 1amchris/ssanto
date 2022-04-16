@@ -440,37 +440,23 @@ class Analysis(Serializable):
                                 column_name,
                             )
 
-                    # self.suitability_calculator.objectives[primary].add_file(
-                    #    index, path, "output.tiff", int(weight_secondary), scaling_function)
-
             output_matrix = self.suitability_calculator.process_data()
 
             tiff_path = self.suitability_calculator.matrix_to_raster(
                 output_matrix)
             analysis_df = self.suitability_calculator.tiff_to_geojson(
                 tiff_path)
-            sub_objectives_json = self.suitability_calculator.process_sub_objectives()
 
             with open(os.path.join(self.files_manager.get_writer_path(), tiff_path), "rb") as tiff:
                 self.tiffs["analysis"] = tiff.read()
-            """ 
-                # ici le tif est ok
-            import rasterio
-            from rasterio.plot import show
-            import matplotlib.pyplot as plt
-            fp = os.path.join(self.files_manager.get_writer_path(), tiff_path)
-            img = rasterio.open(fp)
-            show(img)
-            plt.savefig(os.path.join(
-                self.files_manager.get_writer_path(), "test3.png"))
-                """
+
+            sub_objectives_json = self.suitability_calculator.process_sub_objectives()
 
             self.compute_suitability_above_threshold()
             self.compute_suitability_categories()
 
             return_value = {"file_name": "current analysis",
                             "area": analysis_df.to_json()}
-            # return {"file_name": "current analysis", "area": geo_json}
         else:
             return_value = {"file_name": "current analysis", "area": {}}
         print("end of analysis")
