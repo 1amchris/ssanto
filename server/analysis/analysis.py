@@ -379,7 +379,6 @@ class Analysis(Serializable):
 
                         minimum = dataset["min_value"]
                         maximum = dataset["max_value"]
-                        # TODO Ne semble pas fonctionner
                         missing_data_default_value = missing_data_default_value * \
                             (maximum - minimum) + minimum
 
