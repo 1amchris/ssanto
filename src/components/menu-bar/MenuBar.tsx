@@ -9,6 +9,7 @@ import ServerCallTargets from 'enums/ServerCallTargets';
 import CallModel from 'models/server-coms/CallModel';
 import FilesUtils from 'utils/files-utils';
 import { selectMap } from 'store/reducers/map';
+import { loadingFileComplete, resetError } from 'store/reducers/analysis';
 
 /**
  * Menu bar component.
@@ -25,16 +26,23 @@ function MenuBar() {
         key="import"
         label="open project"
         accept=".sproj"
-        onFileImported={(file: File) =>
-          FilesUtils.extractContentFromFiles([file]).then(file =>
-            dispatch(
-              call({
-                target: ServerCallTargets.OpenProject,
-                args: [file[0].content],
-                // TODO: There should probably be an "onErrorAction"
-              } as CallModel<string[], FileContentModel<string>>)
-            )
-          )
+        onFileImported={(file: File) => {
+            dispatch(resetError());
+            FilesUtils.extractContentFromFiles([file]).then(file => {
+                dispatch(
+                    call({
+                      target: ServerCallTargets.OpenProject,
+                      args: [file[0].content],
+                      onSuccessAction: loadingFileComplete,
+                      onErrorAction: loadingFileComplete
+                      // TODO: There should probably be an "onErrorAction"
+                    } as CallModel<string[], FileContentModel<string>>)
+                  )
+            }
+                
+            );
+        }
+          
         }
       />
       <Action

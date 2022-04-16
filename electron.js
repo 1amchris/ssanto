@@ -4,6 +4,10 @@ const path = require('path');
 
 const { spawn } = require('child_process');
 
+const { app, BrowserWindow } = electron;
+
+let mainWindow = null;
+
 // Windows: path.join(__dirname, '\\Python39-32\\python.exe')
 const PYTHON_PATH = 'python3';
 const PYTHON_CWD = 'server'; // Prod: '../server'; Dev: // 'server'
@@ -38,13 +42,11 @@ python.on('close', code => {
 
 python.on('exit', (code, signal) => {
   console.log(`[Python][exit] Code: ${code} Signal: ${signal}`);
+  if (mainWindow) mainWindow.close();
+  app.quit();
 });
 
 /* ----------------------*/
-
-const { app, BrowserWindow } = electron;
-
-let mainWindow = null;
 
 /**
  * Create the app window.
