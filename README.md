@@ -62,7 +62,7 @@ If something doesn't work as expected, here are a couple ideas
 
 #### Dependencies:
 
-You should double and triple check that you have succesfully installed all required dependencies; see [Install Dependencies](#install-dependencies).
+You should double and triple check that you have successfully installed all required dependencies; see [Install Dependencies](#install-dependencies).
 
 ## Usage
 
