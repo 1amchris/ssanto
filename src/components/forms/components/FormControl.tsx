@@ -22,10 +22,11 @@ class FormControl extends FormComponent {
   }
 
   render = () => {
+    /* eslint-disable no-unused-vars */
     const {
       t,
-      // i18n,
-      // tReady,
+      i18n,
+      tReady,
       hideLabel,
       visuallyHidden,
       className,

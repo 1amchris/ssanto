@@ -19,10 +19,11 @@ class MenuAction extends MenuComponent {
   }
 
   render = () => {
+    /* eslint-disable no-unused-vars */
     const {
         t,
-        // i18n,
-        // tReady,
+        i18n,
+        tReady,
         className,
         label,
         ...rest

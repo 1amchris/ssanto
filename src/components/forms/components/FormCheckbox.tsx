@@ -21,11 +21,12 @@ class FormCheckbox extends FormComponent {
   }
 
   render = () => {
+    /* eslint-disable no-unused-vars */
     const {
       t,
-      // i18n,
-      // tReady,
-      // hideLabel,
+      i18n,
+      tReady,
+      hideLabel,
       visuallyHidden,
       className,
       label,
