@@ -32,7 +32,8 @@ class Analysis(Serializable):
         self.files_manager = files_manager
         self.suitability_calculator = None
         self.tiffs = {}  # layername {string}: tiff {bytes}
-        self.hierarchy = Hierarchy(os.path.join(os.path.join(os.getcwd(), "objectives_data"), "hierarchy.json"))
+        self.hierarchy = Hierarchy(os.path.join(os.path.join(
+            os.getcwd(), "objectives_data"), "hierarchy.json"))
 
         self.parameters = subjects_manager.create(
             "parameters",
@@ -84,10 +85,12 @@ class Analysis(Serializable):
         self.sub_analysis = subjects_manager.create("sub_analysis", [])
 
         # suitability categories: ([0-10[, [10-20[, [20-30[, [30-40[, [40-50[, [50-60[, [60-70[, [70-80[, [80-90[, [90-100]) or None
-        self.suitability_categories = subjects_manager.create("analysis.visualization.suitability_categories", None)
+        self.suitability_categories = subjects_manager.create(
+            "analysis.visualization.suitability_categories", None)
 
         # suitability : [0, 100] or None
-        self.suitability_threshold = subjects_manager.create("analysis.visualization.suitability_threshold", 50)
+        self.suitability_threshold = subjects_manager.create(
+            "analysis.visualization.suitability_threshold", 50)
         self.suitability_above_threshold = subjects_manager.create(
             "analysis.visualization.suitability_above_threshold", None
         )
@@ -120,7 +123,8 @@ class Analysis(Serializable):
 
         def visit(value):
             if value in visited:
-                raise ValueError(f"Duplicate values: {value} is used more than once!")
+                raise ValueError(
+                    f"Duplicate values: {value} is used more than once!")
             else:
                 visited.add(value)
 
@@ -239,8 +243,10 @@ class Analysis(Serializable):
         return {"group": group, "name": name, "geojson": geojson}
 
     def objectives_data_update(self):
-        new_hierarchy = self.hierarchy.filter_master_list(self.nbs.value()["system_type"])
-        default_objectives_hierarchy = self.hierarchy.get_default_hierarchy(self.nbs.value()["system_type"])
+        new_hierarchy = self.hierarchy.filter_master_list(
+            self.nbs.value()["system_type"])
+        default_objectives_hierarchy = self.hierarchy.get_default_hierarchy(
+            self.nbs.value()["system_type"])
         self.objectives_data.notify(new_hierarchy)
         self.objectives.notify(default_objectives_hierarchy)
 
@@ -251,7 +257,8 @@ class Analysis(Serializable):
             for (secondary_index, attributes) in enumerate(secondaries["attributes"]):
                 for (attribute_index, datasets) in enumerate(attributes["datasets"]):
                     continuousCondition = datasets["type"] == "Continuous"
-                    booleanCondition = datasets["type"] == "Boolean" and bool(datasets["isCalculated"])
+                    booleanCondition = datasets["type"] == "Boolean" and bool(
+                        datasets["isCalculated"])
                     if continuousCondition or booleanCondition:
                         string_function = datasets["properties"]["valueScalingFunction"]
                         if continuousCondition:
@@ -275,12 +282,14 @@ class Analysis(Serializable):
                         new_objectives_data["primaries"]["secondaries"][primary_index]["attributes"][secondary_index][
                             "datasets"
                         ][attribute_index]["properties"]["distribution_value"] = [float(y_) for y_ in list(y)]
-                        self.subjects_manager.update("objectives", new_objectives_data)
+                        self.subjects_manager.update(
+                            "objectives", new_objectives_data)
 
     def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
         base = MapCursorInformations()
         if calculator := self.suitability_calculator:
-            base.objectives = calculator.get_informations_at(cursor.lat, cursor.long)
+            base.objectives = calculator.get_informations_at(
+                cursor.lat, cursor.long)
         return base
 
     def update(self, subject, data):
@@ -328,17 +337,20 @@ class Analysis(Serializable):
             cell_size = self.parameters.value().get("cell_size")
             scaling_function = "x"  # self.parameters.value().get("scaling_function")
 
-            self.suitability_calculator = SuitabilityCalculator(self.files_manager.get_writer_path())
+            self.suitability_calculator = SuitabilityCalculator(
+                self.files_manager.get_writer_path())
             self.suitability_calculator.set_cell_size(cell_size)
             self.suitability_calculator.set_crs("epsg:3857")
-            self.suitability_calculator.set_study_area_input(self.study_area.value())
+            self.suitability_calculator.set_study_area_input(
+                self.study_area.value())
 
             for (primary, weight_primary, secondaries) in zip(
                 data["primaries"]["primary"],
                 data["primaries"]["weights"],
                 data["primaries"]["secondaries"],
             ):
-                self.suitability_calculator.add_objective(primary, float(weight_primary))
+                self.suitability_calculator.add_objective(
+                    primary, float(weight_primary))
                 for (secondary_index, (secondary, weight_secondary, attributes),) in enumerate(
                     zip(
                         secondaries["secondary"],
@@ -364,11 +376,14 @@ class Analysis(Serializable):
                         is_calculated = bool(dataset["isCalculated"])
                         scaling_function = dataset["properties"]["valueScalingFunction"]
                         missing_data_default_value = dataset["properties"]["missingDataSuitability"]
+
                         minimum = dataset["min_value"]
                         maximum = dataset["max_value"]
-                        missing_data_default_value = missing_data_default_value * (maximum - minimum) + minimum
+                        # TODO Ne semble pas fonctionner
+                        missing_data_default_value = missing_data_default_value * \
+                            (maximum - minimum) + minimum
+
                         input_file = file_name
-                        print("WEIGHT", weight_attribute)
                         if not is_calculated and column_type == "Boolean":
                             self.suitability_calculator.add_file_to_objective(
                                 attribute,
@@ -431,17 +446,31 @@ class Analysis(Serializable):
 
             output_matrix = self.suitability_calculator.process_data()
 
-            tiff_path = self.suitability_calculator.matrix_to_raster(output_matrix)
-            analysis_df = self.suitability_calculator.tiff_to_geojson(tiff_path)
+            tiff_path = self.suitability_calculator.matrix_to_raster(
+                output_matrix)
+            analysis_df = self.suitability_calculator.tiff_to_geojson(
+                tiff_path)
             sub_objectives_json = self.suitability_calculator.process_sub_objectives()
 
             with open(os.path.join(self.files_manager.get_writer_path(), tiff_path), "rb") as tiff:
                 self.tiffs["analysis"] = tiff.read()
+            """ 
+                # ici le tif est ok
+            import rasterio
+            from rasterio.plot import show
+            import matplotlib.pyplot as plt
+            fp = os.path.join(self.files_manager.get_writer_path(), tiff_path)
+            img = rasterio.open(fp)
+            show(img)
+            plt.savefig(os.path.join(
+                self.files_manager.get_writer_path(), "test3.png"))
+                """
 
             self.compute_suitability_above_threshold()
             self.compute_suitability_categories()
 
-            return_value = {"file_name": "current analysis", "area": analysis_df.to_json()}
+            return_value = {"file_name": "current analysis",
+                            "area": analysis_df.to_json()}
             # return {"file_name": "current analysis", "area": geo_json}
         else:
             return_value = {"file_name": "current analysis", "area": {}}

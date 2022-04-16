@@ -148,7 +148,9 @@ function ValueScaling({ t, disabled }: any) {
   const functionFactory = ({ name, key, label, dataset }: FactoryProps) => {
     return (
       <Collapsible title={label}>
-        {dataset.isContinuous && (
+        {dataset.type === 'Boolean' ? (
+          <></>
+        ) : (
           <React.Fragment>
             <Control
               max={1}
