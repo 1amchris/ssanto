@@ -14,17 +14,9 @@ export const exportSlice = createSlice({
       const file: File = new File([decode(content) as BlobPart], name);
       saveAs(file, name);
     },
-
-    exportPDF: (state, { payload }: PayloadAction<any>) => {
-      console.warn('No PDF has been exported.');
-    },
-
-    exportJPEG: (state, { payload }: PayloadAction<any>) => {
-      console.warn('No PDF has been exported.');
-    },
   },
 });
 
-export const { exportData, exportPDF, exportJPEG } = exportSlice.actions;
+export const { exportData } = exportSlice.actions;
 
 export default exportSlice.reducer;
