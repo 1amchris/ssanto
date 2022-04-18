@@ -56,6 +56,16 @@ npm start
 
 This should launch the server, launch the client and open an electron GUI. If not, check the command-line. Something might not work as expected; see [Troubleshooting](#troubleshooting).
 
+### Building the app
+
+Right now, the build pipeline is not completely automatic. Considering the [dependencies](#install-dependencies) have been installed, you may follow this procedure:
+
+- Run `npm run build:react` to build the client.
+- Edit the `electron.js` file to enable the production variables. You simply need to toggle `IS_IN_PRODUCTION` to `true`.
+- Run `npm run build:electron` to build the electron executable.
+- Once it is built, you need to uncompress the pre-package python executable with the dependencies into the folder `./release/Ssanto-win32-x64/resources/app`.
+- You now have your new build in the folder `./release/Ssanto-win32-x64`, you can compress it and release it.
+
 ### Troubleshooting
 
 If something doesn't work as expected, here are a couple ideas
@@ -76,13 +86,13 @@ Tell people where they can go to for help. It can be any combination of an issue
 
 If you have ideas for releases in the future, it is a good idea to list them in the README. -->
 
-## Contributing
+<!--## Contributing
 
 State if you are open to contributions and what your requirements are for accepting them.
 
 For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.-->
 
 ## Authors and acknowledgment
 

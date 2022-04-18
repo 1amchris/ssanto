@@ -1,5 +1,4 @@
 const electron = require('electron');
-// const url = require('url'); // PROD
 const path = require('path');
 
 const { spawn } = require('child_process');
@@ -8,9 +7,13 @@ const { app, BrowserWindow } = electron;
 
 let mainWindow = null;
 
-// Windows: path.join(__dirname, '\\Python39-32\\python.exe')
-const PYTHON_PATH = 'python3';
-const PYTHON_CWD = 'server'; // Prod: '../server'; Dev: // 'server'
+const IS_IN_PRODUCTION = false;
+
+// For windows built-in python for easy install for the user
+const PYTHON_PATH = IS_IN_PRODUCTION
+  ? path.join(__dirname, '\\Python39-32\\python.exe')
+  : 'python3';
+const PYTHON_CWD = 'server';
 const PYTHON_MAIN = './main.py';
 
 const python = spawn(PYTHON_PATH, ['-u', PYTHON_MAIN], {
@@ -64,16 +67,15 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadURL(
-    'http://localhost:3000', // DEV
-    // PROD
-    /* url.format({
-              pathname: path.join(__dirname, 'build/index.html'),
-              protocol: "file:",
-              slashes: true
-          }),*/
-    {}
-  );
+  const appUrl = IS_IN_PRODUCTION
+    ? require('url').format({
+        pathname: path.join(__dirname, 'build/index.html'),
+        protocol: 'file:',
+        slashes: true,
+      })
+    : 'http://localhost:3000';
+
+  mainWindow.loadURL(appUrl, {});
   mainWindow.setMenuBarVisibility(false);
   // mainWindow.webContents.openDevTools();
   mainWindow.maximize();
