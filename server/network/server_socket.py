@@ -61,7 +61,8 @@ class ServerSocket:
             except websockets.ConnectionClosedOK:
                 break
 
-            print(data)
+            # For debugging purpose
+            # print(data)
 
             try:
                 obj = json.loads(data)
@@ -72,6 +73,7 @@ class ServerSocket:
             try:
                 if obj[Field.TARGET.value] in self.commands_handlers:
                     if Field.DATA.value in obj:
+                        print("Call Id:"+ str(obj[Field.CALL_ID.value]) + ", Target:" + str(obj[Field.TARGET.value]))
                         code, return_data = self.commands_handlers[obj[Field.TARGET.value]](
                             obj[Field.DATA.value])
                         type = SendType.CALL.value if code == ServerSocket.REQUEST_SUCCEEDED else SendType.ERROR.value

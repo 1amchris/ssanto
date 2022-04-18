@@ -50,8 +50,7 @@ class Logger:
         self.stdout.flush()
         self.logging_file.flush()
 
-
 # Create the logger at global scope
 # Replace the number by the number of characters maximum to be displayed
 # in the terminal per log, or -1 to remove the limit
-Logger(debug=True, log=True, max_line_length=16)
+Logger(debug=True, log=True, max_line_length=80)
