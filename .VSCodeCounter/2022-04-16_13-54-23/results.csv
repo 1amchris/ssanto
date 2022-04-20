@@ -1,0 +1,156 @@
+"filename", "language", "JavaScript", "JSON with Comments", "JSON", "Markdown", "TypeScript React", "TypeScript", "pip requirements", "Python", "HTML", "comment", "blank", "total"
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/.eslintrc.json", "JSON", 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 1, 18
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/.prettierrc.json", "JSON", 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 1, 8
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/README.md", "Markdown", 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 28, 60
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/electron.js", "JavaScript", 61, 0, 0, 0, 0, 0, 0, 0, 0, 15, 18, 94
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/package-lock.json", "JSON", 0, 0, 37076, 0, 0, 0, 0, 0, 0, 0, 1, 37077
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/package.json", "JSON", 0, 0, 106, 0, 0, 0, 0, 0, 0, 0, 1, 107
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/public/index.html", "HTML", 0, 0, 0, 0, 0, 0, 0, 0, 20, 4, 1, 25
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/public/manifest.json", "JSON", 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 1, 26
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/analysis/analysis.py", "Python", 0, 0, 0, 0, 0, 0, 0, 437, 0, 15, 64, 516
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/analysis/feature.py", "Python", 0, 0, 0, 0, 0, 0, 0, 327, 0, 18, 44, 389
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/analysis/graph_maker.py", "Python", 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 5, 34
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/analysis/hierarchy.py", "Python", 0, 0, 0, 0, 0, 0, 0, 58, 0, 22, 11, 91
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/analysis/map.py", "Python", 0, 0, 0, 0, 0, 0, 0, 20, 0, 1, 8, 29
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/analysis/math_operation.py", "Python", 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 2, 22
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/analysis/objective.py", "Python", 0, 0, 0, 0, 0, 0, 0, 123, 0, 4, 14, 141
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/analysis/raster_transform.py", "Python", 0, 0, 0, 0, 0, 0, 0, 77, 0, 8, 30, 115
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/analysis/study_area.py", "Python", 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 8, 38
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/analysis/suitability_calculator.py", "Python", 0, 0, 0, 0, 0, 0, 0, 231, 0, 8, 30, 269
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/01.home/01.what's in the docs.md", "Markdown", 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 9, 23
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/02.getting started/01.what is ssanto.md", "Markdown", 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 14, 34
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/02.getting started/02.how ssanto works.md", "Markdown", 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 32, 75
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/03.analysis/01.file explorer.md", "Markdown", 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 9, 21
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/03.analysis/02.parameters.md", "Markdown", 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 13, 27
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/03.analysis/03.study area.md", "Markdown", 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 8, 19
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/03.analysis/04.nbs system.md", "Markdown", 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 8, 18
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/03.analysis/05.objectives hierarchy.md", "Markdown", 0, 0, 0, 71, 0, 0, 0, 0, 0, 0, 22, 93
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/03.analysis/06.value scaling.md", "Markdown", 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 19, 64
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/03.analysis/07.weighting.md", "Markdown", 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 8, 20
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/03.analysis/08.Calculation.md", "Markdown", 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 24, 56
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/data/guide/03.analysis/09.Reporting.md", "Markdown", 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 7, 15
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/files/file.py", "Python", 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 7, 24
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/files/file_manager.py", "Python", 0, 0, 0, 0, 0, 0, 0, 135, 0, 10, 39, 184
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/files/file_metadata.py", "Python", 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 4, 13
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/files/serializable.py", "Python", 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 3, 8
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/files/shapefile.py", "Python", 0, 0, 0, 0, 0, 0, 0, 85, 0, 6, 22, 113
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/guide_builder.py", "Python", 0, 0, 0, 0, 0, 0, 0, 43, 0, 1, 13, 57
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/interface.py", "Python", 0, 0, 0, 0, 0, 0, 0, 38, 0, 4, 9, 51
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/logger.py", "Python", 0, 0, 0, 0, 0, 0, 0, 40, 0, 4, 14, 58
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/main.py", "Python", 0, 0, 0, 0, 0, 0, 0, 41, 0, 5, 18, 64
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/network/network_definitions.py", "Python", 0, 0, 0, 0, 0, 0, 0, 10, 0, 1, 4, 15
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/network/server_socket.py", "Python", 0, 0, 0, 0, 0, 0, 0, 67, 0, 2, 21, 90
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/objectives_data/hierarchy.json", "JSON", 0, 0, 467, 0, 0, 0, 0, 0, 0, 0, 65, 532
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/objectives_data/nbs.json", "JSON", 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 8
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/requirements.txt", "pip requirements", 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 8
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/subjects/subject.py", "Python", 0, 0, 0, 0, 0, 0, 0, 19, 0, 1, 6, 26
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/server/subjects/subjects_manager.py", "Python", 0, 0, 0, 0, 0, 0, 0, 24, 0, 3, 9, 36
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/apis/ServerCom.ts", "TypeScript", 0, 0, 0, 0, 0, 104, 0, 0, 0, 11, 22, 137
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/App.test.tsx", "TypeScript React", 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 3, 16
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/App.tsx", "TypeScript React", 0, 0, 0, 0, 139, 0, 0, 0, 0, 0, 8, 147
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/Collapsible.tsx", "TypeScript React", 0, 0, 0, 0, 47, 0, 0, 0, 0, 0, 4, 51
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/Main.tsx", "TypeScript React", 0, 0, 0, 0, 214, 0, 0, 0, 0, 0, 13, 227
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/analysis/FileExplorer.tsx", "TypeScript React", 0, 0, 0, 0, 126, 0, 0, 0, 0, 0, 7, 133
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/analysis/NbsSystemType.tsx", "TypeScript React", 0, 0, 0, 0, 77, 0, 0, 0, 0, 0, 6, 83
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/analysis/ObjectiveHierarchy.tsx", "TypeScript React", 0, 0, 0, 0, 884, 0, 0, 0, 0, 9, 66, 959
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/analysis/Parameters.tsx", "TypeScript React", 0, 0, 0, 0, 94, 0, 0, 0, 0, 0, 6, 100
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/analysis/StudyArea.tsx", "TypeScript React", 0, 0, 0, 0, 75, 0, 0, 0, 0, 0, 6, 81
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/analysis/ValueScaling.tsx", "TypeScript React", 0, 0, 0, 0, 254, 0, 0, 0, 0, 4, 19, 277
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/analysis/Weighting.tsx", "TypeScript React", 0, 0, 0, 0, 201, 0, 0, 0, 0, 0, 20, 221
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/analysis/index.ts", "TypeScript", 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 2, 16
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/aside-informations/InformationCard.tsx", "TypeScript React", 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 3, 16
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/aside-informations/MapCursorInformation.tsx", "TypeScript React", 0, 0, 0, 0, 82, 0, 0, 0, 0, 18, 5, 105
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/aside-informations/MapLegend.tsx", "TypeScript React", 0, 0, 0, 0, 98, 0, 0, 0, 0, 1, 9, 108
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/aside-informations/MapSuitabilityAboveThreshold.tsx", "TypeScript React", 0, 0, 0, 0, 67, 0, 0, 0, 0, 15, 6, 88
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/aside-informations/MapSuitabilityCategories.tsx", "TypeScript React", 0, 0, 0, 0, 60, 0, 0, 0, 0, 9, 5, 74
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/aside-informations/ValueScalingFunctionGraphs.tsx", "TypeScript React", 0, 0, 0, 0, 117, 0, 0, 0, 0, 0, 9, 126
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/Form.tsx", "TypeScript React", 0, 0, 0, 0, 65, 0, 0, 0, 0, 7, 4, 76
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/FormsBar.tsx", "TypeScript React", 0, 0, 0, 0, 114, 0, 0, 0, 0, 0, 8, 122
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormAlert.tsx", "TypeScript React", 0, 0, 0, 0, 30, 0, 0, 0, 0, 5, 4, 39
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormButton.tsx", "TypeScript React", 0, 0, 0, 0, 41, 0, 0, 0, 0, 5, 5, 51
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormCheckbox.tsx", "TypeScript React", 0, 0, 0, 0, 50, 0, 0, 0, 0, 4, 4, 58
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormComponent.tsx", "TypeScript React", 0, 0, 0, 0, 53, 0, 0, 0, 0, 14, 6, 73
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormControl.tsx", "TypeScript React", 0, 0, 0, 0, 52, 0, 0, 0, 0, 6, 5, 63
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormExpandableList.tsx", "TypeScript React", 0, 0, 0, 0, 135, 0, 0, 0, 0, 16, 11, 162
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormInteractiveScalingGraph.tsx", "TypeScript React", 0, 0, 0, 0, 95, 0, 0, 0, 0, 2, 16, 113
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormList.tsx", "TypeScript React", 0, 0, 0, 0, 127, 0, 0, 0, 0, 16, 12, 155
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormScalingGraph.tsx", "TypeScript React", 0, 0, 0, 0, 175, 0, 0, 0, 0, 3, 10, 188
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormSelect.tsx", "TypeScript React", 0, 0, 0, 0, 59, 0, 0, 0, 0, 5, 6, 70
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormSimpleList.tsx", "TypeScript React", 0, 0, 0, 0, 108, 0, 0, 0, 0, 13, 13, 134
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/FormSpacer.tsx", "TypeScript React", 0, 0, 0, 0, 17, 0, 0, 0, 0, 4, 4, 25
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/forms/components/index.ts", "TypeScript", 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 2, 24
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/guide/Categories.tsx", "TypeScript React", 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 3, 28
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/guide/Category.tsx", "TypeScript React", 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 3, 16
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/guide/CategoryLink.tsx", "TypeScript React", 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 3, 14
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/guide/CategoryLinks.tsx", "TypeScript React", 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 3, 21
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/guide/Guide.tsx", "TypeScript React", 0, 0, 0, 0, 91, 0, 0, 0, 0, 0, 5, 96
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/guide/Topic.tsx", "TypeScript React", 0, 0, 0, 0, 37, 0, 0, 0, 0, 0, 5, 42
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/guide/TopicLink.tsx", "TypeScript React", 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 3, 18
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/guide/TopicLinks.tsx", "TypeScript React", 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 3, 19
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/guide/Topics.tsx", "TypeScript React", 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 3, 23
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/map/InteractiveMapContainer.tsx", "TypeScript React", 0, 0, 0, 0, 55, 0, 0, 0, 0, 0, 5, 60
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/map/LayersGroups.tsx", "TypeScript React", 0, 0, 0, 0, 120, 0, 0, 0, 0, 0, 12, 132
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/menu-bar/Menu.tsx", "TypeScript React", 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 3, 21
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/menu-bar/MenuBar.tsx", "TypeScript React", 0, 0, 0, 0, 94, 0, 0, 0, 0, 2, 8, 104
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/menu-bar/components/MenuAction.tsx", "TypeScript React", 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 5, 29
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/menu-bar/components/MenuComponent.tsx", "TypeScript React", 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 4, 17
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/menu-bar/components/MenuDivider.tsx", "TypeScript React", 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 5, 25
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/menu-bar/components/MenuImport.tsx", "TypeScript React", 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 6, 55
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/menu-bar/components/MenuLink.tsx", "TypeScript React", 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 5, 29
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/components/menu-bar/components/index.ts", "TypeScript", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 2, 7
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/consts/graph.ts", "TypeScript", 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1, 4
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/enums/SendType.ts", "TypeScript", 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 8
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/enums/ServerCallTargets.ts", "TypeScript", 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 6, 24
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/enums/ServerSubscriptionTargets.ts", "TypeScript", 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 2, 22
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/hooks.ts", "TypeScript", 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 3, 13
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/index.tsx", "TypeScript React", 0, 0, 0, 0, 60, 0, 0, 0, 0, 7, 10, 77
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/locales/en.json", "JSON", 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/locales/fr.json", "JSON", 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 1, 34
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/AnalysisObjectivesModel.ts", "TypeScript", 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 2, 20
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/DatasetModel.ts", "TypeScript", 0, 0, 0, 0, 0, 36, 0, 0, 0, 0, 3, 39
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/LoadingValue.ts", "TypeScript", 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 1, 5
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/ObjectivesDataModel.ts", "TypeScript", 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 2, 14
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/PropsModel.ts", "TypeScript", 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1, 4
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/ShapefileModel.ts", "TypeScript", 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 2, 22
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/ValueScalingModel.ts", "TypeScript", 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 2, 10
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/file/FileContentModel.ts", "TypeScript", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1, 6
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/file/FileMetadataModel.ts", "TypeScript", 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 1, 7
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/form/FormSelectOptionModel.ts", "TypeScript", 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 1, 5
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/guide/CategoryModel.ts", "TypeScript", 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 8
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/guide/TopicModel.ts", "TypeScript", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1, 6
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/map/InsertLayerModel.ts", "TypeScript", 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 2, 10
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/map/LatLong.ts", "TypeScript", 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/map/Layers.ts", "TypeScript", 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 5, 22
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/map/MapCursorInformationsModel.ts", "TypeScript", 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 1, 5
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/map/MapStateModel.ts", "TypeScript", 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 2, 17
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/map/RemoveLayerModel.ts", "TypeScript", 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/map/SuitabilityCategoriesModel.ts", "TypeScript", 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1, 4
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/menu-bar/MenuActionModel.ts", "TypeScript", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 2, 7
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/menu-bar/MenuExportModel.ts", "TypeScript", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 2, 7
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/menu-bar/MenuImportModel.ts", "TypeScript", 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 8
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/menu-bar/MenuItemModel.ts", "TypeScript", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1, 6
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/menu-bar/MenuModel.ts", "TypeScript", 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 8
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/menu-bar/MenuNavigationModel.ts", "TypeScript", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 2, 7
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/menu-bar/index.ts", "TypeScript", 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 2, 9
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/server-coms/CallModel.ts", "TypeScript", 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 2, 20
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/server-coms/ReceiveData.ts", "TypeScript", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 2, 7
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/models/server-coms/SubscriptionModel.ts", "TypeScript", 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 2, 10
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/react-app-env.d.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/serviceWorker.ts", "TypeScript", 0, 0, 0, 0, 0, 102, 0, 0, 0, 31, 14, 147
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/setupTests.ts", "TypeScript", 0, 0, 0, 0, 0, 1, 0, 0, 0, 4, 1, 6
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/hooks.ts", "TypeScript", 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 2, 7
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/middlewares/AnalysisMiddleware.ts", "TypeScript", 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 5, 50
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/middlewares/ServerMiddleware.ts", "TypeScript", 0, 0, 0, 0, 0, 39, 0, 0, 0, 0, 8, 47
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/reducers/analysis.ts", "TypeScript", 0, 0, 0, 0, 0, 130, 0, 0, 0, 20, 22, 172
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/reducers/export.ts", "TypeScript", 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 6, 31
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/reducers/guide.ts", "TypeScript", 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 5, 24
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/reducers/import.ts", "TypeScript", 0, 0, 0, 0, 0, 1, 0, 0, 0, 20, 4, 25
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/reducers/map.ts", "TypeScript", 0, 0, 0, 0, 0, 96, 0, 0, 0, 1, 5, 102
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/reducers/server.ts", "TypeScript", 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 3, 28
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/redux-toolkit-utils.ts", "TypeScript", 0, 0, 0, 0, 0, 28, 0, 0, 0, 5, 7, 40
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/store/store.ts", "TypeScript", 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 3, 36
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/utils/color-scale-utils.ts", "TypeScript", 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 2, 19
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/utils/files-utils.ts", "TypeScript", 0, 0, 0, 0, 0, 21, 0, 0, 0, 1, 3, 25
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/src/utils/layers-utils.ts", "TypeScript", 0, 0, 0, 0, 0, 54, 0, 0, 0, 0, 13, 67
+"/home/philippd/Desktop/WorkingSSANTO/projet-bichai/tsconfig.json", "JSON with Comments", 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 1, 22
+"Total", "-", 61, 21, 37744, 324, 4405, 1094, 8, 1885, 20, 392, 1274, 47228
