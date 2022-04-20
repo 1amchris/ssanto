@@ -59,7 +59,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     show: false,
     title: 'SSANTO',
-    icon: './icon.png',
+    icon: './public/logo512.png', // change that in prod too
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
