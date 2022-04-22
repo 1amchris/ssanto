@@ -103,12 +103,14 @@ def shape_to_Raster(
 def process_raster(cell_size, crs, input, output, field_name=False, study_area=None):
     print("process_raster", input, "****", output)
     if input.endswith(".shp"):
+        raster_output = os.path.splitext(input)[0]
+        raster_output += ".tiff"
         shape_to_Raster(
-            cell_size, input, output, field_name=field_name, study_area=study_area
+            cell_size, input, raster_output, field_name=field_name, study_area=study_area
         )
 
         # --- Convert to Mercantor ---
-        file_raster = gdal.Open(output)
+        file_raster = gdal.Open(raster_output)
     else:
         file_raster = gdal.Open(input)
     return gdal.Warp(output, file_raster, dstSRS=crs)

@@ -83,6 +83,7 @@ class ContinuousFeature(Feature):
             study_area=self.study_area,
         )
         self.as_array = self.process_raster_as_array()
+        self.as_raster = None
 
     def process_raster_as_array(self):
         file_band = self.as_raster.GetRasterBand(1)
@@ -383,6 +384,7 @@ class CategoricalFeature(ContinuousFeature):
             study_area=self.study_area,
         )
         self.as_array = self.process_raster_as_array()
+        self.as_raster = None
 
     def categorize_values(self):
 
