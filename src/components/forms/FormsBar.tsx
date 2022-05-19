@@ -82,7 +82,7 @@ function FormsBar({ children, className, t }: any, key?: string) {
   return (
     <div
       className="position-relative"
-      style={{ height: 'calc(100vh - 24px)', width: '100%' }}
+      style={{ height: 'calc(100vh - 24px - 22px)', width: '100%' }}
     >
       <nav
         key={key}

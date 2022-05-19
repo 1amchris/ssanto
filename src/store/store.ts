@@ -1,18 +1,22 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import mapReducer from 'store/reducers/map';
+import activityBarReducer from 'store/reducers/activity-bar';
 import analysisReducer from 'store/reducers/analysis';
-import guideReducer from 'store/reducers/guide';
 import exportReducer from 'store/reducers/export';
+import guideReducer from 'store/reducers/guide';
+import statusBarReducer from 'store/reducers/status-bar';
 import ServerMiddleware from 'store/middlewares/ServerMiddleware';
 import AnalysisMiddleware from 'store/middlewares/AnalysisMiddleware';
 import { call, subscribe } from 'store/reducers/server';
 
 export const store = configureStore({
   reducer: {
+    activityBar: activityBarReducer,
     analysis: analysisReducer,
     export: exportReducer,
     guide: guideReducer,
     map: mapReducer,
+    statusBar: statusBarReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

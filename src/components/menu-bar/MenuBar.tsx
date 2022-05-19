@@ -16,7 +16,7 @@ import { loadingFileComplete, resetError } from 'store/reducers/analysis';
  * @param {any} param0 Parameters for the menu bar.
  * @return {JSX.Element} Html.
  */
-function MenuBar() {
+function MenuBar({ style }: any) {
   const mapLayers = useAppSelector(selectMap).layers;
   const dispatch = useAppDispatch();
 
@@ -27,23 +27,19 @@ function MenuBar() {
         label="open project"
         accept=".sproj"
         onFileImported={(file: File) => {
-            dispatch(resetError());
-            FilesUtils.extractContentFromFiles([file]).then(file => {
-                dispatch(
-                    call({
-                      target: ServerCallTargets.OpenProject,
-                      args: [file[0].content],
-                      onSuccessAction: loadingFileComplete,
-                      onErrorAction: loadingFileComplete
-                      // TODO: There should probably be an "onErrorAction"
-                    } as CallModel<string[], FileContentModel<string>>)
-                  )
-            }
-                
+          dispatch(resetError());
+          FilesUtils.extractContentFromFiles([file]).then(file => {
+            dispatch(
+              call({
+                target: ServerCallTargets.OpenProject,
+                args: [file[0].content],
+                onSuccessAction: loadingFileComplete,
+                onErrorAction: loadingFileComplete,
+                // TODO: There should probably be an "onErrorAction"
+              } as CallModel<string[], FileContentModel<string>>)
             );
-        }
-          
-        }
+          });
+        }}
       />
       <Action
         key="action"
@@ -87,7 +83,7 @@ function MenuBar() {
   return (
     <nav
       className="navbar navbar-expand navbar-light border-bottom py-0 small"
-      style={{ height: '24px' }}
+      style={style}
     >
       <div className="container-fluid">
         <img

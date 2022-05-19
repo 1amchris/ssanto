@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-
 /**
  * @callback useEffectOnceCallback
  * @return {void}

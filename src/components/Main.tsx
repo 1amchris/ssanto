@@ -22,6 +22,9 @@ import MapSuitabilityAboveThreshold from 'components/aside-informations/MapSuita
 import ValueScalingFunctionGraphs from './aside-informations/ValueScalingFunctionGraphs';
 import MapLegend from './aside-informations/MapLegend';
 import { flatten } from 'flattenizer';
+import ActivityBar from './core/ActivityBar';
+import SideBar from './core/SideBar';
+import StatusBar from './core/StatusBar';
 
 /**
  * Main component.
@@ -143,11 +146,14 @@ function Main() {
   }
 
   return (
-    <div style={{ overflowY: 'clip' }}>
-      <header>
-        <MenuBar />
-      </header>
-      <div className="d-grid" style={{ gridTemplateColumns: '300px auto' }}>
+    <div className="d-flex flex-column" style={{ maxHeight: '100vh' }}>
+      <MenuBar style={{ height: '24px' }} />
+      <div
+        className="d-flex flex-row"
+        style={{ height: 'calc(100vh - 24px - 22px)' }}
+      >
+        <ActivityBar />
+        <SideBar />
         <aside id="left-aside">
           <FormsBar>
             <Collapsible
@@ -273,6 +279,7 @@ function Main() {
           </aside>
         </main>
       </div>
+      <StatusBar style={{ height: '22px' }} />
     </div>
   );
 }
