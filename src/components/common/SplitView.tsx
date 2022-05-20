@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { max, min } from 'lodash';
 
-function ResizeHandle({ direction, color, onMouseDown }: any) {
-  const handlerSize: number = 5;
-  const [focused, setFocused] = useState(false);
+function Handle({ direction, options, onMouseDown }: any) {
+  const handlerSize: number = options.size || 5;
+  const color: string = options.color || '#0D6EFD';
   const directionIsColumn = direction === 'column';
+
+  const [focused, setFocused] = useState(false);
 
   return (
     <div
@@ -29,25 +32,35 @@ function ResizeHandle({ direction, color, onMouseDown }: any) {
 
         transitionProperty: 'background-color',
         transitionDuration: '250ms',
-        transitionDelay: '500ms',
+        transitionDelay: '250ms',
       }}
     ></div>
   );
 }
 
+export interface ViewOptions {
+  size: number;
+  unit: 'px' | '%';
+  maxSize?: number;
+  minSize?: number;
+}
+
+export interface HandlerOptions {
+  color: string;
+  size: number;
+}
 function SplitView({
   children,
   style,
-  panelsSize: _panelsSize, // an array of constraints.
-  // For example, [300, 500] will set the first child to 300 px wide,
-  // and the second to 500px wide. Any other children will be set to 100%.
-  direction = 'row',
-  handlerColor = '#0D6EFD',
+  viewsOptions,
+  direction = 'row' as 'row' | 'column',
+  handlerOptions = { size: 5, color: '#0D6EFD' } as HandlerOptions,
 }: any) {
-  const [selectedView, setSelectedView] = useState<number | null>(null);
-  const [viewOrigin, setViewOrigin] = useState<number | null>(null);
-  const [viewsSizes, setPanelsSize] = useState(_panelsSize);
-  const [resizing, setResizing] = useState(false);
+  const [selectedView, setSelectedView] = useState<number | undefined>();
+  const [handlePosition, setHandlePosition] = useState<number | undefined>();
+  const [viewsSizes, setViewsSizes] = useState(
+    viewsOptions.map((option: ViewOptions) => option.size)
+  );
 
   const directionIsColumn = direction === 'column';
 
@@ -58,80 +71,149 @@ function SplitView({
         display: 'flex',
         flexDirection: direction || 'row',
       }}
-      onMouseMove={e => resize(e)}
-      onMouseLeave={() => stop()}
-      onMouseUp={() => stop()}
+      onMouseMove={e => resizeView(e)}
+      onMouseLeave={() => unselectView()}
+      onMouseUp={() => unselectView()}
     >
-      {renderChildren(children[0], 0)}
+      {renderView(children[0], 0)}
       {children
         .slice(1)
         .map((children: JSX.Element, index: number) => [
-          renderHandle(index + 1),
-          renderChildren(children, index + 1),
+          <Handle
+            key={`handle-${index}`}
+            direction={direction}
+            options={handlerOptions}
+            onMouseDown={(e: any) => selectView(e, index + 1)}
+          />,
+          renderView(children, index + 1),
         ])}
     </div>
   );
 
-  function renderChildren(children: JSX.Element, index: number) {
+  function renderView(children: JSX.Element, index: number) {
     return (
-      <div key={`fragment-${index}`} style={getStyle(index)}>
+      <div key={`view-${index}`} style={getViewStyle(index)}>
         {children}
       </div>
     );
   }
 
-  function renderHandle(index: number) {
-    return (
-      <ResizeHandle
-        key={`handle-${index}`}
-        direction={direction}
-        color={handlerColor}
-        onMouseDown={(e: any) => start(e, index)}
-      />
-    );
-  }
-
-  function getStyle(index: number) {
-    const size =
-      index > viewsSizes.length - 1 ? '100%' : `${viewsSizes[index]}px`;
-
-    return {
-      minHeight: directionIsColumn ? size : '100%',
-      minWidth: directionIsColumn ? '100%' : size,
+  function getViewStyle(viewIndex: number) {
+    const defaultStyle = {
       overflow: 'hidden',
+      minHeight: '100%',
+      minWidth: '100%',
     };
+
+    const viewOptions = viewsOptions[viewIndex];
+    if (viewsSizes[viewIndex] !== undefined) {
+      const size = `${viewsSizes[viewIndex]}${viewOptions.unit}`;
+
+      return {
+        ...defaultStyle,
+        minHeight: directionIsColumn ? size : defaultStyle.minHeight,
+        minWidth: !directionIsColumn ? size : defaultStyle.minWidth,
+      };
+    }
+
+    return defaultStyle;
   }
 
-  function start(e: any, index: number) {
+  function selectView(e: any, index: number) {
     e.preventDefault();
     setSelectedView(index);
-    setViewOrigin(directionIsColumn ? e.clientY : e.clientX);
-    setResizing(true);
+    setHandlePosition(directionIsColumn ? e.clientY : e.clientX);
   }
 
-  function resize({ screenX, screenY }: any) {
-    if (resizing) {
-      const mousePosition = directionIsColumn ? screenY : screenX;
+  function resizeView({ screenX, screenY }: any) {
+    if (selectedView === undefined || handlePosition === undefined) return;
 
-      const delta = viewOrigin! - mousePosition;
-      const newViewsSizes = getNewViewsSizes(delta);
-
-      setViewOrigin(mousePosition);
-      setPanelsSize(newViewsSizes);
+    /* eslint-disable no-unused-vars */
+    // For some unknown reason, this isn't detected as "being used"
+    enum OverflowDirection {
+      LeftOrUp,
+      RightOrDown,
     }
+    /* eslint-enable no-unused-vars */
+
+    const resize = (
+      direction: OverflowDirection,
+      viewIndex: number,
+      distance: number,
+      minTravel: number,
+      maxTravel: number
+    ) => {
+      const displacement = max([minTravel, min([maxTravel, distance])])!;
+
+      if (
+        !(0 <= viewIndex && viewIndex < viewsSizes.length) ||
+        displacement === 0
+      )
+        return 0;
+
+      const currentSize = viewsSizes[viewIndex];
+      const desiredSize =
+        currentSize +
+        (direction === OverflowDirection.LeftOrUp
+          ? -displacement
+          : +displacement);
+
+      const { maxSize, minSize } = viewsOptions[viewIndex];
+      const possibleSize = min([
+        maxSize || Infinity,
+        max([minSize || 0, desiredSize]),
+      ]);
+
+      const sizeDiff = possibleSize - desiredSize;
+      let gained = possibleSize - currentSize;
+
+      if (sizeDiff !== 0) {
+        gained += resize(
+          direction,
+          viewIndex + (direction === OverflowDirection.LeftOrUp ? -1 : 1),
+          direction === OverflowDirection.LeftOrUp ? sizeDiff : -sizeDiff,
+          minTravel + gained,
+          maxTravel - gained
+        );
+      }
+
+      // console.log({
+      //   viewIndex,
+      //   currentSize,
+      //   // desiredSize,
+      //   possibleSize,
+      //   sizeDiff,
+      //   displacement,
+      //   gained,
+      //   minTravel,
+      //   maxTravel,
+      // });
+
+      viewsSizes[viewIndex] = possibleSize;
+      return gained;
+    };
+
+    const mousePosition = directionIsColumn ? screenY : screenX;
+    const delta = handlePosition - mousePosition;
+
+    const moved = resize(
+      OverflowDirection.LeftOrUp,
+      selectedView - 1,
+      delta,
+      -Infinity,
+      Infinity
+    );
+    resize(OverflowDirection.RightOrDown, selectedView, delta, -moved, moved);
+
+    // console.warn('');
+    console.log({ viewsSizes });
+
+    setHandlePosition(mousePosition);
+    setViewsSizes(viewsSizes);
   }
 
-  function stop() {
-    setResizing(false);
-    setSelectedView(null);
-  }
-
-  function getNewViewsSizes(delta: number) {
-    return viewsSizes.map((viewSize: number, index: number) => {
-      if (index === selectedView) return viewSize + delta;
-      else if (index === selectedView! - 1) return viewSize - delta;
-      else return viewSize;
-    });
+  function unselectView() {
+    setSelectedView(undefined);
   }
 }
 

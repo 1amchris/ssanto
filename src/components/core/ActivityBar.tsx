@@ -16,7 +16,7 @@ const iconColors = {
   disabled: '#00000090',
   focused: '#000000ff',
   activated: '#000000ff',
-  default: '#00000088',
+  default: '#00000066',
 };
 
 function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {
@@ -63,9 +63,8 @@ function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {
           minHeight: activity.size,
           minWidth: activity.size,
           backgroundColor: activity.backgroundColor,
-          borderLeftWidth: '2px',
-          borderLeftColor: active ? activity.color : '#00000000',
-          borderLeftStyle: 'solid',
+          borderLeft: `2px solid ${active ? activity.color : '#00000000'}`,
+          cursor: 'pointer',
         }}
         onClick={onClick}
         onMouseEnter={() => setFocused(true)}

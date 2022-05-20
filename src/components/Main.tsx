@@ -1,27 +1,27 @@
 import React from 'react';
 import MenuBar from 'components/menu-bar/MenuBar';
-import Collapsible from 'components/Collapsible';
-import FormsBar from 'components/forms/FormsBar';
-import FileExplorer from './analysis/FileExplorer';
-import {
-  Parameters,
-  StudyArea,
-  NbsSystem,
-  ObjectiveHierarchy,
-  Weighting,
-  ValueScaling,
-} from 'components/analysis';
-import InteractiveMapContainer from 'components/map/InteractiveMapContainer';
-import InformationCard from 'components/aside-informations/InformationCard';
-import { useAppSelector } from 'store/hooks';
-import { selectAnalysis } from 'store/reducers/analysis';
-import { selectMap } from 'store/reducers/map';
-import MapCursorInformation from 'components/aside-informations/MapCursorInformation';
-import MapSuitabilityCategories from 'components/aside-informations/MapSuitabilityCategories';
-import MapSuitabilityAboveThreshold from 'components/aside-informations/MapSuitabilityAboveThreshold';
-import ValueScalingFunctionGraphs from './aside-informations/ValueScalingFunctionGraphs';
-import MapLegend from './aside-informations/MapLegend';
-import { flatten } from 'flattenizer';
+// import Collapsible from 'components/Collapsible';
+// import FormsBar from 'components/forms/FormsBar';
+// import FileExplorer from './analysis/FileExplorer';
+// import {
+//   Parameters,
+//   StudyArea,
+//   NbsSystem,
+//   ObjectiveHierarchy,
+//   Weighting,
+//   ValueScaling,
+// } from 'components/analysis';
+// import InteractiveMapContainer from 'components/map/InteractiveMapContainer';
+// import InformationCard from 'components/aside-informations/InformationCard';
+// import { useAppSelector } from 'store/hooks';
+// import { selectAnalysis } from 'store/reducers/analysis';
+// import { selectMap } from 'store/reducers/map';
+// import MapCursorInformation from 'components/aside-informations/MapCursorInformation';
+// import MapSuitabilityCategories from 'components/aside-informations/MapSuitabilityCategories';
+// import MapSuitabilityAboveThreshold from 'components/aside-informations/MapSuitabilityAboveThreshold';
+// import ValueScalingFunctionGraphs from './aside-informations/ValueScalingFunctionGraphs';
+// import MapLegend from './aside-informations/MapLegend';
+// import { flatten } from 'flattenizer';
 import ActivityBar from './core/ActivityBar';
 import SideBar from './core/SideBar';
 import StatusBar from './core/StatusBar';
@@ -33,14 +33,14 @@ import SplitView from './common/SplitView';
  * @return {JSX.Element} Html.
  */
 function Main() {
-  const analysis = useAppSelector(selectAnalysis);
-  const {
-    cursorInformations,
-    suitabilityCategories,
-    suitabilityAboveThreshold,
-  } = useAppSelector(selectMap);
-  const objectives = analysis.properties.objectives;
-  const ohIsLoading = analysis.properties.objectivesLoading;
+  // const analysis = useAppSelector(selectAnalysis);
+  // const {
+  //   cursorInformations,
+  //   suitabilityCategories,
+  //   suitabilityAboveThreshold,
+  // } = useAppSelector(selectMap);
+  // const objectives = analysis.properties.objectives;
+  // const ohIsLoading = analysis.properties.objectivesLoading;
 
   /**
    * Check if the parameters are valid.
@@ -151,12 +151,27 @@ function Main() {
       <MenuBar style={{ height: '24px' }} />
       <div
         className="d-flex flex-row"
-        style={{ height: 'calc(100vh - 24px - 22px)' }}
+        style={{
+          height: 'calc(100vh - 24px - 22px)',
+          maxWidth: 'calc(100vw - 48px)',
+          overflow: 'auto',
+        }}
       >
         <ActivityBar />
-        <SplitView direction="row" panelsSize={[258, 258]}>
+        <SplitView
+          direction="column"
+          viewsOptions={[
+            { size: 278, unit: 'px' },
+            { size: 278, unit: 'px', minSize: 170, maxSize: 300 },
+            { size: 278, unit: 'px', minSize: 170, maxSize: 300 },
+            { size: 278, unit: 'px' },
+          ]}
+        >
           <SideBar />
-          <aside id="left-aside">
+          <SideBar />
+          <SideBar />
+          <SideBar />
+          {/* <aside id="left-aside">
             <FormsBar>
               <Collapsible
                 title={'file explorer'}
@@ -217,8 +232,8 @@ function Main() {
                 />
               </Collapsible>
             </FormsBar>
-          </aside>
-          <main
+          </aside> */}
+          {/* <main
             className="shadow w-100 h-100 position-relative"
             style={{ zIndex: 1 }}
           >
@@ -286,7 +301,7 @@ function Main() {
                 </InformationCard>
               )}
             </aside>
-          </main>
+          </main> */}
         </SplitView>
       </div>
       <StatusBar style={{ height: '22px' }} />
