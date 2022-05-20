@@ -6,10 +6,10 @@ import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectActivityBar, setActive } from 'store/reducers/activity-bar';
 
 const backgroundColors = {
-  disabled: 'lightgray',
-  focused: 'white',
-  activated: 'white',
-  default: 'white',
+  disabled: '#00000022',
+  focused: '#00000000',
+  activated: '#00000000',
+  default: '#00000000',
 };
 
 const iconColors = {
@@ -64,8 +64,8 @@ function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {
           minWidth: activity.size,
           backgroundColor: activity.backgroundColor,
           borderLeftWidth: '2px',
-          borderLeftColor: activity.color,
-          borderLeftStyle: active ? 'solid' : 'none',
+          borderLeftColor: active ? activity.color : '#00000000',
+          borderLeftStyle: 'solid',
         }}
         onClick={onClick}
         onMouseEnter={() => setFocused(true)}
@@ -99,7 +99,7 @@ function ActivityBar() {
   }
 
   return (
-    <nav className="d-flex flex-column justify-content-between">
+    <nav className="d-flex flex-column justify-content-between bg-light">
       <div className="d-flex flex-column overflow-auto">
         {activities?.map(activity => (
           <ActivityItem
