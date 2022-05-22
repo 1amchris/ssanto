@@ -6,7 +6,7 @@ import * as codicons from 'react-icons/vsc';
  * Side bar component.
  * @return {JSX.Element} Html.
  */
-function SideBar() {
+function SideBar({ style }: any) {
   const label = 'Views and more actions...';
   const iconName = 'VscEllipsis';
   const iconBaseProps: IconBaseProps = {
@@ -16,7 +16,10 @@ function SideBar() {
   };
 
   return (
-    <nav className="d-flex flex-column justify-content-between border border h-100">
+    <nav
+      className="d-flex flex-column justify-content-between border border h-100"
+      style={style}
+    >
       <div
         className="d-flex flex-column overflow-auto"
         style={{ padding: '0 16px 0 20px', userSelect: 'none' }}
@@ -34,7 +37,9 @@ function SideBar() {
             )}
           </div>
         </div>
-        <p style={{ marginLeft: -20 }}>
+        <p
+        // style={{ marginLeft: -20 }}
+        >
           Lorem ipsum dolor, sit amet consectetur adipisicing elit.
           Exercitationem dignissimos autem architecto expedita illum sequi aut
           rerum, facilis enim fugit eligendi? Nesciunt unde soluta dolorem

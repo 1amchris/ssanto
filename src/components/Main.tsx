@@ -158,20 +158,19 @@ function Main() {
         }}
       >
         <ActivityBar />
-        <SplitView
-          style={{ width: '1500px' }}
-          direction="row"
-          viewsOptions={[
-            { size: 278, unit: 'px' },
-            { size: 278, unit: 'px', minSize: 170, maxSize: 300 },
-            { size: 278, unit: 'px', minSize: 170, maxSize: 300 },
-            { size: 278, unit: 'px' },
-          ]}
-        >
+        <SplitView style={{ width: 1200 }} direction="row">
+          {/* <div style={{ minWidth: '10px' }}>
+            <section>
+              <h1>section header</h1>
+              <SideBar />
+            </section>
+          </div> */}
           <SideBar />
-          <SideBar />
-          <SideBar />
-          <SideBar />
+          <SplitView direction="column">
+            <SideBar />
+            <SideBar />
+          </SplitView>
+          {/* <SideBar /> */}
           {/* <aside id="left-aside">
             <FormsBar>
               <Collapsible
