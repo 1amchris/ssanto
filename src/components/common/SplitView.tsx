@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { max, min } from 'lodash';
 
 function Handle({ direction, options, onMouseDown }: any) {
@@ -64,8 +64,24 @@ function SplitView({
 
   const directionIsColumn = direction === 'column';
 
+  const [dimensions, setDimensions] = useState<{
+    width: number;
+    height: number;
+  }>({
+    width: 0,
+    height: 0,
+  });
+
+  const windowSizeRef = useCallback(node => {
+    if (node !== null) {
+      const { width, height } = node.getBoundingClientRect();
+      setDimensions({ width, height });
+    }
+  }, []);
+
   return (
     <div
+      ref={windowSizeRef}
       style={{
         ...style,
         display: 'flex',
@@ -75,6 +91,10 @@ function SplitView({
       onMouseLeave={() => unselectView()}
       onMouseUp={() => unselectView()}
     >
+      <div style={{ minWidth: 100 }}>
+        <p>width: {dimensions.width}</p>
+        <p>height: {dimensions.height}</p>
+      </div>
       {renderView(children[0], 0)}
       {children
         .slice(1)
@@ -177,18 +197,6 @@ function SplitView({
         );
       }
 
-      // console.log({
-      //   viewIndex,
-      //   currentSize,
-      //   // desiredSize,
-      //   possibleSize,
-      //   sizeDiff,
-      //   displacement,
-      //   gained,
-      //   minTravel,
-      //   maxTravel,
-      // });
-
       viewsSizes[viewIndex] = possibleSize;
       return gained;
     };
@@ -204,9 +212,6 @@ function SplitView({
       Infinity
     );
     resize(OverflowDirection.RightOrDown, selectedView, delta, -moved, moved);
-
-    // console.warn('');
-    console.log({ viewsSizes });
 
     setHandlePosition(mousePosition);
     setViewsSizes(viewsSizes);

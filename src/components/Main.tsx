@@ -159,7 +159,8 @@ function Main() {
       >
         <ActivityBar />
         <SplitView
-          direction="column"
+          style={{ width: '1500px' }}
+          direction="row"
           viewsOptions={[
             { size: 278, unit: 'px' },
             { size: 278, unit: 'px', minSize: 170, maxSize: 300 },
