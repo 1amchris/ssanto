@@ -336,6 +336,7 @@ function SplitView({
 
   function unselectView() {
     setSelectedHandle(undefined);
+    setHandlePosition(undefined);
   }
 }
 
