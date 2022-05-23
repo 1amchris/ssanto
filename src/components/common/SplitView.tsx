@@ -51,10 +51,8 @@ class ViewOptionsUtils {
   static convertToPixels(
     measure: string | number | undefined,
     length: number
-  ): string | undefined {
+  ): string {
     const value = ViewOptionsUtils.getValue(measure);
-    if (value === undefined) return undefined;
-
     if (ViewOptionsUtils.getUnit(measure) === '%') {
       return `${(length * value) / 100}px`;
     } else {
@@ -62,8 +60,8 @@ class ViewOptionsUtils {
     }
   }
 
-  static getValue(measure: string | number | undefined): number | undefined {
-    if (measure === undefined) return undefined;
+  static getValue(measure: string | number | undefined): number {
+    if (measure === undefined) return 0;
     measure = measure.toString();
     if (measure.endsWith('%')) return +measure.substring(0, measure.length - 1);
     else if (measure.endsWith('px'))
@@ -71,17 +69,19 @@ class ViewOptionsUtils {
     else return +measure;
   }
 
-  static getUnit(measure: string | number | undefined): string | undefined {
-    if (measure === undefined) return undefined;
+  static getUnit(measure: string | number | undefined): string {
+    if (measure === undefined) return 'px';
     measure = measure.toString();
     if (measure.endsWith('%')) return '%';
     else return 'px';
   }
 
-  static getSumOfSizes(viewsOptions: ViewOptions[]) {
-    return sum(
-      viewsOptions.map((option: ViewOptions) =>
-        ViewOptionsUtils.getValue(option.size)
+  static getSumOfSizes(viewsOptions: ViewOptions[]): number {
+    return (
+      sum(
+        viewsOptions.map((option: ViewOptions) =>
+          ViewOptionsUtils.getValue(option.size)
+        )
       ) || 0
     );
   }
@@ -117,21 +117,21 @@ function SplitView({
   const [selectedHandle, setSelectedHandle] = useState<number | undefined>();
   const [handlePosition, setHandlePosition] = useState<number | undefined>();
   const [viewsOptions, setViewsOptions] = useState(
-    children.map((node: JSX.Element) => {
+    ([] as JSX.Element[]).concat(children).map((node: JSX.Element) => {
       const defaultMaxSize = Infinity;
-      const defaultMinSize = 0;
+      const defaultMinSize = '0px';
 
       return directionIsColumn
-        ? {
+        ? ({
             maxSize: node.props.style?.maxHeight || defaultMaxSize,
             minSize: node.props.style?.minHeight || defaultMinSize,
             size: node.props.style?.height,
-          }
-        : {
+          } as ViewOptions)
+        : ({
             maxSize: node.props.style?.maxWidth || defaultMaxSize,
             minSize: node.props.style?.minWidth || defaultMinSize,
             size: node.props.style?.width,
-          };
+          } as ViewOptions);
     })
   );
 
@@ -140,25 +140,28 @@ function SplitView({
     handleWidth: !directionIsColumn,
     onResize: useCallback((width?: number, height?: number) => {
       if (width === undefined || height === undefined) return;
+      console.log('onResize', { width, height });
 
       viewsOptions.map((viewOptions: ViewOptions) => {
         // convert the % styles to pixels
-        Object.entries(viewOptions).forEach(([key, value]: any) => {
-          Object.defineProperty(viewOptions, key, {
-            value: ViewOptionsUtils.convertToPixels(
-              value,
-              directionIsColumn ? height! : width!
-            ),
-          });
-        });
+        Object.entries(viewOptions).forEach(
+          ([key, value]: [string, string | number]) => {
+            Object.defineProperty(viewOptions, key, {
+              value: ViewOptionsUtils.convertToPixels(
+                value,
+                directionIsColumn ? height! : width!
+              ),
+            });
+          }
+        );
 
         return viewOptions;
       });
 
       // distribute the remaining space evenly (should really only happen the first time)
       const used = sum(
-        viewsOptions.map(
-          (options: ViewOptions) => ViewOptionsUtils.getValue(options.size) || 0
+        viewsOptions.map((options: ViewOptions) =>
+          ViewOptionsUtils.getValue(options.size)
         )
       );
       const available = max([
@@ -166,8 +169,14 @@ function SplitView({
         (directionIsColumn ? height! : width!) - used,
       ])!;
       const undefinedSizesIndices = viewsOptions
-        .map((options: ViewOptions, index: number) => [options, index])
-        .filter(([options]: [ViewOptions, number]) => !options.size)
+        .map(
+          (options: ViewOptions, index: number) =>
+            [options, index] as [ViewOptions, number]
+        )
+        .filter(
+          ([options]: [ViewOptions, number]) =>
+            !ViewOptionsUtils.getValue(options.size)
+        )
         .map(([_, index]: [ViewOptions, number]) => index);
       console.log({ undefinedSizesIndices });
       const averageSize = available / undefinedSizesIndices.length;
@@ -177,13 +186,13 @@ function SplitView({
       });
 
       // scale all values to fit within the window's size (ex. when the splitview is resized)
-      const currentWidth = ViewOptionsUtils.getSumOfSizes(viewsOptions);
-      if (currentWidth !== 0) {
-        const ratio = width / currentWidth;
+      const currentSize = ViewOptionsUtils.getSumOfSizes(viewsOptions);
+      if (currentSize !== 0) {
+        const ratio = (directionIsColumn ? height : width) / currentSize;
         viewsOptions.forEach(({ size }: ViewOptions, index: number) => {
           // TODO: it is possible that the scaled size is smaller/greater than the min/max values of the view.
           viewsOptions[index].size = `${
-            ViewOptionsUtils.getValue(size)! * ratio
+            ViewOptionsUtils.getValue(size) * ratio
           }px`;
         });
       }
@@ -195,7 +204,7 @@ function SplitView({
   return (
     <div
       ref={ref}
-      className="border border-3 border-danger"
+      // className="border border-3 border-danger"
       style={{
         ...style,
         position: 'relative',
@@ -275,9 +284,7 @@ function SplitView({
     if (!(0 <= viewIndex && viewIndex < viewsOptions.length) || distance === 0)
       return 0;
 
-    const currentSize = ViewOptionsUtils.getValue(
-      viewsOptions[viewIndex].size
-    )!;
+    const currentSize = ViewOptionsUtils.getValue(viewsOptions[viewIndex].size);
     const desiredSize =
       currentSize +
       (direction === OverflowDirection.LeftOrUp ? -distance : +distance);
@@ -285,7 +292,7 @@ function SplitView({
     const { maxSize, minSize } = viewsOptions[viewIndex];
     const possibleSize = min([
       ViewOptionsUtils.getValue(maxSize) || Infinity,
-      max([ViewOptionsUtils.getValue(minSize) || 0, desiredSize])!,
+      max([ViewOptionsUtils.getValue(minSize), desiredSize])!,
     ])!;
 
     const sizeDiff = possibleSize - desiredSize;

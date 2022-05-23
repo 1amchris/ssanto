@@ -158,17 +158,25 @@ function Main() {
         }}
       >
         <ActivityBar />
-        <SplitView style={{ width: 1200 }} direction="row">
-          <SideBar style={{ minWidth: 100 }} />
-          <SplitView style={{ width: '50%' }} direction="row">
-            <SideBar style={{ minWidth: 50 }} />
-            <SideBar style={{ minWidth: 50, width: 120 }} />
-            <SideBar style={{ minWidth: 50 }} />
-            <SideBar style={{ minWidth: 50 }} />
+        <SplitView direction="row">
+          <SplitView style={{ minWidth: 120, width: 300 }} direction="column">
+            <SideBar style={{ minHeight: 42 }} />
+            <SideBar style={{ minHeight: 42 }} />
+            <SideBar style={{ minHeight: 42 }} />
+            <SideBar style={{ minHeight: 42 }} />
           </SplitView>
-          <SideBar style={{ minWidth: 100 }} />
-          <SideBar style={{ minWidth: 100 }} />
-          {/* <aside id="left-aside">
+          <SplitView style={{ minWidth: 120 }} direction="column">
+            <SplitView direction="row">
+              <SideBar style={{ minWidth: 120 }} />
+              <SideBar style={{ minWidth: 120 }} />
+              <SideBar style={{ minWidth: 120 }} />
+              <SideBar style={{ minWidth: 120 }} />
+            </SplitView>
+            <SideBar style={{ height: '30%' }} />
+          </SplitView>
+        </SplitView>
+
+        {/* <aside id="left-aside">
             <FormsBar>
               <Collapsible
                 title={'file explorer'}
@@ -230,7 +238,7 @@ function Main() {
               </Collapsible>
             </FormsBar>
           </aside> */}
-          {/* <main
+        {/* <main
             className="shadow w-100 h-100 position-relative"
             style={{ zIndex: 1 }}
           >
@@ -299,7 +307,6 @@ function Main() {
               )}
             </aside>
           </main> */}
-        </SplitView>
       </div>
       <StatusBar style={{ height: '22px' }} />
     </div>
