@@ -16,10 +16,7 @@ function SideBar({ style }: any) {
   };
 
   return (
-    <nav
-      className="d-flex flex-column justify-content-between border border h-100"
-      style={style}
-    >
+    <nav className="d-flex flex-column justify-content-between" style={style}>
       <div
         className="d-flex flex-column overflow-auto"
         style={{ padding: '0 16px 0 20px', userSelect: 'none' }}

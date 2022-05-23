@@ -40,6 +40,7 @@
     "react-leaflet": "^3.2.5",
     "react-markdown": "^8.0.0",
     "react-redux": "^7.2.6",
+    "react-resize-detector": "^7.0.0",
     "react-router-dom": "^6.2.1",
     "react-router-hash-link": "^2.4.3",
     "react-scripts": "5.0.0",

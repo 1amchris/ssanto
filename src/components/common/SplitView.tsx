@@ -1,18 +1,27 @@
 import React, { useCallback, useState } from 'react';
 import { max, min, sum } from 'lodash';
+import { useResizeDetector } from 'react-resize-detector';
 
 export interface HandleOptions {
-  color: string;
-  size: number;
+  focusedColor: string;
+  defaultColor: string;
+  focusedSize: number;
+  defaultSize: number;
 }
 
 function Handle({ position, direction, options, onMouseDown }: any) {
-  const handleSize: number = options.size || 5;
-  const handlePosition = position - handleSize / 2;
-  const color: string = options.color || '#0D6EFD';
-  const directionIsColumn = direction === 'column';
+  const [focused, setFocused] = useState(false);
 
-  const [focused, setFocused] = useState(true);
+  const handleSize: number = focused
+    ? options.focusedSize || 5
+    : options.defaultSize || 1;
+  const handlePosition = position - handleSize / 2;
+
+  const color: string = focused
+    ? options.focusedColor || '#0D6EFD'
+    : options.defaultColor || 'lightgray';
+
+  const directionIsColumn = direction === 'column';
 
   return (
     <div
@@ -25,19 +34,14 @@ function Handle({ position, direction, options, onMouseDown }: any) {
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       style={{
+        zIndex: 100,
+        background: color,
         position: 'absolute',
         top: directionIsColumn ? handlePosition : 0,
-        left: directionIsColumn ? 0 : handlePosition,
-
-        zIndex: 100,
-        cursor: directionIsColumn ? 'row-resize' : 'col-resize',
+        left: !directionIsColumn ? handlePosition : 0,
         width: directionIsColumn ? '100%' : handleSize,
-        height: directionIsColumn ? handleSize : '100%',
-        background: focused ? color : '#00000000',
-
-        transitionProperty: 'background-color',
-        transitionDuration: '250ms',
-        transitionDelay: '250ms',
+        height: !directionIsColumn ? '100%' : handleSize,
+        cursor: directionIsColumn ? 'row-resize' : 'col-resize',
       }}
     ></div>
   );
@@ -73,6 +77,14 @@ class ViewOptionsUtils {
     if (measure.endsWith('%')) return '%';
     else return 'px';
   }
+
+  static getSumOfSizes(viewsOptions: ViewOptions[]) {
+    return sum(
+      viewsOptions.map((option: ViewOptions) =>
+        ViewOptionsUtils.getValue(option.size)
+      ) || 0
+    );
+  }
 }
 
 interface ViewOptions {
@@ -81,59 +93,61 @@ interface ViewOptions {
   maxSize?: string;
 }
 
-interface Dimensions {
-  width: number;
-  height: number;
+/* eslint-disable no-unused-vars */
+// for some unknown reason, this isn't detected as "being used"
+enum OverflowDirection {
+  LeftOrUp,
+  RightOrDown,
 }
+/* eslint-enable no-unused-vars */
 
 function SplitView({
   children,
-  style,
+  style = { height: '100%', width: '100%' },
   direction = 'row' as 'row' | 'column',
   handleOptions = {
-    size: 5,
-    color: '#0D6EFD',
+    focusedSize: 5,
+    focusedColor: '#0D6EFD',
+    defaultSize: 1,
+    defaultColor: 'lightgray',
   } as HandleOptions,
 }: any) {
+  const directionIsColumn = direction === 'column';
+
   const [selectedHandle, setSelectedHandle] = useState<number | undefined>();
   const [handlePosition, setHandlePosition] = useState<number | undefined>();
   const [viewsOptions, setViewsOptions] = useState(
-    children.map(() => ({ size: '0px' } as ViewOptions))
+    children.map((node: JSX.Element) => {
+      const defaultMaxSize = Infinity;
+      const defaultMinSize = 0;
+
+      return directionIsColumn
+        ? {
+            maxSize: node.props.style?.maxHeight || defaultMaxSize,
+            minSize: node.props.style?.minHeight || defaultMinSize,
+            size: node.props.style?.height,
+          }
+        : {
+            maxSize: node.props.style?.maxWidth || defaultMaxSize,
+            minSize: node.props.style?.minWidth || defaultMinSize,
+            size: node.props.style?.width,
+          };
+    })
   );
-  viewsOptions;
 
-  const [dimensions, setDimensions] = useState({
-    width: 0,
-    height: 0,
-  } as Dimensions);
+  const { ref } = useResizeDetector({
+    handleHeight: directionIsColumn,
+    handleWidth: !directionIsColumn,
+    onResize: useCallback((width?: number, height?: number) => {
+      if (width === undefined || height === undefined) return;
 
-  const directionIsColumn = direction === 'column';
-
-  const windowSizeRef = useCallback((node: HTMLDivElement) => {
-    if (node !== null) {
-      const { width, height } = node.getBoundingClientRect();
-      setDimensions({ width, height });
-
-      const viewsOptions = children.map((node: JSX.Element) => {
-        // extract the original styles (mins, maxs and defaults, if any)
-        const viewOptions = directionIsColumn
-          ? {
-              maxSize: node.props.style?.maxHeight,
-              minSize: node.props.style?.minHeight,
-              size: node.props.style?.height,
-            }
-          : {
-              maxSize: node.props.style?.maxWidth,
-              minSize: node.props.style?.minWidth,
-              size: node.props.style?.width,
-            };
-
+      viewsOptions.map((viewOptions: ViewOptions) => {
         // convert the % styles to pixels
         Object.entries(viewOptions).forEach(([key, value]: any) => {
           Object.defineProperty(viewOptions, key, {
             value: ViewOptionsUtils.convertToPixels(
               value,
-              directionIsColumn ? height : width
+              directionIsColumn ? height! : width!
             ),
           });
         });
@@ -141,60 +155,70 @@ function SplitView({
         return viewOptions;
       });
 
-      // distribute the remaining space evenly
+      // distribute the remaining space evenly (should really only happen the first time)
       const used = sum(
         viewsOptions.map(
           (options: ViewOptions) => ViewOptionsUtils.getValue(options.size) || 0
         )
       );
-      const available = (directionIsColumn ? height : width) - used;
+      const available = max([
+        0,
+        (directionIsColumn ? height! : width!) - used,
+      ])!;
       const undefinedSizesIndices = viewsOptions
         .map((options: ViewOptions, index: number) => [options, index])
         .filter(([options]: [ViewOptions, number]) => !options.size)
         .map(([_, index]: [ViewOptions, number]) => index);
-      const averageSize = `${available / undefinedSizesIndices.length}px`;
+      console.log({ undefinedSizesIndices });
+      const averageSize = available / undefinedSizesIndices.length;
       undefinedSizesIndices.forEach((index: number) => {
-        viewsOptions[index].size = averageSize;
+        // TODO: it is possible that the 'averageSize' is lesser/greater than the min/max values of the view.
+        viewsOptions[index].size = `${averageSize}px`;
       });
 
+      // scale all values to fit within the window's size (ex. when the splitview is resized)
+      const currentWidth = ViewOptionsUtils.getSumOfSizes(viewsOptions);
+      if (currentWidth !== 0) {
+        const ratio = width / currentWidth;
+        viewsOptions.forEach(({ size }: ViewOptions, index: number) => {
+          // TODO: it is possible that the scaled size is smaller/greater than the min/max values of the view.
+          viewsOptions[index].size = `${
+            ViewOptionsUtils.getValue(size)! * ratio
+          }px`;
+        });
+      }
+
       setViewsOptions(viewsOptions);
-    }
-  }, []);
+    }, []),
+  });
 
   return (
-    <React.Fragment>
-      <div style={{ minWidth: 100 }} className="d-none">
-        <p>width: {dimensions.width}px</p>
-        <p>height: {dimensions.height}px</p>
-      </div>
-      <div
-        ref={windowSizeRef}
-        style={{
-          ...style,
-          position: 'relative',
-          overflow: 'auto',
-        }}
-        className="border border-2 border-warning"
-        onMouseMove={e => resizeView(e)}
-        onMouseLeave={() => unselectView()}
-        onMouseUp={() => unselectView()}
-      >
-        {renderView([].concat(children)[0], 0)}
-        {[]
-          .concat(children)
-          .slice(1)
-          .map((view: JSX.Element, index: number) => [
-            <Handle
-              key={`handle-${index}`}
-              position={getPosition(index + 1)}
-              direction={direction}
-              options={handleOptions}
-              onMouseDown={(e: any) => selectHandle(e, index + 1)}
-            />,
-            renderView(view, index + 1),
-          ])}
-      </div>
-    </React.Fragment>
+    <div
+      ref={ref}
+      className="border border-3 border-danger"
+      style={{
+        ...style,
+        position: 'relative',
+      }}
+      onMouseMove={e => resizeView(e)}
+      onMouseLeave={() => unselectView()}
+      onMouseUp={() => unselectView()}
+    >
+      {renderView([].concat(children)[0], 0)}
+      {[]
+        .concat(children)
+        .slice(1)
+        .map((view: JSX.Element, index: number) => [
+          <Handle
+            key={`handle-${index}`}
+            position={getPosition(index + 1, viewsOptions)}
+            direction={direction}
+            options={handleOptions}
+            onMouseDown={(e: any) => selectHandle(e, index + 1)}
+          />,
+          renderView(view, index + 1),
+        ])}
+    </div>
   );
 
   function renderView(children: JSX.Element, index: number) {
@@ -217,7 +241,7 @@ function SplitView({
 
   function getViewStyle(viewIndex: number): React.CSSProperties {
     const size = `${viewsOptions[viewIndex].size}`;
-    const position = getPosition(viewIndex);
+    const position = getPosition(viewIndex, viewsOptions);
 
     return {
       overflow: 'auto',
@@ -229,7 +253,7 @@ function SplitView({
     } as React.CSSProperties;
   }
 
-  function getPosition(viewIndex: number): number {
+  function getPosition(viewIndex: number, viewsOptions: ViewOptions[]): number {
     return sum(
       viewsOptions
         .slice(0, viewIndex)
@@ -238,82 +262,75 @@ function SplitView({
   }
 
   function selectHandle(e: any, index: number) {
+    e.preventDefault(); // prevents the dragging of the view instead of the handle
     setSelectedHandle(index);
-    setHandlePosition(directionIsColumn ? e.screenY : e.screenX);
+    setHandlePosition(directionIsColumn ? e.clientY : e.clientX);
   }
 
-  function resizeView({ screenX, screenY }: any) {
+  function resize(
+    direction: OverflowDirection,
+    viewIndex: number,
+    distance: number
+  ) {
+    if (!(0 <= viewIndex && viewIndex < viewsOptions.length) || distance === 0)
+      return 0;
+
+    const currentSize = ViewOptionsUtils.getValue(
+      viewsOptions[viewIndex].size
+    )!;
+    const desiredSize =
+      currentSize +
+      (direction === OverflowDirection.LeftOrUp ? -distance : +distance);
+
+    const { maxSize, minSize } = viewsOptions[viewIndex];
+    const possibleSize = min([
+      ViewOptionsUtils.getValue(maxSize) || Infinity,
+      max([ViewOptionsUtils.getValue(minSize) || 0, desiredSize])!,
+    ])!;
+
+    const sizeDiff = possibleSize - desiredSize;
+    let gained = possibleSize - currentSize;
+
+    if (sizeDiff !== 0) {
+      gained += resize(
+        direction,
+        viewIndex + (direction === OverflowDirection.LeftOrUp ? -1 : 1),
+        direction === OverflowDirection.LeftOrUp ? sizeDiff : -sizeDiff
+      );
+    }
+
+    viewsOptions[viewIndex].size = `${possibleSize}px`;
+    return gained;
+  }
+
+  function resizeView({ clientX, clientY, currentTarget }: any) {
     if (selectedHandle === undefined || handlePosition === undefined) return;
 
-    /* eslint-disable no-unused-vars */
-    // For some unknown reason, this isn't detected as "being used"
-    enum OverflowDirection {
-      LeftOrUp,
-      RightOrDown,
-    }
-    /* eslint-enable no-unused-vars */
-
-    const resize = (
-      direction: OverflowDirection,
-      viewIndex: number,
-      distance: number,
-      minTravel: number,
-      maxTravel: number
-    ) => {
-      const displacement = max([minTravel, min([maxTravel, distance])])!;
-
-      if (
-        !(0 <= viewIndex && viewIndex < viewsOptions.length) ||
-        displacement === 0
-      )
-        return 0;
-
-      const currentSize = ViewOptionsUtils.getValue(
-        viewsOptions[viewIndex].size
-      )!;
-      const desiredSize =
-        currentSize +
-        (direction === OverflowDirection.LeftOrUp
-          ? -displacement
-          : +displacement);
-
-      // const { maxSize, minSize } = viewsOptions[viewIndex];
-      // const possibleSize = min([
-      //   maxSize || Infinity,
-      //   max([minSize || 0, desiredSize]),
-      // ]);
-      const possibleSize = desiredSize;
-
-      const sizeDiff = possibleSize - desiredSize;
-      let gained = possibleSize - currentSize;
-
-      if (sizeDiff !== 0) {
-        gained += resize(
-          direction,
-          viewIndex + (direction === OverflowDirection.LeftOrUp ? -1 : 1),
-          direction === OverflowDirection.LeftOrUp ? sizeDiff : -sizeDiff,
-          minTravel + gained,
-          maxTravel - gained
-        );
-      }
-
-      viewsOptions[viewIndex].size = `${possibleSize}px`;
-      return gained;
-    };
-
-    const mousePosition = directionIsColumn ? screenY : screenX;
+    // get the mouse displacement/delta
+    const mousePosition = directionIsColumn ? clientY : clientX;
     const delta = handlePosition - mousePosition;
 
-    const moved = resize(
-      OverflowDirection.LeftOrUp,
-      selectedHandle - 1,
-      delta,
-      -Infinity,
-      Infinity
-    );
-    resize(OverflowDirection.RightOrDown, selectedHandle, delta, -moved, moved);
+    // get new views dimensions
+    const priorTotalSize = ViewOptionsUtils.getSumOfSizes(viewsOptions);
+    resize(OverflowDirection.LeftOrUp, selectedHandle - 1, delta);
+    resize(OverflowDirection.RightOrDown, selectedHandle, delta);
+    const posteriorTotalSize = ViewOptionsUtils.getSumOfSizes(viewsOptions);
+    const totalSizeDelta = posteriorTotalSize - priorTotalSize;
 
-    setHandlePosition(mousePosition);
+    // remove the difference in container size to the "growing view" size.
+    // if there is a difference, it means that all of the "shrinking views" have reached their minSize, but the "growing view" didn't stop growing. (it might be a hack)
+    //  shrinking view: the view that's losing screen estate
+    //  growing view: the view that's gaining screen estate
+    const viewIndex = delta < 0 ? selectedHandle - 1 : selectedHandle;
+    const size = ViewOptionsUtils.getValue(viewsOptions[viewIndex].size);
+    viewsOptions[viewIndex].size = `${size! - totalSizeDelta}px`;
+
+    // get new handle position
+    const { top, left } = currentTarget.getBoundingClientRect();
+    const parentOffset = directionIsColumn ? top : left;
+    const relativeHandlePosition = getPosition(selectedHandle, viewsOptions);
+
+    setHandlePosition(relativeHandlePosition + parentOffset);
     setViewsOptions(viewsOptions);
   }
 

@@ -159,18 +159,15 @@ function Main() {
       >
         <ActivityBar />
         <SplitView style={{ width: 1200 }} direction="row">
-          {/* <div style={{ minWidth: '10px' }}>
-            <section>
-              <h1>section header</h1>
-              <SideBar />
-            </section>
-          </div> */}
-          <SideBar />
-          <SplitView direction="column">
-            <SideBar />
-            <SideBar />
+          <SideBar style={{ minWidth: 100 }} />
+          <SplitView style={{ width: '50%' }} direction="row">
+            <SideBar style={{ minWidth: 50 }} />
+            <SideBar style={{ minWidth: 50, width: 120 }} />
+            <SideBar style={{ minWidth: 50 }} />
+            <SideBar style={{ minWidth: 50 }} />
           </SplitView>
-          {/* <SideBar /> */}
+          <SideBar style={{ minWidth: 100 }} />
+          <SideBar style={{ minWidth: 100 }} />
           {/* <aside id="left-aside">
             <FormsBar>
               <Collapsible
