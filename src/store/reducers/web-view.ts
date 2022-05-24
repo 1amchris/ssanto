@@ -12,7 +12,6 @@ export const webViewSlice = createSlice({
       { payload: preventPointerEvents }: PayloadAction<boolean>
     ) => {
       state.preventPointerEvents = preventPointerEvents;
-      console.log({ preventPointerEvents });
     },
   },
 });
