@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { max, min, sum } from 'lodash';
 import { useResizeDetector } from 'react-resize-detector';
+import { useAppDispatch } from 'store/hooks';
+import { updatePreventPointerEvents } from 'store/reducers/web-view';
 
 export interface HandleOptions {
   focusedColor: string;
@@ -113,6 +115,7 @@ function SplitView({
   } as HandleOptions,
 }: any) {
   const directionIsColumn = direction === 'column';
+  const dispatch = useAppDispatch();
 
   const [selectedHandle, setSelectedHandle] = useState<number | undefined>();
   const [handlePosition, setHandlePosition] = useState<number | undefined>();
@@ -135,12 +138,11 @@ function SplitView({
     })
   );
 
-  const { ref } = useResizeDetector({
+  const { ref: mainContainerRef } = useResizeDetector({
     handleHeight: directionIsColumn,
     handleWidth: !directionIsColumn,
     onResize: useCallback((width?: number, height?: number) => {
       if (width === undefined || height === undefined) return;
-      console.log('onResize', { width, height });
 
       viewsOptions.map((viewOptions: ViewOptions) => {
         // convert the % styles to pixels
@@ -178,7 +180,7 @@ function SplitView({
             !ViewOptionsUtils.getValue(options.size)
         )
         .map(([_, index]: [ViewOptions, number]) => index);
-      console.log({ undefinedSizesIndices });
+
       const averageSize = available / undefinedSizesIndices.length;
       undefinedSizesIndices.forEach((index: number) => {
         // TODO: it is possible that the 'averageSize' is lesser/greater than the min/max values of the view.
@@ -203,14 +205,13 @@ function SplitView({
 
   return (
     <div
-      ref={ref}
-      // className="border border-3 border-danger"
+      ref={mainContainerRef}
       style={{
         ...style,
         position: 'relative',
       }}
+      // onMouseDown is on the Handler
       onMouseMove={e => resizeView(e)}
-      onMouseLeave={() => unselectView()}
       onMouseUp={() => unselectView()}
     >
       {renderView([].concat(children)[0], 0)}
@@ -274,6 +275,7 @@ function SplitView({
     e.preventDefault(); // prevents the dragging of the view instead of the handle
     setSelectedHandle(index);
     setHandlePosition(directionIsColumn ? e.clientY : e.clientX);
+    dispatch(updatePreventPointerEvents(true));
   }
 
   function resize(
@@ -310,8 +312,9 @@ function SplitView({
     return gained;
   }
 
-  function resizeView({ clientX, clientY, currentTarget }: any) {
+  function resizeView({ clientX, clientY, currentTarget, buttons }: any) {
     if (selectedHandle === undefined || handlePosition === undefined) return;
+    if (buttons !== 1) return unselectView();
 
     // get the mouse displacement/delta
     const mousePosition = directionIsColumn ? clientY : clientX;
@@ -344,6 +347,7 @@ function SplitView({
   function unselectView() {
     setSelectedHandle(undefined);
     setHandlePosition(undefined);
+    dispatch(updatePreventPointerEvents(false));
   }
 }
 

@@ -5,6 +5,7 @@ import analysisReducer from 'store/reducers/analysis';
 import exportReducer from 'store/reducers/export';
 import guideReducer from 'store/reducers/guide';
 import statusBarReducer from 'store/reducers/status-bar';
+import webViewReducer from 'store/reducers/web-view';
 import ServerMiddleware from 'store/middlewares/ServerMiddleware';
 import AnalysisMiddleware from 'store/middlewares/AnalysisMiddleware';
 import { call, subscribe } from 'store/reducers/server';
@@ -17,6 +18,7 @@ export const store = configureStore({
     guide: guideReducer,
     map: mapReducer,
     statusBar: statusBarReducer,
+    webView: webViewReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

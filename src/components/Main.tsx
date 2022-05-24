@@ -153,7 +153,7 @@ function Main() {
         className="d-flex flex-row"
         style={{
           height: 'calc(100vh - 24px - 22px)',
-          maxWidth: 'calc(100vw - 48px)',
+          maxWidth: '100%',
           overflow: 'auto',
         }}
       >
