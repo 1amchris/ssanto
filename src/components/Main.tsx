@@ -22,10 +22,11 @@ import MenuBar from 'components/menu-bar/MenuBar';
 // import ValueScalingFunctionGraphs from './aside-informations/ValueScalingFunctionGraphs';
 // import MapLegend from './aside-informations/MapLegend';
 // import { flatten } from 'flattenizer';
-import ActivityBar from './core/ActivityBar';
-import SideBar from './core/SideBar';
-import StatusBar from './core/StatusBar';
-import SplitView from './common/SplitView';
+import ActivityBar from 'components/core/ActivityBar';
+import SideBar from 'components/core/SideBar';
+import StatusBar from 'components/core/StatusBar';
+import SplitView from 'components/core/SplitView';
+import EditorGroups from 'components/core/EditorGroups';
 
 /**
  * Main component.
@@ -159,19 +160,9 @@ function Main() {
       >
         <ActivityBar />
         <SplitView direction="row">
-          <SplitView style={{ minWidth: 120, width: 300 }} direction="column">
-            <SideBar style={{ minHeight: 42 }} />
-            <SideBar style={{ minHeight: 42 }} />
-            <SideBar style={{ minHeight: 42 }} />
-            <SideBar style={{ minHeight: 42 }} />
-          </SplitView>
+          <SideBar style={{ minWidth: 120, width: 240 }} />
           <SplitView style={{ minWidth: 120 }} direction="column">
-            <SplitView direction="row">
-              <SideBar style={{ minWidth: 120 }} />
-              <SideBar style={{ minWidth: 120 }} />
-              <SideBar style={{ minWidth: 120 }} />
-              <SideBar style={{ minWidth: 120 }} />
-            </SplitView>
+            <EditorGroups />
             <SideBar style={{ height: '30%' }} />
           </SplitView>
         </SplitView>
