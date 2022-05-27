@@ -89,7 +89,6 @@ function ActivityBar() {
   const dispatch = useAppDispatch();
 
   function handleActivityClick(activity: any) {
-    console.log(`clicked on activity: "${activity.id}"`);
     dispatch(setActive(activity.id));
   }
 

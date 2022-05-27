@@ -1,6 +1,10 @@
-import WebView from 'components/common/WebView';
 import React from 'react';
 import { IconBaseProps, IconType } from 'react-icons';
+import { selectActivityBar } from 'store/reducers/activity-bar';
+import { useAppSelector } from 'store/hooks';
+import { ActivityModel } from 'models/ActivityModel';
+import DefaultView from 'components/core/DefaultView';
+import FileExplorer from 'activities/FileExplorer';
 import * as codicons from 'react-icons/vsc';
 
 /**
@@ -8,6 +12,12 @@ import * as codicons from 'react-icons/vsc';
  * @return {JSX.Element} Html.
  */
 function SideBar({ style }: any) {
+  const { active: activeActivity, activities } =
+    useAppSelector(selectActivityBar);
+  const activity = activities.find(
+    (activity: ActivityModel) => activity.id === activeActivity
+  )!;
+
   const label = 'Views and more actions...';
   const iconName = 'VscEllipsis';
   const iconBaseProps: IconBaseProps = {
@@ -18,7 +28,7 @@ function SideBar({ style }: any) {
 
   return (
     <nav
-      className="d-flex flex-column justify-content-between"
+      className="d-flex flex-column"
       style={{ userSelect: 'none', ...style }}
     >
       <div
@@ -26,7 +36,7 @@ function SideBar({ style }: any) {
         style={{ padding: '12px 16px 12px 20px' }}
       >
         <div className="text-uppercase" style={{ fontSize: 12 }}>
-          explorer
+          {activity.label}
         </div>
         <div style={{ marginBottom: -6, marginTop: -6 }}>
           {(codicons as { [iconName: string]: IconType })[iconName](
@@ -34,13 +44,10 @@ function SideBar({ style }: any) {
           )}
         </div>
       </div>
-      <WebView src="https://www.example.com/" title="example webview" />
-      {/* <p>
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Exercitationem
-        dignissimos autem architecto expedita illum sequi aut rerum, facilis
-        enim fugit eligendi? Nesciunt unde soluta dolorem deleniti
-        reprehenderit, temporibus dolore itaque.
-      </p> */}
+      <div className="w-100 h-100 overflow-auto">
+        {true && <FileExplorer />}
+        {false && <DefaultView />}
+      </div>
     </nav>
   );
 }
