@@ -25,7 +25,7 @@ import MenuBar from 'components/menu-bar/MenuBar';
 import ActivityBar from 'components/core/ActivityBar';
 import SideBar from 'components/core/SideBar';
 import StatusBar from 'components/core/StatusBar';
-import SplitView from 'components/core/SplitView';
+import SplitView from 'components/common/SplitView';
 import EditorGroups from 'components/core/EditorGroups';
 
 /**

@@ -1,6 +1,6 @@
 import React from 'react';
 import EditorGroup from 'components/core/EditorGroup';
-import SplitView from 'components/core/SplitView';
+import SplitView from 'components/common/SplitView';
 
 function EditorGroups({ style }: any) {
   return (

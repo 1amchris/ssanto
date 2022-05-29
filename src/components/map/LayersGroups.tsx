@@ -11,7 +11,7 @@ import { call } from 'store/reducers/server';
 import CallModel from 'models/server-coms/CallModel';
 import { InsertLayerModel } from 'models/map/InsertLayerModel';
 import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
-import ColorScaleUtils from 'utils/color-scale-utils';
+import ColorUtils from 'utils/color-utils';
 
 const usePrevious = (value: any) => {
   const ref = useRef();
@@ -30,7 +30,7 @@ const LayersGroups = ({ t }: any) => {
       feature.properties !== undefined &&
       feature.properties.sutability >= 0
     ) {
-      const color = ColorScaleUtils.greenToRed(feature.properties.sutability);
+      const color = ColorUtils.greenToRed(feature.properties.sutability);
       return {
         color: color,
         fillColor: color,

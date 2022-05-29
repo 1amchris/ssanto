@@ -1,4 +1,6 @@
-namespace ColorScaleUtils {
+import { Color, Opacity } from 'enums/Color';
+
+namespace ColorUtils {
   /**
    * Convert a percentage into a green to red color scale
    * @param {number} perc Percentage
@@ -18,6 +20,13 @@ namespace ColorScaleUtils {
     const h = r * 0x10000 + g * 0x100 + b * 0x1;
     return '#' + ('000000' + h.toString(16)).slice(-6);
   }
+
+  export function applyOpacity(color: Color, opacity: Opacity) {
+    const hexOpacity = Math.round(opacity * 255)
+      .toString(16)
+      .padStart(2, '0');
+    return `${color}${hexOpacity}`;
+  }
 }
 
-export default ColorScaleUtils;
+export default ColorUtils;

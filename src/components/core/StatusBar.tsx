@@ -1,20 +1,22 @@
+import { Color, Opacity } from 'enums/Color';
 import React, { useState } from 'react';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { IconBaseProps, IconType } from 'react-icons';
 import * as codicons from 'react-icons/vsc';
 import { useAppSelector } from 'store/hooks';
 import { selectStatusBar } from 'store/reducers/status-bar';
+import ColorUtils from 'utils/color-utils';
 
 const backgroundColors = {
-  disabled: '#00000000',
-  focused: '#ffffff22',
-  default: '#00000000',
+  disabled: ColorUtils.applyOpacity(Color.Black, Opacity.Transparent),
+  focused: ColorUtils.applyOpacity(Color.White, Opacity.OneEighth),
+  default: ColorUtils.applyOpacity(Color.Black, Opacity.Transparent),
 };
 
 const iconColors = {
-  disabled: '#00000090',
-  focused: '#ffffffff',
-  default: '#ffffffff',
+  disabled: ColorUtils.applyOpacity(Color.Black, Opacity.Half),
+  focused: ColorUtils.applyOpacity(Color.White, Opacity.Opaque),
+  default: ColorUtils.applyOpacity(Color.White, Opacity.Opaque),
 };
 
 function StatusItem({
@@ -29,6 +31,7 @@ function StatusItem({
 
   const activity = {
     size: '12px',
+    cursor: disabled ? 'default' : 'cursor',
     color: focused
       ? iconColors.focused
       : disabled
@@ -63,12 +66,13 @@ function StatusItem({
         style={{
           minHeight: activity.size,
           backgroundColor: activity.backgroundColor,
+          cursor: activity.cursor,
         }}
-        onClick={onClick}
-        onMouseEnter={() => setFocused(true)}
-        onMouseLeave={() => setFocused(false)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
+        onClick={(e: any) => !disabled && onClick(e)}
+        onMouseEnter={() => !disabled && setFocused(true)}
+        onMouseLeave={() => !disabled && setFocused(false)}
+        onFocus={() => !disabled && setFocused(true)}
+        onBlur={() => !disabled && setFocused(false)}
       >
         {iconName &&
           (codicons as { [iconName: string]: IconType })[iconName](

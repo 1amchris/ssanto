@@ -1,22 +1,31 @@
+import { Color, Opacity } from 'enums/Color';
 import React, { useState } from 'react';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { IconBaseProps, IconType } from 'react-icons';
 import * as codicons from 'react-icons/vsc';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectActivityBar, setActive } from 'store/reducers/activity-bar';
+import ColorUtils from 'utils/color-utils';
 
 const backgroundColors = {
-  disabled: '#00000022',
-  focused: '#00000000',
-  activated: '#00000000',
-  default: '#00000000',
+  disabled: ColorUtils.applyOpacity(Color.LightGray, Opacity.Half),
+  focused: undefined,
+  activated: undefined,
+  default: undefined,
+};
+
+const borderColors = {
+  disabled: ColorUtils.applyOpacity(Color.Black, Opacity.Transparent),
+  focused: undefined,
+  activated: ColorUtils.applyOpacity(Color.Black, Opacity.Opaque),
+  default: ColorUtils.applyOpacity(Color.Black, Opacity.Transparent),
 };
 
 const iconColors = {
-  disabled: '#00000090',
-  focused: '#000000ff',
-  activated: '#000000ff',
-  default: '#00000066',
+  disabled: ColorUtils.applyOpacity(Color.Gray, Opacity.ThreeQuarters),
+  focused: ColorUtils.applyOpacity(Color.Black, Opacity.Opaque),
+  activated: ColorUtils.applyOpacity(Color.Black, Opacity.Opaque),
+  default: ColorUtils.applyOpacity(Color.Gray, Opacity.Opaque),
 };
 
 function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {
@@ -24,6 +33,7 @@ function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {
 
   const activity = {
     size: '48px',
+    cursor: disabled ? 'default' : 'pointer',
     color: focused
       ? iconColors.focused
       : active
@@ -31,6 +41,13 @@ function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {
       : disabled
       ? iconColors.disabled
       : iconColors.default,
+    borderColor: focused
+      ? borderColors.focused
+      : active
+      ? borderColors.activated
+      : disabled
+      ? borderColors.disabled
+      : borderColors.default,
     backgroundColor: focused
       ? backgroundColors.focused
       : active
@@ -63,14 +80,14 @@ function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {
           minHeight: activity.size,
           minWidth: activity.size,
           backgroundColor: activity.backgroundColor,
-          borderLeft: `2px solid ${active ? activity.color : '#00000000'}`,
-          cursor: 'pointer',
+          borderLeft: `2px solid ${activity.borderColor}`,
+          cursor: activity.cursor,
         }}
-        onClick={onClick}
-        onMouseEnter={() => setFocused(true)}
-        onMouseLeave={() => setFocused(false)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
+        onClick={(e: any) => !disabled && onClick(e)}
+        onMouseEnter={() => !disabled && setFocused(true)}
+        onMouseLeave={() => !disabled && setFocused(false)}
+        onFocus={() => !disabled && setFocused(true)}
+        onBlur={() => !disabled && setFocused(false)}
       >
         {(codicons as { [iconName: string]: IconType })[iconName](
           iconBaseProps
@@ -102,7 +119,7 @@ function ActivityBar() {
         {activities?.map(activity => (
           <ActivityItem
             {...activity}
-            key={`activities/activity-${activity.id}`}
+            key={`${activity.id}${active === activity.id}`}
             active={active === activity.id}
             onClick={() => handleActivityClick(activity)}
           />
