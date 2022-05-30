@@ -5,27 +5,27 @@ import { IconBaseProps, IconType } from 'react-icons';
 import * as codicons from 'react-icons/vsc';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectActivityBar, setActive } from 'store/reducers/activity-bar';
-import ColorUtils from 'utils/color-utils';
+import ColorsUtils from 'utils/colors-utils';
 
 const backgroundColors = {
-  disabled: ColorUtils.applyOpacity(Color.LightGray, Opacity.Half),
+  disabled: ColorsUtils.applyOpacity(Color.LightGray, Opacity.Half),
   focused: undefined,
   activated: undefined,
   default: undefined,
 };
 
 const borderColors = {
-  disabled: ColorUtils.applyOpacity(Color.Black, Opacity.Transparent),
+  disabled: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
   focused: undefined,
-  activated: ColorUtils.applyOpacity(Color.Black, Opacity.Opaque),
-  default: ColorUtils.applyOpacity(Color.Black, Opacity.Transparent),
+  activated: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
+  default: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
 };
 
 const iconColors = {
-  disabled: ColorUtils.applyOpacity(Color.Gray, Opacity.ThreeQuarters),
-  focused: ColorUtils.applyOpacity(Color.Black, Opacity.Opaque),
-  activated: ColorUtils.applyOpacity(Color.Black, Opacity.Opaque),
-  default: ColorUtils.applyOpacity(Color.Gray, Opacity.Opaque),
+  disabled: ColorsUtils.applyOpacity(Color.Gray, Opacity.ThreeQuarters),
+  focused: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
+  activated: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
+  default: ColorsUtils.applyOpacity(Color.Gray, Opacity.Opaque),
 };
 
 function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {

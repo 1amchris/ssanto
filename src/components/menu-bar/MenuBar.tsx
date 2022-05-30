@@ -2,7 +2,7 @@ import React from 'react';
 import FileContentModel from 'models/file/FileContentModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { exportData } from 'store/reducers/export';
-import { Action, Divider, Import, Link } from './components';
+import { Action, Divider, ImportFile, ImportFolder, Link } from './components';
 import { call } from 'store/reducers/server';
 import Menu from './Menu';
 import ServerCallTargets from 'enums/ServerCallTargets';
@@ -10,6 +10,11 @@ import CallModel from 'models/server-coms/CallModel';
 import FilesUtils from 'utils/files-utils';
 import { selectMap } from 'store/reducers/map';
 import { loadingFileComplete, resetError } from 'store/reducers/analysis';
+import {
+  resetWorkspace,
+  selectFiles,
+  setWorkspace,
+} from 'store/reducers/files';
 
 /**
  * Menu bar component.
@@ -18,13 +23,14 @@ import { loadingFileComplete, resetError } from 'store/reducers/analysis';
  */
 function MenuBar({ style }: any) {
   const mapLayers = useAppSelector(selectMap).layers;
+  const { files } = useAppSelector(selectFiles);
   const dispatch = useAppDispatch();
 
   const getMenus = () => [
     <Menu key="menu-project" label="project">
-      <Import
-        key="import"
-        label="open project"
+      <ImportFile
+        key="import-file"
+        label="open file"
         accept=".sproj"
         onFileImported={(file: File) => {
           dispatch(resetError());
@@ -41,6 +47,13 @@ function MenuBar({ style }: any) {
           });
         }}
       />
+      <ImportFolder
+        key="import-folder"
+        label="open workspace"
+        onFolderImported={(files: FileList) =>
+          dispatch(setWorkspace(FilesUtils.extractMetadataFromFiles(files)))
+        }
+      />
       <Action
         key="action"
         label="save project"
@@ -53,6 +66,13 @@ function MenuBar({ style }: any) {
             } as CallModel<void, FileContentModel<string>>)
           )
         }
+      />
+      <Action
+        key="close-workspace"
+        label="close workspace"
+        disabled={!files || files.length === 0}
+        // TODO: There should probably be a "confirm action" dialog
+        onClick={() => dispatch(resetWorkspace())}
       />
       <Divider />
       <Action

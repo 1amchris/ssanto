@@ -5,18 +5,18 @@ import { IconBaseProps, IconType } from 'react-icons';
 import * as codicons from 'react-icons/vsc';
 import { useAppSelector } from 'store/hooks';
 import { selectStatusBar } from 'store/reducers/status-bar';
-import ColorUtils from 'utils/color-utils';
+import ColorsUtils from 'utils/colors-utils';
 
 const backgroundColors = {
-  disabled: ColorUtils.applyOpacity(Color.Black, Opacity.Transparent),
-  focused: ColorUtils.applyOpacity(Color.White, Opacity.OneEighth),
-  default: ColorUtils.applyOpacity(Color.Black, Opacity.Transparent),
+  disabled: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
+  focused: ColorsUtils.applyOpacity(Color.White, Opacity.OneEighth),
+  default: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
 };
 
 const iconColors = {
-  disabled: ColorUtils.applyOpacity(Color.Black, Opacity.Half),
-  focused: ColorUtils.applyOpacity(Color.White, Opacity.Opaque),
-  default: ColorUtils.applyOpacity(Color.White, Opacity.Opaque),
+  disabled: ColorsUtils.applyOpacity(Color.Black, Opacity.Half),
+  focused: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
+  default: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
 };
 
 function StatusItem({

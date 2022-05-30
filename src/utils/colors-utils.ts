@@ -1,6 +1,6 @@
 import { Color, Opacity } from 'enums/Color';
 
-namespace ColorUtils {
+namespace ColorsUtils {
   /**
    * Convert a percentage into a green to red color scale
    * @param {number} perc Percentage
@@ -29,4 +29,4 @@ namespace ColorUtils {
   }
 }
 
-export default ColorUtils;
+export default ColorsUtils;

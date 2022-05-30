@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import ColorUtils from 'utils/color-utils';
+import ColorsUtils from 'utils/colors-utils';
 
 export enum Color {
   // Eventful

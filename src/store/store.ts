@@ -3,6 +3,7 @@ import mapReducer from 'store/reducers/map';
 import activityBarReducer from 'store/reducers/activity-bar';
 import analysisReducer from 'store/reducers/analysis';
 import exportReducer from 'store/reducers/export';
+import filesReducer from 'store/reducers/files';
 import guideReducer from 'store/reducers/guide';
 import statusBarReducer from 'store/reducers/status-bar';
 import webViewReducer from 'store/reducers/web-view';
@@ -15,6 +16,7 @@ export const store = configureStore({
     activityBar: activityBarReducer,
     analysis: analysisReducer,
     export: exportReducer,
+    files: filesReducer,
     guide: guideReducer,
     map: mapReducer,
     statusBar: statusBarReducer,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import ColorUtils from 'utils/color-utils';
+import ColorsUtils from 'utils/colors-utils';
 let width: number;
 let height: number;
 let gradient: any;
@@ -18,7 +18,7 @@ const getGradient = (
     for (let x = 0; x < 100; x++) {
       gradient.addColorStop(
         Math.min(x / 100, 1),
-        ColorUtils.greenToRed(Math.min(x, 100))
+        ColorsUtils.greenToRed(Math.min(x, 100))
       );
     }
   }
