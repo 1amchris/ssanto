@@ -1,4 +1,6 @@
 import { Color, Opacity } from 'enums/Color';
+import { ColorPalette } from 'models/ColorPalette';
+import { RelevantColors } from 'models/RelevantColors';
 
 namespace ColorsUtils {
   /**
@@ -26,6 +28,21 @@ namespace ColorsUtils {
       .toString(16)
       .padStart(2, '0');
     return `${color}${hexOpacity}`;
+  }
+
+  export function getRelevantColor(
+    colors: ColorPalette,
+    flags: RelevantColors
+  ) {
+    return flags.active && colors.active
+      ? colors.active
+      : flags.focused && colors.focused
+      ? colors.focused
+      : flags.hovered && colors.hovered
+      ? colors.hovered
+      : flags.disabled && colors.disabled
+      ? colors.disabled
+      : colors.default;
   }
 }
 

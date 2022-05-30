@@ -1,6 +1,6 @@
 import FileContentModel from 'models/file/FileContentModel';
-import { encode } from 'base64-arraybuffer';
 import FileMetadataModel from 'models/file/FileMetadataModel';
+import { encode } from 'base64-arraybuffer';
 import { uniqueId } from 'lodash';
 
 namespace FilesUtils {
@@ -38,6 +38,25 @@ namespace FilesUtils {
         relativePath: (file as any).webkitRelativePath,
       } as FileMetadataModel;
     });
+
+  // export const treeify = (files: FileMetadataModel[]) => {
+  //   console.log({ files });
+  //   const tree: { [folder: string]: FileMetadataModel[] } = {};
+  //   for (const file of files) {
+  //     const { relativePath } = file;
+  //     if (relativePath === undefined) {
+  //       console.warn(`File ${file.id} has no relative path:`, file);
+  //       continue;
+  //     }
+  //     const key = relativePath.substring(0).replaceAll('/', '.');
+  //     tree[key]
+  //   }
+  //   return tree;
+  // };
+
+  export function indexFiles<FileType>(files: FileType[]) {
+    return files.map((file, index) => [file, index]) as [FileType, number][];
+  }
 }
 
 export default FilesUtils;

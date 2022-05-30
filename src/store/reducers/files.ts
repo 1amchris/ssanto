@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { sortBy } from 'lodash';
 import FileMetadataModel from 'models/file/FileMetadataModel';
 import { RootState } from 'store/store';
 
@@ -14,7 +15,7 @@ export const filesSlice = createSlice({
       state,
       { payload: files }: PayloadAction<FileMetadataModel[]>
     ) => {
-      state.files = files;
+      state.files = sortBy(files, 'absolutePath');
     },
     setFocus: (state, { payload: fileId }: PayloadAction<string>) => {
       state.focusedFile = fileId;
