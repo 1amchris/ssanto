@@ -1,53 +1,16 @@
-// import React, { createRef, RefObject, useState } from 'react';
 import React, { createRef, RefObject } from 'react';
-// import FileMetadataModel from 'models/file/FileMetadataModel';
 import { BsTextLeft } from 'react-icons/bs';
-// import ColorsUtils from 'utils/colors-utils';
-// import { Color, Opacity } from 'enums/Color';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
   selectFiles,
   setFileSelection,
   setFocus,
-  // setFileSelection,
-  // setFocus,
   setWorkspace,
 } from 'store/reducers/files';
 import { Button } from 'react-bootstrap';
 import FilesUtils from 'utils/files-utils';
-// import TreeView from 'components/common/TreeView';
 import ListView from 'components/common/ListView';
 import FileMetadataModel from 'models/file/FileMetadataModel';
-
-// const backgroundColors = {
-//   active: ColorsUtils.applyOpacity(Color.Primary, Opacity.SevenEighths),
-//   disabled: ColorsUtils.applyOpacity(Color.LightGray, Opacity.Half),
-//   focused: undefined,
-//   hovered: ColorsUtils.applyOpacity(Color.LightGray, Opacity.OneQuarter),
-//   default: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
-// };
-
-// const borderColors = {
-//   active: undefined,
-//   disabled: undefined,
-//   focused: ColorsUtils.applyOpacity(Color.Info, Opacity.Opaque),
-//   hovered: undefined,
-//   default: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
-// };
-
-// const textColors = {
-//   active: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
-//   disabled: ColorsUtils.applyOpacity(Color.Gray, Opacity.ThreeQuarters),
-//   hovered: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
-//   focused: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
-//   default: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
-// };
-
-const FileRow = ({ name, relativePath }: any) => (
-  <div className="w-100 px-2 text-truncate">
-    <BsTextLeft /> {name} {<i>{relativePath}</i>}
-  </div>
-);
 
 function NoWorkspaceSelected() {
   const dispatch = useAppDispatch();
@@ -89,6 +52,14 @@ function NoWorkspaceSelected() {
   );
 }
 
+function FileRow({ name, relativePath }: any) {
+  return (
+    <div className="w-100 px-2 text-truncate">
+      <BsTextLeft /> {name} {<i>{relativePath}</i>}
+    </div>
+  );
+}
+
 /**
  * File explorer component.
  * Used to visualize and manipulate the system's files.
@@ -98,7 +69,8 @@ function FileExplorer({ style }: any) {
   const dispatch = useAppDispatch();
   const { files, fileSelection, focusedFile } = useAppSelector(selectFiles);
 
-  const indexedFiles = FilesUtils.indexFiles(files);
+  const indexedFiles: [FileMetadataModel, number][] =
+    FilesUtils.indexFiles(files);
 
   const selected = indexedFiles
     .filter(([file]: [FileMetadataModel, number]) =>
@@ -120,7 +92,6 @@ function FileExplorer({ style }: any) {
       }}
     >
       {!files?.length && <NoWorkspaceSelected />}
-      {/* <TreeView> */}
       {files?.length > 0 && (
         <ListView
           elements={files}
@@ -139,51 +110,6 @@ function FileExplorer({ style }: any) {
           }}
         />
       )}
-      {/* files.map((file: FileMetadataModel, index: number) => (
-            <FileRowFactory
-              onClick={(e: MouseEvent) => {
-                const focusedIndex = files.findIndex(
-                  (f: FileMetadataModel) => f.id === focusedFile
-                );
-
-                let newFileSelection = [];
-                if (e.shiftKey && focusedIndex !== -1) {
-                  newFileSelection = [...fileSelection];
-                  const startIndex = Math.min(index, focusedIndex);
-                  const endIndex = Math.max(index, focusedIndex);
-                  for (let i = startIndex; i <= endIndex; i++) {
-                    if (
-                      newFileSelection.findIndex(
-                        (f: string) => f === files[i].id
-                      ) === -1
-                    ) {
-                      newFileSelection.push(files[i].id);
-                    }
-                  }
-                }
-                // TODO: Handle Windows/Mac events differently (e.g. ctrl/cmd)
-                else if (e.ctrlKey || e.metaKey) {
-                  const currentIndex = fileSelection.indexOf(file.id);
-                  newFileSelection =
-                    currentIndex === -1
-                      ? [...fileSelection, file.id]
-                      : fileSelection.filter((id: string) => id !== file.id);
-                } else {
-                  newFileSelection = [file.id];
-                }
-
-                dispatch(setFileSelection(newFileSelection));
-                dispatch(setFocus(file.id));
-              }}
-              key={file.id}
-              file={file}
-              active={
-                fileSelection.findIndex((id: string) => id === file.id) > -1
-              }
-              focused={focusedFile === file.id}
-            />
-          ))} */}
-      {/* </TreeView> */}
     </div>
   );
 }

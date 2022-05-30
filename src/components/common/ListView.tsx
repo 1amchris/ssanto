@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import ColorsUtils from 'utils/colors-utils';
 import { Color, Opacity } from 'enums/Color';
+import { ColorPalette } from 'models/ColorPalette';
 
 const backgroundColors = {
   active: ColorsUtils.applyOpacity(Color.Primary, Opacity.SevenEighths),
@@ -8,7 +9,7 @@ const backgroundColors = {
   focused: undefined,
   hovered: ColorsUtils.applyOpacity(Color.LightGray, Opacity.OneQuarter),
   default: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
-};
+} as ColorPalette;
 
 const borderColors = {
   active: undefined,
@@ -16,7 +17,7 @@ const borderColors = {
   focused: ColorsUtils.applyOpacity(Color.Info, Opacity.Opaque),
   hovered: undefined,
   default: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
-};
+} as ColorPalette;
 
 const textColors = {
   active: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
@@ -24,7 +25,7 @@ const textColors = {
   hovered: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
   focused: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
   default: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
-};
+} as ColorPalette;
 
 const Row = ({ children, active, focused, onClick, disabled = false }: any) => {
   const [hovered, setHovered] = useState(false);
@@ -58,6 +59,7 @@ const Row = ({ children, active, focused, onClick, disabled = false }: any) => {
 function ListView({
   elements,
   factory,
+  style,
   selected = [],
   focused = undefined,
   onFocusChanged = () => {},
@@ -65,6 +67,7 @@ function ListView({
 }: {
   elements: any[];
   factory: (props: Object) => React.ReactNode;
+  style?: CSSProperties;
   selected?: number[];
   focused?: number;
   onFocusChanged?: (index: number) => void;
@@ -79,7 +82,7 @@ function ListView({
   }, [selected, focused]);
 
   return (
-    <div>
+    <div style={{ ...style, width: '100%', height: '100%' }}>
       {elements.map((element: any, index: number) => (
         <Row
           key={`${JSON.stringify(element)}-${index}`}
