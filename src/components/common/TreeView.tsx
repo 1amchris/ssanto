@@ -1,7 +1,10 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+// import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import ColorsUtils from 'utils/colors-utils';
 import { Color, Opacity } from 'enums/Color';
 import { ColorPalette } from 'models/ColorPalette';
+import FilesUtils from 'utils/files-utils';
+import { VscChevronDown, VscChevronRight } from 'react-icons/vsc';
 
 const backgroundColors = {
   active: ColorsUtils.applyOpacity(Color.Primary, Opacity.SevenEighths),
@@ -27,7 +30,15 @@ const textColors = {
   default: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
 } as ColorPalette;
 
-const Row = ({ children, active, focused, onClick, disabled = false }: any) => {
+const TreeHeader = ({
+  label,
+  expanded,
+  active,
+  focused,
+  onClick,
+  indentationLevel = 0,
+  disabled = false,
+}: any) => {
   const [hovered, setHovered] = useState(false);
 
   const options = { active, focused, hovered, disabled };
@@ -45,6 +56,77 @@ const Row = ({ children, active, focused, onClick, disabled = false }: any) => {
       onMouseEnter={() => !disabled && setHovered(true)}
       onMouseLeave={() => !disabled && setHovered(false)}
       style={{
+        paddingLeft: indentationLevel * 8,
+        color: row.color,
+        background: row.backgroundColor,
+        border: `1px solid ${row.borderColor || 'transparent'}`,
+        cursor: row.cursor,
+      }}
+    >
+      {expanded ? <VscChevronDown /> : <VscChevronRight />} {label}
+    </div>
+  );
+};
+
+const TreeNode = ({
+  node,
+  label,
+  factory,
+  indentationLevel = 0,
+  disabled = false,
+}: any) => {
+  const [expanded, setExpanded] = useState(true);
+
+  return (
+    <div className="w-100">
+      <TreeHeader
+        expanded={expanded}
+        label={label}
+        indentationLevel={indentationLevel}
+        onClick={(e: MouseEvent) => {
+          if (disabled) return;
+          // TODO: the shift/ctrl/meta key should be handled here
+          if (e.shiftKey || e.ctrlKey || e.metaKey) return;
+          setExpanded(!expanded);
+        }}
+      />
+      {expanded && (
+        <TreeView
+          node={node}
+          factory={factory}
+          indentationLevel={indentationLevel + 1}
+        />
+      )}
+    </div>
+  );
+};
+
+const TreeLeaf = ({
+  children,
+  active,
+  focused,
+  indentationLevel = 0,
+  onClick = () => {},
+  disabled = false,
+}: any) => {
+  const [hovered, setHovered] = useState(false);
+
+  const options = { active, focused, hovered, disabled };
+  const row = {
+    cursor: disabled ? 'default' : 'pointer',
+    color: ColorsUtils.getRelevantColor(textColors, options),
+    borderColor: ColorsUtils.getRelevantColor(borderColors, options),
+    backgroundColor: ColorsUtils.getRelevantColor(backgroundColors, options),
+  };
+
+  return (
+    <div
+      className="w-100"
+      onClick={e => !disabled && onClick(e)}
+      onMouseEnter={() => !disabled && setHovered(true)}
+      onMouseLeave={() => !disabled && setHovered(false)}
+      style={{
+        paddingLeft: indentationLevel * 8 - 1,
         color: row.color,
         background: row.backgroundColor,
         border: `1px solid ${row.borderColor || 'transparent'}`,
@@ -58,76 +140,53 @@ const Row = ({ children, active, focused, onClick, disabled = false }: any) => {
 
 function TreeView({
   elements,
+  node,
   factory,
+  indentationLevel = 0,
   style,
-  selected = [],
-  focused = undefined,
-  onFocusChanged = () => {},
-  onSelectionChanged = () => {},
-}: {
-  elements: any[];
+}: // selected = [],
+// focused = undefined,
+// onFocusChanged = () => {},
+// onSelectionChanged = () => {},
+{
+  elements?: any[];
+  node?: any[];
   factory: (props: Object) => React.ReactNode;
+  indentationLevel?: number;
   style?: CSSProperties;
   selected?: number[];
   focused?: number;
   onFocusChanged?: (index: number) => void;
   onSelectionChanged?: (indices: number[]) => void;
 }) {
-  const [selection, setSelection] = useState<number[]>([]);
-  const [focus, setFocus] = useState<number | undefined>();
-
-  useEffect(() => {
-    setSelection(selected);
-    setFocus(focused);
-  }, [selected, focused]);
+  /* remove me when generifying */
+  if (elements) {
+    node = FilesUtils.treeify(elements);
+  }
+  const { folders: nodes, files: leaves } =
+    FilesUtils.splitFoldersAndFiles(node);
 
   return (
     <div style={{ ...style, width: '100%', height: '100%' }}>
-      {elements.map((element: any, index: number) => (
-        <Row
-          key={`${JSON.stringify(element)}-${index}`}
-          active={selection.includes(index)}
-          focused={focus === index}
-          onClick={(e: MouseEvent) => {
-            let newSelection = [];
-
-            // handle shift selection
-            if (e.shiftKey && focus !== undefined) {
-              newSelection = [...selection];
-              const startIndex = Math.min(index, focus);
-              const endIndex = Math.max(index, focus);
-              for (let i = startIndex; i <= endIndex; i++) {
-                if (!newSelection.includes(i)) {
-                  newSelection.push(i);
-                }
-              }
-            }
-            // TODO: Handle Windows/Mac events differently (e.g. ctrl/cmd)
-            // handle ctrl/cmd selection
-            else if (e.ctrlKey || e.metaKey) {
-              const currentIndex = selection.indexOf(index);
-              newSelection =
-                currentIndex === -1
-                  ? [...selection, index]
-                  : selection.filter((n: number) => n !== index);
-            }
-            // handle normal selection
-            else {
-              newSelection = [index];
-            }
-
-            setSelection(newSelection);
-            onSelectionChanged(newSelection);
-
-            setFocus(index);
-            onFocusChanged(index);
-          }}
+      {nodes.map(([label, node]: any, index: number) => (
+        <TreeNode
+          key={index}
+          label={label}
+          node={node}
+          factory={factory}
+          indentationLevel={indentationLevel}
+        />
+      ))}
+      {leaves.map(([_, leaf]: any, index: number) => (
+        <TreeLeaf
+          key={`${JSON.stringify(leaf)}-${index}`}
+          indentationLevel={indentationLevel}
         >
           {factory({
-            ...element,
+            ...leaf,
             orderIndex: index,
           })}
-        </Row>
+        </TreeLeaf>
       ))}
     </div>
   );

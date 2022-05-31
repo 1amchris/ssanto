@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BsTextLeft } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectFiles, setFileSelection, setFocus } from 'store/reducers/files';
 import FilesUtils from 'utils/files-utils';
-import ListView from 'components/common/ListView';
 import FileMetadataModel from 'models/file/FileMetadataModel';
 import NoWorkspaceSelected from 'components/activities/NoWorkspaceSelected';
+// import ListView from 'components/common/ListView';
+import TreeView from 'components/common/TreeView';
 
 function FileRow({ name, relativePath }: any) {
   return (
     <div className="w-100 px-2 text-truncate">
-      <BsTextLeft /> {name} {<i>{relativePath}</i>}
+      {/* <BsTextLeft /> {name} {<i className="text-secondary">{relativePath}</i>} */}
+      <BsTextLeft /> {name}
     </div>
   );
 }
@@ -23,11 +25,6 @@ function FileRow({ name, relativePath }: any) {
 function FileExplorer({ style }: any) {
   const dispatch = useAppDispatch();
   const { files, fileSelection, focusedFile } = useAppSelector(selectFiles);
-
-  useEffect(() => {
-    const treeedFiles = FilesUtils.treeify(files);
-    console.log({ treeedFiles });
-  }, [files]);
 
   const indexedFiles: [FileMetadataModel, number][] =
     FilesUtils.indexFiles(files);
@@ -50,7 +47,9 @@ function FileExplorer({ style }: any) {
     >
       {!files?.length && <NoWorkspaceSelected />}
       {files?.length > 0 && (
-        <ListView
+        <TreeView
+          indentationLevel={2}
+          // <ListView
           elements={files}
           factory={FileRow}
           focused={focused}

@@ -20,7 +20,7 @@ export default class ServerCom {
   // TODO: there should probably be a "isClosed" method [returns if the connection is closed]
   // TODO: there should probably be a "onOpened" subject [returns a promise to subscribe to]
   // TODO: there should probably be a "onClosed" subject [returns a promise to subscribe to]
-  /** 
+  /**
    * @constructor
    */
   constructor() {
