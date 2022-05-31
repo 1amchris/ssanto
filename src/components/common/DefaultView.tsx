@@ -10,7 +10,7 @@ function DefaultView({ style, showTips = true }: any) {
 
   return (
     <div
-      style={{ width: '100%', height: '100%', ...style }}
+      style={{ width: '100%', height: '100%', ...style, userSelect: 'none' }}
       className="d-flex flex-column justify-content-center align-items-center"
       ref={ref}
     >
@@ -23,6 +23,7 @@ function DefaultView({ style, showTips = true }: any) {
           opacity: 0.65,
           filter: 'grayscale(100%)',
         }}
+        draggable={false}
         alt="SSANTO map logo"
       />
       {_showTips && (

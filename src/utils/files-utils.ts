@@ -39,20 +39,26 @@ namespace FilesUtils {
       } as FileMetadataModel;
     });
 
-  // export const treeify = (files: FileMetadataModel[]) => {
-  //   console.log({ files });
-  //   const tree: { [folder: string]: FileMetadataModel[] } = {};
-  //   for (const file of files) {
-  //     const { relativePath } = file;
-  //     if (relativePath === undefined) {
-  //       console.warn(`File ${file.id} has no relative path:`, file);
-  //       continue;
-  //     }
-  //     const key = relativePath.substring(0).replaceAll('/', '.');
-  //     tree[key]
-  //   }
-  //   return tree;
-  // };
+  export const treeify = (files: FileMetadataModel[]) => {
+    return files
+      .filter(file => file.relativePath !== undefined)
+      .reduce((acc: any, file: FileMetadataModel) => {
+        let directory = acc;
+        file
+          .relativePath!.split('/')
+          .slice(0, -1)
+          .forEach(folder => {
+            if (!directory.hasOwnProperty(folder)) {
+              directory[folder] = {};
+            }
+
+            directory = directory[folder];
+          });
+
+        directory[file.name] = file;
+        return acc;
+      }, {});
+  };
 
   export function indexFiles<FileType>(files: FileType[]) {
     return files.map((file, index) => [file, index]) as [FileType, number][];

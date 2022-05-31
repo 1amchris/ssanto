@@ -4,7 +4,7 @@ import { selectActivityBar } from 'store/reducers/activity-bar';
 import { useAppSelector } from 'store/hooks';
 import { ActivityModel } from 'models/ActivityModel';
 import DefaultView from 'components/common/DefaultView';
-import FileExplorer from 'activities/FileExplorer';
+import FileExplorer from 'components/activities/FileExplorer';
 import * as codicons from 'react-icons/vsc';
 
 /**
