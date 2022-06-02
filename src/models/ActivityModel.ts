@@ -1,15 +1,17 @@
+import { Activity as Activity } from 'enums/Activity';
+
 export interface IActivityModel {
-  id: string;
+  id: Activity;
   label: string;
   iconName: string;
 }
 
 export class ActivityModel implements IActivityModel {
-  readonly id: string;
+  readonly id: Activity;
   readonly label: string;
   readonly iconName: string;
 
-  constructor(id: string, label: string, iconName: string) {
+  constructor(id: Activity, label: string, iconName: string) {
     this.id = id;
     this.label = label;
     this.iconName = iconName;

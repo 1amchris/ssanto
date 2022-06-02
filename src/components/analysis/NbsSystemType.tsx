@@ -11,7 +11,7 @@ import {
 import Form from 'components/forms/Form';
 import { Select, Button, Spacer } from 'components/forms/components';
 import { call } from 'store/reducers/server';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 import { Modal } from 'react-bootstrap';
@@ -47,7 +47,7 @@ function NbsSystem({ t, disabled }: any) {
     );
     dispatch(
       call({
-        target: ServerCallTargets.Update,
+        target: ServerCallTarget.Update,
         args: [property, fields],
         onSuccessAction: injectSetLoadingCreator({
           value: property,
@@ -74,7 +74,7 @@ function NbsSystem({ t, disabled }: any) {
           onClick={() => {
             dispatch(
               call({
-                target: ServerCallTargets.SaveProject,
+                target: ServerCallTarget.SaveProject,
                 onSuccessAction: exportData,
                 // TODO: There should probably be an "onErrorAction"
               } as CallModel<void, FileContentModel<string>>)
@@ -129,8 +129,13 @@ function NbsSystem({ t, disabled }: any) {
       }
       tooltip={t('the selected NBS system type ...')}
     />,
-    <Spacer key="nbs-spacer"/>,
-    <Button key="nbs-submit-button" variant="outline-primary" type="submit" loading={isLoading}>
+    <Spacer key="nbs-spacer" />,
+    <Button
+      key="nbs-submit-button"
+      variant="outline-primary"
+      type="submit"
+      loading={isLoading}
+    >
       {capitalize(t('apply'))}
     </Button>,
     <Button key="nbs-reset-button" variant="outline-danger" type="reset">

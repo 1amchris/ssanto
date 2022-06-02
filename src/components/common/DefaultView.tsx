@@ -28,11 +28,11 @@ function DefaultView({ style, showTips = true }: any) {
       />
       {_showTips && (
         <p className="d-flex flex-column text-secondary p-2">
-          <span className="p-1">
+          <span className="p-1 text-center">
             <kbd className="bg-secondary">CMD</kbd> +{' '}
             <kbd className="bg-secondary">O</kbd> to open a project
           </span>
-          <span className="p-1">
+          <span className="p-1 text-center">
             <kbd className="bg-secondary">CMD</kbd> +{' '}
             <kbd className="bg-secondary">Q</kbd> to close SSanto
           </span>

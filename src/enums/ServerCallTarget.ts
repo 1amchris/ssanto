@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-enum ServerCallTargets {
+
+enum ServerCallTarget {
   Update = 'update',
   UpdateSuitabilityThreshold = 'analysis.update_suitability_threshold',
   ExportTiff = 'analysis.export_tiff',
@@ -22,4 +23,4 @@ enum ServerCallTargets {
   GuideGet = 'guide.get',
 }
 
-export default ServerCallTargets;
+export default ServerCallTarget;

@@ -10,7 +10,7 @@ import {
 } from 'store/reducers/analysis';
 import { Button } from 'components/forms/components';
 import CallModel from 'models/server-coms/CallModel';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import LoadingValue from 'models/LoadingValue';
 import { Modal } from 'react-bootstrap';
 
@@ -58,7 +58,7 @@ function FormsBar({ children, className, t }: any, key?: string) {
                 );
                 dispatch(
                   call({
-                    target: ServerCallTargets.ComputeSuitability,
+                    target: ServerCallTarget.ComputeSuitability,
                     onErrorAction: injectSetErrorCreator('analysis'),
                   } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
                 );

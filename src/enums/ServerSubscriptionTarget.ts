@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-enum ServerSubscriptionTargets {
+
+enum ServerSubscriptionTarget {
   FileManagerFiles = 'file_manager.files',
   FileManagerShapefiles = 'file_manager.shapefiles',
   MapCursor = 'map.cursor',
@@ -19,4 +20,4 @@ enum ServerSubscriptionTargets {
   AnalysisGraphSuitabilityAboveThreshold = 'analysis.visualization.suitability_above_threshold',
 }
 
-export default ServerSubscriptionTargets;
+export default ServerSubscriptionTarget;

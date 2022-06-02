@@ -5,7 +5,7 @@ import { exportData } from 'store/reducers/export';
 import { Action, Divider, ImportFile, ImportFolder, Link } from './components';
 import { call } from 'store/reducers/server';
 import Menu from './Menu';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import FilesUtils from 'utils/files-utils';
 import { selectMap } from 'store/reducers/map';
@@ -37,7 +37,7 @@ function MenuBar({ style }: any) {
           FilesUtils.extractContentFromFiles([file]).then(file => {
             dispatch(
               call({
-                target: ServerCallTargets.OpenProject,
+                target: ServerCallTarget.OpenProject,
                 args: [file[0].content],
                 onSuccessAction: loadingFileComplete,
                 onErrorAction: loadingFileComplete,
@@ -60,7 +60,7 @@ function MenuBar({ style }: any) {
         onClick={() =>
           dispatch(
             call({
-              target: ServerCallTargets.SaveProject,
+              target: ServerCallTarget.SaveProject,
               onSuccessAction: exportData,
               // TODO: There should probably be an "onErrorAction"
             } as CallModel<void, FileContentModel<string>>)
@@ -86,7 +86,7 @@ function MenuBar({ style }: any) {
         onClick={() =>
           dispatch(
             call({
-              target: ServerCallTargets.ExportTiff,
+              target: ServerCallTarget.ExportTiff,
               args: ['analysis'],
               onSuccessAction: exportData,
               // TODO: There should probably be an "onErrorAction"

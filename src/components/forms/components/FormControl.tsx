@@ -16,7 +16,7 @@ class FormControl extends FormComponent {
    * @param {any} props .prefix is a ReactElement which will be prepended to the input control
    *              .suffix is a ReactElement which will be appended to the input control
    * @param {string} [key] Key name
-   */  
+   */
   constructor(props: any, key?: string) {
     super(props, uniqueId('form/control-'), key);
   }

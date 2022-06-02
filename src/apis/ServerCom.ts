@@ -79,16 +79,16 @@ export default class ServerCom {
     // Debug purpose
     // console.log('onMessage subject', received);
 
-    if (received.type === SendType.SUBJECT) {
+    if (received.type === SendType.Subject) {
       this.subjectListeners
         .get(received.data.subject)
         ?.call(null, received.data.data);
-    } else if (received.type === SendType.CALL) {
+    } else if (received.type === SendType.Call) {
       this.callListeners
         .get(received.data.call)
         ?.call(null, true, received.data.data);
       this.callListeners.delete(received.data.call);
-    } else if (received.type === SendType.ERROR) {
+    } else if (received.type === SendType.Error) {
       this.callListeners
         .get(received.data.call)
         ?.call(null, false, received.data.data);

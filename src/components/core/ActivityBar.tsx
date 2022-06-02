@@ -1,4 +1,5 @@
 import { Color, Opacity } from 'enums/Color';
+import { ColorPalette } from 'models/ColorPalette';
 import React, { useState } from 'react';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { IconBaseProps, IconType } from 'react-icons';
@@ -10,51 +11,34 @@ import ColorsUtils from 'utils/colors-utils';
 const backgroundColors = {
   disabled: ColorsUtils.applyOpacity(Color.LightGray, Opacity.Half),
   focused: undefined,
-  activated: undefined,
-  default: undefined,
-};
+  active: undefined,
+  default: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
+} as ColorPalette;
 
 const borderColors = {
   disabled: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
   focused: undefined,
-  activated: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
+  active: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
   default: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
-};
+} as ColorPalette;
 
 const iconColors = {
   disabled: ColorsUtils.applyOpacity(Color.Gray, Opacity.ThreeQuarters),
   focused: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
-  activated: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
+  active: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
   default: ColorsUtils.applyOpacity(Color.Gray, Opacity.Opaque),
-};
+} as ColorPalette;
 
 function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {
   const [focused, setFocused] = useState(false);
 
+  const options = { active, disabled, focused };
   const activity = {
     size: '48px',
     cursor: disabled ? 'default' : 'pointer',
-    color: focused
-      ? iconColors.focused
-      : active
-      ? iconColors.activated
-      : disabled
-      ? iconColors.disabled
-      : iconColors.default,
-    borderColor: focused
-      ? borderColors.focused
-      : active
-      ? borderColors.activated
-      : disabled
-      ? borderColors.disabled
-      : borderColors.default,
-    backgroundColor: focused
-      ? backgroundColors.focused
-      : active
-      ? backgroundColors.activated
-      : disabled
-      ? backgroundColors.disabled
-      : backgroundColors.default,
+    color: ColorsUtils.getRelevantColor(iconColors, options),
+    borderColor: ColorsUtils.getRelevantColor(borderColors, options),
+    backgroundColor: ColorsUtils.getRelevantColor(backgroundColors, options),
   };
 
   const iconBaseProps: IconBaseProps = {

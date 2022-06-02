@@ -10,7 +10,7 @@ import {
 import { withTranslation } from 'react-i18next';
 import Form from 'components/forms/Form';
 import { call } from 'store/reducers/server';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
@@ -68,8 +68,13 @@ function Parameters({ t, disabled }: any) {
       type="number"
       tooltip={t('the cell size is ...')}
     />,
-    <Spacer key="spacer"/>,
-    <Button key="apply-button" variant="outline-primary" type="submit" loading={isLoading}>
+    <Spacer key="spacer" />,
+    <Button
+      key="apply-button"
+      variant="outline-primary"
+      type="submit"
+      loading={isLoading}
+    >
       {capitalize(t('apply'))}
     </Button>,
     <Button key="reset-button" variant="outline-danger" type="reset">
@@ -91,7 +96,7 @@ function Parameters({ t, disabled }: any) {
         );
         dispatch(
           call({
-            target: ServerCallTargets.Update,
+            target: ServerCallTarget.Update,
             args: [property, { ...properties, ...fields }],
             onSuccessAction: injectSetLoadingCreator({
               value: property,

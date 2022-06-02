@@ -6,7 +6,7 @@ import { removeLayer, selectMap, upsertLayer } from 'store/reducers/map';
 import { Layer, Layers, LayersUpdateGroups } from 'models/map/Layers';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { useEffect, useRef } from 'react';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import { call } from 'store/reducers/server';
 import CallModel from 'models/server-coms/CallModel';
 import { InsertLayerModel } from 'models/map/InsertLayerModel';
@@ -80,7 +80,7 @@ const LayersGroups = ({ t }: any) => {
     for (const layer of toAdd) {
       dispatch(
         call({
-          target: ServerCallTargets.GetLayer,
+          target: ServerCallTarget.GetLayer,
           args: [layer[0], layer[1]],
           onSuccessAction: upsertLayer,
         } as CallModel<string[], InsertLayerModel, void, void, void>)

@@ -22,7 +22,7 @@ import {
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 import DatasetModel, {
   DefaultDataset,
@@ -964,7 +964,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           );
           dispatch(
             call({
-              target: ServerCallTargets.Update,
+              target: ServerCallTarget.Update,
               args: [property, oh],
               onSuccessAction: injectSetLoadingCreator({
                 value: property,

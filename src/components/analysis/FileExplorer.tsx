@@ -17,7 +17,7 @@ import {
 import FileMetadataModel from 'models/file/FileMetadataModel';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import FileContentModel from 'models/file/FileContentModel';
 
 const FileRowFactory = ({
@@ -69,7 +69,12 @@ function FileExplorer({ t, disabled }: any) {
         t('the selected files will be uploaded to the server for further use.')
       )}
     />,
-    <Button key="add-button" variant="outline-primary" type="submit" loading={isLoading}>
+    <Button
+      key="add-button"
+      variant="outline-primary"
+      type="submit"
+      loading={isLoading}
+    >
       {capitalize(t('add'))}
     </Button>,
     files?.length > 0 && <Spacer />,
@@ -88,7 +93,7 @@ function FileExplorer({ t, disabled }: any) {
           );
           dispatch(
             call({
-              target: ServerCallTargets.FileManagerRemoveFile,
+              target: ServerCallTarget.FileManagerRemoveFile,
               args: [(files[index] as FileMetadataModel).name],
               onSuccessAction: injectSetLoadingCreator({
                 value: property,
@@ -121,7 +126,7 @@ function FileExplorer({ t, disabled }: any) {
           files =>
             dispatch(
               call({
-                target: ServerCallTargets.FileManagerAddFiles,
+                target: ServerCallTarget.FileManagerAddFiles,
                 args: files,
                 onSuccessAction: injectSetLoadingCreator({
                   value: property,

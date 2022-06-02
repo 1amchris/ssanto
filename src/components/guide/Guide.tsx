@@ -11,7 +11,7 @@ import CategoryLinks from 'components/guide/CategoryLinks';
 import { call } from 'store/reducers/server';
 import { useEffectOnce } from 'hooks';
 import CallModel from 'models/server-coms/CallModel';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 
 /**
  * Guide component.
@@ -25,7 +25,7 @@ function Guide({ t }: any) {
   useEffectOnce(() => {
     dispatch(
       call({
-        target: ServerCallTargets.GuideGet,
+        target: ServerCallTarget.GuideGet,
         onSuccessAction: updateCategories,
       } as CallModel)
     );
@@ -46,37 +46,35 @@ function Guide({ t }: any) {
         <aside className="h-100 bg-light border-end">
           <nav>
             <ul className="list-unstyled py-3 mb-0">
-              {
-                [
-                  <Link
-                    key="link"
-                    to="/"
-                    className="text-decoration-none text-muted small"
+              {[
+                <Link
+                  key="link"
+                  to="/"
+                  className="text-decoration-none text-muted small"
+                >
+                  <FcPrevious className="me-1" />
+                  <span>{capitalize(t('return'))}</span>
+                </Link>,
+                categories.length > 0 && (
+                  <CategoryLinks
+                    style={{
+                      overflow: 'auto',
+                      height: 'calc(100vh - 24px - 40px - 33px)',
+                    }}
                   >
-                    <FcPrevious className="me-1" />
-                    <span>{capitalize(t('return'))}</span>
-                  </Link>,
-                  categories.length > 0 && (
-                    <CategoryLinks
-                      style={{
-                        overflow: 'auto',
-                        height: 'calc(100vh - 24px - 40px - 33px)',
-                      }}
-                    >
-                      {categories}
-                    </CategoryLinks>
-                  ),
-                ]
-                  .filter(children => children)
-                  .map((child, index: number) => (
-                    <li
-                      key={`navigation/item-${index}`}
-                      className="ps-3 pb-2 border-bottom"
-                    >
-                      {child}
-                    </li>
-                  ))
-              }
+                    {categories}
+                  </CategoryLinks>
+                ),
+              ]
+                .filter(children => children)
+                .map((child, index: number) => (
+                  <li
+                    key={`navigation/item-${index}`}
+                    className="ps-3 pb-2 border-bottom"
+                  >
+                    {child}
+                  </li>
+                ))}
             </ul>
           </nav>
         </aside>

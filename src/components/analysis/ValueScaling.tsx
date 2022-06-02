@@ -19,7 +19,7 @@ import {
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 import Collapsible from 'components/Collapsible';
 import ValueScalingProperties from 'models/DatasetModel';
@@ -246,7 +246,7 @@ function ValueScaling({ t, disabled }: any) {
           secondaries: objectives.primaries.secondaries[index],
         }))}
     />,
-    <Spacer key="spacer"/>,
+    <Spacer key="spacer" />,
     <Button key="apply" variant="outline-primary" loading={isLoading}>
       {capitalize(t('apply'))}
     </Button>,
@@ -267,7 +267,7 @@ function ValueScaling({ t, disabled }: any) {
         );
         dispatch(
           call({
-            target: ServerCallTargets.Update,
+            target: ServerCallTarget.Update,
             args: [property, merge(objectives, fields)],
             onSuccessAction: injectSetLoadingCreator({
               value: property,

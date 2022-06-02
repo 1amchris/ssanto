@@ -23,7 +23,7 @@ import {
 import { MapCursorInformationsModel } from 'models/map/MapCursorInformationsModel';
 import { LatLong } from 'models/map/LatLong';
 import SuitabilityCategoriesModel from 'models/map/SuitabilityCategoriesModel';
-import ServerSubscriptionTargets from 'enums/ServerSubscriptionTargets';
+import ServerSubscriptionTarget from 'enums/ServerSubscriptionTarget';
 import { LayersGroups } from 'models/map/Layers';
 
 /**
@@ -37,102 +37,102 @@ function App() {
     dispatch(openConnection());
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.FileManagerFiles,
+        subject: ServerSubscriptionTarget.FileManagerFiles,
         onAction: injectReceivePropertiesCreator('files'),
       } as SubscriptionModel<string, string>)
     );
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.FileManagerShapefiles,
+        subject: ServerSubscriptionTarget.FileManagerShapefiles,
         onAction: injectReceivePropertiesCreator('shapefiles'),
       } as SubscriptionModel<string, string>)
     );
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.MapCursor,
+        subject: ServerSubscriptionTarget.MapCursor,
         onAction: updateCursor,
       } as SubscriptionModel<LatLong>)
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.MapCursorInformations,
+        subject: ServerSubscriptionTarget.MapCursorInformations,
         onAction: updateCursorInformations,
       } as SubscriptionModel<MapCursorInformationsModel>)
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.Layer,
+        subject: ServerSubscriptionTarget.Layer,
         onAction: updateLayers,
       } as SubscriptionModel<LayersGroups, void>)
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.MapCenter,
+        subject: ServerSubscriptionTarget.MapCenter,
         onAction: updateLocation,
       } as SubscriptionModel<LatLong>)
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.AnalysisResult,
+        subject: ServerSubscriptionTarget.AnalysisResult,
         onAction: analysisSuccess,
       } as SubscriptionModel<LayersGroups, void>)
     );
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.SubAnalysisResult,
+        subject: ServerSubscriptionTarget.SubAnalysisResult,
         onAction: subAnalysisSuccess,
       } as SubscriptionModel<LayersGroups[], void>)
     );
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.AnalysisParameters,
+        subject: ServerSubscriptionTarget.AnalysisParameters,
         onAction: injectReceivePropertiesCreator('parameters'),
       } as SubscriptionModel<string, string>)
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.AnalysisStudyArea,
+        subject: ServerSubscriptionTarget.AnalysisStudyArea,
         onAction: injectReceivePropertiesCreator('study_area'),
       } as SubscriptionModel<string, any>)
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.AnalysisNbsSystem,
+        subject: ServerSubscriptionTarget.AnalysisNbsSystem,
         onAction: injectReceivePropertiesCreator('nbs_system'),
       } as SubscriptionModel<string, string>)
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.AnalysisObjectivesData,
+        subject: ServerSubscriptionTarget.AnalysisObjectivesData,
         onAction: injectReceivePropertiesCreator('objectives_data'),
       } as SubscriptionModel<string, string>)
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.AnalysisObjectives,
+        subject: ServerSubscriptionTarget.AnalysisObjectives,
         onAction: injectReceivePropertiesCreator('objectives'),
       } as SubscriptionModel<string, string>)
     );
     dispatch(
       subscribe({
         subject:
-          ServerSubscriptionTargets.AnalysisGraphSuitabilityAboveThreshold,
+          ServerSubscriptionTarget.AnalysisGraphSuitabilityAboveThreshold,
         onAction: updateSuitabilityAboveThreshold,
       } as SubscriptionModel<number>)
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.AnalysisGraphSuitabilityThreshold,
+        subject: ServerSubscriptionTarget.AnalysisGraphSuitabilityThreshold,
         onAction: updateSuitabilityThreshold,
       } as SubscriptionModel<number>)
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTargets.AnalysisGraphSuitabilityCategories,
+        subject: ServerSubscriptionTarget.AnalysisGraphSuitabilityCategories,
         onAction: updateSuitabilityCategories,
       } as SubscriptionModel<SuitabilityCategoriesModel>)
     );

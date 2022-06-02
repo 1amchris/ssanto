@@ -6,7 +6,7 @@ import Form from 'components/forms/Form';
 import { capitalize, round } from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { call } from 'store/reducers/server';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 
 /**
@@ -56,7 +56,7 @@ function MapSuitabilityAboveThreshold({ t }: any) {
         onSubmit={(fields: any) => {
           dispatch(
             call({
-              target: ServerCallTargets.UpdateSuitabilityThreshold,
+              target: ServerCallTarget.UpdateSuitabilityThreshold,
               args: [fields.suitability_threshold],
             } as CallModel<[number]>)
           );

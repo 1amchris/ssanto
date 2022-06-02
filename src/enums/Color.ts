@@ -1,7 +1,5 @@
 /* eslint-disable no-unused-vars */
 
-import ColorsUtils from 'utils/colors-utils';
-
 export enum Color {
   // Eventful
   Primary = '#0d6efd',

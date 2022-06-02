@@ -5,11 +5,10 @@ import { useAppSelector, useAppDispatch } from 'store/hooks';
 import { selectMap } from 'store/reducers/map';
 import { call } from 'store/reducers/server';
 import LayersGroups from 'components/map/LayersGroups';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
-
 
 /**
  * Interactive map container component.
@@ -25,13 +24,13 @@ function InteractiveMapContainer({ className, style, id }: any) {
       click(e) {
         dispatch(
           call({
-            target: ServerCallTargets.GetCellSuitability,
+            target: ServerCallTarget.GetCellSuitability,
             args: [{ lat: e.latlng.lat, long: e.latlng.lng }],
           } as CallModel<[Object], void, LoadingValue<string>, string, string>)
         );
         dispatch(
           call({
-            target: ServerCallTargets.MapSetCursor,
+            target: ServerCallTarget.MapSetCursor,
             args: [e.latlng.lat, e.latlng.lng],
           } as CallModel<[number, number], void, void, string, string>)
         );

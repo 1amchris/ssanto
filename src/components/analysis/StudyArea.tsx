@@ -10,7 +10,7 @@ import {
 import Form from 'components/forms/Form';
 import { Control, Button, Spacer, Select } from 'components/forms/components';
 import { call } from 'store/reducers/server';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
 import { selectMap } from 'store/reducers/map';
@@ -51,7 +51,7 @@ function StudyArea({ t, disabled }: any) {
     );
     dispatch(
       call({
-        target: ServerCallTargets.UpdateStudyAreaFiles,
+        target: ServerCallTarget.UpdateStudyAreaFiles,
         args: [fields.study_area_file],
         onSuccessAction: injectSetLoadingCreator({
           value: property,
@@ -78,7 +78,7 @@ function StudyArea({ t, disabled }: any) {
           onClick={() => {
             dispatch(
               call({
-                target: ServerCallTargets.SaveProject,
+                target: ServerCallTarget.SaveProject,
                 onSuccessAction: exportData,
                 // TODO: There should probably be an "onErrorAction"
               } as CallModel<void, FileContentModel<string>>)
@@ -130,7 +130,12 @@ function StudyArea({ t, disabled }: any) {
       options={filesChoices}
     />,
     <Spacer key="spacer" />,
-    <Button key="apply" variant="outline-primary" type="submit" loading={isLoading}>
+    <Button
+      key="apply"
+      variant="outline-primary"
+      type="submit"
+      loading={isLoading}
+    >
       {capitalize(t('apply'))}
     </Button>,
   ];

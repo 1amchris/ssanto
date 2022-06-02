@@ -19,7 +19,7 @@ import {
 import { FactoryProps } from 'components/forms/components/FormExpandableList';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import ObjectivesHierarchyModel from 'models/AnalysisObjectivesModel';
 
 interface WeightsHierarchy {
@@ -69,7 +69,6 @@ const merge = (
  * @return {WeightsHierarchy} The normalized weight.
  */
 function normalizeWeights({ primaries }: WeightsHierarchy): WeightsHierarchy {
-
   /**
    * Normalization function.
    * @param {number[]} weights Input weights.
@@ -219,7 +218,7 @@ function Weighting({ t, disabled }: any) {
 
         dispatch(
           call({
-            target: ServerCallTargets.Update,
+            target: ServerCallTarget.Update,
             args: [property, merge(objectives, normalizeWeights(fields))],
             onSuccessAction: injectSetLoadingCreator({
               value: property,
