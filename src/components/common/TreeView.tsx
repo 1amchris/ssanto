@@ -1,10 +1,7 @@
-// import React, { CSSProperties, useEffect, useState } from 'react';
-import React, { MouseEvent, useState } from 'react';
+import React, { CSSProperties, MouseEvent, useState } from 'react';
 import ColorsUtils from 'utils/colors-utils';
 import { Color, Opacity } from 'enums/Color';
 import { ColorPalette } from 'models/ColorPalette';
-// import FileMetadataModel from 'models/file/FileMetadataModel';
-// import FolderMetadataModel from 'models/file/FolderMetadataModel';
 import { VscChevronDown, VscChevronRight } from 'react-icons/vsc';
 
 const backgroundColors = {
@@ -36,10 +33,18 @@ const TreeHeader = ({
   expanded,
   active,
   focused,
-  onClick = () => {},
-  indentationLevel = 0,
+  onClick,
+  indentationLevel,
   disabled = false,
-}: any) => {
+}: {
+  label: React.ReactNode;
+  expanded: boolean;
+  active: boolean;
+  focused: boolean;
+  indentationLevel: number;
+  onClick: (e: MouseEvent) => void;
+  disabled?: boolean;
+}) => {
   const [hovered, setHovered] = useState(false);
 
   const options = { active, focused, hovered, disabled };
@@ -73,10 +78,17 @@ const TreeLeaf = ({
   children,
   active,
   focused,
-  indentationLevel = 0,
-  onClick = () => {},
+  onClick,
+  indentationLevel,
   disabled = false,
-}: any) => {
+}: {
+  children: React.ReactNode;
+  active: boolean;
+  focused: boolean;
+  indentationLevel: number;
+  disabled?: boolean;
+  onClick: (e: MouseEvent) => void;
+}) => {
   const [hovered, setHovered] = useState(false);
 
   const options = { active, focused, hovered, disabled };
@@ -111,15 +123,28 @@ const TreeNode = ({
   factory,
   selection,
   focus,
+  indentationLevel,
   onClick,
   getIdentifier,
   getNodesAndLeaves,
-  indentationLevel = 0,
   noHeader = false,
   disabled = false,
-}: any) => {
-  const expandedDefault = true;
-  const [expanded, setExpanded] = useState(noHeader || expandedDefault);
+}: {
+  node: any;
+  factory: (props: any) => React.ReactNode;
+  selection: any[];
+  focus: any;
+  indentationLevel: number;
+  noHeader?: boolean;
+  disabled?: boolean;
+  onClick: (e: MouseEvent, element: any) => void;
+  getIdentifier: (node: any) => any;
+  getNodesAndLeaves: (node: any) => {
+    nodes: any[] | undefined;
+    leaves: any[] | undefined;
+  };
+}) => {
+  const [expanded, setExpanded] = useState(noHeader);
 
   const { nodes, leaves } = getNodesAndLeaves(node);
 
@@ -144,7 +169,7 @@ const TreeNode = ({
       )}
       {expanded && (
         <React.Fragment>
-          {nodes.map((node: any, index: number) => (
+          {nodes?.map((node: any, index: number) => (
             <TreeNode
               key={index}
               node={node}
@@ -157,7 +182,7 @@ const TreeNode = ({
               onClick={onClick}
             />
           ))}
-          {leaves.map((leaf: any, index: number) => (
+          {leaves?.map((leaf: any, index: number) => (
             <TreeLeaf
               key={`${JSON.stringify(leaf)}-${index}`}
               active={
@@ -190,20 +215,34 @@ function TreeView({
   focused = undefined,
   indentationLevel = 0,
   getIdentifier = (element?: any) => element?.id,
-  getNodesAndLeaves = (element: any) => ({
-    nodes: element.nodes,
-    leaves: element.leaves,
+  getNodesAndLeaves = (element?: any) => ({
+    nodes: element?.nodes,
+    leaves: element?.leaves,
   }),
   onFocusChanged = () => {},
   onSelectionChanged = () => {},
-}: any) {
+}: {
+  node: any;
+  factory: (props: any) => React.ReactNode;
+  style?: CSSProperties;
+  selected?: any[];
+  focused?: any | undefined;
+  indentationLevel?: number;
+  getIdentifier?: (element?: any) => any | undefined;
+  getNodesAndLeaves?: (element?: any) => {
+    nodes: any[] | undefined;
+    leaves: any[] | undefined;
+  };
+  onFocusChanged?: (focus: any) => void;
+  onSelectionChanged?: (selection: any[]) => void;
+}) {
   const [selection, setSelection] = useState<any[]>(selected);
   const [focus, setFocus] = useState<any | undefined>(focused);
 
   function flatten(root: any): /* leaves */ any[] {
     const { nodes, leaves } = getNodesAndLeaves(root);
 
-    return []
+    return ([] as any[])
       .concat(
         nodes?.reduce(
           (acc: any[], node: any) => acc.concat(node, flatten(node)),
