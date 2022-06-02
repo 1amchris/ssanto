@@ -23,27 +23,22 @@ function FileSearcher({ style }: any) {
   );
 
   const FileRow = ({ name, relativePath }: any) => {
-    const normalizedName = name.toLowerCase();
-    const normalizedSearch = search.toLowerCase();
-
-    const startOfHighlight = normalizedName.indexOf(normalizedSearch);
+    const startOfHighlight = name.toLowerCase().indexOf(search.toLowerCase());
     const endOfHighlight = startOfHighlight + search.length;
-
-    const beforeHighlight = name.substring(0, startOfHighlight);
-    const highlight = name.substring(startOfHighlight, endOfHighlight);
-    const afterHighlight = name.substring(endOfHighlight);
 
     return (
       <div className="w-100 px-2 text-truncate">
-        <BsTextLeft /> {beforeHighlight}
-        <mark className="px-0 bg-warning">{highlight}</mark>
-        {afterHighlight} {<i className="text-secondary">{relativePath}</i>}
+        <BsTextLeft /> {name.substring(0, startOfHighlight)}
+        <mark className="px-0 bg-warning">
+          {name.substring(startOfHighlight, endOfHighlight)}
+        </mark>
+        {name.substring(endOfHighlight)}{' '}
+        {<i className="text-secondary">{relativePath}</i>}
       </div>
     );
   };
 
   const handleSearch = (value: string) => {
-    console.log({ value });
     setSearch(value);
 
     const normalizedValue = value.toLowerCase();
