@@ -8,28 +8,28 @@ export const filesSlice = createSlice({
   initialState: {
     files: [] as FileMetadataModel[],
     fileSelection: [] as string[],
-    focusedFile: null as string | null,
+    focusedFile: undefined as string | undefined,
   },
   reducers: {
     setWorkspace: (
       state,
       { payload: files }: PayloadAction<FileMetadataModel[]>
     ) => {
-      state.files = sortBy(files, 'absolutePath');
+      state.files = sortBy(files, 'uri');
     },
-    setFocus: (state, { payload: fileId }: PayloadAction<string>) => {
-      state.focusedFile = fileId;
+    setFocus: (state, { payload: uri }: PayloadAction<string>) => {
+      state.focusedFile = uri;
     },
     setFileSelection: (
       state,
-      { payload: fileIds }: PayloadAction<string[]>
+      { payload: fileUris }: PayloadAction<string[]>
     ) => {
-      state.fileSelection = fileIds;
+      state.fileSelection = fileUris;
     },
     resetWorkspace: state => {
       state.files = [];
       state.fileSelection = [];
-      state.focusedFile = null;
+      state.focusedFile = undefined;
     },
   },
 });

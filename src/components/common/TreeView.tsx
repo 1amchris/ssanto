@@ -1,9 +1,10 @@
 // import React, { CSSProperties, useEffect, useState } from 'react';
-import React, { CSSProperties, useState } from 'react';
+import React, { MouseEvent, useState } from 'react';
 import ColorsUtils from 'utils/colors-utils';
 import { Color, Opacity } from 'enums/Color';
 import { ColorPalette } from 'models/ColorPalette';
-import FilesUtils from 'utils/files-utils';
+// import FileMetadataModel from 'models/file/FileMetadataModel';
+// import FolderMetadataModel from 'models/file/FolderMetadataModel';
 import { VscChevronDown, VscChevronRight } from 'react-icons/vsc';
 
 const backgroundColors = {
@@ -35,7 +36,7 @@ const TreeHeader = ({
   expanded,
   active,
   focused,
-  onClick,
+  onClick = () => {},
   indentationLevel = 0,
   disabled = false,
 }: any) => {
@@ -64,39 +65,6 @@ const TreeHeader = ({
       }}
     >
       {expanded ? <VscChevronDown /> : <VscChevronRight />} {label}
-    </div>
-  );
-};
-
-const TreeNode = ({
-  node,
-  label,
-  factory,
-  indentationLevel = 0,
-  disabled = false,
-}: any) => {
-  const [expanded, setExpanded] = useState(true);
-
-  return (
-    <div className="w-100">
-      <TreeHeader
-        expanded={expanded}
-        label={label}
-        indentationLevel={indentationLevel}
-        onClick={(e: MouseEvent) => {
-          if (disabled) return;
-          // TODO: the shift/ctrl/meta key should be handled here
-          if (e.shiftKey || e.ctrlKey || e.metaKey) return;
-          setExpanded(!expanded);
-        }}
-      />
-      {expanded && (
-        <TreeView
-          node={node}
-          factory={factory}
-          indentationLevel={indentationLevel + 1}
-        />
-      )}
     </div>
   );
 };
@@ -138,56 +106,164 @@ const TreeLeaf = ({
   );
 };
 
-function TreeView({
-  elements,
+const TreeNode = ({
   node,
   factory,
+  selection,
+  focus,
+  onClick,
+  getIdentifier,
+  getNodesAndLeaves,
   indentationLevel = 0,
+  noHeader = false,
+  disabled = false,
+}: any) => {
+  const expandedDefault = true;
+  const [expanded, setExpanded] = useState(noHeader || expandedDefault);
+
+  const { nodes, leaves } = getNodesAndLeaves(node);
+
+  return (
+    <div className="w-100">
+      {!noHeader && (
+        <TreeHeader
+          expanded={expanded}
+          label={node.name}
+          active={selection.includes(getIdentifier(node))}
+          focused={focus === getIdentifier(node)}
+          indentationLevel={indentationLevel}
+          onClick={(e: MouseEvent) => {
+            if (disabled) return;
+            onClick(e, node);
+
+            if (!(e.shiftKey || e.ctrlKey || e.metaKey)) {
+              setExpanded(!expanded);
+            }
+          }}
+        />
+      )}
+      {expanded && (
+        <React.Fragment>
+          {nodes.map((node: any, index: number) => (
+            <TreeNode
+              key={index}
+              node={node}
+              focus={focus}
+              selection={selection}
+              indentationLevel={indentationLevel + 1}
+              factory={factory}
+              getIdentifier={getIdentifier}
+              getNodesAndLeaves={getNodesAndLeaves}
+              onClick={onClick}
+            />
+          ))}
+          {leaves.map((leaf: any, index: number) => (
+            <TreeLeaf
+              key={`${JSON.stringify(leaf)}-${index}`}
+              active={
+                getIdentifier(leaf) !== undefined &&
+                selection.includes(getIdentifier(leaf))
+              }
+              focused={focus !== undefined && focus === getIdentifier(leaf)}
+              indentationLevel={indentationLevel}
+              onClick={(e: MouseEvent) => {
+                onClick(e, leaf);
+              }}
+            >
+              {factory({
+                ...leaf,
+                orderIndex: index,
+              })}
+            </TreeLeaf>
+          ))}
+        </React.Fragment>
+      )}
+    </div>
+  );
+};
+
+function TreeView({
+  node,
+  factory,
   style,
-}: // selected = [],
-// focused = undefined,
-// onFocusChanged = () => {},
-// onSelectionChanged = () => {},
-{
-  elements?: any[];
-  node?: any[];
-  factory: (props: Object) => React.ReactNode;
-  indentationLevel?: number;
-  style?: CSSProperties;
-  selected?: number[];
-  focused?: number;
-  onFocusChanged?: (index: number) => void;
-  onSelectionChanged?: (indices: number[]) => void;
-}) {
-  /* remove me when generifying */
-  if (elements) {
-    node = FilesUtils.treeify(elements);
+  selected = [],
+  focused = undefined,
+  indentationLevel = 0,
+  getIdentifier = (element?: any) => element?.id,
+  getNodesAndLeaves = (element: any) => ({
+    nodes: element.nodes,
+    leaves: element.leaves,
+  }),
+  onFocusChanged = () => {},
+  onSelectionChanged = () => {},
+}: any) {
+  const [selection, setSelection] = useState<any[]>(selected);
+  const [focus, setFocus] = useState<any | undefined>(focused);
+
+  function flatten(root: any): /* leaves */ any[] {
+    const { nodes, leaves } = getNodesAndLeaves(root);
+
+    return []
+      .concat(
+        nodes?.reduce(
+          (acc: any[], node: any) => acc.concat(node, flatten(node)),
+          []
+        ),
+        leaves
+      )
+      .filter((e: any) => getIdentifier(e) !== undefined);
   }
-  const { folders: nodes, files: leaves } =
-    FilesUtils.splitFoldersAndFiles(node);
+  const uris = flatten(node).map(getIdentifier);
 
   return (
     <div style={{ ...style, width: '100%', height: '100%' }}>
-      {nodes.map(([label, node]: any, index: number) => (
-        <TreeNode
-          key={index}
-          label={label}
-          node={node}
-          factory={factory}
-          indentationLevel={indentationLevel}
-        />
-      ))}
-      {leaves.map(([_, leaf]: any, index: number) => (
-        <TreeLeaf
-          key={`${JSON.stringify(leaf)}-${index}`}
-          indentationLevel={indentationLevel}
-        >
-          {factory({
-            ...leaf,
-            orderIndex: index,
-          })}
-        </TreeLeaf>
-      ))}
+      <TreeNode
+        noHeader
+        node={node}
+        focus={focus}
+        selection={selection}
+        indentationLevel={indentationLevel}
+        factory={factory}
+        getIdentifier={getIdentifier}
+        getNodesAndLeaves={getNodesAndLeaves}
+        onClick={(e: MouseEvent, element: any) => {
+          let newSelection = [];
+          const elementId = getIdentifier(element);
+
+          // handle shift selection
+          if (e.shiftKey && focus !== undefined) {
+            newSelection = [...selection];
+            const indexOfFocused = uris.findIndex(uri => uri === focus);
+            const index = uris.findIndex(uri => uri === elementId);
+            const startIndex = Math.max(0, Math.min(index, indexOfFocused));
+            const endIndex = Math.max(index, indexOfFocused);
+            for (let i = startIndex; i <= endIndex; i++) {
+              if (!newSelection.includes(uris[i])) {
+                newSelection.push(uris[i]);
+              }
+            }
+          }
+          // TODO: Handle Windows/Mac events differently (e.g. ctrl/cmd)
+          // handle ctrl/cmd selection
+          else if (e.ctrlKey || e.metaKey) {
+            const currentIndex = selection.indexOf(elementId);
+            newSelection =
+              currentIndex === -1
+                ? [...selection, elementId]
+                : selection.filter(id => id !== elementId);
+          }
+          // handle normal selection
+          else {
+            newSelection = [elementId];
+          }
+
+          setSelection(newSelection);
+          onSelectionChanged(newSelection);
+
+          setFocus(elementId);
+          onFocusChanged(elementId);
+        }}
+      />
     </div>
   );
 }

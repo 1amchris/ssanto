@@ -1,7 +1,7 @@
 import FileContentModel from 'models/file/FileContentModel';
 import FileMetadataModel from 'models/file/FileMetadataModel';
+import FolderMetadataModel from 'models/file/FolderMetadataModel';
 import { encode } from 'base64-arraybuffer';
-import { uniqueId } from 'lodash';
 
 namespace FilesUtils {
   // Extracts data from files and encodes it in base64
@@ -29,52 +29,60 @@ namespace FilesUtils {
     Array.from(files).map(file => {
       const indexOfLastPeriod = file.name.lastIndexOf('.');
       return {
-        id: uniqueId('file-'),
         name: file.name,
         stem: file.name.substring(0, indexOfLastPeriod),
         extension: file.name.substring(indexOfLastPeriod + 1),
-        /* Kinda hacky, but we need to get the file absolute and relative path from the file */
-        absolutePath: (file as any).path,
+        /* Kinda hacky, but we need to get the file uri and relative path */
+        uri: `file://${(file as any).path}`,
         relativePath: (file as any).webkitRelativePath,
       } as FileMetadataModel;
     });
 
-  export const treeify = (files: FileMetadataModel[]) => {
-    return (
-      files
-        ?.filter(file => file.relativePath !== undefined)
-        ?.reduce((acc: any, file: FileMetadataModel) => {
-          let directory = acc;
-          file
-            .relativePath!.split('/')
-            .slice(0, -1)
-            .forEach(folder => {
-              if (!directory.hasOwnProperty(folder)) {
-                directory[folder] = {};
-              }
+  export const treeify = (
+    files: FileMetadataModel[]
+  ): FolderMetadataModel | undefined => {
+    if (files.length === 0) {
+      return undefined;
+    }
 
-              directory = directory[folder];
-            });
+    const rootFolderName = files[0].relativePath.split('/')[0];
+    const root: FolderMetadataModel = {
+      uri: `${files[0].uri.slice(
+        0,
+        -files[0].relativePath.length
+      )}${rootFolderName}/`,
+      name: rootFolderName,
+      folders: [],
+      files: [],
+      relativePath: `${rootFolderName}/`,
+    };
 
-          directory[file.name] = file;
-          return acc;
-        }, {}) || {}
-    );
+    return files.reduce((acc: FolderMetadataModel, file: FileMetadataModel) => {
+      let directory = acc;
+      file
+        .relativePath!.split('/')
+        .slice(1, -1)
+        .forEach(folderName => {
+          const existingFolderIndex = directory.folders.findIndex(
+            folder => folder.name === folderName
+          );
+          if (existingFolderIndex === -1) {
+            directory.folders.push({
+              uri: `${directory.uri}${folderName}/`,
+              name: folderName,
+              folders: [],
+              files: [],
+              relativePath: `${directory.relativePath}${folderName}/`,
+            } as FolderMetadataModel);
+          }
+
+          directory = directory.folders[directory.folders.length - 1];
+        });
+
+      directory.files.push(file);
+      return acc;
+    }, root);
   };
-
-  export function splitFoldersAndFiles(directory: any) {
-    const folders: [string, Object][] = [];
-    const files: [string, FileMetadataModel][] = [];
-    Object.entries(directory).forEach(([name, value]: [string, any]) => {
-      /* hacky way of figuring out if it's a file */
-      if (name === value.name) {
-        files.push([name, value]);
-      } else {
-        folders.push([name, value]);
-      }
-    });
-    return { folders, files };
-  }
 
   export function indexFiles<FileType>(files: FileType[]) {
     return files.map((file, index) => [file, index]) as [FileType, number][];

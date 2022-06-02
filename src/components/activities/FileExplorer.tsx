@@ -2,11 +2,12 @@ import React from 'react';
 import { BsTextLeft } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectFiles, setFileSelection, setFocus } from 'store/reducers/files';
-import FilesUtils from 'utils/files-utils';
 import FileMetadataModel from 'models/file/FileMetadataModel';
+import FolderMetadataModel from 'models/file/FolderMetadataModel';
 import NoWorkspaceSelected from 'components/activities/NoWorkspaceSelected';
 // import ListView from 'components/common/ListView';
 import TreeView from 'components/common/TreeView';
+import FilesUtils from 'utils/files-utils';
 
 function FileRow({ name, relativePath }: any) {
   return (
@@ -26,17 +27,6 @@ function FileExplorer({ style }: any) {
   const dispatch = useAppDispatch();
   const { files, fileSelection, focusedFile } = useAppSelector(selectFiles);
 
-  const indexedFiles: [FileMetadataModel, number][] =
-    FilesUtils.indexFiles(files);
-
-  const selected = indexedFiles
-    .filter(([file]) => fileSelection.includes(file.id))
-    .map(([_, index]: [FileMetadataModel, number]) => index);
-
-  const focused = indexedFiles.find(
-    ([file]: [FileMetadataModel, number]) => focusedFile === file.id
-  )?.[1];
-
   return (
     <div
       className="w-100 h-100"
@@ -49,20 +39,22 @@ function FileExplorer({ style }: any) {
       {files?.length > 0 && (
         <TreeView
           indentationLevel={2}
-          // <ListView
-          elements={files}
+          node={FilesUtils.treeify(files)}
+          getNodesAndLeaves={(root?: FolderMetadataModel) => ({
+            nodes: root?.folders,
+            leaves: root?.files,
+          })}
           factory={FileRow}
-          focused={focused}
-          selected={selected}
-          onFocusChanged={(index: number) => {
-            const selectedFile = files[index];
-            dispatch(setFocus(selectedFile.id));
+          focused={focusedFile}
+          selected={fileSelection}
+          getIdentifier={(file?: FolderMetadataModel | FileMetadataModel) =>
+            file?.uri
+          }
+          onFocusChanged={(uri: string) => {
+            dispatch(setFocus(uri));
           }}
-          onSelectionChanged={(indices: number[]) => {
-            const selectedFiles = indices.map(
-              (index: number) => files[index].id
-            );
-            dispatch(setFileSelection(selectedFiles));
+          onSelectionChanged={(uris: string[]) => {
+            dispatch(setFileSelection(uris));
           }}
         />
       )}

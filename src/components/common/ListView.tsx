@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import ColorsUtils from 'utils/colors-utils';
 import { Color, Opacity } from 'enums/Color';
 import { ColorPalette } from 'models/ColorPalette';
@@ -62,65 +62,67 @@ function ListView({
   style,
   selected = [],
   focused = undefined,
+  getIdentifier = (element: any | undefined) => element?.id,
   onFocusChanged = () => {},
   onSelectionChanged = () => {},
 }: {
   elements: any[];
   factory: (props: Object) => React.ReactNode;
   style?: CSSProperties;
-  selected?: number[];
-  focused?: number;
-  onFocusChanged?: (index: number) => void;
-  onSelectionChanged?: (indices: number[]) => void;
+  selected?: any[];
+  focused?: any;
+  getIdentifier?: (element: any) => any; // must return a unique identifier for every element
+  onFocusChanged?: (identifier: any) => void;
+  onSelectionChanged?: (identifiers: any[]) => void;
 }) {
-  const [selection, setSelection] = useState<number[]>([]);
-  const [focus, setFocus] = useState<number | undefined>();
-
-  useEffect(() => {
-    setSelection(selected);
-    setFocus(focused);
-  }, [selected, focused]);
+  const [selection, setSelection] = useState<any[]>(selected);
+  const [focus, setFocus] = useState<any | undefined>(focused);
 
   return (
     <div style={{ ...style, width: '100%', height: '100%' }}>
       {elements.map((element: any, index: number) => (
         <Row
           key={`${JSON.stringify(element)}-${index}`}
-          active={selection.includes(index)}
-          focused={focus === index}
+          active={selection.includes(getIdentifier(element))}
+          focused={focus !== undefined && focus === getIdentifier(element)}
           onClick={(e: MouseEvent) => {
             let newSelection = [];
+            const elementId = getIdentifier(element);
 
             // handle shift selection
             if (e.shiftKey && focus !== undefined) {
               newSelection = [...selection];
-              const startIndex = Math.min(index, focus);
-              const endIndex = Math.max(index, focus);
+              const indexOfFocused = elements.findIndex(
+                element => getIdentifier(element) === focus
+              );
+              const startIndex = Math.max(0, Math.min(index, indexOfFocused));
+              const endIndex = Math.max(index, indexOfFocused);
               for (let i = startIndex; i <= endIndex; i++) {
-                if (!newSelection.includes(i)) {
-                  newSelection.push(i);
+                const elementId = getIdentifier(elements[i]);
+                if (!newSelection.includes(elementId)) {
+                  newSelection.push(elementId);
                 }
               }
             }
             // TODO: Handle Windows/Mac events differently (e.g. ctrl/cmd)
             // handle ctrl/cmd selection
             else if (e.ctrlKey || e.metaKey) {
-              const currentIndex = selection.indexOf(index);
+              const currentIndex = selection.indexOf(elementId);
               newSelection =
                 currentIndex === -1
-                  ? [...selection, index]
-                  : selection.filter((n: number) => n !== index);
+                  ? [...selection, elementId]
+                  : selection.filter(id => id !== elementId);
             }
             // handle normal selection
             else {
-              newSelection = [index];
+              newSelection = [elementId];
             }
 
             setSelection(newSelection);
             onSelectionChanged(newSelection);
 
-            setFocus(index);
-            onFocusChanged(index);
+            setFocus(elementId);
+            onFocusChanged(elementId);
           }}
         >
           {factory({
