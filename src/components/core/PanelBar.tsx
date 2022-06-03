@@ -4,7 +4,7 @@ import { Color, Opacity } from 'enums/Color';
 import DefaultView from 'components/common/DefaultView';
 import * as codicons from 'react-icons/vsc';
 import ColorsUtils from 'utils/colors-utils';
-import IPanelModel from '../../models/IPanelModel';
+import IPanelModel from 'models/IPanelModel';
 import { ColorPalette } from 'models/ColorPalette';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { useAppDispatch, useAppSelector } from 'store/hooks';

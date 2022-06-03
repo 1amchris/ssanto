@@ -1,5 +1,5 @@
-import ReceiveData from '../models/server-coms/ReceiveData';
-import SendType from '../enums/SendType';
+import ReceiveData from 'models/server-coms/ReceiveData';
+import SendType from 'enums/SendType';
 
 /**
  * Handle the communication between the client and the server
