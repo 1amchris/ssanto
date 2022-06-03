@@ -29,19 +29,12 @@ function StatusItem({
 }: any) {
   const [focused, setFocused] = useState(false);
 
+  const options = { disabled, focused };
   const activity = {
     size: '12px',
     cursor: disabled ? 'default' : 'cursor',
-    color: focused
-      ? iconColors.focused
-      : disabled
-      ? iconColors.disabled
-      : iconColors.default,
-    backgroundColor: focused
-      ? backgroundColors.focused
-      : disabled
-      ? backgroundColors.disabled
-      : backgroundColors.default,
+    color: ColorsUtils.getRelevantColor(iconColors, options),
+    backgroundColor: ColorsUtils.getRelevantColor(backgroundColors, options),
   };
 
   const iconBaseProps: IconBaseProps = {

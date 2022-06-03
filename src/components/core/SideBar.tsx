@@ -10,7 +10,7 @@ import FileExplorer from 'components/activities/FileExplorer';
 import FileSearcher from 'components/activities/FileSearcher';
 import * as codicons from 'react-icons/vsc';
 
-function getSideView(activity: ActivityModel) {
+function getView(activity: ActivityModel) {
   switch (activity.id) {
     case Activity.Explorer:
       return <FileExplorer />;
@@ -60,29 +60,28 @@ function SideBar({ style }: any) {
         className="d-flex flex-row justify-content-between"
         style={{ padding: '12px 16px 12px 20px' }}
       >
-        <div className="text-uppercase" style={{ fontSize: 12 }}>
+        <div className="text-uppercase" style={{ fontSize: 11 }}>
           {activity.label}
         </div>
         <div style={{ marginBottom: -6, marginTop: -6 }}>
           {/* TODO: add action to icon */}
           {icons.map((icon: any, index: number) => (
-            <span style={{ marginLeft: 4 }} key={`${icon.label}-${index}`}>
-              <button
-                style={{
-                  padding: '0 2.5px',
-                }}
-                className="btn btn-sm"
-              >
-                {(codicons as { [name: string]: IconType })[icon.name]({
-                  title: icon.label,
-                  ...iconBaseProps,
-                })}
-              </button>
-            </span>
+            <button
+              key={`${icon.label}-${index}`}
+              style={{
+                padding: '0 2.5px',
+              }}
+              className="btn btn-sm"
+            >
+              {(codicons as { [name: string]: IconType })[icon.name]({
+                title: icon.label,
+                ...iconBaseProps,
+              })}
+            </button>
           ))}
         </div>
       </div>
-      <div className="w-100 h-100 overflow-auto">{getSideView(activity)}</div>
+      <div className="w-100 h-100 overflow-auto">{getView(activity)}</div>
     </nav>
   );
 }

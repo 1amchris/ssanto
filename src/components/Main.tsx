@@ -27,6 +27,7 @@ import SideBar from 'components/core/SideBar';
 import StatusBar from 'components/core/StatusBar';
 import SplitView from 'components/core/SplitView';
 import EditorGroups from 'components/core/EditorGroups';
+import PanelBar from './core/PanelBar';
 
 /**
  * Main component.
@@ -163,7 +164,7 @@ function Main() {
           <SideBar style={{ minWidth: 120, width: 240 }} />
           <SplitView style={{ minWidth: 120 }} direction="column">
             <EditorGroups />
-            <SideBar style={{ height: '30%' }} />
+            <PanelBar style={{ height: '30%' }} />
           </SplitView>
         </SplitView>
 

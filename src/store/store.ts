@@ -1,10 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import mapReducer from 'store/reducers/map';
 import activityBarReducer from 'store/reducers/activity-bar';
 import analysisReducer from 'store/reducers/analysis';
 import exportReducer from 'store/reducers/export';
 import filesReducer from 'store/reducers/files';
 import guideReducer from 'store/reducers/guide';
+import mapReducer from 'store/reducers/map';
+import panelBarReducer from 'store/reducers/panel-bar';
 import statusBarReducer from 'store/reducers/status-bar';
 import webViewReducer from 'store/reducers/web-view';
 import ServerMiddleware from 'store/middlewares/ServerMiddleware';
@@ -19,6 +20,7 @@ export const store = configureStore({
     files: filesReducer,
     guide: guideReducer,
     map: mapReducer,
+    panelBar: panelBarReducer,
     statusBar: statusBarReducer,
     webView: webViewReducer,
   },
