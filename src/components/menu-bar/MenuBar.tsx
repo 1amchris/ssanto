@@ -2,18 +2,17 @@ import React from 'react';
 import FileContentModel from 'models/file/FileContentModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { exportData } from 'store/reducers/export';
-import { Action, Divider, ImportFile, ImportFolder, Link } from './components';
+import { Action, Divider, ImportFolder, Link } from './components';
 import { call } from 'store/reducers/server';
 import Menu from './Menu';
 import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import FilesUtils from 'utils/files-utils';
 import { selectMap } from 'store/reducers/map';
-import { loadingFileComplete, resetError } from 'store/reducers/analysis';
 import {
+  openWorkspace,
   resetWorkspace,
   selectFiles,
-  setWorkspace,
 } from 'store/reducers/files';
 
 /**
@@ -28,7 +27,7 @@ function MenuBar({ style }: any) {
 
   const getMenus = () => [
     <Menu key="menu-project" label="project">
-      <ImportFile
+      {/* <ImportFile
         key="import-file"
         label="open file"
         accept=".sproj"
@@ -46,12 +45,18 @@ function MenuBar({ style }: any) {
             );
           });
         }}
-      />
+      /> */}
       <ImportFolder
-        key="import-folder"
+        key="open-workspace"
         label="open workspace"
         onFolderImported={(files: FileList) =>
-          dispatch(setWorkspace(FilesUtils.extractMetadataFromFiles(files)))
+          dispatch(
+            openWorkspace(
+              FilesUtils.extractRootPath(
+                Array.from(files).map((f: /* File */ any) => f.path)
+              )
+            )
+          )
         }
       />
       <Action

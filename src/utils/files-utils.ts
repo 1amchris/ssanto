@@ -5,7 +5,7 @@ import { encode } from 'base64-arraybuffer';
 
 namespace FilesUtils {
   // Extracts data from files and encodes it in base64
-  export const extractContentFromFiles = async (
+  export const extractContent = async (
     files: File[] | FileList
   ): Promise<FileContentModel<string>[]> =>
     Promise.all(
@@ -22,8 +22,7 @@ namespace FilesUtils {
       }))
     );
 
-  // Extracts metadata from files
-  export const extractMetadataFromFiles = (
+  export const extractMetadata = (
     files: File[] | FileList
   ): FileMetadataModel[] =>
     Array.from(files).map(file => {
@@ -34,9 +33,30 @@ namespace FilesUtils {
         extension: file.name.substring(indexOfLastPeriod + 1),
         /* Kinda hacky, but we need to get the file uri and relative path */
         uri: `file://${(file as any).path}`,
-        relativePath: (file as any).webkitRelativePath,
+        // relativePath: (file as any).webkitRelativePath,
       } as FileMetadataModel;
     });
+
+  export const pathFromUri = (uri: string): string =>
+    uri.slice('file://'.length);
+
+  export const relativePath = (path: string, root: string): string => {
+    const _root = root.endsWith('/') ? root.slice(0, -1) : root;
+    return path.slice(_root.length - _root.split('/').pop()!.length);
+  };
+
+  export const extractRootPath = (paths: string[]): string =>
+    paths.length === 1
+      ? paths[0].split('/').slice(0, -1).join('/')
+      : (Array.from(paths).reduce((acc: string | undefined, curr: string) => {
+          if (acc === undefined) return curr;
+          const accPath = acc.split('/');
+          const currPath = curr.split('/');
+          const commonPath = accPath.filter(
+            (_: any, i: number) => currPath[i] === accPath[i]
+          );
+          return commonPath.join('/');
+        }, undefined) || '') + '/';
 
   export const treeify = (
     files: FileMetadataModel[]
@@ -45,24 +65,21 @@ namespace FilesUtils {
       return undefined;
     }
 
-    const rootFolderName = files[0].relativePath.split('/')[0];
+    const rootPath = extractRootPath(files.map(f => pathFromUri(f.uri)));
+    const rootFolderName = rootPath.split('/').pop()!;
     const root: FolderMetadataModel = {
-      uri: `${files[0].uri.slice(
-        0,
-        -files[0].relativePath.length
-      )}${rootFolderName}/`,
+      uri: `file://${rootPath}`,
       name: rootFolderName,
       folders: [],
       files: [],
-      relativePath: `${rootFolderName}/`,
     };
 
     return files.reduce((acc: FolderMetadataModel, file: FileMetadataModel) => {
       let directory = acc;
-      file
-        .relativePath!.split('/')
+      relativePath(pathFromUri(file.uri), rootPath)
+        .split('/')
         .slice(1, -1)
-        .forEach(folderName => {
+        .forEach((folderName: string) => {
           const existingFolderIndex = directory.folders.findIndex(
             folder => folder.name === folderName
           );
@@ -72,7 +89,6 @@ namespace FilesUtils {
               name: folderName,
               folders: [],
               files: [],
-              relativePath: `${directory.relativePath}${folderName}/`,
             } as FolderMetadataModel);
           }
 

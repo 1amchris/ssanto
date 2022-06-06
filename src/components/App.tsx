@@ -25,6 +25,7 @@ import { LatLong } from 'models/map/LatLong';
 import SuitabilityCategoriesModel from 'models/map/SuitabilityCategoriesModel';
 import ServerSubscriptionTarget from 'enums/ServerSubscriptionTarget';
 import { LayersGroups } from 'models/map/Layers';
+import { setWorkspace } from 'store/reducers/files';
 
 /**
  * App component.
@@ -38,8 +39,8 @@ function App() {
     dispatch(
       subscribe({
         subject: ServerSubscriptionTarget.FileManagerFiles,
-        onAction: injectReceivePropertiesCreator('files'),
-      } as SubscriptionModel<string, string>)
+        onAction: setWorkspace,
+      })
     );
 
     dispatch(

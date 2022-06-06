@@ -22,6 +22,8 @@ async def main():
     server_socket.bind_command("subscribe", subjects_manager.subscribe)
     server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
 
+    server_socket.bind_command("files.open_workspace", files_manager.open_workspace)
+
     server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
     # server_socket.bind_command("file_manager.add_files", files_manager.add_files, False)
     # server_socket.bind_command("file_manager.remove_file", files_manager.remove_file, False)

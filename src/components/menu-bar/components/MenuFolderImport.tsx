@@ -5,12 +5,6 @@ import MenuComponent from './MenuComponent';
 import { Dropdown } from 'react-bootstrap';
 
 /**
- * @callback fileChangeCallback
- * @param {File} file The file that change
- * @return {void}
- */
-
-/**
  * Menu import component.
  * @param {folderChangeCallback} onFolderChanged Callback on folder change
  * @return {JSX.Element} Html.
@@ -27,8 +21,16 @@ class MenuFolderImport extends MenuComponent {
 
   render = () => {
     /* eslint-disable no-unused-vars */
-    const { t, i18n, tReady, className, label, onFolderImported, ...rest } =
-      this.props;
+    const {
+      t,
+      i18n,
+      tReady,
+      className,
+      label,
+      onFolderImported,
+      onPathImported,
+      ...rest
+    } = this.props;
 
     const inputRef: RefObject<HTMLInputElement> = createRef();
     return (

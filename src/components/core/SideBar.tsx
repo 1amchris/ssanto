@@ -57,10 +57,10 @@ function SideBar({ style }: any) {
       style={{ userSelect: 'none', ...style }}
     >
       <div
-        className="d-flex flex-row justify-content-between"
+        className="d-flex flex-row justify-content-between flex-nowrap"
         style={{ padding: '12px 16px 12px 20px' }}
       >
-        <div className="text-uppercase" style={{ fontSize: 11 }}>
+        <div className="text-uppercase text-truncate" style={{ fontSize: 11 }}>
           {activity.label}
         </div>
         <div style={{ marginBottom: -6, marginTop: -6 }}>

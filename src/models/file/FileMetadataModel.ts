@@ -3,5 +3,4 @@ export default interface FileMetadataModel {
   name: string;
   stem: string;
   extension: string;
-  relativePath: string;
 }

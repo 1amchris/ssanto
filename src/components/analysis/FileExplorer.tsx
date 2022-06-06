@@ -122,19 +122,18 @@ function FileExplorer({ t, disabled }: any) {
             isLoading: true,
           } as LoadingValue<string>)()
         );
-        FilesUtils.extractContentFromFiles(Array.from(fields.files)).then(
-          files =>
-            dispatch(
-              call({
-                target: ServerCallTarget.FileManagerAddFiles,
-                args: files,
-                onSuccessAction: injectSetLoadingCreator({
-                  value: property,
-                  isLoading: false,
-                } as LoadingValue<string>),
-                onErrorAction: injectSetErrorCreator(property),
-              } as CallModel<FileContentModel<string>[], void, LoadingValue<string>, string, string>)
-            )
+        FilesUtils.extractContent(Array.from(fields.files)).then(files =>
+          dispatch(
+            call({
+              target: ServerCallTarget.FileManagerAddFiles,
+              args: files,
+              onSuccessAction: injectSetLoadingCreator({
+                value: property,
+                isLoading: false,
+              } as LoadingValue<string>),
+              onErrorAction: injectSetErrorCreator(property),
+            } as CallModel<FileContentModel<string>[], void, LoadingValue<string>, string, string>)
+          )
         );
       }}
     />

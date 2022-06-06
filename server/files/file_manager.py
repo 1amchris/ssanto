@@ -96,6 +96,17 @@ class FilesManager:
     def get_file_names(self):
         return self.files_content.keys()
 
+    def get_extension(self, file_name):
+        return file_name.split(".")[-1]
+
+    def get_name(self, file_name):
+        return file_name.split(".")[0]
+
+    def add_file(self, file):
+        self.writer.save_file(file.name, file.read_content())
+        self.files_content[file.name] = file
+        return file
+
     def remove_file(self, name):
         # TODO: Popped might be None if there is no files corresponding and generate an error
         popped = self.files_content.pop(name)
@@ -107,17 +118,6 @@ class FilesManager:
             self.writer.remove_file(popped.name)
         self.__notify_metadatas()
         return popped
-
-    def get_extension(self, file_name):
-        return file_name.split(".")[-1]
-
-    def get_name(self, file_name):
-        return file_name.split(".")[0]
-
-    def add_file(self, file):
-        self.writer.save_file(file.name, file.read_content())
-        self.files_content[file.name] = file
-        return file
 
     def add_shapefile(self, shp):
         for file in shp.get_files():
@@ -137,8 +137,6 @@ class FilesManager:
         shp.content = FileParser.load(shp, self.get_writer_path())
         shp.set_feature(self.get_writer_path())
         self.__notify_metadatas()
-
-    # files: { name: string; size: number; content: string (base64); }[]
 
     def add_files(self, *files):
         added = []
@@ -173,6 +171,11 @@ class FilesManager:
         self.__notify_metadatas()
 
         return added, rejected, invalided
+
+    def open_workspace(self, path):
+        print("Opening workspace")
+        all_files = [FileMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
+        self.files.notify(all_files)
 
     def __notify_metadatas(self):
         metadatas = self.get_files_metadatas()

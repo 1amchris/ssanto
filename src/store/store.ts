@@ -11,6 +11,7 @@ import webViewReducer from 'store/reducers/web-view';
 import ServerMiddleware from 'store/middlewares/ServerMiddleware';
 import AnalysisMiddleware from 'store/middlewares/AnalysisMiddleware';
 import { call, subscribe } from 'store/reducers/server';
+import FilesMiddleware from './middlewares/FilesMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -32,7 +33,7 @@ export const store = configureStore({
           call.type, // May contain a callback function
         ],
       },
-    }).concat([ServerMiddleware, AnalysisMiddleware]),
+    }).concat([ServerMiddleware, AnalysisMiddleware, FilesMiddleware]),
 });
 
 export type AppDispatch = typeof store.dispatch;

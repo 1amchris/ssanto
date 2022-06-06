@@ -161,7 +161,7 @@ function Main() {
       >
         <ActivityBar />
         <SplitView direction="row">
-          <SideBar style={{ minWidth: 120, width: 240 }} />
+          <SideBar style={{ minWidth: 200, width: 240 }} />
           <SplitView style={{ minWidth: 120 }} direction="column">
             <EditorGroups />
             <PanelBar style={{ height: '30%' }} />

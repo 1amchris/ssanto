@@ -1,6 +1,6 @@
 import React, { createRef, RefObject } from 'react';
 import { useAppDispatch } from 'store/hooks';
-import { setWorkspace } from 'store/reducers/files';
+import { openWorkspace } from 'store/reducers/files';
 import { Button } from 'react-bootstrap';
 import FilesUtils from 'utils/files-utils';
 
@@ -24,7 +24,13 @@ function NoWorkspaceSelected() {
         type="file"
         className="visually-hidden"
         onChange={handleFolderChanged((files: FileList) =>
-          dispatch(setWorkspace(FilesUtils.extractMetadataFromFiles(files)))
+          dispatch(
+            openWorkspace(
+              FilesUtils.extractRootPath(
+                Array.from(files).map((f: /* Files */ any) => f.path)
+              )
+            )
+          )
         )}
         /* @ts-expect-error */
         directory=""

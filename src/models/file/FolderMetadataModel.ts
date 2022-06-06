@@ -5,5 +5,4 @@ export default interface FolderMetadataModel {
   name: string;
   folders: FolderMetadataModel[];
   files: FileMetadataModel[];
-  relativePath: string;
 }
