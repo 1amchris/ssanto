@@ -1,11 +1,14 @@
 /* eslint-disable no-unused-vars */
 
 enum ServerCallTarget {
+  OpenWorkspace = 'files.open_workspace',
+
+  SaveProject = 'analysis.save_project',
+  OpenProject = 'analysis.open_project',
+
   Update = 'update',
   UpdateSuitabilityThreshold = 'analysis.update_suitability_threshold',
   ExportTiff = 'analysis.export_tiff',
-  SaveProject = 'analysis.save_project',
-  OpenProject = 'analysis.open_project',
   SaveWeights = 'analysis.save_weights',
   SaveObjectiveHierarchy = 'analysis.save_objective_hierarchy',
   UpdateStudyAreaFiles = 'analysis.set_study_area',
