@@ -9,6 +9,9 @@ import { ColorPalette } from 'models/ColorPalette';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectPanelBar, setActive } from 'store/reducers/panel-bar';
+import { Panel } from 'enums/Panel';
+import Output from 'components/views/Output';
+import Problems from 'components/views/Problems';
 
 const backgroundColors = {
   disabled: ColorsUtils.applyOpacity(Color.LightGray, Opacity.Half),
@@ -33,6 +36,10 @@ const iconColors = {
 
 function getView(panel: IPanelModel) {
   switch (panel.id) {
+    case Panel.Output:
+      return <Output />;
+    case Panel.Problems:
+      return <Problems />;
     default:
       return <DefaultView />;
   }
