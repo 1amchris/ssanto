@@ -111,13 +111,13 @@ function MenuBar({ style }: any) {
       style={style}
     >
       <div className="container-fluid">
-        <img
+        {/* <img
           src="logo192.png"
           alt="SSanto"
           width="20"
           height="20"
           className="d-inline-block align-text-top me-2"
-        />
+        /> */}
         <ul className="navbar-nav me-auto">
           {getMenus()?.map((menu, index: number) => (
             <li className="nav-item dropdown" key={`menubar/menu-${index}`}>
