@@ -4,15 +4,13 @@ import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectFiles, setFileSelection, setFocus } from 'store/reducers/files';
 import FileMetadataModel from 'models/file/FileMetadataModel';
 import FolderMetadataModel from 'models/file/FolderMetadataModel';
-import NoWorkspaceSelected from 'components/activities/NoWorkspaceSelected';
-// import ListView from 'components/common/ListView';
+import NoWorkspaceSelected from 'components/views/NoWorkspaceSelected';
 import TreeView from 'components/common/TreeView';
 import FilesUtils from 'utils/files-utils';
 
-function FileRow({ name, relativePath }: any) {
+function FileRow({ name }: any) {
   return (
     <div className="w-100 px-2 text-truncate">
-      {/* <BsTextLeft /> {name} {<i className="text-secondary">{relativePath}</i>} */}
       <BsTextLeft /> {name}
     </div>
   );

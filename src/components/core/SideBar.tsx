@@ -6,8 +6,8 @@ import { ActivityModel } from 'models/ActivityModel';
 import { Activity } from 'enums/Activity';
 import { Color } from 'enums/Color';
 import DefaultView from 'components/common/DefaultView';
-import FileExplorer from 'components/activities/FileExplorer';
-import FileSearcher from 'components/activities/FileSearcher';
+import FileExplorer from 'components/views/FileExplorer';
+import FileSearcher from 'components/views/FileSearcher';
 import * as codicons from 'react-icons/vsc';
 
 function getView(activity: ActivityModel) {

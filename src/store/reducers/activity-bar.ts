@@ -6,7 +6,7 @@ import { RootState } from 'store/store';
 export const activityBarSlice = createSlice({
   name: 'activity-bar',
   initialState: {
-    active: Activity.Search,
+    active: Activity.Explorer,
     activities: [
       { id: Activity.Explorer, label: 'explorer', iconName: 'VscFiles' },
       { id: Activity.Search, label: 'search', iconName: 'VscSearch' },

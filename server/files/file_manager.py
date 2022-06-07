@@ -173,7 +173,6 @@ class FilesManager:
         return added, rejected, invalided
 
     def open_workspace(self, path):
-        print("Opening workspace")
         all_files = [FileMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
         self.files.notify(all_files)
 
