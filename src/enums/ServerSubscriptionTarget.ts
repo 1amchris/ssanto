@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 enum ServerSubscriptionTarget {
+  LogsManagerLogs = 'logs_manager.logs',
   FileManagerFiles = 'file_manager.files',
   FileManagerShapefiles = 'file_manager.shapefiles',
   MapCursor = 'map.cursor',

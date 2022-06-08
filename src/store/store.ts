@@ -5,7 +5,7 @@ import exportReducer from 'store/reducers/export';
 import filesReducer from 'store/reducers/files';
 import guideReducer from 'store/reducers/guide';
 import mapReducer from 'store/reducers/map';
-import outputReducer from 'store/reducers/output';
+import outputReducer from 'store/reducers/logger';
 import panelBarReducer from 'store/reducers/panel-bar';
 import statusBarReducer from 'store/reducers/status-bar';
 import webViewReducer from 'store/reducers/web-view';
@@ -22,7 +22,7 @@ export const store = configureStore({
     files: filesReducer,
     guide: guideReducer,
     map: mapReducer,
-    output: outputReducer,
+    logger: outputReducer,
     panelBar: panelBarReducer,
     statusBar: statusBarReducer,
     webView: webViewReducer,

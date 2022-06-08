@@ -1,7 +1,10 @@
 /* eslint-disable no-unused-vars */
 
+// TODO: there are many inconsistencies in the the enum. Some have "namespaces", some don't. Some are plural, some aren't.
 enum ServerCallTarget {
   OpenWorkspace = 'files.open_workspace',
+
+  LogsManagerLog = 'logs_manager.add_log',
 
   SaveProject = 'analysis.save_project',
   OpenProject = 'analysis.open_project',

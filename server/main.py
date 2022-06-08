@@ -2,11 +2,13 @@ import signal
 import platform
 
 import asyncio
+from logger.log_types import LogType
 
 from network.server_socket import ServerSocket
 from subjects.subjects_manager import SubjectsManager
 
-from logger import *
+from logger.logger import *
+from logger.log_manager import LogsManager
 
 from analysis.analysis import Analysis
 from analysis.map import Map
@@ -17,24 +19,32 @@ from guide_builder import GuideBuilder
 async def main():
     server_socket = ServerSocket("localhost", 15649)
     subjects_manager = SubjectsManager(server_socket)
-    files_manager = FilesManager(subjects_manager)
+    logs_manager = LogsManager(subjects_manager)
+    files_manager = FilesManager(subjects_manager, logs_manager)
+
+    # TODO: I feel like "file_manager.###" should be "files_manager.###" (like the variable's name)
 
     server_socket.bind_command("subscribe", subjects_manager.subscribe)
     server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
 
     server_socket.bind_command("files.open_workspace", files_manager.open_workspace)
-
     server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
     # server_socket.bind_command("file_manager.add_files", files_manager.add_files, False)
     # server_socket.bind_command("file_manager.remove_file", files_manager.remove_file, False)
+
+    server_socket.bind_command("logs_manager.add_log", logs_manager.add_log)
+    server_socket.bind_command("logs_manager.get_logs", logs_manager.get_logs)
 
     analysis = Analysis(subjects_manager, files_manager)
     server_socket.bind_command("update", analysis.update)
     server_socket.bind_command("analysis.update_suitability_threshold", analysis.update_suitability_threshold)
     server_socket.bind_command("compute_suitability", analysis.compute_suitability)
 
+    # TODO: This is confusing. "file_manager.add_files" adds files to "analysis". Should be renamed to "analysis.add_files"
     server_socket.bind_command("file_manager.add_files", analysis.add_files, False)
     server_socket.bind_command("file_manager.remove_file", analysis.remove_file, False)
+
+    # TODO: This is confusing. "get_layer" doesn't follow the same format as the others. Should be renamed to "analysis.get_layer"
     server_socket.bind_command("get_layer", analysis.get_layer)
 
     server_socket.bind_command("analysis.set_study_area", analysis.receive_study_area)

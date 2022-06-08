@@ -26,6 +26,7 @@ import SuitabilityCategoriesModel from 'models/map/SuitabilityCategoriesModel';
 import ServerSubscriptionTarget from 'enums/ServerSubscriptionTarget';
 import { LayersGroups } from 'models/map/Layers';
 import { setWorkspace } from 'store/reducers/files';
+import { setLogs } from 'store/reducers/logger';
 
 /**
  * App component.
@@ -40,6 +41,13 @@ function App() {
       subscribe({
         subject: ServerSubscriptionTarget.FileManagerFiles,
         onAction: setWorkspace,
+      })
+    );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTarget.LogsManagerLogs,
+        onAction: setLogs,
       })
     );
 

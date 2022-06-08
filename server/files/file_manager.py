@@ -6,6 +6,8 @@ import geopandas as gpd
 from files.file_metadata import FileMetaData
 from files.file import File
 from files.shapefile import Shapefile
+from logger.log_manager import LogsManager
+from subjects.subjects_manager import SubjectsManager
 
 
 class FileParser:
@@ -51,8 +53,9 @@ class FilesWriter:
 
 
 class FilesManager:
-    def __init__(self, subjects_manager):
+    def __init__(self, subjects_manager: SubjectsManager, logger: LogsManager):
         self.subjects_manager = subjects_manager
+        self.logger = logger
         self.files_content = dict()
         self.files = self.subjects_manager.create("file_manager.files", dict())
         self.writer = FilesWriter()
@@ -175,6 +178,7 @@ class FilesManager:
     def open_workspace(self, path):
         all_files = [FileMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
         self.files.notify(all_files)
+        self.logger.info(f"Opened workspace at {path}")
 
     def __notify_metadatas(self):
         metadatas = self.get_files_metadatas()

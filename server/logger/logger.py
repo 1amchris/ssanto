@@ -28,11 +28,7 @@ class Logger:
 
     def write(self, msg):
         if self.debug:
-            printed_msg = (
-                msg
-                if self.max_line_length < 0
-                else self.truncate_middle(msg, self.max_line_length)
-            )
+            printed_msg = msg if self.max_line_length < 0 else self.truncate_middle(msg, self.max_line_length)
             self.stdout.write(printed_msg)
         if self.log:
             self.logging_file.write(msg)
@@ -49,6 +45,7 @@ class Logger:
     def flush(self):
         self.stdout.flush()
         self.logging_file.flush()
+
 
 # Create the logger at global scope
 # Replace the number by the number of characters maximum to be displayed

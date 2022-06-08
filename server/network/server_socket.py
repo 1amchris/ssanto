@@ -41,13 +41,15 @@ class ServerSocket:
 
         self.commands_handlers = {}
 
-    def bind_command(self, command_name, callable, allow_return = True):
+    def bind_command(self, command_name, callable, allow_return=True):
         self.commands_handlers[command_name] = self.CommandFunctor(callable, allow_return)
 
     # Type can be 0: subject update, 1: call return, -1: error (use SendType enum)
     def send(self, send_type, data):
         send_data = {"type": send_type, "data": data}
-        json_data = json.dumps(send_data, default=lambda o: o.serialize() if issubclass(type(o), Serializable) else o.__dict__)
+        json_data = json.dumps(
+            send_data, default=lambda o: o.serialize() if issubclass(type(o), Serializable) else o.__dict__
+        )
         task = self.conn.send(json_data)
         asyncio.create_task(task)
 
@@ -73,17 +75,14 @@ class ServerSocket:
             try:
                 if obj[Field.TARGET.value] in self.commands_handlers:
                     if Field.DATA.value in obj:
-                        print("Call Id:"+ str(obj[Field.CALL_ID.value]) + ", Target:" + str(obj[Field.TARGET.value]))
-                        code, return_data = self.commands_handlers[obj[Field.TARGET.value]](
-                            obj[Field.DATA.value])
+                        print("Call Id:" + str(obj[Field.CALL_ID.value]) + ", Target:" + str(obj[Field.TARGET.value]))
+                        code, return_data = self.commands_handlers[obj[Field.TARGET.value]](obj[Field.DATA.value])
                         type = SendType.CALL.value if code == ServerSocket.REQUEST_SUCCEEDED else SendType.ERROR.value
-                        self.send(
-                            type, {"call": obj[Field.CALL_ID.value], "data": return_data})
+                        self.send(type, {"call": obj[Field.CALL_ID.value], "data": return_data})
             except Exception as e:
                 print("STDERR", "Unable to call the method/function", e)
                 print("STDERR", traceback.format_exc())
-                self.send(SendType.ERROR.value, {
-                          "call": obj[Field.CALL_ID.value], "data": "Unknown error occured"})
+                self.send(SendType.ERROR.value, {"call": obj[Field.CALL_ID.value], "data": "Unknown error occured"})
 
         print("Disconnect from", websocket.remote_address[0])
 
