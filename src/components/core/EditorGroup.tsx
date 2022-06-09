@@ -7,6 +7,7 @@ import * as codicons from 'react-icons/vsc';
 import { IconType } from 'react-icons';
 import { BsTextLeft } from 'react-icons/bs';
 import { useResizeDetector } from 'react-resize-detector';
+import FileMetadataModel from 'models/file/FileMetadataModel';
 
 const backgroundColors = {
   active: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
@@ -94,21 +95,29 @@ function EditorTab({
 }
 
 function EditorTabBar({ style }: any) {
-  const [tabs, setTabs] = useState([
+  const [tabs, setTabs] = useState<FileMetadataModel[]>([
     {
       name: 'Editor.tsx',
+      stem: 'Editor',
+      extension: 'tsx',
       uri: 'file:///src/components/core/Editor.tsx',
     },
     {
       name: 'TreeView.tsx',
+      stem: 'TreeView',
+      extension: 'tsx',
       uri: 'file:///src/components/core/TreeView.tsx',
     },
     {
       name: 'EditorGroup.tsx',
+      stem: 'EditorGroup',
+      extension: 'tsx',
       uri: 'file:///src/components/core/EditorGroup.tsx',
     },
     {
       name: 'ListView.tsx',
+      stem: 'ListView',
+      extension: 'tsx',
       uri: 'file:///src/components/core/ListView.tsx',
     },
   ]);
