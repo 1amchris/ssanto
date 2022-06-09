@@ -8,6 +8,7 @@ import mapReducer from 'store/reducers/map';
 import outputReducer from 'store/reducers/logger';
 import panelBarReducer from 'store/reducers/panel-bar';
 import statusBarReducer from 'store/reducers/status-bar';
+import viewsManagerReducer from 'store/reducers/views-manager';
 import webViewReducer from 'store/reducers/web-view';
 import ServerMiddleware from 'store/middlewares/ServerMiddleware';
 import AnalysisMiddleware from 'store/middlewares/AnalysisMiddleware';
@@ -25,6 +26,7 @@ export const store = configureStore({
     logger: outputReducer,
     panelBar: panelBarReducer,
     statusBar: statusBarReducer,
+    viewsManager: viewsManagerReducer,
     webView: webViewReducer,
   },
   middleware: getDefaultMiddleware =>

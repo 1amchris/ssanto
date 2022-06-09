@@ -6,7 +6,7 @@ import { RootState } from 'store/store';
 export const activityBarSlice = createSlice({
   name: 'activity-bar',
   initialState: {
-    active: Activity.Explorer,
+    active: Activity.Explorer as Activity | undefined,
     activities: [
       { id: Activity.Explorer, label: 'explorer', iconName: 'VscFiles' },
       { id: Activity.Search, label: 'search', iconName: 'VscSearch' },
@@ -39,7 +39,7 @@ export const activityBarSlice = createSlice({
     },
 
     setActive: (state, { payload: activityId }: PayloadAction<Activity>) => {
-      state.active = activityId;
+      state.active = state.active === activityId ? undefined : activityId;
     },
   },
 });

@@ -4,10 +4,11 @@ import { Color, Opacity } from 'enums/Color';
 import { ColorPalette } from 'models/ColorPalette';
 import ColorsUtils from 'utils/colors-utils';
 import * as codicons from 'react-icons/vsc';
-import { IconType } from 'react-icons';
+import { IconBaseProps, IconType } from 'react-icons';
 import { BsTextLeft } from 'react-icons/bs';
-import { useResizeDetector } from 'react-resize-detector';
-import FileMetadataModel from 'models/file/FileMetadataModel';
+import { useAppDispatch } from 'store/hooks';
+import { closeView, setActive } from 'store/reducers/views-manager';
+import ViewModel from 'models/ViewModel';
 
 const backgroundColors = {
   active: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
@@ -74,7 +75,7 @@ function EditorTab({
           <button
             style={{
               padding: '0 2.5px',
-              opacity: !hovered ? 0.0 : 1.0,
+              opacity: hovered || active ? 1.0 : 0.0,
             }}
             className={`btn btn-sm`}
             onClick={(e: any) => {
@@ -94,95 +95,84 @@ function EditorTab({
   );
 }
 
-function EditorTabBar({ style }: any) {
-  const [tabs, setTabs] = useState<FileMetadataModel[]>([
-    {
-      name: 'Editor.tsx',
-      stem: 'Editor',
-      extension: 'tsx',
-      uri: 'file:///src/components/core/Editor.tsx',
-    },
-    {
-      name: 'TreeView.tsx',
-      stem: 'TreeView',
-      extension: 'tsx',
-      uri: 'file:///src/components/core/TreeView.tsx',
-    },
-    {
-      name: 'EditorGroup.tsx',
-      stem: 'EditorGroup',
-      extension: 'tsx',
-      uri: 'file:///src/components/core/EditorGroup.tsx',
-    },
-    {
-      name: 'ListView.tsx',
-      stem: 'ListView',
-      extension: 'tsx',
-      uri: 'file:///src/components/core/ListView.tsx',
-    },
-  ]);
-  const [activeTabs, setActiveTabs] = useState<string[]>(
-    tabs.length > 0 ? tabs.map(tab => tab.uri) : []
-  );
-
-  const setFocus = (uri: string) => {
-    const newActiveTabs = [uri, ...activeTabs.filter(tabUri => tabUri !== uri)];
-    setActiveTabs(newActiveTabs);
-    console.log({ activeTabs: newActiveTabs });
+function EditorTabBar({ active, views, style, onClose, onFocus }: any) {
+  const iconBaseProps: IconBaseProps = {
+    size: 16,
+    color: Color.Black,
   };
 
-  const closeTab = (uri: string) => {
-    const newActiveTabs = activeTabs.filter(tabUri => tabUri !== uri);
-    const newTabs = tabs.filter(tab => tab.uri !== uri);
-
-    setTabs(newTabs);
-    setActiveTabs(newActiveTabs);
-    console.log({ tabs: newTabs, activeTabs: newActiveTabs });
-  };
+  const icons = [
+    {
+      label: 'Split Editor',
+      name: 'VscSplitHorizontal',
+    },
+    {
+      label: 'Views and more actions...',
+      name: 'VscEllipsis',
+    },
+  ];
 
   return (
-    <div className="d-flex flex-row bg-light" style={{ ...style, height: 35 }}>
-      {tabs.map((tab, index) => (
-        <EditorTab
-          tab={tab}
-          key={tab.uri + index}
-          active={tab.uri === activeTabs[0]}
-          onClick={() => setFocus(tab.uri)}
-          onClose={() => closeTab(tab.uri)}
-        />
-      ))}
+    <div
+      className="d-flex flex-row flex-nowrap justify-content-between align-items-center bg-light overflow-none"
+      style={{ ...style }}
+    >
+      <div
+        className="d-flex flex-row flex-shrink-1 overflow-auto"
+        style={{ height: 35 }}
+      >
+        {views.map((tab: ViewModel, index: number) => (
+          <EditorTab
+            tab={tab}
+            key={tab.uri + index}
+            active={tab.uri === active[0]}
+            onClick={() => onFocus(tab.uri)}
+            onClose={() => onClose(tab.uri)}
+          />
+        ))}
+      </div>
+      <div style={{ marginTop: -6 }} className="flex-shrink-0 ps-1 pe-2">
+        {/* TODO: add action to icon */}
+        {icons.map((icon: any, index: number) => (
+          <button
+            key={`${icon.label}-${index}`}
+            style={{
+              padding: '0 2.5px',
+            }}
+            className="btn btn-sm"
+          >
+            {(codicons as { [name: string]: IconType })[icon.name]({
+              title: icon.label,
+              ...iconBaseProps,
+            })}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
 
-function EditorGroup({ style }: any) {
-  const {
-    width: containerWidth,
-    height: containerHeight,
-    ref: containerRef,
-  } = useResizeDetector();
-  const { height: tabBarHeight, ref: tabBarRef } = useResizeDetector();
+function EditorGroup({ group, style }: any) {
+  const dispatch = useAppDispatch();
 
   return (
     <div
-      ref={containerRef}
       className="d-flex flex-column position-relative w-100 h-100"
       style={style}
     >
-      <div
-        ref={tabBarRef}
-        className="position-absolute top-0 left-0 overflow-scroll"
-        style={{ width: containerWidth }}
-      >
-        <EditorTabBar />
-      </div>
-      <div
-        className="position-absolute left-0 overflow-auto w-100"
-        style={{
-          top: tabBarHeight,
-          height: Math.max(containerHeight! - tabBarHeight! || 0, 0),
-        }}
-      >
+      {group.views.length > 0 && (
+        <EditorTabBar
+          active={group.active}
+          views={group.views}
+          onFocus={(uri: string) =>
+            dispatch(setActive({ groupId: group.uri, viewId: uri }))
+          }
+          onClose={(uri: string) =>
+            dispatch(closeView({ groupId: group.uri, viewId: uri }))
+          }
+        />
+      )}
+      <div className="flex-fill">
         <DefaultView />
       </div>
     </div>
