@@ -57,13 +57,13 @@ function SideBar({ style }: any) {
       style={{ userSelect: 'none', ...style }}
     >
       <div
-        className="d-flex flex-row justify-content-between flex-nowrap"
-        style={{ padding: '12px 16px 12px 20px' }}
+        className="d-flex flex-row justify-content-between align-items-center flex-nowrap"
+        style={{ height: 35, padding: '0 16px 0 20px' }}
       >
-        <div className="text-uppercase text-truncate" style={{ fontSize: 11 }}>
+        <span className="text-uppercase text-truncate" style={{ fontSize: 11 }}>
           {activity.label}
-        </div>
-        <div style={{ marginBottom: -6, marginTop: -6 }}>
+        </span>
+        <div style={{ marginTop: -6 }}>
           {/* TODO: add action to icon */}
           {icons.map((icon: any, index: number) => (
             <button

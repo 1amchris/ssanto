@@ -32,7 +32,6 @@ export const loggerSlice = createSlice({
       });
     },
     setLogs: (state, { payload: logs }: PayloadAction<Logs>) => {
-      console.log('setLogs', logs);
       state.logs = logs;
     },
     clearLogs: state => {
