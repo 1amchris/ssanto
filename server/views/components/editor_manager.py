@@ -91,6 +91,18 @@ class EditorManager(Serializable):
             self.active.update()
             return view_uri
 
+    def select_group(self, group_id: str):
+        self.logs_manager.info(f"[Editor] Setting active editor group to {group_id}")
+
+        if next(filter(lambda group: group.uri == group_id, self.groups.value())) is None:
+            self.logs_manager.error(f"[Editor] No editor group found for {group_id}")
+            raise KeyError(f"No editor group found for {group_id}")
+
+        self.active.value().remove(group_id)
+        self.active.value().insert(0, group_id)
+        self.active.update()
+        return group_id
+
     def select_view(self, view_uri: str, group_id: str = None):
         self.logs_manager.info(f"[Editor] Setting active view to {view_uri} for editor group {group_id}")
 

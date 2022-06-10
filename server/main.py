@@ -23,15 +23,18 @@ def populate_views_manager(views_manager: ViewsManager):
     # sidebar
     explorer_uri = views_manager.sidebar.add_activity("Explorer", "VscFiles")
     views_manager.sidebar.add_view(FileExplorerView("file:///Users/src/"), explorer_uri)
+
     searcher_uri = views_manager.sidebar.add_activity("Search", "VscSearch")
     views_manager.sidebar.add_view(FileSearcherView("file:///Users/src/"), searcher_uri)
+
     extensions_uri = views_manager.sidebar.add_activity("Extensions", "VscExtensions")
     # empty on purpose
+
     views_manager.sidebar.select_activity(explorer_uri)
 
     # editor
-    # for testing purposes, as it is currently impossible to spawn a new group
-    views_manager.editor.add_view(View("Editor.tsx", "file:///Users/src/Editor.tsx"))
+    # for testing purposes, as it is currently impossible to spawn new groups in the editor
+    views_manager.editor.add_group()
     views_manager.editor.add_group()
 
 
@@ -57,6 +60,7 @@ async def main():
 
     server_socket.bind_command("views_manager.editor.close_view", views_manager.editor.remove_view)
     server_socket.bind_command("views_manager.editor.select_view", views_manager.editor.select_view)
+    server_socket.bind_command("views_manager.editor.select_group", views_manager.editor.select_group)
     server_socket.bind_command("views_manager.sidebar.close_view", views_manager.sidebar.remove_view)
     server_socket.bind_command("views_manager.sidebar.select_view", views_manager.sidebar.select_view)
     server_socket.bind_command("views_manager.sidebar.select_activity", views_manager.sidebar.select_activity)

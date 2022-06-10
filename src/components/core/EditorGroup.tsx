@@ -161,6 +161,14 @@ function EditorGroup({ group, style }: any) {
     <div
       className="d-flex flex-column position-relative w-100 h-100"
       style={style}
+      onClick={() => {
+        dispatch(
+          call({
+            target: ServerCallTarget.ViewsManagerSelectEditorGroup,
+            args: [group.uri],
+          } as CallModel)
+        );
+      }}
     >
       {group.views.length > 0 && (
         <EditorTabBar

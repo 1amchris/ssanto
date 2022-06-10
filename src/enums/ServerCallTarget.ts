@@ -7,6 +7,7 @@ enum ServerCallTarget {
 
   LogsManagerLog = 'logs_manager.add_log',
 
+  ViewsManagerSelectEditorGroup = 'views_manager.editor.select_group',
   ViewsManagerSelectEditor = 'views_manager.editor.select_view',
   ViewsManagerOpenEditor = 'views_manager.editor.open_view',
   ViewsManagerCloseEditor = 'views_manager.editor.close_view',
