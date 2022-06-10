@@ -1,5 +1,4 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import activityBarReducer from 'store/reducers/activity-bar';
 import analysisReducer from 'store/reducers/analysis';
 import exportReducer from 'store/reducers/export';
 import filesReducer from 'store/reducers/files';
@@ -17,7 +16,6 @@ import { call, subscribe } from 'store/reducers/server';
 
 export const store = configureStore({
   reducer: {
-    activityBar: activityBarReducer,
     analysis: analysisReducer,
     export: exportReducer,
     files: filesReducer,

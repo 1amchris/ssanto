@@ -1,32 +1,80 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
 import ViewGroupModel from 'models/ViewGroupModel';
+import { Activity } from 'enums/Activity';
 
 export const viewsManagerSlice = createSlice({
   name: 'views-manager',
   initialState: {
-    active: [] as string[],
-    groups: [
-      {
-        uri: 'view-group://placeholder',
-        active: [],
-        views: [],
-      },
-    ] as ViewGroupModel[],
+    editor: {
+      active: [] as string[],
+      groups: [
+        {
+          uri: 'view-group://editor-placeholder',
+          active: [],
+          views: [],
+        },
+      ] as ViewGroupModel[],
+    },
+    sidebar: {
+      active: undefined as string | undefined,
+      activities: [
+        {
+          uri: 'view-group://sidebar-placeholder',
+          active: [],
+          views: [],
+          icon: 'VscRefresh',
+          label: 'placeholder',
+        },
+      ] as ViewGroupModel[],
+      options: [
+        {
+          uri: `${Activity.Accounts}://`,
+          label: 'accounts',
+          icon: 'VscAccount',
+        },
+        {
+          uri: `${Activity.Manage}://`,
+          label: 'manage',
+          icon: 'VscSettingsGear',
+        },
+      ],
+    },
   },
   reducers: {
-    setViews: (state, { payload: groups }: PayloadAction<ViewGroupModel[]>) => {
-      console.log('setViews', groups);
-      state.groups = groups;
+    setEditorViews: (
+      state,
+      { payload: groups }: PayloadAction<ViewGroupModel[]>
+    ) => {
+      state.editor.groups = groups;
     },
-    setActiveViews: (state, { payload: active }: PayloadAction<string[]>) => {
-      console.log('setActiveViews', active);
-      state.active = active;
+    setActiveEditorViews: (
+      state,
+      { payload: active }: PayloadAction<string[]>
+    ) => {
+      state.editor.active = active;
+    },
+    setSidebarViews: (
+      state,
+      { payload: activities }: PayloadAction<ViewGroupModel[]>
+    ) => {
+      state.sidebar.activities = activities;
+    },
+    setActiveSidebarView: (
+      state,
+      { payload: active }: PayloadAction<string>
+    ) => {
+      state.sidebar.active = active;
     },
   },
 });
 
-export const { setViews, setActiveViews } = viewsManagerSlice.actions;
+export const {
+  setEditorViews,
+  setActiveEditorViews,
+  setSidebarViews,
+  setActiveSidebarView,
+} = viewsManagerSlice.actions;
 
 export const selectViewsManager = (state: RootState) => state.viewsManager;
 

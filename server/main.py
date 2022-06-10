@@ -9,7 +9,7 @@ from subjects.subjects_manager import SubjectsManager
 from logger.logger import *
 from logger.log_manager import LogsManager
 
-from views.view_manager import View, ViewsManager
+from views.view_manager import View, ViewsManager, FileExplorerView, FileSearcherView
 
 from analysis.analysis import Analysis
 from analysis.map import Map
@@ -18,14 +18,24 @@ from guide_builder import GuideBuilder
 
 
 def populate_views_manager(views_manager: ViewsManager):
-    views_manager.add_view(View("Editor.tsx", "file:///Users/src/Editor.tsx"))
-    views_manager.add_view(View("EditorGroups.tsx", "file:///Users/src/EditorGroups.tsx"))
-    views_manager.add_view(View("Output.tsx", "file:///Users/src/Output.tsx"))
-    views_manager.add_view(View("GuideBuilder.py", "file:///Users/src/GuideBuilder.py"))
-    group_uri = views_manager.add_group()
-    views_manager.add_view(View("main.py", "file:///Users/src/main.py"), group_uri)
-    views_manager.add_view(View("ActivityBar.tsx", "file:///Users/src/ActivityBar.tsx"), group_uri)
-    views_manager.add_view(View("files.ts", "file:///Users/src/files.ts"), group_uri)
+    # sidebar
+    explorer_uri = views_manager.sidebar.add_activity("Explorer", "VscFiles")
+    views_manager.sidebar.add_view(FileExplorerView("file:///Users/src/"), explorer_uri)
+    searcher_uri = views_manager.sidebar.add_activity("Search", "VscSearch")
+    views_manager.sidebar.add_view(FileSearcherView("file:///Users/src/"), searcher_uri)
+    extensions_uri = views_manager.sidebar.add_activity("Extensions", "VscExtensions")
+    # empty on purpose
+    views_manager.sidebar.select_activity(explorer_uri)
+
+    # editor
+    views_manager.editor.add_view(View("Editor.tsx", "file:///Users/src/Editor.tsx"))
+    views_manager.editor.add_view(View("EditorGroups.tsx", "file:///Users/src/EditorGroups.tsx"))
+    views_manager.editor.add_view(View("Output.tsx", "file:///Users/src/Output.tsx"))
+    views_manager.editor.add_view(View("GuideBuilder.py", "file:///Users/src/GuideBuilder.py"))
+    group_uri = views_manager.editor.add_group()
+    views_manager.editor.add_view(View("main.py", "file:///Users/src/main.py"), group_uri)
+    views_manager.editor.add_view(View("ActivityBar.tsx", "file:///Users/src/ActivityBar.tsx"), group_uri)
+    views_manager.editor.add_view(View("files.ts", "file:///Users/src/files.ts"), group_uri)
 
 
 async def main():
@@ -47,8 +57,11 @@ async def main():
     # server_socket.bind_command("file_manager.add_files", files_manager.add_files, False)
     # server_socket.bind_command("file_manager.remove_file", files_manager.remove_file, False)
 
-    server_socket.bind_command("views_manager.close_view", views_manager.remove_view)
-    server_socket.bind_command("views_manager.select_view", views_manager.select_view)
+    server_socket.bind_command("views_manager.editor.close_view", views_manager.editor.remove_view)
+    server_socket.bind_command("views_manager.editor.select_view", views_manager.editor.select_view)
+    server_socket.bind_command("views_manager.sidebar.close_view", views_manager.sidebar.remove_view)
+    server_socket.bind_command("views_manager.sidebar.select_view", views_manager.sidebar.select_view)
+    server_socket.bind_command("views_manager.sidebar.select_activity", views_manager.sidebar.select_activity)
 
     server_socket.bind_command("logs_manager.add_log", logs_manager.add_log)
     server_socket.bind_command("logs_manager.get_logs", logs_manager.get_logs)

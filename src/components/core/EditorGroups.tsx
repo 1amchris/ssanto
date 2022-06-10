@@ -5,7 +5,9 @@ import { useAppSelector } from 'store/hooks';
 import { selectViewsManager } from 'store/reducers/views-manager';
 
 function EditorGroups({ style }: any) {
-  const { groups } = useAppSelector(selectViewsManager);
+  const {
+    editor: { groups },
+  } = useAppSelector(selectViewsManager);
 
   return (
     <SplitView

@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 
 export enum Activity {
-  Explorer = 'ssanto.explorer',
-  Search = 'ssanto.search',
-  Extensions = 'ssanto.extensions',
-  Accounts = 'ssanto.accounts',
-  Manage = 'ssanto.manage',
+  Explorer = 'file-explorer',
+  Search = 'file-searcher',
+  Extensions = 'extensions',
+  Accounts = 'accounts',
+  Manage = 'manage',
 }

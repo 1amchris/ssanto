@@ -6,9 +6,14 @@ enum ServerCallTarget {
 
   LogsManagerLog = 'logs_manager.add_log',
 
-  ViewsManagerSelectView = 'views_manager.select_view',
-  ViewsManagerOpenView = 'views_manager.open_view',
-  ViewsManagerCloseView = 'views_manager.close_view',
+  ViewsManagerSelectEditor = 'views_manager.editor.select_view',
+  ViewsManagerOpenEditor = 'views_manager.editor.open_view',
+  ViewsManagerCloseEditor = 'views_manager.editor.close_view',
+
+  ViewsManagerSelectActivity = 'views_manager.sidebar.select_activity',
+  ViewsManagerSelectActivityView = 'views_manager.sidebar.select_view',
+  ViewsManagerOpenActivityView = 'views_manager.sidebar.open_view',
+  ViewsManagerCloseActivityView = 'views_manager.sidebar.close_view',
 
   SaveProject = 'analysis.save_project',
   OpenProject = 'analysis.open_project',

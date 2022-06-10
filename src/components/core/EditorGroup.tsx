@@ -169,7 +169,7 @@ function EditorGroup({ group, style }: any) {
           onFocus={(uri: string) =>
             dispatch(
               call({
-                target: ServerCallTarget.ViewsManagerSelectView,
+                target: ServerCallTarget.ViewsManagerSelectEditor,
                 args: [uri, group.uri],
               } as CallModel)
             )
@@ -177,7 +177,7 @@ function EditorGroup({ group, style }: any) {
           onClose={(uri: string) =>
             dispatch(
               call({
-                target: ServerCallTarget.ViewsManagerCloseView,
+                target: ServerCallTarget.ViewsManagerCloseEditor,
                 args: [uri, group.uri],
               } as CallModel)
             )

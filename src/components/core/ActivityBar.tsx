@@ -1,11 +1,14 @@
-import { Color, Opacity } from 'enums/Color';
-import { ColorPalette } from 'models/ColorPalette';
 import React, { useState } from 'react';
+import { Color, Opacity } from 'enums/Color';
+import ServerCallTarget from 'enums/ServerCallTarget';
+import { ColorPalette } from 'models/ColorPalette';
+import CallModel from 'models/server-coms/CallModel';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { IconBaseProps, IconType } from 'react-icons';
 import * as codicons from 'react-icons/vsc';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectActivityBar, setActive } from 'store/reducers/activity-bar';
+import { call } from 'store/reducers/server';
+import { selectViewsManager } from 'store/reducers/views-manager';
 import ColorsUtils from 'utils/colors-utils';
 
 const backgroundColors = {
@@ -29,7 +32,13 @@ const iconColors = {
   default: ColorsUtils.applyOpacity(Color.Gray, Opacity.Opaque),
 } as ColorPalette;
 
-function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {
+function ActivityItem({
+  label,
+  icon: iconName,
+  active,
+  disabled,
+  onClick,
+}: any) {
   const [focused, setFocused] = useState(false);
 
   const options = { active, disabled, focused };
@@ -86,15 +95,23 @@ function ActivityItem({ id, label, iconName, active, disabled, onClick }: any) {
  * @return {JSX.Element} Html.
  */
 function ActivityBar() {
-  const { active, activities, options } = useAppSelector(selectActivityBar);
+  const {
+    sidebar: { active, activities, options },
+  } = useAppSelector(selectViewsManager);
   const dispatch = useAppDispatch();
 
   function handleActivityClick(activity: any) {
-    dispatch(setActive(activity.id));
+    dispatch(
+      call({
+        target: ServerCallTarget.ViewsManagerSelectActivity,
+        args: [activity.uri],
+      } as CallModel)
+    );
   }
 
   function handleOptionClick(option: any) {
-    console.log(`clicked on activity option: "${option.id}"`);
+    // TODO: implement clicking on activity bar option
+    console.log(`clicked on activity option: "${option.uri}"`);
   }
 
   return (
@@ -103,17 +120,17 @@ function ActivityBar() {
         {activities?.map(activity => (
           <ActivityItem
             {...activity}
-            key={`${activity.id}${active === activity.id}`}
-            active={active === activity.id}
+            key={`${activity.uri}${active === activity.uri}`}
+            active={active === activity.uri}
             onClick={() => handleActivityClick(activity)}
           />
         ))}
       </div>
       <div className="d-flex flex-column">
-        {options?.map(option => (
+        {options?.map((option: any) => (
           <ActivityItem
             {...option}
-            key={`activities/option-${option.id}`}
+            key={`activities/option-${option.uri}`}
             onClick={() => handleOptionClick(option)}
           />
         ))}

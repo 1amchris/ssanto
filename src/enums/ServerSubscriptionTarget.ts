@@ -6,8 +6,10 @@ enum ServerSubscriptionTarget {
 
   LogsManagerLogs = 'logs_manager.logs',
 
-  ViewsManagerViews = 'views_manager.views',
-  ViewsManagerActiveViews = 'views_manager.active_views',
+  ViewsManagerEditorViews = 'views_manager.editor.views',
+  ViewsManagerActiveEditorViews = 'views_manager.editor.active_views',
+  ViewsManagerSidebarViews = 'views_manager.sidebar.activities',
+  ViewsManagerActiveSidebarView = 'views_manager.sidebar.active_view',
 
   MapCursor = 'map.cursor',
   MapCursorInformations = 'map.cursor.informations',

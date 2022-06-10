@@ -4,4 +4,6 @@ export default interface ViewGroupModel {
   uri: string;
   active: string[];
   views: ViewModel[];
+  icon?: string;
+  label?: string;
 }

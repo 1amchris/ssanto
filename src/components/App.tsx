@@ -27,7 +27,12 @@ import ServerSubscriptionTarget from 'enums/ServerSubscriptionTarget';
 import { LayersGroups } from 'models/map/Layers';
 import { setWorkspace } from 'store/reducers/files';
 import { setLogs } from 'store/reducers/logger';
-import { setViews, setActiveViews } from 'store/reducers/views-manager';
+import {
+  setEditorViews,
+  setActiveEditorViews,
+  setSidebarViews,
+  setActiveSidebarView,
+} from 'store/reducers/views-manager';
 
 /**
  * App component.
@@ -54,15 +59,29 @@ function App() {
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.ViewsManagerViews,
-        onAction: setViews,
+        subject: ServerSubscriptionTarget.ViewsManagerEditorViews,
+        onAction: setEditorViews,
       })
     );
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.ViewsManagerActiveViews,
-        onAction: setActiveViews,
+        subject: ServerSubscriptionTarget.ViewsManagerActiveEditorViews,
+        onAction: setActiveEditorViews,
+      })
+    );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTarget.ViewsManagerSidebarViews,
+        onAction: setSidebarViews,
+      })
+    );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTarget.ViewsManagerActiveSidebarView,
+        onAction: setActiveSidebarView,
       })
     );
 

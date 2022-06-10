@@ -1,24 +1,24 @@
 import React from 'react';
 import { IconBaseProps, IconType } from 'react-icons';
-import { selectActivityBar } from 'store/reducers/activity-bar';
 import { useAppSelector } from 'store/hooks';
-import { ActivityModel } from 'models/ActivityModel';
 import { Activity } from 'enums/Activity';
 import { Color } from 'enums/Color';
 import DefaultView from 'components/common/DefaultView';
 import FileExplorer from 'components/views/FileExplorer';
 import FileSearcher from 'components/views/FileSearcher';
 import * as codicons from 'react-icons/vsc';
+import { selectViewsManager } from 'store/reducers/views-manager';
 
-function getView(activity: ActivityModel) {
-  switch (activity.id) {
+function getView(activity: any) {
+  // TODO: Move to a ViewsRegistry
+  const viewType = activity?.uri?.slice(0, activity?.uri?.indexOf('://'));
+  switch (viewType) {
     case Activity.Explorer:
       return <FileExplorer />;
     case Activity.Search:
       return <FileSearcher />;
-    default:
-      return <DefaultView />;
   }
+  return <DefaultView />;
 }
 
 /**
@@ -26,9 +26,11 @@ function getView(activity: ActivityModel) {
  * @return {JSX.Element} Html.
  */
 function SideBar({ style }: any) {
-  const { active: activeId, activities } = useAppSelector(selectActivityBar);
+  const {
+    sidebar: { active: activeId, activities },
+  } = useAppSelector(selectViewsManager);
   const activity = activities.find(
-    (activity: ActivityModel) => activity.id === activeId
+    (activity: any) => activity.uri === activeId
   )!;
 
   const iconBaseProps: IconBaseProps = {
@@ -84,9 +86,17 @@ function SideBar({ style }: any) {
           ))}
         </div>
       </div>
-      <div className="w-100 h-100 overflow-auto">
-        {activity !== undefined && getView(activity)}
-      </div>
+      {activity?.views?.length > 0 ? (
+        activity?.views.map((view: any) => (
+          <div key={view.name} className="w-100 h-100 overflow-auto">
+            {getView(view)}
+          </div>
+        ))
+      ) : (
+        <div className="w-100 h-100 overflow-auto">
+          <DefaultView />
+        </div>
+      )}
     </nav>
   );
 }
