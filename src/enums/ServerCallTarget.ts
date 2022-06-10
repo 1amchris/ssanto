@@ -6,6 +6,10 @@ enum ServerCallTarget {
 
   LogsManagerLog = 'logs_manager.add_log',
 
+  ViewsManagerSelectView = 'views_manager.select_view',
+  ViewsManagerOpenView = 'views_manager.open_view',
+  ViewsManagerCloseView = 'views_manager.close_view',
+
   SaveProject = 'analysis.save_project',
   OpenProject = 'analysis.open_project',
 

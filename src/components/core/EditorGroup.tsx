@@ -7,8 +7,10 @@ import * as codicons from 'react-icons/vsc';
 import { IconBaseProps, IconType } from 'react-icons';
 import { BsTextLeft } from 'react-icons/bs';
 import { useAppDispatch } from 'store/hooks';
-import { closeView, setActive } from 'store/reducers/views-manager';
 import ViewModel from 'models/ViewModel';
+import { call } from 'store/reducers/server';
+import ServerCallTarget from 'enums/ServerCallTarget';
+import CallModel from 'models/server-coms/CallModel';
 
 const backgroundColors = {
   active: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
@@ -165,10 +167,20 @@ function EditorGroup({ group, style }: any) {
           active={group.active}
           views={group.views}
           onFocus={(uri: string) =>
-            dispatch(setActive({ groupId: group.uri, viewId: uri }))
+            dispatch(
+              call({
+                target: ServerCallTarget.ViewsManagerSelectView,
+                args: [uri, group.uri],
+              } as CallModel)
+            )
           }
           onClose={(uri: string) =>
-            dispatch(closeView({ groupId: group.uri, viewId: uri }))
+            dispatch(
+              call({
+                target: ServerCallTarget.ViewsManagerCloseView,
+                args: [uri, group.uri],
+              } as CallModel)
+            )
           }
         />
       )}

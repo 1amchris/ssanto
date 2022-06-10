@@ -1,13 +1,20 @@
 /* eslint-disable no-unused-vars */
 
 enum ServerSubscriptionTarget {
-  LogsManagerLogs = 'logs_manager.logs',
   FileManagerFiles = 'file_manager.files',
   FileManagerShapefiles = 'file_manager.shapefiles',
+
+  LogsManagerLogs = 'logs_manager.logs',
+
+  ViewsManagerViews = 'views_manager.views',
+  ViewsManagerActiveViews = 'views_manager.active_views',
+
   MapCursor = 'map.cursor',
   MapCursorInformations = 'map.cursor.informations',
   MapCenter = 'map.center',
+
   Layer = 'layers',
+
   AnalysisResult = 'analysis',
   SubAnalysisResult = 'sub_analysis',
   AnalysisParameters = 'parameters',

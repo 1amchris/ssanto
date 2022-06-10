@@ -2,7 +2,6 @@ import signal
 import platform
 
 import asyncio
-from logger.log_types import LogType
 
 from network.server_socket import ServerSocket
 from subjects.subjects_manager import SubjectsManager
@@ -10,17 +9,35 @@ from subjects.subjects_manager import SubjectsManager
 from logger.logger import *
 from logger.log_manager import LogsManager
 
+from views.view_manager import View, ViewsManager
+
 from analysis.analysis import Analysis
 from analysis.map import Map
 from files.file_manager import FilesManager
 from guide_builder import GuideBuilder
 
 
+def populate_views_manager(views_manager: ViewsManager):
+    views_manager.add_view(View("Editor.tsx", "file:///Users/src/Editor.tsx"))
+    views_manager.add_view(View("EditorGroups.tsx", "file:///Users/src/EditorGroups.tsx"))
+    views_manager.add_view(View("Output.tsx", "file:///Users/src/Output.tsx"))
+    views_manager.add_view(View("GuideBuilder.py", "file:///Users/src/GuideBuilder.py"))
+    group_uri = views_manager.add_group()
+    views_manager.add_view(View("main.py", "file:///Users/src/main.py"), group_uri)
+    views_manager.add_view(View("ActivityBar.tsx", "file:///Users/src/ActivityBar.tsx"), group_uri)
+    views_manager.add_view(View("files.ts", "file:///Users/src/files.ts"), group_uri)
+    del_me = views_manager.add_view(View("Output.tsx", "file:///Users/src/Output.tsx"), group_uri)
+    views_manager.remove_view(del_me, group_uri)
+
+
 async def main():
     server_socket = ServerSocket("localhost", 15649)
     subjects_manager = SubjectsManager(server_socket)
     logs_manager = LogsManager(subjects_manager)
+    views_manager = ViewsManager(subjects_manager, logs_manager)
     files_manager = FilesManager(subjects_manager, logs_manager)
+
+    populate_views_manager(views_manager)
 
     # TODO: I feel like "file_manager.###" should be "files_manager.###" (like the variable's name)
 
@@ -31,6 +48,9 @@ async def main():
     server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
     # server_socket.bind_command("file_manager.add_files", files_manager.add_files, False)
     # server_socket.bind_command("file_manager.remove_file", files_manager.remove_file, False)
+
+    server_socket.bind_command("views_manager.close_view", views_manager.remove_view)
+    server_socket.bind_command("views_manager.select_view", views_manager.select_view)
 
     server_socket.bind_command("logs_manager.add_log", logs_manager.add_log)
     server_socket.bind_command("logs_manager.get_logs", logs_manager.get_logs)

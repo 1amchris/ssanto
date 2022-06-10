@@ -27,6 +27,7 @@ import ServerSubscriptionTarget from 'enums/ServerSubscriptionTarget';
 import { LayersGroups } from 'models/map/Layers';
 import { setWorkspace } from 'store/reducers/files';
 import { setLogs } from 'store/reducers/logger';
+import { setViews, setActiveViews } from 'store/reducers/views-manager';
 
 /**
  * App component.
@@ -48,6 +49,20 @@ function App() {
       subscribe({
         subject: ServerSubscriptionTarget.LogsManagerLogs,
         onAction: setLogs,
+      })
+    );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTarget.ViewsManagerViews,
+        onAction: setViews,
+      })
+    );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTarget.ViewsManagerActiveViews,
+        onAction: setActiveViews,
       })
     );
 
