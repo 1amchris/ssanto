@@ -9,7 +9,9 @@ from subjects.subjects_manager import SubjectsManager
 from logger.logger import *
 from logger.log_manager import LogsManager
 
-from views.view_manager import View, ViewsManager, FileExplorerView, FileSearcherView
+from views.manager import ViewsManager
+from views.builtin import FileExplorerView, FileSearcherView
+from views.views import View
 
 from analysis.analysis import Analysis
 from analysis.map import Map
@@ -28,14 +30,9 @@ def populate_views_manager(views_manager: ViewsManager):
     views_manager.sidebar.select_activity(explorer_uri)
 
     # editor
+    # for testing purposes, as it is currently impossible to spawn a new group
     views_manager.editor.add_view(View("Editor.tsx", "file:///Users/src/Editor.tsx"))
-    views_manager.editor.add_view(View("EditorGroups.tsx", "file:///Users/src/EditorGroups.tsx"))
-    views_manager.editor.add_view(View("Output.tsx", "file:///Users/src/Output.tsx"))
-    views_manager.editor.add_view(View("GuideBuilder.py", "file:///Users/src/GuideBuilder.py"))
-    group_uri = views_manager.editor.add_group()
-    views_manager.editor.add_view(View("main.py", "file:///Users/src/main.py"), group_uri)
-    views_manager.editor.add_view(View("ActivityBar.tsx", "file:///Users/src/ActivityBar.tsx"), group_uri)
-    views_manager.editor.add_view(View("files.ts", "file:///Users/src/files.ts"), group_uri)
+    views_manager.editor.add_group()
 
 
 async def main():
@@ -53,6 +50,7 @@ async def main():
     server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
 
     server_socket.bind_command("files.open_workspace", files_manager.open_workspace)
+    server_socket.bind_command("files.open_file", files_manager.open_file(views_manager))
     server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
     # server_socket.bind_command("file_manager.add_files", files_manager.add_files, False)
     # server_socket.bind_command("file_manager.remove_file", files_manager.remove_file, False)

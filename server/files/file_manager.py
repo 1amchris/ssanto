@@ -8,6 +8,8 @@ from files.file import File
 from files.shapefile import Shapefile
 from logger.log_manager import LogsManager
 from subjects.subjects_manager import SubjectsManager
+from views.manager import ViewsManager
+from views.views import View
 
 
 class FileParser:
@@ -179,6 +181,14 @@ class FilesManager:
         all_files = [FileMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
         self.files.notify(all_files)
         self.logger.info(f"Opened workspace at {path}")
+
+    def open_file(self, views_manager: ViewsManager):
+        def hof(file_uri: str):
+            view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri)
+            print("new_view", view.serialize())
+            views_manager.editor.add_view(view)
+
+        return hof
 
     def __notify_metadatas(self):
         metadatas = self.get_files_metadatas()

@@ -79,6 +79,7 @@ const TreeLeaf = ({
   active,
   focused,
   onClick,
+  onDoubleClick,
   indentationLevel,
   disabled = false,
 }: {
@@ -88,6 +89,7 @@ const TreeLeaf = ({
   indentationLevel: number;
   disabled?: boolean;
   onClick: (e: MouseEvent) => void;
+  onDoubleClick: (e: MouseEvent) => void;
 }) => {
   const [hovered, setHovered] = useState(false);
 
@@ -103,6 +105,7 @@ const TreeLeaf = ({
     <div
       className="w-100"
       onClick={e => !disabled && onClick(e)}
+      onDoubleClick={e => !disabled && onDoubleClick(e)}
       onMouseEnter={() => !disabled && setHovered(true)}
       onMouseLeave={() => !disabled && setHovered(false)}
       style={{
@@ -125,6 +128,7 @@ const TreeNode = ({
   focus,
   indentationLevel,
   onClick,
+  onDoubleClick,
   getIdentifier,
   getNodesAndLeaves,
   noHeader = false,
@@ -138,6 +142,7 @@ const TreeNode = ({
   noHeader?: boolean;
   disabled?: boolean;
   onClick: (e: MouseEvent, element: any) => void;
+  onDoubleClick: (e: MouseEvent, element: any) => void;
   getIdentifier: (node: any) => any;
   getNodesAndLeaves: (node: any) => {
     nodes: any[] | undefined;
@@ -180,6 +185,7 @@ const TreeNode = ({
               getIdentifier={getIdentifier}
               getNodesAndLeaves={getNodesAndLeaves}
               onClick={onClick}
+              onDoubleClick={onDoubleClick}
             />
           ))}
           {leaves?.map((leaf: any, index: number) => (
@@ -191,6 +197,9 @@ const TreeNode = ({
               }
               focused={focus !== undefined && focus === getIdentifier(leaf)}
               indentationLevel={indentationLevel}
+              onDoubleClick={(e: MouseEvent) => {
+                onDoubleClick(e, leaf);
+              }}
               onClick={(e: MouseEvent) => {
                 onClick(e, leaf);
               }}
@@ -221,6 +230,7 @@ function TreeView({
   }),
   onFocusChanged = () => {},
   onSelectionChanged = () => {},
+  onDoubleClickLeaf = () => {},
 }: {
   node: any;
   factory: (props: any) => React.ReactNode;
@@ -235,6 +245,7 @@ function TreeView({
   };
   onFocusChanged?: (focus: any) => void;
   onSelectionChanged?: (selection: any[]) => void;
+  onDoubleClickLeaf?: (e: MouseEvent, leaf: any) => void;
 }) {
   const [selection, setSelection] = useState<any[]>(selected);
   const [focus, setFocus] = useState<any | undefined>(focused);
@@ -265,6 +276,9 @@ function TreeView({
         factory={factory}
         getIdentifier={getIdentifier}
         getNodesAndLeaves={getNodesAndLeaves}
+        onDoubleClick={(e: MouseEvent, leaf: any) => {
+          onDoubleClickLeaf(e, leaf);
+        }}
         onClick={(e: MouseEvent, element: any) => {
           let newSelection = [];
           const elementId = getIdentifier(element);

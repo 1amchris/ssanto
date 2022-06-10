@@ -12,7 +12,7 @@ const FilesMiddleware: Middleware =
       case openWorkspace.type: {
         dispatch(
           call({
-            target: ServerCallTarget.OpenWorkspace,
+            target: ServerCallTarget.FilesOpenWorkspace,
             args: [action.payload],
             // TODO: There should maybe be an "onSuccessAction"
             // TODO: There should maybe be an "onErrorAction"

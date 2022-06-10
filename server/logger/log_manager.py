@@ -1,5 +1,4 @@
 from collections import defaultdict
-import string
 from files.serializable import Serializable
 from logger.log_message import LogMessage
 from logger.log_types import LogType
@@ -37,7 +36,7 @@ class LogsManager(Serializable):
     def serialize(self) -> dict:
         return self.logs.value().serialize()
 
-    def add_log(self, log_type: LogType, message: string):
+    def add_log(self, log_type: LogType, message: str):
         # TODO: it might become heavy over time (sends all of the logs all of the time).
         # We should address this if it becomes a problem
         self.logs.value()[log_type].append(LogMessage(log_type, message))
@@ -51,20 +50,20 @@ class LogsManager(Serializable):
         else:
             raise KeyError(f"No logs for {log_type}")
 
-    def tip(self, message: string):
+    def tip(self, message: str):
         self.add_log(LogType.TIP, message)
 
-    def warning(self, message: string):
+    def warning(self, message: str):
         self.add_log(LogType.WARNING, message)
 
-    def error(self, message: string):
+    def error(self, message: str):
         self.add_log(LogType.ERROR, message)
 
-    def info(self, message: string):
+    def info(self, message: str):
         self.add_log(LogType.INFO, message)
 
-    def debug(self, message: string):
+    def debug(self, message: str):
         self.add_log(LogType.DEBUG, message)
 
-    def critical(self, message: string):
+    def critical(self, message: str):
         self.add_log(LogType.CRITICAL, message)

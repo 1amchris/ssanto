@@ -2,7 +2,8 @@
 
 // TODO: there are many inconsistencies in the the enum. Some have "namespaces", some don't. Some are plural, some aren't.
 enum ServerCallTarget {
-  OpenWorkspace = 'files.open_workspace',
+  FilesOpenWorkspace = 'files.open_workspace',
+  FilesOpenFile = 'files.open_file',
 
   LogsManagerLog = 'logs_manager.add_log',
 

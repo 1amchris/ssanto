@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import { BsTextLeft } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectFiles, setFileSelection, setFocus } from 'store/reducers/files';
@@ -7,6 +7,9 @@ import FolderMetadataModel from 'models/file/FolderMetadataModel';
 import NoWorkspaceSelected from 'components/views/NoWorkspaceSelected';
 import TreeView from 'components/common/TreeView';
 import FilesUtils from 'utils/files-utils';
+import ServerCallTarget from 'enums/ServerCallTarget';
+import CallModel from 'models/server-coms/CallModel';
+import { call } from 'store/reducers/server';
 
 function FileRow({ name }: any) {
   return (
@@ -53,6 +56,14 @@ function FileExplorer({ style }: any) {
           }}
           onSelectionChanged={(uris: string[]) => {
             dispatch(setFileSelection(uris));
+          }}
+          onDoubleClickLeaf={(e: MouseEvent, file: FileMetadataModel) => {
+            dispatch(
+              call({
+                target: ServerCallTarget.FilesOpenFile,
+                args: [file.uri],
+              } as CallModel)
+            );
           }}
         />
       )}
