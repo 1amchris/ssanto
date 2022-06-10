@@ -26,8 +26,6 @@ def populate_views_manager(views_manager: ViewsManager):
     views_manager.add_view(View("main.py", "file:///Users/src/main.py"), group_uri)
     views_manager.add_view(View("ActivityBar.tsx", "file:///Users/src/ActivityBar.tsx"), group_uri)
     views_manager.add_view(View("files.ts", "file:///Users/src/files.ts"), group_uri)
-    del_me = views_manager.add_view(View("Output.tsx", "file:///Users/src/Output.tsx"), group_uri)
-    views_manager.remove_view(del_me, group_uri)
 
 
 async def main():
