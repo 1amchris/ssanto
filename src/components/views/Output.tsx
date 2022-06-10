@@ -18,7 +18,8 @@ function Output() {
           {`["`}
           {<span className="text-uppercase">{type}</span>}
           {`" - `}
-          {moment(time).format('hh:mm:ss a')}
+          {/* moment takes milliseconds, and time is in seconds */}
+          {moment(time * 1000).format('hh:mm:ss a')}
           {`] ${message}`}
         </pre>
       ))}
