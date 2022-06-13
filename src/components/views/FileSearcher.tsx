@@ -7,6 +7,9 @@ import FolderMetadataModel from 'models/file/FolderMetadataModel';
 import NoWorkspaceSelected from 'components/views/NoWorkspaceSelected';
 import ListView from 'components/common/ListView';
 import FormControl from 'components/forms/components/FormControl';
+import ServerCallTarget from 'enums/ServerCallTarget';
+import CallModel from 'models/server-coms/CallModel';
+import { call } from 'store/reducers/server';
 
 /**
  * File searcher component.
@@ -82,6 +85,14 @@ function FileSearcher({ style }: any) {
             getIdentifier={(file?: FolderMetadataModel | FileMetadataModel) =>
               file?.uri
             }
+            onDoubleClickRow={(e: MouseEvent, file: FileMetadataModel) => {
+              dispatch(
+                call({
+                  target: ServerCallTarget.FilesOpenFile,
+                  args: [file.uri],
+                } as CallModel)
+              );
+            }}
             onFocusChanged={(uri: string) => {
               dispatch(setFocus(uri));
             }}

@@ -27,7 +27,14 @@ const textColors = {
   default: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
 } as ColorPalette;
 
-const Row = ({ children, active, focused, onClick, disabled = false }: any) => {
+const Row = ({
+  children,
+  active,
+  focused,
+  onClick,
+  onDoubleClick,
+  disabled = false,
+}: any) => {
   const [hovered, setHovered] = useState(false);
 
   const options = { active, focused, hovered, disabled };
@@ -42,6 +49,7 @@ const Row = ({ children, active, focused, onClick, disabled = false }: any) => {
     <div
       className="w-100"
       onClick={e => !disabled && onClick(e)}
+      onDoubleClick={e => !disabled && onDoubleClick(e)}
       onMouseEnter={() => !disabled && setHovered(true)}
       onMouseLeave={() => !disabled && setHovered(false)}
       style={{
@@ -65,6 +73,7 @@ function ListView({
   getIdentifier = (element: any | undefined) => element?.id,
   onFocusChanged = () => {},
   onSelectionChanged = () => {},
+  onDoubleClickRow = () => {},
 }: {
   elements: any[];
   factory: (props: Object) => React.ReactNode;
@@ -74,6 +83,7 @@ function ListView({
   getIdentifier?: (element: any) => any; // must return a unique identifier for every element
   onFocusChanged?: (identifier: any) => void;
   onSelectionChanged?: (identifiers: any[]) => void;
+  onDoubleClickRow?: (e: MouseEvent, row: any) => void;
 }) {
   const [selection, setSelection] = useState<any[]>(selected);
   const [focus, setFocus] = useState<any | undefined>(focused);
@@ -85,6 +95,9 @@ function ListView({
           key={`${JSON.stringify(element)}-${index}`}
           active={selection.includes(getIdentifier(element))}
           focused={focus !== undefined && focus === getIdentifier(element)}
+          onDoubleClick={(e: MouseEvent) => {
+            onDoubleClickRow(e, element);
+          }}
           onClick={(e: MouseEvent) => {
             let newSelection = [];
             const elementId = getIdentifier(element);
