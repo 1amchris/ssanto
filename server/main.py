@@ -23,9 +23,9 @@ def populate_extension_manager():
     extensions = ExtensionManager()
     # examples of registering new view types for given extensions
     # TODO populate extension manager with actual view types (maybe even user-editable in the future)
-    extensions.register_view_type("tsx", "editor")
-    extensions.register_view_type("sproj", "ssanto-project")
-    extensions.register_view_type("smap", "map")
+    extensions["tsx"] = "editor"
+    extensions["sproj"] = "ssanto-project"
+    extensions["smap"] = "ssanto-map"
 
 
 def populate_views_manager(views_manager: ViewsManager):
