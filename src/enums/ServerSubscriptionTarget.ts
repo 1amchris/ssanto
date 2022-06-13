@@ -8,6 +8,8 @@ enum ServerSubscriptionTarget {
 
   ViewsManagerEditorViews = 'views_manager.editor.views',
   ViewsManagerActiveEditorViews = 'views_manager.editor.active_views',
+  ViewsManagerPanelViews = 'views_manager.panel.activities',
+  ViewsManagerActivePanelView = 'views_manager.panel.active_view',
   ViewsManagerSidebarViews = 'views_manager.sidebar.activities',
   ViewsManagerActiveSidebarView = 'views_manager.sidebar.active_view',
 

@@ -30,6 +30,8 @@ import { setLogs } from 'store/reducers/logger';
 import {
   setEditorViews,
   setActiveEditorViews,
+  setPanelViews,
+  setActivePanelView,
   setSidebarViews,
   setActiveSidebarView,
 } from 'store/reducers/views-manager';
@@ -63,7 +65,6 @@ function App() {
         onAction: setEditorViews,
       })
     );
-
     dispatch(
       subscribe({
         subject: ServerSubscriptionTarget.ViewsManagerActiveEditorViews,
@@ -73,11 +74,23 @@ function App() {
 
     dispatch(
       subscribe({
+        subject: ServerSubscriptionTarget.ViewsManagerPanelViews,
+        onAction: setPanelViews,
+      })
+    );
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTarget.ViewsManagerActivePanelView,
+        onAction: setActivePanelView,
+      })
+    );
+
+    dispatch(
+      subscribe({
         subject: ServerSubscriptionTarget.ViewsManagerSidebarViews,
         onAction: setSidebarViews,
       })
     );
-
     dispatch(
       subscribe({
         subject: ServerSubscriptionTarget.ViewsManagerActiveSidebarView,

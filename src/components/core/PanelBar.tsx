@@ -4,14 +4,15 @@ import { Color, Opacity } from 'enums/Color';
 import DefaultView from 'components/common/DefaultView';
 import * as codicons from 'react-icons/vsc';
 import ColorsUtils from 'utils/colors-utils';
-import IPanelModel from 'models/IPanelModel';
 import { ColorPalette } from 'models/ColorPalette';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectPanelBar, setActive } from 'store/reducers/panel-bar';
-import { Panel } from 'enums/Panel';
 import Output from 'components/views/Output';
-import Problems from 'components/views/Problems';
+import ProblemsExplorer from 'components/views/ProblemsExplorer';
+import { selectViewsManager } from 'store/reducers/views-manager';
+import ServerCallTarget from 'enums/ServerCallTarget';
+import CallModel from 'models/server-coms/CallModel';
+import { call } from 'store/reducers/server';
 
 const backgroundColors = {
   disabled: ColorsUtils.applyOpacity(Color.LightGray, Opacity.Half),
@@ -34,15 +35,16 @@ const iconColors = {
   default: ColorsUtils.applyOpacity(Color.Gray, Opacity.Opaque),
 } as ColorPalette;
 
-function getView(panel: IPanelModel) {
-  switch (panel.id) {
-    case Panel.Output:
+function getView(activity: any) {
+  // TODO: Move to a ViewsRegistry
+  const viewType = activity?.uri?.slice(0, activity?.uri?.indexOf('://'));
+  switch (viewType) {
+    case 'output':
       return <Output />;
-    case Panel.Problems:
-      return <Problems />;
-    default:
-      return <DefaultView />;
+    case 'problems-explorer':
+      return <ProblemsExplorer />;
   }
+  return <DefaultView />;
 }
 
 function PanelItem({ label, active, disabled, onClick }: any) {
@@ -103,8 +105,10 @@ function PanelItem({ label, active, disabled, onClick }: any) {
  */
 function PanelBar({ style }: any) {
   const dispatch = useAppDispatch();
-  const { active: activeId, panels } = useAppSelector(selectPanelBar);
-  const panel = panels.find((panel: IPanelModel) => panel.id === activeId)!;
+  const {
+    panel: { active: activeId, activities: panels },
+  } = useAppSelector(selectViewsManager);
+  const panel = panels.find((panel: any) => panel.uri === activeId)!;
 
   const iconBaseProps: IconBaseProps = {
     size: 16,
@@ -122,10 +126,6 @@ function PanelBar({ style }: any) {
     },
   ];
 
-  function handlePanelClick(panel: any) {
-    dispatch(setActive(panel.id));
-  }
-
   return (
     <nav
       className="d-flex flex-column"
@@ -136,12 +136,19 @@ function PanelBar({ style }: any) {
         style={{ padding: '0px 8px' }}
       >
         <div className="d-flex flex-row">
-          {panels?.map((panel: IPanelModel) => (
+          {panels?.map(panel => (
             <PanelItem
               {...panel}
-              key={`${panel.id}${activeId === panel.id}`}
-              active={activeId === panel.id}
-              onClick={() => handlePanelClick(panel)}
+              key={`${panel.uri}${activeId === panel.uri}`}
+              active={activeId === panel.uri}
+              onClick={() =>
+                dispatch(
+                  call({
+                    target: ServerCallTarget.ViewsManagerSelectPanel,
+                    args: [panel.uri],
+                  } as CallModel)
+                )
+              }
             />
           ))}
         </div>
@@ -166,7 +173,17 @@ function PanelBar({ style }: any) {
           ))}
         </div>
       </div>
-      <div className="w-100 h-100 overflow-auto">{getView(panel)}</div>
+      {panel?.views?.length > 0 ? (
+        panel?.views.map((view: any) => (
+          <div key={view.name} className="w-100 h-100 overflow-auto">
+            {getView(view)}
+          </div>
+        ))
+      ) : (
+        <div className="w-100 h-100 overflow-auto">
+          <DefaultView />
+        </div>
+      )}
     </nav>
   );
 }

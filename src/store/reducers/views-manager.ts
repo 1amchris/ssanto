@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
 import ViewGroupModel from 'models/ViewGroupModel';
-import { Activity } from 'enums/Activity';
 
 export const viewsManagerSlice = createSlice({
   name: 'views-manager',
@@ -13,6 +12,18 @@ export const viewsManagerSlice = createSlice({
           uri: 'view-group://editor-placeholder',
           active: [],
           views: [],
+        },
+      ] as ViewGroupModel[],
+    },
+    panel: {
+      active: undefined as string | undefined,
+      activities: [
+        {
+          uri: 'view-group://panel-placeholder',
+          active: [],
+          views: [],
+          icon: 'VscRefresh',
+          label: 'placeholder',
         },
       ] as ViewGroupModel[],
     },
@@ -29,12 +40,12 @@ export const viewsManagerSlice = createSlice({
       ] as ViewGroupModel[],
       options: [
         {
-          uri: `${Activity.Accounts}://`,
+          uri: `accounts://`,
           label: 'accounts',
           icon: 'VscAccount',
         },
         {
-          uri: `${Activity.Manage}://`,
+          uri: `settings://`,
           label: 'manage',
           icon: 'VscSettingsGear',
         },
@@ -54,6 +65,15 @@ export const viewsManagerSlice = createSlice({
     ) => {
       state.editor.active = active;
     },
+    setPanelViews: (
+      state,
+      { payload: activities }: PayloadAction<ViewGroupModel[]>
+    ) => {
+      state.panel.activities = activities;
+    },
+    setActivePanelView: (state, { payload: active }: PayloadAction<string>) => {
+      state.panel.active = active;
+    },
     setSidebarViews: (
       state,
       { payload: activities }: PayloadAction<ViewGroupModel[]>
@@ -72,6 +92,8 @@ export const viewsManagerSlice = createSlice({
 export const {
   setEditorViews,
   setActiveEditorViews,
+  setPanelViews,
+  setActivePanelView,
   setSidebarViews,
   setActiveSidebarView,
 } = viewsManagerSlice.actions;

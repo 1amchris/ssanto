@@ -12,6 +12,11 @@ enum ServerCallTarget {
   ViewsManagerOpenEditor = 'views_manager.editor.open_view',
   ViewsManagerCloseEditor = 'views_manager.editor.close_view',
 
+  ViewsManagerSelectPanel = 'views_manager.panel.select_activity',
+  ViewsManagerSelectPanelView = 'views_manager.panel.select_view',
+  ViewsManagerOpenPanelView = 'views_manager.panel.open_view',
+  ViewsManagerClosePanelView = 'views_manager.panel.close_view',
+
   ViewsManagerSelectActivity = 'views_manager.sidebar.select_activity',
   ViewsManagerSelectActivityView = 'views_manager.sidebar.select_view',
   ViewsManagerOpenActivityView = 'views_manager.sidebar.open_view',

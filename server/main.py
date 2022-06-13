@@ -10,7 +10,7 @@ from logger.logger import *
 from logger.log_manager import LogsManager
 
 from views.manager import ViewsManager
-from views.builtin import FileExplorerView, FileSearcherView
+from views.builtin import FileExplorerView, FileSearcherView, ProblemExplorerView, OutputView
 from views.views import View
 
 from analysis.analysis import Analysis
@@ -20,6 +20,22 @@ from guide_builder import GuideBuilder
 
 
 def populate_views_manager(views_manager: ViewsManager):
+
+    # editor
+    # for testing purposes, as it is currently impossible to spawn new groups in the editor
+    views_manager.editor.add_group()
+
+    # panel
+    problems_uri = views_manager.panel.add_activity("Problems", "VscWarning")
+    print("problems_uri", problems_uri)
+    views_manager.panel.add_view(ProblemExplorerView("file:///Users/src/"), problems_uri)
+
+    output_uri = views_manager.panel.add_activity("Output", "VscOutput")
+    print("output_uri", output_uri)
+    views_manager.panel.add_view(OutputView("file:///Users/src/"), output_uri)
+
+    views_manager.panel.select_activity(output_uri)
+
     # sidebar
     explorer_uri = views_manager.sidebar.add_activity("Explorer", "VscFiles")
     views_manager.sidebar.add_view(FileExplorerView("file:///Users/src/"), explorer_uri)
@@ -30,12 +46,7 @@ def populate_views_manager(views_manager: ViewsManager):
     extensions_uri = views_manager.sidebar.add_activity("Extensions", "VscExtensions")
     # empty on purpose
 
-    views_manager.sidebar.select_activity(explorer_uri)
-
-    # editor
-    # for testing purposes, as it is currently impossible to spawn new groups in the editor
-    views_manager.editor.add_group()
-    views_manager.editor.add_group()
+    views_manager.sidebar.select_activity(explorer_uri, allow_none=False)
 
 
 async def main():
@@ -61,6 +72,9 @@ async def main():
     server_socket.bind_command("views_manager.editor.close_view", views_manager.editor.remove_view)
     server_socket.bind_command("views_manager.editor.select_view", views_manager.editor.select_view)
     server_socket.bind_command("views_manager.editor.select_group", views_manager.editor.select_group)
+    server_socket.bind_command("views_manager.panel.close_view", views_manager.panel.remove_view)
+    server_socket.bind_command("views_manager.panel.select_view", views_manager.panel.select_view)
+    server_socket.bind_command("views_manager.panel.select_activity", views_manager.panel.select_activity)
     server_socket.bind_command("views_manager.sidebar.close_view", views_manager.sidebar.remove_view)
     server_socket.bind_command("views_manager.sidebar.select_view", views_manager.sidebar.select_view)
     server_socket.bind_command("views_manager.sidebar.select_activity", views_manager.sidebar.select_activity)

@@ -1,7 +1,6 @@
 import React from 'react';
 import { IconBaseProps, IconType } from 'react-icons';
 import { useAppSelector } from 'store/hooks';
-import { Activity } from 'enums/Activity';
 import { Color } from 'enums/Color';
 import DefaultView from 'components/common/DefaultView';
 import FileExplorer from 'components/views/FileExplorer';
@@ -13,9 +12,9 @@ function getView(activity: any) {
   // TODO: Move to a ViewsRegistry
   const viewType = activity?.uri?.slice(0, activity?.uri?.indexOf('://'));
   switch (viewType) {
-    case Activity.Explorer:
+    case 'file-explorer':
       return <FileExplorer />;
-    case Activity.Search:
+    case 'file-searcher':
       return <FileSearcher />;
   }
   return <DefaultView />;
