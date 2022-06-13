@@ -9,7 +9,7 @@ import MenuBar from 'components/menu-bar/MenuBar';
 import Categories from 'components/guide/Categories';
 import CategoryLinks from 'components/guide/CategoryLinks';
 import { call } from 'store/reducers/server';
-import { useEffectOnce } from 'hooks';
+import { useEffectOnce } from 'hooks/useEffectOnce';
 import CallModel from 'models/server-coms/CallModel';
 import ServerCallTarget from 'enums/ServerCallTarget';
 

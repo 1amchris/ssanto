@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { IconBaseProps, IconType } from 'react-icons';
 import { Color, Opacity } from 'enums/Color';
 import DefaultView from 'components/common/DefaultView';
@@ -7,12 +7,11 @@ import ColorsUtils from 'utils/colors-utils';
 import { ColorPalette } from 'models/ColorPalette';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import Output from 'components/views/Output';
-import ProblemsExplorer from 'components/views/ProblemsExplorer';
 import { selectViewsManager } from 'store/reducers/views-manager';
 import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import { call } from 'store/reducers/server';
+import useViewsRegistry from 'hooks/useViewsRegistry';
 
 const backgroundColors = {
   disabled: ColorsUtils.applyOpacity(Color.LightGray, Opacity.Half),
@@ -34,18 +33,6 @@ const iconColors = {
   active: ColorsUtils.applyOpacity(Color.Black, Opacity.Opaque),
   default: ColorsUtils.applyOpacity(Color.Gray, Opacity.Opaque),
 } as ColorPalette;
-
-function getView(activity: any) {
-  // TODO: Move to a ViewsRegistry
-  const viewType = activity?.uri?.slice(0, activity?.uri?.indexOf('://'));
-  switch (viewType) {
-    case 'output':
-      return <Output />;
-    case 'problems-explorer':
-      return <ProblemsExplorer />;
-  }
-  return <DefaultView />;
-}
 
 function PanelItem({ label, active, disabled, onClick }: any) {
   const [focused, setFocused] = useState(false);
@@ -104,6 +91,8 @@ function PanelItem({ label, active, disabled, onClick }: any) {
  * @return {JSX.Element} Html.
  */
 function PanelBar({ style }: any) {
+  const { getView } = useViewsRegistry();
+
   const dispatch = useAppDispatch();
   const {
     panel: { active: activeId, activities: panels },
@@ -174,11 +163,16 @@ function PanelBar({ style }: any) {
         </div>
       </div>
       {panel?.views?.length > 0 ? (
-        panel?.views.map((view: any) => (
-          <div key={view.name} className="w-100 h-100 overflow-auto">
-            {getView(view)}
-          </div>
-        ))
+        panel?.views.map((view: any) => {
+          const Panel = getView(view.uri);
+          return (
+            <div key={view.name} className="w-100 h-100 overflow-auto">
+              <Suspense fallback={<div>Loading...</div>}>
+                <Panel />
+              </Suspense>
+            </div>
+          );
+        })
       ) : (
         <div className="w-100 h-100 overflow-auto">
           <DefaultView />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MenuBar from 'components/menu-bar/MenuBar';
 // import Collapsible from 'components/Collapsible';
 // import FormsBar from 'components/forms/FormsBar';
@@ -27,7 +27,8 @@ import SideBar from 'components/core/SideBar';
 import StatusBar from 'components/core/StatusBar';
 import SplitView from 'components/core/SplitView';
 import EditorGroups from 'components/core/EditorGroups';
-import PanelBar from './core/PanelBar';
+import PanelBar from 'components/core/PanelBar';
+import ViewsRegistry from 'components/ViewsRegistry';
 
 /**
  * Main component.
@@ -148,27 +149,53 @@ function Main() {
   //   );
   // }
 
-  return (
-    <div className="d-flex flex-column" style={{ maxHeight: '100vh' }}>
-      <MenuBar style={{ height: '24px' }} />
-      <div
-        className="d-flex flex-row"
-        style={{
-          height: 'calc(100vh - 24px - 22px)',
-          maxWidth: '100%',
-          overflow: 'auto',
-        }}
-      >
-        <ActivityBar />
-        <SplitView direction="row">
-          <SideBar style={{ minWidth: 200, width: 240 }} />
-          <SplitView style={{ minWidth: 120 }} direction="column">
-            <EditorGroups />
-            <PanelBar style={{ height: '30%' }} />
-          </SplitView>
-        </SplitView>
+  const [factories, setFactories] = useState({
+    ['file-explorer']: React.lazy(() => {
+      return import('components/views/FileExplorer');
+    }),
+    ['file-searcher']: React.lazy(() => {
+      return import('components/views/FileSearcher');
+    }),
+    ['output']: React.lazy(() => {
+      return import('components/views/Output');
+    }),
+    ['problems-explorer']: React.lazy(() => {
+      return import('components/views/ProblemsExplorer');
+    }),
+  });
 
-        {/* <aside id="left-aside">
+  const value = {
+    factories,
+    registerFactory: (
+      viewType: string,
+      factory: (props: any) => React.ReactNode
+    ) => {
+      setFactories({ ...factories, [viewType]: factory });
+    },
+  };
+
+  return (
+    <ViewsRegistry.Provider value={value}>
+      <div className="d-flex flex-column" style={{ maxHeight: '100vh' }}>
+        <MenuBar style={{ height: '24px' }} />
+        <div
+          className="d-flex flex-row"
+          style={{
+            height: 'calc(100vh - 24px - 22px)',
+            maxWidth: '100%',
+            overflow: 'auto',
+          }}
+        >
+          <ActivityBar />
+          <SplitView direction="row">
+            <SideBar style={{ minWidth: 200, width: 240 }} />
+            <SplitView style={{ minWidth: 120 }} direction="column">
+              <EditorGroups />
+              <PanelBar style={{ height: '30%' }} />
+            </SplitView>
+          </SplitView>
+
+          {/* <aside id="left-aside">
             <FormsBar>
               <Collapsible
                 title={'file explorer'}
@@ -230,7 +257,7 @@ function Main() {
               </Collapsible>
             </FormsBar>
           </aside> */}
-        {/* <main
+          {/* <main
             className="shadow w-100 h-100 position-relative"
             style={{ zIndex: 1 }}
           >
@@ -299,9 +326,10 @@ function Main() {
               )}
             </aside>
           </main> */}
+        </div>
+        <StatusBar style={{ height: '22px' }} />
       </div>
-      <StatusBar style={{ height: '22px' }} />
-    </div>
+    </ViewsRegistry.Provider>
   );
 }
 

@@ -1,30 +1,19 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { IconBaseProps, IconType } from 'react-icons';
 import { useAppSelector } from 'store/hooks';
 import { Color } from 'enums/Color';
 import DefaultView from 'components/common/DefaultView';
-import FileExplorer from 'components/views/FileExplorer';
-import FileSearcher from 'components/views/FileSearcher';
 import * as codicons from 'react-icons/vsc';
 import { selectViewsManager } from 'store/reducers/views-manager';
-
-function getView(activity: any) {
-  // TODO: Move to a ViewsRegistry
-  const viewType = activity?.uri?.slice(0, activity?.uri?.indexOf('://'));
-  switch (viewType) {
-    case 'file-explorer':
-      return <FileExplorer />;
-    case 'file-searcher':
-      return <FileSearcher />;
-  }
-  return <DefaultView />;
-}
+import useViewsRegistry from 'hooks/useViewsRegistry';
 
 /**
  * Side bar component.
  * @return {JSX.Element} Html.
  */
 function SideBar({ style }: any) {
+  const { getView } = useViewsRegistry();
+
   const {
     sidebar: { active: activeId, activities },
   } = useAppSelector(selectViewsManager);
@@ -86,11 +75,16 @@ function SideBar({ style }: any) {
         </div>
       </div>
       {activity?.views?.length > 0 ? (
-        activity?.views.map((view: any) => (
-          <div key={view.name} className="w-100 h-100 overflow-auto">
-            {getView(view)}
-          </div>
-        ))
+        activity?.views.map((view: any) => {
+          const Activity = getView(view.uri);
+          return (
+            <div key={view.name} className="w-100 h-100 overflow-auto">
+              <Suspense fallback={<div>Loading...</div>}>
+                <Activity />
+              </Suspense>
+            </div>
+          );
+        })
       ) : (
         <div className="w-100 h-100 overflow-auto">
           <DefaultView />

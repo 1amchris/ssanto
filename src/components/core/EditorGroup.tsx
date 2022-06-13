@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import DefaultView from 'components/common/DefaultView';
 import { Color, Opacity } from 'enums/Color';
-import { ColorPalette } from 'models/ColorPalette';
-import ColorsUtils from 'utils/colors-utils';
-import * as codicons from 'react-icons/vsc';
-import { IconBaseProps, IconType } from 'react-icons';
-import { BsTextLeft } from 'react-icons/bs';
-import { useAppDispatch } from 'store/hooks';
-import ViewModel from 'models/ViewModel';
-import { call } from 'store/reducers/server';
+import Editor from 'components/core/Editor';
 import ServerCallTarget from 'enums/ServerCallTarget';
+import { ColorPalette } from 'models/ColorPalette';
+import ViewModel from 'models/ViewModel';
 import CallModel from 'models/server-coms/CallModel';
+import * as codicons from 'react-icons/vsc';
+import { BsTextLeft } from 'react-icons/bs';
+import { IconBaseProps, IconType } from 'react-icons';
+import { useAppDispatch } from 'store/hooks';
+import { call } from 'store/reducers/server';
+import ColorsUtils from 'utils/colors-utils';
 
 const backgroundColors = {
   active: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
@@ -157,6 +157,10 @@ function EditorTabBar({ active, views, style, onClose, onFocus }: any) {
 function EditorGroup({ group, style }: any) {
   const dispatch = useAppDispatch();
 
+  const selectedView = group.views.find(
+    (view: any) => view.uri === group.active[0]
+  );
+
   return (
     <div
       className="d-flex flex-column position-relative w-100 h-100"
@@ -193,7 +197,7 @@ function EditorGroup({ group, style }: any) {
         />
       )}
       <div className="flex-fill">
-        <DefaultView />
+        <Editor uri={selectedView} />
       </div>
     </div>
   );

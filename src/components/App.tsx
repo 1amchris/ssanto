@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffectOnce } from 'hooks';
+import { useEffectOnce } from 'hooks/useEffectOnce';
 import { useAppDispatch } from 'store/hooks';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Main from 'components/Main';
