@@ -73,23 +73,24 @@ class EditorManager(Serializable):
             self.logs_manager.error(f"[Editor] No view found for {view_uri} in editor group {group_id}")
             raise KeyError(f"No view found for {view_uri} in editor group {group_id}")
 
-        else:
-            group.views = list(filter(lambda v: v.uri != view_uri, group.views))
-            group.active.remove(view_uri)
-            active = self.active.value()
+        group.views = list(filter(lambda v: v.uri != view_uri, group.views))
+        group.active.remove(view_uri)
+        active = self.active.value()
 
-            if len(group.views) == 0:
-                groups = list(filter(lambda g: g.uri != group.uri, groups))
-                active.remove(group.uri)
+        if len(group.views) == 0:
+            groups = list(filter(lambda g: g.uri != group.uri, groups))
+            active.remove(group.uri)
+            print("Removing group")
 
-            if len(groups) == 0:
-                new_group = ViewGroup()
-                groups.insert(0, new_group)
-                active.insert(0, new_group.uri)
+        if len(groups) == 0:
+            print("Adding group (because 0 editors)")
+            new_group = ViewGroup()
+            groups.insert(0, new_group)
+            active.insert(0, new_group.uri)
 
-            self.groups.update()
-            self.active.update()
-            return view_uri
+        self.groups.notify(groups)
+        self.active.notify(active)
+        return view_uri
 
     def select_group(self, group_id: str):
         self.logs_manager.info(f"[Editor] Setting active editor group to {group_id}")

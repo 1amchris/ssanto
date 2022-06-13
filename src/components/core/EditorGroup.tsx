@@ -11,6 +11,7 @@ import { IconBaseProps, IconType } from 'react-icons';
 import { useAppDispatch } from 'store/hooks';
 import { call } from 'store/reducers/server';
 import ColorsUtils from 'utils/colors-utils';
+import DefaultView from 'components/common/DefaultView';
 
 const backgroundColors = {
   active: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
@@ -196,9 +197,13 @@ function EditorGroup({ group, style }: any) {
           }
         />
       )}
-      <div className="flex-fill">
-        <Editor uri={selectedView} />
-      </div>
+      {selectedView !== undefined ? (
+        <div className="flex-fill">
+          <Editor view={selectedView} />
+        </div>
+      ) : (
+        <DefaultView />
+      )}
     </div>
   );
 }
