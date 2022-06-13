@@ -9,9 +9,9 @@ from subjects.subjects_manager import SubjectsManager
 from logger.logger import *
 from logger.log_manager import LogsManager
 
+from views.extension_manager import ExtensionManager
 from views.manager import ViewsManager
 from views.builtin import FileExplorerView, FileSearcherView, ProblemExplorerView, OutputView
-from views.views import View
 
 from analysis.analysis import Analysis
 from analysis.map import Map
@@ -19,19 +19,25 @@ from files.file_manager import FilesManager
 from guide_builder import GuideBuilder
 
 
-def populate_views_manager(views_manager: ViewsManager):
+def populate_extension_manager():
+    extensions = ExtensionManager()
+    # examples of registering new view types for given extensions
+    # TODO populate extension manager with actual view types (maybe even user-editable in the future)
+    extensions.register_view_type("tsx", "editor")
+    extensions.register_view_type("sproj", "ssanto-project")
+    extensions.register_view_type("smap", "map")
 
+
+def populate_views_manager(views_manager: ViewsManager):
     # editor
     # for testing purposes, as it is currently impossible to spawn new groups in the editor
     views_manager.editor.add_group()
 
     # panel
     problems_uri = views_manager.panel.add_activity("Problems", "VscWarning")
-    print("problems_uri", problems_uri)
     views_manager.panel.add_view(ProblemExplorerView("file:///Users/src/"), problems_uri)
 
     output_uri = views_manager.panel.add_activity("Output", "VscOutput")
-    print("output_uri", output_uri)
     views_manager.panel.add_view(OutputView("file:///Users/src/"), output_uri)
 
     views_manager.panel.select_activity(output_uri)
@@ -56,6 +62,7 @@ async def main():
     views_manager = ViewsManager(subjects_manager, logs_manager)
     files_manager = FilesManager(subjects_manager, logs_manager)
 
+    populate_extension_manager()
     populate_views_manager(views_manager)
 
     # TODO: I feel like "file_manager.###" should be "files_manager.###" (like the variable's name)
