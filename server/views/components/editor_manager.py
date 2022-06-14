@@ -33,8 +33,6 @@ class EditorManager(Serializable):
         return groups[index].uri
 
     def add_view(self, view: View, group_id: str = None, prevent_duplicates=True):
-        self.logs_manager.info(f"[Editor] Adding {view.uri}")
-
         groups = self.groups.value()
 
         if prevent_duplicates:
@@ -43,6 +41,8 @@ class EditorManager(Serializable):
                 if view.uri in map(lambda v: v.uri, group.views):
                     self.select_view(view.uri, group_uri)
                     return view.uri
+
+        self.logs_manager.info(f"[Editor] Adding {view.uri}")
 
         group_id = group_id if group_id else self.active.value()[0]
         group = next(filter(lambda group: group.uri == group_id, groups))
@@ -59,8 +59,6 @@ class EditorManager(Serializable):
             return view.uri
 
     def remove_view(self, view_uri: str, group_id: str = None):
-        self.logs_manager.info(f"[Editor] Deleting {view_uri}")
-
         groups = self.groups.value()
         group_id = group_id if group_id else self.active.value()[0]
         group = next(filter(lambda group: group.uri == group_id, groups))
@@ -73,6 +71,8 @@ class EditorManager(Serializable):
             self.logs_manager.error(f"[Editor] No view found for {view_uri} in editor group {group_id}")
             raise KeyError(f"No view found for {view_uri} in editor group {group_id}")
 
+        self.logs_manager.info(f"[Editor] Deleting {view_uri}")
+
         group.views = list(filter(lambda v: v.uri != view_uri, group.views))
         group.active.remove(view_uri)
         active = self.active.value()
@@ -80,10 +80,8 @@ class EditorManager(Serializable):
         if len(group.views) == 0:
             groups = list(filter(lambda g: g.uri != group.uri, groups))
             active.remove(group.uri)
-            print("Removing group")
 
         if len(groups) == 0:
-            print("Adding group (because 0 editors)")
             new_group = ViewGroup()
             groups.insert(0, new_group)
             active.insert(0, new_group.uri)
@@ -93,11 +91,11 @@ class EditorManager(Serializable):
         return view_uri
 
     def select_group(self, group_id: str):
-        self.logs_manager.info(f"[Editor] Setting active editor group to {group_id}")
-
         if next(filter(lambda group: group.uri == group_id, self.groups.value())) is None:
             self.logs_manager.error(f"[Editor] No editor group found for {group_id}")
             raise KeyError(f"No editor group found for {group_id}")
+
+        self.logs_manager.info(f"[Editor] Setting active editor group to {group_id}")
 
         self.active.value().remove(group_id)
         self.active.value().insert(0, group_id)
@@ -105,8 +103,6 @@ class EditorManager(Serializable):
         return group_id
 
     def select_view(self, view_uri: str, group_id: str = None):
-        self.logs_manager.info(f"[Editor] Setting active view to {view_uri} for editor group {group_id}")
-
         groups = self.groups.value()
         group_id = group_id if group_id else self.active.value()[0]
         group = next(filter(lambda group: group.uri == group_id, groups))
@@ -118,6 +114,8 @@ class EditorManager(Serializable):
         elif view_uri not in map(lambda v: v.uri, group.views):
             self.logs_manager.error(f"No view found for {view_uri} in editor group {group_id}")
             raise KeyError(f"No view found for {view_uri} in editor group {group_id}")
+
+        self.logs_manager.info(f"[Editor] Setting active view to {view_uri} for editor group {group_id}")
 
         group.active.remove(view_uri)
         group.active.insert(0, view_uri)

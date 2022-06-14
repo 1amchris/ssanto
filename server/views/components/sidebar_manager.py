@@ -31,8 +31,6 @@ class SideBarManager(Serializable):
         return activities[index].uri
 
     def add_view(self, view: View, activity_id: str = None):
-        self.logs_manager.info(f"[Sidebar] Adding {view.uri}")
-
         activities = self.activities.value()
         activity_id = activity_id if activity_id else self.active.value()[0]
         activity = next(filter(lambda activity: activity.uri == activity_id, activities))
@@ -41,16 +39,15 @@ class SideBarManager(Serializable):
             self.logs_manager.error(f"[Sidebar] No activity found for {activity_id}")
             raise KeyError(f"No activity found for {activity_id}")
 
-        else:
-            activity.views.insert(0, view)
-            activity.active.insert(0, view.uri)
-            self.activities.update()
-            self.select_view(view.uri, activity.uri)
-            return view.uri
+        self.logs_manager.info(f"[Sidebar] Adding {view.uri}")
+
+        activity.views.insert(0, view)
+        activity.active.insert(0, view.uri)
+        self.activities.update()
+        self.select_view(view.uri, activity.uri)
+        return view.uri
 
     def remove_view(self, view_uri: str, activity_id: str = None):
-        self.logs_manager.info(f"[Sidebar] Deleting {view_uri}")
-
         activities = self.activities.value()
         activity_id = activity_id if activity_id else self.active.value()[0]
         activity = next(filter(lambda activity: activity.uri == activity_id, activities))
@@ -63,25 +60,25 @@ class SideBarManager(Serializable):
             self.logs_manager.error(f"[Sidebar] No view found for {view_uri} in activity {activity_id}")
             raise KeyError(f"No view found for {view_uri} in activity {activity_id}")
 
-        else:
-            activity.views = list(filter(lambda v: v.uri != view_uri, activity.views))
-            activity.active.remove(view_uri)
-            self.activities.update()
-            return view_uri
+        self.logs_manager.info(f"[Sidebar] Deleting {view_uri}")
+
+        activity.views = list(filter(lambda v: v.uri != view_uri, activity.views))
+        activity.active.remove(view_uri)
+        self.activities.update()
+        return view_uri
 
     def select_activity(self, activity_id: str, allow_none=True):
         new_active_activity = activity_id if not allow_none or self.active.value() != activity_id else None
-        self.logs_manager.info(f"[Sidebar] Setting active activity to {new_active_activity}")
 
         if new_active_activity is not None and new_active_activity not in map(lambda a: a.uri, self.activities.value()):
             self.logs_manager.error(f"[Sidebar] No activity found for {new_active_activity}")
             raise KeyError(f"No activity found for {new_active_activity}")
 
+        self.logs_manager.info(f"[Sidebar] Setting active activity to {new_active_activity}")
+
         self.active.notify(new_active_activity)
 
     def select_view(self, view_uri: str, activity_id: str = None):
-        self.logs_manager.info(f"[Sidebar] Setting active view to {view_uri}")
-
         activities = self.activities.value()
         activity_id = activity_id if activity_id else self.active.value()[0]
         activity = next(filter(lambda activity: activity.uri == activity_id, activities))
@@ -94,8 +91,9 @@ class SideBarManager(Serializable):
             self.logs_manager.error(f"No view found for {view_uri} in activity {activity_id}")
             raise KeyError(f"No view found for {view_uri} in activity {activity_id}")
 
-        else:
-            activity.active.remove(view_uri)
-            activity.active.insert(0, view_uri)
-            self.activities.update()
-            return view_uri
+        self.logs_manager.info(f"[Sidebar] Setting active view to {view_uri}")
+
+        activity.active.remove(view_uri)
+        activity.active.insert(0, view_uri)
+        self.activities.update()
+        return view_uri
