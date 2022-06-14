@@ -3,10 +3,12 @@
 // TODO: there are many inconsistencies in the the enum. Some have "namespaces", some don't. Some are plural, some aren't.
 enum ServerCallTarget {
   FilesOpenWorkspace = 'files.open_workspace',
+  FilesCloseWorkspace = 'files.close_workspace',
   FilesOpenFile = 'files.open_file',
 
   LogsManagerLog = 'logs_manager.add_log',
 
+  ViewsManagerOpenEditorGroup = 'views_manager.editor.add_group',
   ViewsManagerSelectEditorGroup = 'views_manager.editor.select_group',
   ViewsManagerSelectEditor = 'views_manager.editor.select_view',
   ViewsManagerOpenEditor = 'views_manager.editor.open_view',

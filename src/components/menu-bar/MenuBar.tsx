@@ -9,11 +9,7 @@ import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import FilesUtils from 'utils/files-utils';
 import { selectMap } from 'store/reducers/map';
-import {
-  openWorkspace,
-  resetWorkspace,
-  selectFiles,
-} from 'store/reducers/files';
+import { openWorkspace, selectFiles } from 'store/reducers/files';
 
 /**
  * Menu bar component.
@@ -62,12 +58,13 @@ function MenuBar({ style }: any) {
       <Action
         key="action"
         label="save project"
+        // TODO: It should also account for modifications in files
+        disabled={!files || files.length === 0}
         onClick={() =>
           dispatch(
             call({
               target: ServerCallTarget.SaveProject,
               onSuccessAction: exportData,
-              // TODO: There should probably be an "onErrorAction"
             } as CallModel<void, FileContentModel<string>>)
           )
         }
@@ -77,7 +74,27 @@ function MenuBar({ style }: any) {
         label="close workspace"
         disabled={!files || files.length === 0}
         // TODO: There should probably be a "confirm action" dialog
-        onClick={() => dispatch(resetWorkspace())}
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerCallTarget.FilesCloseWorkspace,
+            } as CallModel)
+          )
+        }
+      />
+      <Divider />
+      <Action
+        key="add-group"
+        label="open editor group"
+        disabled={!files || files.length === 0}
+        // TODO: There should probably be a "confirm action" dialog
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerCallTarget.ViewsManagerOpenEditorGroup,
+            } as CallModel)
+          )
+        }
       />
       <Divider />
       <Action

@@ -58,6 +58,7 @@ class FilesManager:
     def __init__(self, subjects_manager: SubjectsManager, logger: LogsManager):
         self.subjects_manager = subjects_manager
         self.logger = logger
+        self.workspace = None
         self.files_content = dict()
         self.files = self.subjects_manager.create("file_manager.files", dict())
         self.writer = FilesWriter()
@@ -177,18 +178,6 @@ class FilesManager:
 
         return added, rejected, invalided
 
-    def open_workspace(self, path):
-        all_files = [FileMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
-        self.files.notify(all_files)
-        self.logger.info(f"Opened workspace at {path}")
-
-    def open_file(self, views_manager: ViewsManager):
-        def hof(file_uri: str):
-            view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri)
-            views_manager.editor.add_view(view)
-
-        return hof
-
     def __notify_metadatas(self):
         metadatas = self.get_files_metadatas()
         shapefiles_metadatas = self.get_shapefiles_metadatas()
@@ -196,3 +185,26 @@ class FilesManager:
         self.shapefiles.notify(shapefiles_metadatas)
 
     # Add loaded file to the file manager?
+
+    def open_workspace(self, path):
+        if self.workspace is not None:
+            self.close_workspace()
+
+        self.workspace = path
+        all_files = [FileMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
+        self.files.notify(all_files)
+        self.logger.info(f"[Workspace] Opened workspace: {self.workspace}")
+
+    def close_workspace(self):
+        # TODO: Perhaps we should save the files in the workspace before closing it
+        if self.workspace is not None:
+            self.files.notify([])
+            self.logger.info(f"[Workspace] Closed workspace: {self.workspace}")
+            self.workspace = None
+
+    def open_file(self, views_manager: ViewsManager):
+        def hof(file_uri: str):
+            view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri)
+            views_manager.editor.add_view(view)
+
+        return hof
