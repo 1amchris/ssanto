@@ -7,7 +7,7 @@ function Editor({ view }: any) {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <View />
+      <View key={view.uri} />
     </Suspense>
   );
 }

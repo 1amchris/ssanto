@@ -23,16 +23,10 @@ def populate_extension_manager():
     extensions = ExtensionManager()
     # examples of registering new view types for given extensions
     # TODO populate extension manager with actual view types (maybe even user-editable in the future)
-    extensions["tsx"] = "editor"
-    extensions["sproj"] = "ssanto-project"
-    extensions["smap"] = "ssanto-map"
+    extensions["sproj"] = "map"
 
 
 def populate_views_manager(views_manager: ViewsManager):
-    # editor
-    # for testing purposes, as it is currently impossible to spawn new groups in the editor
-    views_manager.editor.add_group()
-
     # panel
     problems_uri = views_manager.panel.add_activity("Problems", "VscWarning")
     views_manager.panel.add_view(ProblemExplorerView("file:///Users/src/"), problems_uri)

@@ -155,7 +155,7 @@ function EditorTabBar({ active, views, style, onClose, onFocus }: any) {
   );
 }
 
-function EditorGroup({ group, style }: any) {
+function EditorGroup({ active, group, style }: any) {
   const dispatch = useAppDispatch();
 
   const selectedView = group.views.find(
@@ -167,6 +167,7 @@ function EditorGroup({ group, style }: any) {
       className="d-flex flex-column position-relative w-100 h-100"
       style={style}
       onClick={() => {
+        if (active) return;
         dispatch(
           call({
             target: ServerCallTarget.ViewsManagerSelectEditorGroup,

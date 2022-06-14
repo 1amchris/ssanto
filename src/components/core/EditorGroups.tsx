@@ -6,7 +6,7 @@ import { selectViewsManager } from 'store/reducers/views-manager';
 
 function EditorGroups({ style }: any) {
   const {
-    editor: { groups },
+    editor: { groups, active },
   } = useAppSelector(selectViewsManager);
 
   return (
@@ -16,7 +16,12 @@ function EditorGroups({ style }: any) {
       style={style}
     >
       {groups.map(group => (
-        <EditorGroup key={group.uri} group={group} style={{ minWidth: 200 }} />
+        <EditorGroup
+          key={group.uri}
+          active={group.uri === active[0]}
+          group={group}
+          style={{ minWidth: 200 }}
+        />
       ))}
     </SplitView>
   );
