@@ -23,7 +23,8 @@ def populate_extension_manager():
     extensions = ExtensionManager()
     # examples of registering new view types for given extensions
     # TODO populate extension manager with actual view types (maybe even user-editable in the future)
-    extensions["sproj"] = "map"
+    # extensions["sproj"] = "ssanto-map"
+    extensions["sproj"] = "ssanto-settings"
 
 
 def populate_views_manager(views_manager: ViewsManager):
@@ -72,9 +73,10 @@ async def main():
     # server_socket.bind_command("file_manager.remove_file", files_manager.remove_file, False)
 
     server_socket.bind_command("views_manager.editor.add_group", views_manager.editor.add_group)
+    server_socket.bind_command("views_manager.editor.select_group", views_manager.editor.select_group)
+    server_socket.bind_command("views_manager.editor.close_group", views_manager.editor.remove_group)
     server_socket.bind_command("views_manager.editor.close_view", views_manager.editor.remove_view)
     server_socket.bind_command("views_manager.editor.select_view", views_manager.editor.select_view)
-    server_socket.bind_command("views_manager.editor.select_group", views_manager.editor.select_group)
     server_socket.bind_command("views_manager.panel.close_view", views_manager.panel.remove_view)
     server_socket.bind_command("views_manager.panel.select_view", views_manager.panel.select_view)
     server_socket.bind_command("views_manager.panel.select_activity", views_manager.panel.select_activity)

@@ -10,6 +10,7 @@ enum ServerCallTarget {
 
   ViewsManagerOpenEditorGroup = 'views_manager.editor.add_group',
   ViewsManagerSelectEditorGroup = 'views_manager.editor.select_group',
+  ViewsManagerCloseEditorGroup = 'views_manager.editor.close_group',
   ViewsManagerSelectEditor = 'views_manager.editor.select_view',
   ViewsManagerOpenEditor = 'views_manager.editor.open_view',
   ViewsManagerCloseEditor = 'views_manager.editor.close_view',

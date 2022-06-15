@@ -32,6 +32,27 @@ class EditorManager(Serializable):
         self.groups.update()
         return groups[index].uri
 
+    def remove_group(self, group_id: str):
+        groups = self.groups.value()
+        group = next(filter(lambda group: group.uri == group_id, groups))
+
+        if group is None:
+            self.logs_manager.error(f"[Editor] No editor group found for {group_id}")
+            raise KeyError(f"No editor group found for {group_id}")
+
+        elif len(group.views) > 0:
+            self.logs_manager.error(
+                f"[Editor] Found views in editor group {group_id}. Cannot close editor group containing views."
+            )
+            raise KeyError(f"Found views in editor group {group_id}. Cannot close editor group containing views.")
+
+        self.logs_manager.info(f"[Editor] Deleting editor group {group_id}")
+
+        self.active.notify(list(filter(lambda g: g != group_id, self.active.value())))
+        self.groups.notify(list(filter(lambda g: g.uri != group_id, groups)))
+
+        return self.select_group(self.active.value()[0])
+
     def add_view(self, view: View, group_id: str = None, prevent_duplicates=True):
         groups = self.groups.value()
 

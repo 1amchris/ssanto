@@ -156,14 +156,17 @@ function Main() {
     ['file-searcher']: React.lazy(() => {
       return import('components/views/FileSearcher');
     }),
-    ['map']: React.lazy(() => {
-      return import('components/views/Map');
-    }),
     ['output']: React.lazy(() => {
       return import('components/views/Output');
     }),
-    ['problems-explorer']: React.lazy(() => {
+    ['problems-explorernpm t']: React.lazy(() => {
       return import('components/views/ProblemsExplorer');
+    }),
+    ['ssanto-map']: React.lazy(() => {
+      return import('components/views/Map');
+    }),
+    ['ssanto-settings']: React.lazy(() => {
+      return import('components/views/SettingsEditor');
     }),
   });
 

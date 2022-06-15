@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { MouseEvent, useState } from 'react';
 import { Color, Opacity } from 'enums/Color';
 import Editor from 'components/core/Editor';
 import ServerCallTarget from 'enums/ServerCallTarget';
@@ -36,6 +36,47 @@ const textColors = {
   focused: undefined,
   default: ColorsUtils.applyOpacity(Color.Gray, Opacity.Opaque),
 } as ColorPalette;
+
+function NoEditor({ closeable, onClose }: any) {
+  const iconBaseProps: IconBaseProps = {
+    size: 16,
+    color: Color.Black,
+  };
+
+  const closeIcon = {
+    label: 'Close view',
+    name: 'VscClose',
+  };
+
+  return (
+    <div className="d-flex flex-column h-100 w-100">
+      <div
+        className="d-flex flex-row-reverse align-items-center"
+        style={{ height: 35 }}
+      >
+        <div
+          className="ps-1 pe-2"
+          style={{ display: closeable ? 'block' : 'none' }}
+        >
+          <button
+            style={{
+              marginTop: -6,
+              padding: '0 2.5px',
+            }}
+            className="btn btn-sm"
+            onClick={(e: MouseEvent) => closeable && onClose?.(e)}
+          >
+            {(codicons as { [name: string]: IconType })[closeIcon.name]({
+              title: closeIcon.label,
+              ...iconBaseProps,
+            })}
+          </button>
+        </div>
+      </div>
+      <DefaultView />
+    </div>
+  );
+}
 
 function EditorTab({
   tab,
@@ -155,7 +196,7 @@ function EditorTabBar({ active, views, style, onClose, onFocus }: any) {
   );
 }
 
-function EditorGroup({ active, group, style }: any) {
+function EditorGroup({ closeable, active, group, style }: any) {
   const dispatch = useAppDispatch();
 
   const selectedView = group.views.find(
@@ -164,7 +205,7 @@ function EditorGroup({ active, group, style }: any) {
 
   return (
     <div
-      className="d-flex flex-column position-relative w-100 h-100"
+      className="d-flex flex-column flex-nowrap position-relative overflow-none"
       style={style}
       onClick={() => {
         if (active) return;
@@ -176,35 +217,50 @@ function EditorGroup({ active, group, style }: any) {
         );
       }}
     >
-      {group.views.length > 0 && (
-        <EditorTabBar
-          active={group.active}
-          views={group.views}
-          onFocus={(uri: string) =>
-            dispatch(
-              call({
-                target: ServerCallTarget.ViewsManagerSelectEditor,
-                args: [uri, group.uri],
-              } as CallModel)
-            )
-          }
-          onClose={(uri: string) =>
-            dispatch(
-              call({
-                target: ServerCallTarget.ViewsManagerCloseEditor,
-                args: [uri, group.uri],
-              } as CallModel)
-            )
-          }
-        />
-      )}
-      {selectedView !== undefined ? (
-        <div className="flex-fill">
+      <div className="flex-shrink-0">
+        {group.views.length > 0 && (
+          <EditorTabBar
+            active={group.active}
+            views={group.views}
+            onFocus={(uri: string) =>
+              dispatch(
+                call({
+                  target: ServerCallTarget.ViewsManagerSelectEditor,
+                  args: [uri, group.uri],
+                } as CallModel)
+              )
+            }
+            onClose={(uri: string) =>
+              dispatch(
+                call({
+                  target: ServerCallTarget.ViewsManagerCloseEditor,
+                  args: [uri, group.uri],
+                } as CallModel)
+              )
+            }
+          />
+        )}
+      </div>
+      <div className="flex-fill flex-shrink-1 overflow-auto">
+        {selectedView !== undefined ? (
           <Editor view={selectedView} />
-        </div>
-      ) : (
-        <DefaultView />
-      )}
+        ) : (
+          <NoEditor
+            closeable={closeable}
+            onClose={(e: MouseEvent) => {
+              e.stopPropagation();
+              if (closeable) {
+                dispatch(
+                  call({
+                    target: ServerCallTarget.ViewsManagerCloseEditorGroup,
+                    args: [group.uri],
+                  } as CallModel)
+                );
+              }
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }

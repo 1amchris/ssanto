@@ -20,6 +20,7 @@ function EditorGroups({ style }: any) {
           key={group.uri}
           active={group.uri === active[0]}
           group={group}
+          closeable={groups.length > 1}
           style={{ minWidth: 200 }}
         />
       ))}
