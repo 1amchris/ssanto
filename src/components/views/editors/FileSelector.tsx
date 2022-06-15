@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISettingWithValidationProps } from 'models/SettingsPropsModel';
+import { ISettingWithValidationProps } from 'models/SettingsEditorProps';
 
 export interface FileEditorProps {
   setting: FileSettingProps;
@@ -32,6 +32,8 @@ function FileSelector({ setting }: FileEditorProps) {
               return;
             }
           }
+
+          setting.onValidChange?.(files);
         }}
         type="file"
         className="form-control form-control-sm"

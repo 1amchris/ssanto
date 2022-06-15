@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISettingWithValidationProps } from 'models/SettingsPropsModel';
+import { ISettingWithValidationProps } from 'models/SettingsEditorProps';
 
 export interface NumberEditorProps {
   setting: NumberSettingProps;
@@ -32,6 +32,8 @@ function NumberEditor({ setting }: NumberEditorProps) {
               return;
             }
           }
+
+          setting.onValidChange?.(numberValue);
         }}
         type="number"
         placeholder={`${setting.placeholder || setting.value}`}

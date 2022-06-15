@@ -1,4 +1,4 @@
-import { ISettingWithValidationProps } from 'models/SettingsPropsModel';
+import { ISettingWithValidationProps } from 'models/SettingsEditorProps';
 import React from 'react';
 
 interface SelectEditorProps {
@@ -38,6 +38,8 @@ function SelectEditor({ setting }: SelectEditorProps) {
               return;
             }
           }
+
+          setting.onValidChange?.(value);
         }}
       >
         {setting.options.map((option: SelectOptionProps) => (

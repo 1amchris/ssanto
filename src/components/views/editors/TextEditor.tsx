@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISettingWithValidationProps } from 'models/SettingsPropsModel';
+import { ISettingWithValidationProps } from 'models/SettingsEditorProps';
 
 export interface TextEditorProps {
   setting: TextSettingProps;
@@ -30,6 +30,8 @@ function TextEditor({ setting }: TextEditorProps) {
               return;
             }
           }
+
+          setting.onValidChange?.(value);
         }}
         type="text"
         placeholder={setting.placeholder || setting.value}

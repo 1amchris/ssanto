@@ -7,14 +7,15 @@ export type SettingsEditorType =
   | 'file'
   | 'select';
 
-export interface ISettingProps {
+export interface ISettingProps<T> {
   type: SettingsEditorType;
   uri: string;
   displayName: string;
-  family?: string;
   shortDescription: string;
+  family?: string;
+  onValidChange?: (value: T) => void;
 }
 
-export interface ISettingWithValidationProps<T> extends ISettingProps {
-  validators: ValidatorModel<T>[];
+export interface ISettingWithValidationProps<T> extends ISettingProps<T> {
+  validators?: ValidatorModel<T>[];
 }
