@@ -60,7 +60,7 @@ function FileExplorer({ style }: any) {
           onDoubleClickLeaf={(e: MouseEvent, file: FileMetadataModel) => {
             dispatch(
               call({
-                target: ServerCallTarget.FilesOpenFile,
+                target: ServerCallTarget.FilesManagerOpenFile,
                 args: [file.uri],
               } as CallModel)
             );

@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 
 enum ServerSubscriptionTarget {
-  FileManagerFiles = 'file_manager.files',
+  WorkspaceManagerFiles = 'workspace_manager.files',
+
   FileManagerShapefiles = 'file_manager.shapefiles',
 
   LogsManagerLogs = 'logs_manager.logs',

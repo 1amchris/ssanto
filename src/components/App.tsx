@@ -47,7 +47,7 @@ function App() {
     dispatch(openConnection());
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.FileManagerFiles,
+        subject: ServerSubscriptionTarget.WorkspaceManagerFiles,
         onAction: setWorkspace,
       })
     );

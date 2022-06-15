@@ -80,17 +80,17 @@ function Map() {
         Flyyy
       </button> */}
       <MapContainer
-        center={[0, 0]}
+        center={[51.5, 0]}
         zoom={zoom}
         crs={L.CRS.EPSG3857}
         style={{
           width: '100%',
           height: '100%',
         }}
-        whenCreated={map => {
-          // setMapRef(map);
-          map.flyTo({ lat: 51.5, lng: -0.09 }, zoom);
-        }}
+        // whenCreated={map => {
+        //   // setMapRef(map);
+        //   map.flyTo({ lat: 51.5, lng: -0.09 }, zoom);
+        // }}
         // whenCreated={map => {
         //   new SimpleMapScreenshoter({
         //     mimeType: 'image/jpeg',

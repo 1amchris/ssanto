@@ -93,7 +93,7 @@ function FileExplorer({ t, disabled }: any) {
           );
           dispatch(
             call({
-              target: ServerCallTarget.FileManagerRemoveFile,
+              target: ServerCallTarget.AnalysisRemoveFile,
               args: [(files[index] as FileMetadataModel).name],
               onSuccessAction: injectSetLoadingCreator({
                 value: property,
@@ -125,7 +125,7 @@ function FileExplorer({ t, disabled }: any) {
         FilesUtils.extractContent(Array.from(fields.files)).then(files =>
           dispatch(
             call({
-              target: ServerCallTarget.FileManagerAddFiles,
+              target: ServerCallTarget.AnalysisAddFiles,
               args: files,
               onSuccessAction: injectSetLoadingCreator({
                 value: property,

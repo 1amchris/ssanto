@@ -15,7 +15,7 @@ from views.builtin import FileExplorerView, FileSearcherView, ProblemExplorerVie
 
 from analysis.analysis import Analysis
 from analysis.map import Map
-from files.file_manager import FilesManager
+from files.file_manager import FilesManager, WorkspaceManager
 from guide_builder import GuideBuilder
 
 
@@ -23,8 +23,7 @@ def populate_extension_manager():
     extensions = ExtensionManager()
     # examples of registering new view types for given extensions
     # TODO populate extension manager with actual view types (maybe even user-editable in the future)
-    # extensions["sproj"] = "ssanto-map"
-    extensions["sproj"] = "ssanto-settings"
+    extensions["sproj"] = "ssanto-map"
 
 
 def populate_views_manager(views_manager: ViewsManager):
@@ -55,20 +54,20 @@ async def main():
     subjects_manager = SubjectsManager(server_socket)
     logs_manager = LogsManager(subjects_manager)
     views_manager = ViewsManager(subjects_manager, logs_manager)
+    workspace_manager = WorkspaceManager(subjects_manager, logs_manager)
     files_manager = FilesManager(subjects_manager, logs_manager)
 
     populate_extension_manager()
     populate_views_manager(views_manager)
 
-    # TODO: I feel like "file_manager.###" should be "files_manager.###" (like the variable's name)
-
     server_socket.bind_command("subscribe", subjects_manager.subscribe)
     server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
 
-    server_socket.bind_command("files.open_workspace", files_manager.open_workspace)
-    server_socket.bind_command("files.close_workspace", files_manager.close_workspace)
-    server_socket.bind_command("files.open_file", files_manager.open_file(views_manager))
-    server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
+    server_socket.bind_command("workspace_manager.open_workspace", workspace_manager.open_workspace)
+    server_socket.bind_command("workspace_manager.close_workspace", workspace_manager.close_workspace)
+
+    server_socket.bind_command("files_manager.open_file", files_manager.open_file(views_manager))
+    server_socket.bind_command("files_manager.get_files", files_manager.get_files_metadatas)
 
     server_socket.bind_command("views_manager.editor.add_group", views_manager.editor.add_group)
     server_socket.bind_command("views_manager.editor.select_group", views_manager.editor.select_group)
@@ -90,9 +89,8 @@ async def main():
     server_socket.bind_command("analysis.update_suitability_threshold", analysis.update_suitability_threshold)
     server_socket.bind_command("compute_suitability", analysis.compute_suitability)
 
-    # TODO: This is confusing. "file_manager.add_files" adds files to "analysis". Should be renamed to "analysis.add_files"
-    server_socket.bind_command("file_manager.add_files", analysis.add_files, False)
-    server_socket.bind_command("file_manager.remove_file", analysis.remove_file, False)
+    server_socket.bind_command("analysis.add_files", analysis.add_files, False)
+    server_socket.bind_command("analysis.remove_file", analysis.remove_file, False)
 
     # TODO: This is confusing. "get_layer" doesn't follow the same format as the others. Should be renamed to "analysis.get_layer"
     server_socket.bind_command("get_layer", analysis.get_layer)

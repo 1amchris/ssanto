@@ -2,9 +2,11 @@
 
 // TODO: there are many inconsistencies in the the enum. Some have "namespaces", some don't. Some are plural, some aren't.
 enum ServerCallTarget {
-  FilesOpenWorkspace = 'files.open_workspace',
-  FilesCloseWorkspace = 'files.close_workspace',
-  FilesOpenFile = 'files.open_file',
+  WorkspaceManagerOpenWorkspace = 'workspace_manager.open_workspace',
+  WorkspaceManagerCloseWorkspace = 'workspace_manager.close_workspace',
+
+  FilesManagerOpenFile = 'files_manager.open_file',
+  FileManagerGetFiles = 'files_manager.get_files',
 
   LogsManagerLog = 'logs_manager.add_log',
 
@@ -38,9 +40,8 @@ enum ServerCallTarget {
 
   GetLayer = 'get_layer',
 
-  FileManagerGetFiles = 'file_manager.get_files',
-  FileManagerAddFiles = 'file_manager.add_files',
-  FileManagerRemoveFile = 'file_manager.remove_file',
+  AnalysisAddFiles = 'analysis.add_files',
+  AnalysisRemoveFile = 'analysis.remove_file',
 
   GetCellSuitability = 'get_cell_suitability',
   MapSetCursor = 'map.set_cursor',

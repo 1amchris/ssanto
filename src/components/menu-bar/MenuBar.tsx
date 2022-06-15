@@ -77,7 +77,7 @@ function MenuBar({ style }: any) {
         onClick={() =>
           dispatch(
             call({
-              target: ServerCallTarget.FilesCloseWorkspace,
+              target: ServerCallTarget.WorkspaceManagerCloseWorkspace,
             } as CallModel)
           )
         }

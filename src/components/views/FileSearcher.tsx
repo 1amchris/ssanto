@@ -88,7 +88,7 @@ function FileSearcher({ style }: any) {
             onDoubleClickRow={(e: MouseEvent, file: FileMetadataModel) => {
               dispatch(
                 call({
-                  target: ServerCallTarget.FilesOpenFile,
+                  target: ServerCallTarget.FilesManagerOpenFile,
                   args: [file.uri],
                 } as CallModel)
               );

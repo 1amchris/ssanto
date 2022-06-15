@@ -186,6 +186,21 @@ class FilesManager:
 
     # Add loaded file to the file manager?
 
+    def open_file(self, views_manager: ViewsManager):
+        def hof(file_uri: str, view_type: str = None):
+            view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri, view_type=view_type)
+            views_manager.editor.add_view(view)
+
+        return hof
+
+
+class WorkspaceManager:
+    def __init__(self, subjects_manager: SubjectsManager, logger: LogsManager):
+        self.subjects_manager = subjects_manager
+        self.logger = logger
+        self.workspace = None
+        self.files = self.subjects_manager.create("workspace_manager.files", dict())
+
     def open_workspace(self, path):
         if self.workspace is not None:
             self.close_workspace()
@@ -201,10 +216,3 @@ class FilesManager:
             self.files.notify([])
             self.logger.info(f"[Workspace] Closed workspace: {self.workspace}")
             self.workspace = None
-
-    def open_file(self, views_manager: ViewsManager):
-        def hof(file_uri: str, view_type: str = None):
-            view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri, view_type=view_type)
-            views_manager.editor.add_view(view)
-
-        return hof

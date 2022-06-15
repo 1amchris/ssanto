@@ -240,7 +240,7 @@ function Main() {
           action: ({ view }: ViewActionCallbackProps) =>
             dispatch(
               call({
-                target: ServerCallTarget.FilesOpenFile,
+                target: ServerCallTarget.FilesManagerOpenFile,
                 args: [view.source, 'ssanto-settings'],
               } as CallModel)
             ),
@@ -256,7 +256,7 @@ function Main() {
           action: ({ view }: ViewActionCallbackProps) =>
             dispatch(
               call({
-                target: ServerCallTarget.FilesOpenFile,
+                target: ServerCallTarget.FilesManagerOpenFile,
                 args: [view.source, 'ssanto-map'],
               } as CallModel)
             ),
@@ -294,7 +294,7 @@ function Main() {
             <SideBar style={{ minWidth: 200, width: 240 }} />
             <SplitView style={{ minWidth: 120 }} direction="column">
               <EditorGroups />
-              <PanelBar style={{ height: '30%' }} />
+              <PanelBar style={{ height: '30%', minHeight: '35px' }} />
             </SplitView>
           </SplitView>
 
