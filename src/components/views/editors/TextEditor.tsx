@@ -11,8 +11,11 @@ export interface TextSettingProps extends ISettingWithValidationProps<string> {
   placeholder?: string;
 }
 
-// TODO: display validation messages
 function TextEditor({ setting }: TextEditorProps) {
+  const [invalidMessage, setInvalidMessage] = React.useState<
+    string | undefined
+  >(undefined);
+
   return (
     <div>
       <label
@@ -26,11 +29,12 @@ function TextEditor({ setting }: TextEditorProps) {
         onChange={({ target: { value } }) => {
           for (const validator of setting.validators || []) {
             if (!validator.assert(value)) {
-              console.error(validator.message(value));
+              setInvalidMessage(validator.message(value));
               return;
             }
           }
 
+          setInvalidMessage(undefined);
           setting.onValidChange?.(value);
         }}
         type="text"
@@ -39,6 +43,9 @@ function TextEditor({ setting }: TextEditorProps) {
         className="form-control form-control-sm"
         id="textEditorInput"
       />
+      {invalidMessage && (
+        <p className="small mb-0 mt-1 text-danger">{invalidMessage}</p>
+      )}
     </div>
   );
 }

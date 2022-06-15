@@ -115,14 +115,14 @@ export const settings = [
     shortDescription:
       'Specifies what configuration file to use when computing the suitability of a setting for a given editor.',
     accept: '.json',
-    multiple: false,
+    multiple: true,
     validators: [
       {
         assert: (files: FileList | null) => files !== null,
         message: () => `Invalid. No file selected.`,
       },
       {
-        assert: (files: FileList) => files.length <= 3,
+        assert: (files: FileList) => files.length <= 2,
         message: (files: FileList) =>
           `Invalid. ${files.length} is too many files.`,
       },

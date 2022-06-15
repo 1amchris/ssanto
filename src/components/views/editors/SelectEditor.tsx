@@ -18,6 +18,10 @@ export interface SelectOptionProps {
 }
 
 function SelectEditor({ setting }: SelectEditorProps) {
+  const [invalidMessage, setInvalidMessage] = React.useState<
+    string | undefined
+  >(undefined);
+
   return (
     <div>
       <label
@@ -34,11 +38,12 @@ function SelectEditor({ setting }: SelectEditorProps) {
         onChange={({ target: { value } }) => {
           for (const validator of setting.validators || []) {
             if (!validator.assert(value)) {
-              console.error(validator.message(value));
+              setInvalidMessage(validator.message(value));
               return;
             }
           }
 
+          setInvalidMessage(undefined);
           setting.onValidChange?.(value);
         }}
       >
@@ -48,6 +53,9 @@ function SelectEditor({ setting }: SelectEditorProps) {
           </option>
         ))}
       </select>
+      {invalidMessage && (
+        <p className="small mb-0 mt-1 text-danger">{invalidMessage}</p>
+      )}
     </div>
   );
 }

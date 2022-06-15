@@ -13,6 +13,10 @@ export interface FileSettingProps
 }
 
 function FileSelector({ setting }: FileEditorProps) {
+  const [invalidMessage, setInvalidMessage] = React.useState<
+    string | undefined
+  >(undefined);
+
   return (
     <div>
       <label
@@ -28,17 +32,21 @@ function FileSelector({ setting }: FileEditorProps) {
         onChange={({ target: { files } }) => {
           for (const validator of setting.validators || []) {
             if (!validator.assert(files)) {
-              console.error(validator.message(files));
+              setInvalidMessage(validator.message(files));
               return;
             }
           }
 
+          setInvalidMessage(undefined);
           setting.onValidChange?.(files);
         }}
         type="file"
         className="form-control form-control-sm"
         id="fileSelectorInput"
       />
+      {invalidMessage && (
+        <p className="small mb-0 mt-1 text-danger">{invalidMessage}</p>
+      )}
     </div>
   );
 }
