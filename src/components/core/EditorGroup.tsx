@@ -12,6 +12,8 @@ import { useAppDispatch } from 'store/hooks';
 import { call } from 'store/reducers/server';
 import ColorsUtils from 'utils/colors-utils';
 import DefaultView from 'components/common/DefaultView';
+import useViewsRegistry from 'hooks/useViewsRegistry';
+import ViewAction from 'models/ViewAction';
 
 const backgroundColors = {
   active: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
@@ -139,22 +141,38 @@ function EditorTab({
   );
 }
 
-function EditorTabBar({ active, views, style, onClose, onFocus }: any) {
+function EditorTabBar({
+  active,
+  focused,
+  views,
+  style,
+  onClose,
+  onFocus,
+}: any) {
+  const { getActions } = useViewsRegistry();
+
   const iconBaseProps: IconBaseProps = {
     size: 16,
     color: Color.Black,
   };
 
-  const icons = [
-    {
-      label: 'Split Editor',
-      name: 'VscSplitHorizontal',
-    },
+  const defaultActions = [
     {
       label: 'Views and more actions...',
-      name: 'VscEllipsis',
+      iconName: 'VscEllipsis',
+      action: () => {},
     },
   ];
+
+  const conditionalDefaultActions = [
+    {
+      label: 'Split Editor',
+      iconName: 'VscSplitHorizontal',
+      action: () => {},
+    },
+  ];
+
+  const viewsActions = getActions(active[0]);
 
   return (
     <div
@@ -176,27 +194,31 @@ function EditorTabBar({ active, views, style, onClose, onFocus }: any) {
         ))}
       </div>
       <div style={{ marginTop: -6 }} className="flex-shrink-0 ps-1 pe-2">
-        {/* TODO: add action to icon */}
-        {icons.map((icon: any, index: number) => (
-          <button
-            key={`${icon.label}-${index}`}
-            style={{
-              padding: '0 2.5px',
-            }}
-            className="btn btn-sm"
-          >
-            {(codicons as { [name: string]: IconType })[icon.name]({
-              title: icon.label,
-              ...iconBaseProps,
-            })}
-          </button>
-        ))}
+        {([] as ViewAction[])
+          .concat((focused && viewsActions) || [])
+          .concat((focused && conditionalDefaultActions) || [])
+          .concat(defaultActions || [])
+          .map((action: any, index: number) => (
+            <button
+              key={`${action.label}-${index}`}
+              style={{
+                padding: '0 2.5px',
+              }}
+              className="btn btn-sm"
+              onClick={() => action.action()}
+            >
+              {(codicons as { [name: string]: IconType })[action.iconName]({
+                title: action.label,
+                ...iconBaseProps,
+              })}
+            </button>
+          ))}
       </div>
     </div>
   );
 }
 
-function EditorGroup({ closeable, active, group, style }: any) {
+function EditorGroup({ closeable, focused, group, style }: any) {
   const dispatch = useAppDispatch();
 
   const selectedView = group.views.find(
@@ -208,7 +230,7 @@ function EditorGroup({ closeable, active, group, style }: any) {
       className="d-flex flex-column flex-nowrap position-relative overflow-none"
       style={style}
       onClick={() => {
-        if (active) return;
+        if (focused) return;
         dispatch(
           call({
             target: ServerCallTarget.ViewsManagerSelectEditorGroup,
@@ -220,6 +242,7 @@ function EditorGroup({ closeable, active, group, style }: any) {
       <div className="flex-shrink-0">
         {group.views.length > 0 && (
           <EditorTabBar
+            focused={focused}
             active={group.active}
             views={group.views}
             onFocus={(uri: string) =>

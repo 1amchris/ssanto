@@ -29,6 +29,7 @@ import SplitView from 'components/core/SplitView';
 import EditorGroups from 'components/core/EditorGroups';
 import PanelBar from 'components/core/PanelBar';
 import ViewsRegistry from 'components/ViewsRegistry';
+import ViewAction from 'models/ViewAction';
 
 /**
  * Main component.
@@ -150,33 +151,111 @@ function Main() {
   // }
 
   const [factories, setFactories] = useState({
-    ['file-explorer']: React.lazy(() => {
-      return import('components/views/FileExplorer');
-    }),
-    ['file-searcher']: React.lazy(() => {
-      return import('components/views/FileSearcher');
-    }),
-    ['output']: React.lazy(() => {
-      return import('components/views/Output');
-    }),
-    ['problems-explorernpm t']: React.lazy(() => {
-      return import('components/views/ProblemsExplorer');
-    }),
-    ['ssanto-map']: React.lazy(() => {
-      return import('components/views/Map');
-    }),
-    ['ssanto-settings']: React.lazy(() => {
-      return import('components/views/SettingsEditor');
-    }),
+    ['file-explorer']: {
+      actions: [
+        {
+          label: 'New File',
+          iconName: 'VscNewFile',
+          action: () => console.log('[Explorer] New File'),
+        },
+        {
+          label: 'New Folder',
+          iconName: 'VscNewFolder',
+          action: () => console.log('[Explorer] New Folder'),
+        },
+        {
+          label: 'Refresh explorer',
+          iconName: 'VscRefresh',
+          action: () => console.log('[Explorer] Refresh explorer'),
+        },
+        {
+          label: 'Collapse folders in explorer',
+          iconName: 'VscCollapseAll',
+          action: () => console.log('[Explorer] Collapse folders in explorer'),
+        },
+      ],
+      factory: React.lazy(() => import('components/views/FileExplorer')),
+    },
+    ['file-searcher']: {
+      actions: [
+        {
+          label: 'Refresh',
+          iconName: 'VscRefresh',
+          action: () => console.log('[Searcher] Refresh'),
+        },
+        {
+          label: 'Clear Search Results',
+          iconName: 'VscClearAll',
+          action: () => console.log('[Searcher] Clear Search Results'),
+        },
+      ],
+      factory: React.lazy(() => import('components/views/FileSearcher')),
+    },
+    ['output']: {
+      actions: [
+        {
+          label: 'Clear Output',
+          iconName: 'VscClearAll',
+          action: () => console.log('[Output] Clear Output'),
+        },
+        {
+          label: 'Turn Auto Scrolling Off',
+          iconName: 'VscUnlock',
+          action: () => console.log('[Output] Turn Auto Scrolling Off'),
+        },
+        {
+          label: 'Open Log Output File',
+          iconName: 'VscGoToFile',
+          action: () => console.log('[Output] Open Log Output File'),
+        },
+      ],
+      factory: React.lazy(() => import('components/views/Output')),
+    },
+    ['problems-explorer']: {
+      actions: [
+        {
+          label: 'Collapse All',
+          iconName: 'VscCollapseAll',
+          action: () => console.log('[Problems] Collapse All'),
+        },
+        {
+          label: 'View as Table',
+          iconName: 'VscListFlat',
+          action: () => console.log('[Problems] Turn Auto Scrolling Off'),
+        },
+      ],
+      factory: React.lazy(() => import('components/views/ProblemsExplorer')),
+    },
+    ['ssanto-map']: {
+      actions: [
+        {
+          label: 'Show Settings',
+          iconName: 'VscSettings',
+          action: () => console.log('[Map] Show Settings'),
+        },
+      ],
+      factory: React.lazy(() => import('components/views/Map')),
+    },
+    ['ssanto-settings']: {
+      actions: [
+        {
+          label: 'Show map',
+          iconName: 'VscGlobe',
+          action: () => console.log('[Settings] Show Map'),
+        },
+      ],
+      factory: React.lazy(() => import('components/views/SettingsEditor')),
+    },
   });
 
   const value = {
     factories,
     registerFactory: (
       viewType: string,
-      factory: (props: any) => React.ReactNode
+      factory: (props: any) => React.ReactNode,
+      actions: ViewAction[]
     ) => {
-      setFactories({ ...factories, [viewType]: factory });
+      setFactories({ ...factories, [viewType]: { factory, actions } });
     },
   };
 

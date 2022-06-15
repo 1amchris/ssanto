@@ -12,6 +12,7 @@ import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import { call } from 'store/reducers/server';
 import useViewsRegistry from 'hooks/useViewsRegistry';
+import ViewAction from 'models/ViewAction';
 
 const backgroundColors = {
   disabled: ColorsUtils.applyOpacity(Color.LightGray, Opacity.Half),
@@ -91,7 +92,7 @@ function PanelItem({ label, active, disabled, onClick }: any) {
  * @return {JSX.Element} Html.
  */
 function PanelBar({ style }: any) {
-  const { getView } = useViewsRegistry();
+  const { getView, getActions } = useViewsRegistry();
 
   const dispatch = useAppDispatch();
   const {
@@ -104,16 +105,22 @@ function PanelBar({ style }: any) {
     color: Color.Black,
   };
 
-  const icons = [
+  const defaultActions = [
     {
       label: 'Maximize panel size',
-      name: 'VscChevronUp',
+      iconName: 'VscChevronUp',
+      action: () => {},
     },
     {
       label: 'Close panel',
-      name: 'VscClose',
+      iconName: 'VscClose',
+      action: () => {},
     },
-  ];
+  ] as ViewAction[];
+
+  const viewsActions = panel?.views
+    ?.map(view => getActions(view.uri))
+    ?.flat() as ViewAction[];
 
   return (
     <nav
@@ -145,21 +152,24 @@ function PanelBar({ style }: any) {
           style={{ minHeight: 35 }}
           className="d-flex flex-row align-items-center"
         >
-          {/* TODO: add action to icon */}
-          {icons.map((icon: any, index: number) => (
-            <button
-              key={`${icon.label}-${index}`}
-              style={{
-                padding: '0 2.5px',
-              }}
-              className="btn btn-sm"
-            >
-              {(codicons as { [name: string]: IconType })[icon.name]({
-                title: icon.label,
-                ...iconBaseProps,
-              })}
-            </button>
-          ))}
+          {([] as ViewAction[])
+            .concat(viewsActions || [])
+            .concat(defaultActions || [])
+            .map((action: any, index: number) => (
+              <button
+                key={`${action.label}-${index}`}
+                style={{
+                  padding: '0 2.5px',
+                }}
+                className="btn btn-sm"
+                onClick={() => action.action()}
+              >
+                {(codicons as { [name: string]: IconType })[action.iconName]({
+                  title: action.label,
+                  ...iconBaseProps,
+                })}
+              </button>
+            ))}
         </div>
       </div>
       {panel?.views?.length > 0 ? (

@@ -7,14 +7,23 @@ export default function useViewsRegistry() {
   const { factories } = useContext(ViewsRegistry);
 
   return {
+    getActions: (uri?: string) => {
+      if (!uri) {
+        return [];
+      }
+
+      const viewType = uri.slice(0, uri.indexOf('://'));
+      const viewActions = (factories as any)[viewType].actions;
+      return viewActions || [];
+    },
     getView: (uri?: string) => {
       if (!uri) {
         return DefaultView;
       }
 
       const viewType = uri.slice(0, uri.indexOf('://'));
-      const View = (factories as any)[viewType];
-      return View || UnsupportedFileView;
+      const viewFactory = (factories as any)[viewType].factory;
+      return viewFactory || UnsupportedFileView;
     },
   };
 }
