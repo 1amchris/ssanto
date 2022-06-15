@@ -69,8 +69,6 @@ async def main():
     server_socket.bind_command("files.close_workspace", files_manager.close_workspace)
     server_socket.bind_command("files.open_file", files_manager.open_file(views_manager))
     server_socket.bind_command("file_manager.get_files", files_manager.get_files_metadatas)
-    # server_socket.bind_command("file_manager.add_files", files_manager.add_files, False)
-    # server_socket.bind_command("file_manager.remove_file", files_manager.remove_file, False)
 
     server_socket.bind_command("views_manager.editor.add_group", views_manager.editor.add_group)
     server_socket.bind_command("views_manager.editor.select_group", views_manager.editor.select_group)
