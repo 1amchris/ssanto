@@ -7,6 +7,7 @@ import * as codicons from 'react-icons/vsc';
 import { selectViewsManager } from 'store/reducers/views-manager';
 import useViewsRegistry from 'hooks/useViewsRegistry';
 import ViewAction from 'models/ViewAction';
+import ViewModel from 'models/ViewModel';
 
 /**
  * Side bar component.
@@ -37,9 +38,7 @@ function SideBar({ style }: any) {
     },
   ] as ViewAction[];
 
-  const viewsActions = activity?.views
-    ?.map(view => getActions(view.uri))
-    ?.flat() as ViewAction[];
+  const viewsActions = getActions(activity?.active?.[0]) as ViewAction[];
 
   return (
     <nav
@@ -67,7 +66,13 @@ function SideBar({ style }: any) {
                   padding: '0 2.5px',
                 }}
                 className="btn btn-sm"
-                onClick={() => action.action()}
+                onClick={() =>
+                  action.action({
+                    view: activity.views.find(
+                      (view: ViewModel) => view.uri === activity.active[0]
+                    )!,
+                  })
+                }
               >
                 {(codicons as { [name: string]: IconType })[action.iconName]({
                   title: action.label,
@@ -81,7 +86,7 @@ function SideBar({ style }: any) {
         activity?.views.map((view: any) => {
           const Activity = getView(view.uri);
           return (
-            <div key={view.name} className="w-100 overflow-auto">
+            <div key={view.name} className="w-100 h-100 overflow-auto">
               <Suspense fallback={<div>Loading...</div>}>
                 <Activity />
               </Suspense>

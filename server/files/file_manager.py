@@ -203,8 +203,8 @@ class FilesManager:
             self.workspace = None
 
     def open_file(self, views_manager: ViewsManager):
-        def hof(file_uri: str):
-            view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri)
+        def hof(file_uri: str, view_type: str = None):
+            view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri, view_type=view_type)
             views_manager.editor.add_view(view)
 
         return hof

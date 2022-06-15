@@ -13,6 +13,7 @@ import CallModel from 'models/server-coms/CallModel';
 import { call } from 'store/reducers/server';
 import useViewsRegistry from 'hooks/useViewsRegistry';
 import ViewAction from 'models/ViewAction';
+import ViewModel from 'models/ViewModel';
 
 const backgroundColors = {
   disabled: ColorsUtils.applyOpacity(Color.LightGray, Opacity.Half),
@@ -118,9 +119,7 @@ function PanelBar({ style }: any) {
     },
   ] as ViewAction[];
 
-  const viewsActions = panel?.views
-    ?.map(view => getActions(view.uri))
-    ?.flat() as ViewAction[];
+  const viewsActions = getActions(panel?.active?.[0]) as ViewAction[];
 
   return (
     <nav
@@ -162,7 +161,13 @@ function PanelBar({ style }: any) {
                   padding: '0 2.5px',
                 }}
                 className="btn btn-sm"
-                onClick={() => action.action()}
+                onClick={() =>
+                  action.action({
+                    view: panel.views.find(
+                      (view: ViewModel) => view.uri === panel.active[0]
+                    )!,
+                  })
+                }
               >
                 {(codicons as { [name: string]: IconType })[action.iconName]({
                   title: action.label,

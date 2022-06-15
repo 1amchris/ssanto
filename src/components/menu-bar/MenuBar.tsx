@@ -87,7 +87,6 @@ function MenuBar({ style }: any) {
         key="add-group"
         label="open editor group"
         disabled={!files || files.length === 0}
-        // TODO: There should probably be a "confirm action" dialog
         onClick={() =>
           dispatch(
             call({

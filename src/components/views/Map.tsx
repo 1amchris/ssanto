@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import L from 'leaflet';
 // import L, { LatLng } from 'leaflet';
 import {
@@ -48,7 +48,7 @@ function Map() {
   // };
 
   const { t } = useTranslation();
-  const [mapRef, setMapRef] = useState<L.Map | undefined>(undefined);
+  // const [mapRef, setMapRef] = useState<L.Map | undefined>(undefined);
   const zoom = 10;
 
   function MapEvents() {
@@ -67,7 +67,7 @@ function Map() {
 
   return (
     <div className="w-100 h-100">
-      <button
+      {/* <button
         onClick={() =>
           mapRef?.flyToBounds(
             new L.LatLngBounds(
@@ -78,7 +78,7 @@ function Map() {
         }
       >
         Flyyy
-      </button>
+      </button> */}
       <MapContainer
         center={[0, 0]}
         zoom={zoom}
@@ -88,7 +88,7 @@ function Map() {
           height: '100%',
         }}
         whenCreated={map => {
-          setMapRef(map);
+          // setMapRef(map);
           map.flyTo({ lat: 51.5, lng: -0.09 }, zoom);
         }}
         // whenCreated={map => {

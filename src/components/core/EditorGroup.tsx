@@ -149,6 +149,7 @@ function EditorTabBar({
   onClose,
   onFocus,
 }: any) {
+  const dispatch = useAppDispatch();
   const { getActions } = useViewsRegistry();
 
   const iconBaseProps: IconBaseProps = {
@@ -168,11 +169,17 @@ function EditorTabBar({
     {
       label: 'Split Editor',
       iconName: 'VscSplitHorizontal',
-      action: () => {},
+      action: () => {
+        dispatch(
+          call({
+            target: ServerCallTarget.ViewsManagerOpenEditorGroup,
+          } as CallModel)
+        );
+      },
     },
   ];
 
-  const viewsActions = getActions(active[0]);
+  const viewsActions = getActions(active?.[0]);
 
   return (
     <div
@@ -205,7 +212,11 @@ function EditorTabBar({
                 padding: '0 2.5px',
               }}
               className="btn btn-sm"
-              onClick={() => action.action()}
+              onClick={() =>
+                action.action({
+                  view: views.find((view: ViewModel) => view.uri === active[0]),
+                })
+              }
             >
               {(codicons as { [name: string]: IconType })[action.iconName]({
                 title: action.label,

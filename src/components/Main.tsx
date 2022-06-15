@@ -29,7 +29,11 @@ import SplitView from 'components/core/SplitView';
 import EditorGroups from 'components/core/EditorGroups';
 import PanelBar from 'components/core/PanelBar';
 import ViewsRegistry from 'components/ViewsRegistry';
-import ViewAction from 'models/ViewAction';
+import ViewAction, { ViewActionCallbackProps } from 'models/ViewAction';
+import { useAppDispatch } from 'store/hooks';
+import ServerCallTarget from 'enums/ServerCallTarget';
+import CallModel from 'models/server-coms/CallModel';
+import { call } from 'store/reducers/server';
 
 /**
  * Main component.
@@ -150,6 +154,8 @@ function Main() {
   //   );
   // }
 
+  const dispatch = useAppDispatch();
+
   const [factories, setFactories] = useState({
     ['file-explorer']: {
       actions: [
@@ -231,7 +237,13 @@ function Main() {
         {
           label: 'Show Settings',
           iconName: 'VscSettings',
-          action: () => console.log('[Map] Show Settings'),
+          action: ({ view }: ViewActionCallbackProps) =>
+            dispatch(
+              call({
+                target: ServerCallTarget.FilesOpenFile,
+                args: [view.source, 'ssanto-settings'],
+              } as CallModel)
+            ),
         },
       ],
       factory: React.lazy(() => import('components/views/Map')),
@@ -241,7 +253,13 @@ function Main() {
         {
           label: 'Show map',
           iconName: 'VscGlobe',
-          action: () => console.log('[Settings] Show Map'),
+          action: ({ view }: ViewActionCallbackProps) =>
+            dispatch(
+              call({
+                target: ServerCallTarget.FilesOpenFile,
+                args: [view.source, 'ssanto-map'],
+              } as CallModel)
+            ),
         },
       ],
       factory: React.lazy(() => import('components/views/SettingsEditor')),
