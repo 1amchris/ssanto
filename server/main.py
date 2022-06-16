@@ -55,6 +55,7 @@ async def main():
     logs_manager = LogsManager(subjects_manager)
     views_manager = ViewsManager(subjects_manager, logs_manager)
     workspace_manager = WorkspaceManager(subjects_manager, logs_manager)
+    document_manager = DocumentManager(subjects_manager, logs_manager)
     files_manager = FilesManager(subjects_manager, logs_manager)
 
     populate_extension_manager()
