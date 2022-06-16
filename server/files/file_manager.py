@@ -216,5 +216,6 @@ class WorkspaceManager:
             view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri, view_type=view_type)
             views_manager.editor.add_view(view)
             documents_manager.open_document(file_uri)
+            self.logger.info(f"[Workspace] Opened document: {file_uri}")
 
         return hof

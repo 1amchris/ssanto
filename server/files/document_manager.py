@@ -36,48 +36,50 @@ class DocumentsManager:
         self.logs_manager: SubjectsManager = logs_manager
         self.documents: dict[str:DocumentEditor] = dict()
 
-        self.logs_manager.info("Documents manager initialized")
+        self.logs_manager.info("[Documents] Documents manager initialized")
 
     def get_document(self, uri: str, open_if_need_be: bool = True) -> DocumentEditor:
         if uri in self.documents:
-            self.logs_manager.info(f"Fetching existing document with uri: {uri}")
-            return self.documents[uri]
+            document = self.documents[uri]
+            self.logs_manager.info(f"[Documents] Fetched existing document: {uri}")
+            return document
         elif open_if_need_be:
-            self.logs_manager.info(f"Fetching new document with uri: {uri}")
-            return self.open_document(uri)
+            document = self.open_document(uri)
+            self.logs_manager.info(f"[Documents] Fetched new document: {uri}")
+            return document
         else:
-            self.logs_manager.error(f"No document found with uri: {uri}")
-            raise KeyError("No document found for uri: {uri}")
+            self.logs_manager.error(f"[Documents] No document found: {uri}")
+            raise KeyError("No document found: {uri}")
 
     def update_document(self, uri: str, changes: dict) -> DocumentEditor:
         document = self.get_document(uri)
-        self.logs_manager.info(f"Updating document with uri: {uri}")
         document.update_document(changes)
+        self.logs_manager.info(f"[Documents] Updated document: {uri}")
         return document
 
     def open_document(self, uri: str) -> DocumentEditor:
-        self.logs_manager.info(f"Opening document with uri: {uri}")
         if uri in self.documents:
-            self.logs_manager.info(f"Document {uri} already exists. No need to open it.")
+            self.logs_manager.info(f"[Documents] Document is already opened: {uri}")
             return self.get_document(uri, False)
 
         self.documents[uri] = DocumentEditor(uri)
+        self.logs_manager.info(f"[Documents] Opened document: {uri}")
         return self.get_document(uri, False)
 
     def close_document(self, uri: str, save: bool = True) -> str:
-        self.logs_manager.info(f"Closing document with uri: {uri}")
         if save:
-            self.logs_manager.info(f"Saving document before closing it")
             self.save_document(uri)
 
         del self.documents[uri]
+        self.logs_manager.info(f"[Documents] Closed document: {uri}")
         return uri
 
     def save_document(self, uri: str) -> str:
         document = self.get_document(uri, False)
-        self.logs_manager.info(f"Saving document with uri: {uri}")
         document.save_changes_to_file()
+        self.logs_manager.info(f"[Documents] Saved document: {uri}")
 
     def save_all(self) -> list[str]:
-        self.logs_manager.info(f"Saving all opened documents")
-        return [self.save_document(uri) for uri in self.documents]
+        uris = [self.save_document(uri) for uri in self.documents]
+        self.logs_manager.info(f"[Documents] Saved all opened documents: {len(uris)}")
+        return uris
