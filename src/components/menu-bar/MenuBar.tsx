@@ -63,7 +63,7 @@ function MenuBar({ style }: any) {
         onClick={() =>
           dispatch(
             call({
-              target: ServerCallTarget.SaveProject,
+              target: ServerCallTarget.AnalysisSaveProject,
               onSuccessAction: exportData,
             } as CallModel<void, FileContentModel<string>>)
           )
@@ -107,7 +107,7 @@ function MenuBar({ style }: any) {
         onClick={() =>
           dispatch(
             call({
-              target: ServerCallTarget.ExportTiff,
+              target: ServerCallTarget.AnalysisExportTiff,
               args: ['analysis'],
               onSuccessAction: exportData,
               // TODO: There should probably be an "onErrorAction"

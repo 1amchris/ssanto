@@ -7,7 +7,7 @@ import { call } from 'store/reducers/server';
 import LayersGroups from 'components/map/LayersGroups';
 import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
-import LoadingValue from 'models/LoadingValue';
+// import LoadingValue from 'models/LoadingValue';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 
 /**
@@ -22,12 +22,12 @@ function InteractiveMapContainer({ className, style, id }: any) {
   const MapEvents = () => {
     useMapEvents({
       click(e) {
-        dispatch(
-          call({
-            target: ServerCallTarget.GetCellSuitability,
-            args: [{ lat: e.latlng.lat, long: e.latlng.lng }],
-          } as CallModel<[Object], void, LoadingValue<string>, string, string>)
-        );
+        // dispatch(
+        //   call({
+        //     target: ServerCallTarget.GetCellSuitability,
+        //     args: [{ lat: e.latlng.lat, long: e.latlng.lng }],
+        //   } as CallModel<[Object], void, LoadingValue<string>, string, string>)
+        // );
         dispatch(
           call({
             target: ServerCallTarget.MapSetCursor,

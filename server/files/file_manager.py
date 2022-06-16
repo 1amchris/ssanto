@@ -6,6 +6,7 @@ import geopandas as gpd
 from files.file_metadata import FileMetaData
 from files.file import File
 from files.shapefile import Shapefile
+from files.document_manager import DocumentsManager
 from logger.log_manager import LogsManager
 from subjects.subjects_manager import SubjectsManager
 from views.manager import ViewsManager
@@ -186,13 +187,6 @@ class FilesManager:
 
     # Add loaded file to the file manager?
 
-    def open_file(self, views_manager: ViewsManager):
-        def hof(file_uri: str, view_type: str = None):
-            view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri, view_type=view_type)
-            views_manager.editor.add_view(view)
-
-        return hof
-
 
 class WorkspaceManager:
     def __init__(self, subjects_manager: SubjectsManager, logger: LogsManager):
@@ -216,3 +210,11 @@ class WorkspaceManager:
             self.files.notify([])
             self.logger.info(f"[Workspace] Closed workspace: {self.workspace}")
             self.workspace = None
+
+    def open_file(self, views_manager: ViewsManager, documents_manager: DocumentsManager):
+        def hof(file_uri: str, view_type: str = None):
+            view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri, view_type=view_type)
+            views_manager.editor.add_view(view)
+            documents_manager.open_document(file_uri)
+
+        return hof

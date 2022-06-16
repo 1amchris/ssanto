@@ -964,7 +964,7 @@ function ObjectiveHierarchy({ t, disabled }: any) {
           );
           dispatch(
             call({
-              target: ServerCallTarget.Update,
+              target: ServerCallTarget.AnalysisUpdateParams,
               args: [property, oh],
               onSuccessAction: injectSetLoadingCreator({
                 value: property,

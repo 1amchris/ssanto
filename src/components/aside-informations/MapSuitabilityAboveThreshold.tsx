@@ -56,7 +56,7 @@ function MapSuitabilityAboveThreshold({ t }: any) {
         onSubmit={(fields: any) => {
           dispatch(
             call({
-              target: ServerCallTarget.UpdateSuitabilityThreshold,
+              target: ServerCallTarget.AnalysisUpdateSuitabilityThreshold,
               args: [fields.suitability_threshold],
             } as CallModel<[number]>)
           );

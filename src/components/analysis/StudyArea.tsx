@@ -51,7 +51,7 @@ function StudyArea({ t, disabled }: any) {
     );
     dispatch(
       call({
-        target: ServerCallTarget.UpdateStudyAreaFiles,
+        target: ServerCallTarget.AnalysisUpdateStudyAreaFiles,
         args: [fields.study_area_file],
         onSuccessAction: injectSetLoadingCreator({
           value: property,
@@ -78,7 +78,7 @@ function StudyArea({ t, disabled }: any) {
           onClick={() => {
             dispatch(
               call({
-                target: ServerCallTarget.SaveProject,
+                target: ServerCallTarget.AnalysisSaveProject,
                 onSuccessAction: exportData,
                 // TODO: There should probably be an "onErrorAction"
               } as CallModel<void, FileContentModel<string>>)

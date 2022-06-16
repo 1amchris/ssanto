@@ -240,7 +240,7 @@ function Main() {
           action: ({ view }: ViewActionCallbackProps) =>
             dispatch(
               call({
-                target: ServerCallTarget.FilesManagerOpenFile,
+                target: ServerCallTarget.WorkspaceManagerOpenFile,
                 args: [view.source, 'ssanto-settings'],
               } as CallModel)
             ),
@@ -256,7 +256,7 @@ function Main() {
           action: ({ view }: ViewActionCallbackProps) =>
             dispatch(
               call({
-                target: ServerCallTarget.FilesManagerOpenFile,
+                target: ServerCallTarget.WorkspaceManagerOpenFile,
                 args: [view.source, 'ssanto-map'],
               } as CallModel)
             ),

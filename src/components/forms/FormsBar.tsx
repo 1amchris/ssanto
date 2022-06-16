@@ -58,7 +58,7 @@ function FormsBar({ children, className, t }: any, key?: string) {
                 );
                 dispatch(
                   call({
-                    target: ServerCallTarget.ComputeSuitability,
+                    target: ServerCallTarget.AnalysisComputeSuitability,
                     onErrorAction: injectSetErrorCreator('analysis'),
                   } as CallModel<void, { file_name: string; analysis_data: string }, void, string, string>)
                 );

@@ -6,6 +6,8 @@ import asyncio
 from network.server_socket import ServerSocket
 from subjects.subjects_manager import SubjectsManager
 
+from files.document_manager import DocumentsManager
+
 from logger.logger import *
 from logger.log_manager import LogsManager
 
@@ -19,11 +21,10 @@ from files.file_manager import FilesManager, WorkspaceManager
 from guide_builder import GuideBuilder
 
 
-def populate_extension_manager():
-    extensions = ExtensionManager()
+def populate_extension_manager(extension_manager: ExtensionManager):
     # examples of registering new view types for given extensions
     # TODO populate extension manager with actual view types (maybe even user-editable in the future)
-    extensions["sproj"] = "ssanto-map"
+    extension_manager["sproj"] = "ssanto-map"
 
 
 def populate_views_manager(views_manager: ViewsManager):
@@ -55,19 +56,20 @@ async def main():
     logs_manager = LogsManager(subjects_manager)
     views_manager = ViewsManager(subjects_manager, logs_manager)
     workspace_manager = WorkspaceManager(subjects_manager, logs_manager)
-    document_manager = DocumentManager(subjects_manager, logs_manager)
-    files_manager = FilesManager(subjects_manager, logs_manager)
+    documents_manager = DocumentsManager(subjects_manager, logs_manager)
 
-    populate_extension_manager()
+    populate_extension_manager(ExtensionManager())
     populate_views_manager(views_manager)
 
     server_socket.bind_command("subscribe", subjects_manager.subscribe)
     server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
 
+    workspace_manager_open_file = workspace_manager.open_file(views_manager, documents_manager)
+    server_socket.bind_command("workspace_manager.open_file", workspace_manager_open_file)
     server_socket.bind_command("workspace_manager.open_workspace", workspace_manager.open_workspace)
     server_socket.bind_command("workspace_manager.close_workspace", workspace_manager.close_workspace)
 
-    server_socket.bind_command("files_manager.open_file", files_manager.open_file(views_manager))
+    files_manager = FilesManager(subjects_manager, logs_manager)
     server_socket.bind_command("files_manager.get_files", files_manager.get_files_metadatas)
 
     server_socket.bind_command("views_manager.editor.add_group", views_manager.editor.add_group)
@@ -86,20 +88,19 @@ async def main():
     server_socket.bind_command("logs_manager.get_logs", logs_manager.get_logs)
 
     analysis = Analysis(subjects_manager, files_manager)
-    server_socket.bind_command("update", analysis.update)
+    server_socket.bind_command("analysis.update", analysis.update)
+    server_socket.bind_command("analysis.set_study_area", analysis.receive_study_area)
     server_socket.bind_command("analysis.update_suitability_threshold", analysis.update_suitability_threshold)
-    server_socket.bind_command("compute_suitability", analysis.compute_suitability)
+    server_socket.bind_command("analysis.compute_suitability", analysis.compute_suitability)
 
     server_socket.bind_command("analysis.add_files", analysis.add_files, False)
     server_socket.bind_command("analysis.remove_file", analysis.remove_file, False)
 
-    # TODO: This is confusing. "get_layer" doesn't follow the same format as the others. Should be renamed to "analysis.get_layer"
-    server_socket.bind_command("get_layer", analysis.get_layer)
+    server_socket.bind_command("analysis.export_tiff", analysis.export_tiff)
+    server_socket.bind_command("analysis.get_layer", analysis.get_layer)
 
-    server_socket.bind_command("analysis.set_study_area", analysis.receive_study_area)
     server_socket.bind_command("analysis.save_project", analysis.export_project_save)
     server_socket.bind_command("analysis.open_project", analysis.import_project_save)
-    server_socket.bind_command("analysis.export_tiff", analysis.export_tiff)
 
     map = Map(subjects_manager, analysis.get_informations_at_position)
     server_socket.bind_command("map.set_cursor", map.set_cursor)

@@ -47,7 +47,7 @@ function NbsSystem({ t, disabled }: any) {
     );
     dispatch(
       call({
-        target: ServerCallTarget.Update,
+        target: ServerCallTarget.AnalysisUpdateParams,
         args: [property, fields],
         onSuccessAction: injectSetLoadingCreator({
           value: property,
@@ -74,7 +74,7 @@ function NbsSystem({ t, disabled }: any) {
           onClick={() => {
             dispatch(
               call({
-                target: ServerCallTarget.SaveProject,
+                target: ServerCallTarget.AnalysisSaveProject,
                 onSuccessAction: exportData,
                 // TODO: There should probably be an "onErrorAction"
               } as CallModel<void, FileContentModel<string>>)

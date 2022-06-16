@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
 
-// TODO: there are many inconsistencies in the the enum. Some have "namespaces", some don't. Some are plural, some aren't.
 enum ServerCallTarget {
+  WorkspaceManagerOpenFile = 'workspace_manager.open_file',
   WorkspaceManagerOpenWorkspace = 'workspace_manager.open_workspace',
   WorkspaceManagerCloseWorkspace = 'workspace_manager.close_workspace',
 
-  FilesManagerOpenFile = 'files_manager.open_file',
   FileManagerGetFiles = 'files_manager.get_files',
 
   LogsManagerLog = 'logs_manager.add_log',
@@ -27,23 +26,22 @@ enum ServerCallTarget {
   ViewsManagerOpenActivityView = 'views_manager.sidebar.open_view',
   ViewsManagerCloseActivityView = 'views_manager.sidebar.close_view',
 
-  SaveProject = 'analysis.save_project',
-  OpenProject = 'analysis.open_project',
-
-  Update = 'update',
-  UpdateSuitabilityThreshold = 'analysis.update_suitability_threshold',
-  ExportTiff = 'analysis.export_tiff',
-  SaveWeights = 'analysis.save_weights',
-  SaveObjectiveHierarchy = 'analysis.save_objective_hierarchy',
-  UpdateStudyAreaFiles = 'analysis.set_study_area',
-  ComputeSuitability = 'compute_suitability',
-
-  GetLayer = 'get_layer',
-
   AnalysisAddFiles = 'analysis.add_files',
   AnalysisRemoveFile = 'analysis.remove_file',
 
-  GetCellSuitability = 'get_cell_suitability',
+  AnalysisExportTiff = 'analysis.export_tiff',
+  AnalysisGetLayer = 'analysis.get_layer',
+
+  AnalysisOpenProject = 'analysis.open_project',
+  AnalysisSaveProject = 'analysis.save_project',
+  AnalysisSaveWeights = 'analysis.save_weights',
+  AnalysisSaveObjectiveHierarchy = 'analysis.save_objective_hierarchy',
+
+  AnalysisUpdateParams = 'analysis.update',
+  AnalysisUpdateStudyAreaFiles = 'analysis.set_study_area',
+  AnalysisUpdateSuitabilityThreshold = 'analysis.update_suitability_threshold',
+  AnalysisComputeSuitability = 'analysis.compute_suitability',
+
   MapSetCursor = 'map.set_cursor',
 
   GuideGet = 'guide.get',

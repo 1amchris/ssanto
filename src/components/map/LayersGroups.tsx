@@ -80,7 +80,7 @@ const LayersGroups = ({ t }: any) => {
     for (const layer of toAdd) {
       dispatch(
         call({
-          target: ServerCallTarget.GetLayer,
+          target: ServerCallTarget.AnalysisGetLayer,
           args: [layer[0], layer[1]],
           onSuccessAction: upsertLayer,
         } as CallModel<string[], InsertLayerModel, void, void, void>)

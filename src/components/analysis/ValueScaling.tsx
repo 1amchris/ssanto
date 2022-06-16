@@ -267,7 +267,7 @@ function ValueScaling({ t, disabled }: any) {
         );
         dispatch(
           call({
-            target: ServerCallTarget.Update,
+            target: ServerCallTarget.AnalysisUpdateParams,
             args: [property, merge(objectives, fields)],
             onSuccessAction: injectSetLoadingCreator({
               value: property,

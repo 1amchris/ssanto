@@ -218,7 +218,7 @@ function Weighting({ t, disabled }: any) {
 
         dispatch(
           call({
-            target: ServerCallTarget.Update,
+            target: ServerCallTarget.AnalysisUpdateParams,
             args: [property, merge(objectives, normalizeWeights(fields))],
             onSuccessAction: injectSetLoadingCreator({
               value: property,
