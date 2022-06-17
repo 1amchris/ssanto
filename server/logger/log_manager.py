@@ -16,8 +16,7 @@ class Logs(Serializable):
         self.logs[log_type] = log_messages
 
     def serialize(self):
-        res = {str(log_type.value): [log.serialize() for log in logs] for log_type, logs in self.logs.items()}
-        return res
+        return {str(log_type.value): [log.serialize() for log in logs] for log_type, logs in self.logs.items()}
 
     def clear(self):
         self.logs = defaultdict(list)
