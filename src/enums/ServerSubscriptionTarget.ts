@@ -1,18 +1,18 @@
 /* eslint-disable no-unused-vars */
 
 enum ServerSubscriptionTarget {
-  WorkspaceManagerFiles = 'workspace_manager.files',
+  WorkspaceFiles = 'workspace.files',
 
-  FileManagerShapefiles = 'file_manager.shapefiles',
+  FilesShapefiles = 'files.shapefiles',
 
-  LogsManagerLogs = 'logs_manager.logs',
+  LoggerLogs = 'logger.logs',
 
-  ViewsManagerEditorViews = 'views_manager.editor.views',
-  ViewsManagerActiveEditorViews = 'views_manager.editor.active_views',
-  ViewsManagerPanelViews = 'views_manager.panel.activities',
-  ViewsManagerActivePanelView = 'views_manager.panel.active_view',
-  ViewsManagerSidebarViews = 'views_manager.sidebar.activities',
-  ViewsManagerActiveSidebarView = 'views_manager.sidebar.active_view',
+  WorkspaceViewsEditorViews = 'workspace.views.editor.views',
+  WorkspaceViewsActiveEditorViews = 'workspace.views.editor.active_views',
+  WorkspaceViewsPanelViews = 'workspace.views.panel.activities',
+  WorkspaceViewsActivePanelView = 'workspace.views.panel.active_view',
+  WorkspaceViewsSidebarViews = 'workspace.views.sidebar.activities',
+  WorkspaceViewsActiveSidebarView = 'workspace.views.sidebar.active_view',
 
   MapCursor = 'map.cursor',
   MapCursorInformations = 'map.cursor.informations',

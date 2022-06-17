@@ -1,7 +1,7 @@
 from singleton import Singleton
 
 
-class ExtensionManager(metaclass=Singleton):
+class DefaultViewRegistry(metaclass=Singleton):
     __extensions = dict()
     __default_view_type = "view"
 
@@ -14,6 +14,7 @@ class ExtensionManager(metaclass=Singleton):
     def __setitem__(self, extension, view_type):
         self.register_view_type(extension, view_type)
 
+    # TODO: We should probably move this to an extension utils/manager
     def normalize_extension(self, extension):
         return extension.lower().split(".")[-1].strip()
 

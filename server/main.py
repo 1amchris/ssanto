@@ -6,28 +6,27 @@ import asyncio
 from network.server_socket import ServerSocket
 from subjects.subjects_manager import SubjectsManager
 
-from files.document_manager import DocumentsManager
-
 from logger.logger import *
 from logger.log_manager import LogsManager
 
-from views.extension_manager import ExtensionManager
-from views.manager import ViewsManager
 from views.builtin import FileExplorerView, FileSearcherView, ProblemExplorerView, OutputView
+from views.default_view_registry import DefaultViewRegistry
+from views.manager import ViewsManager
 
 from analysis.analysis import Analysis
 from analysis.map import Map
-from files.file_manager import FilesManager, WorkspaceManager
+from files.file_manager import FilesManager
+from files.workspace_manager import WorkspaceManager
 from guide_builder import GuideBuilder
 
 
-def populate_extension_manager(extension_manager: ExtensionManager):
+def populate_view_registry(view_registry: DefaultViewRegistry):
     # examples of registering new view types for given extensions
     # TODO populate extension manager with actual view types (maybe even user-editable in the future)
-    extension_manager["sproj"] = "ssanto-map"
+    view_registry["sproj"] = "ssanto-map"
 
 
-def populate_views_manager(views_manager: ViewsManager):
+def populate_views(views_manager: ViewsManager):
     # panel
     problems_uri = views_manager.panel.add_activity("Problems", "VscWarning")
     views_manager.panel.add_view(ProblemExplorerView("file:///Users/src/"), problems_uri)
@@ -51,62 +50,59 @@ def populate_views_manager(views_manager: ViewsManager):
 
 
 async def main():
-    server_socket = ServerSocket("localhost", 15649)
-    subjects_manager = SubjectsManager(server_socket)
-    logs_manager = LogsManager(subjects_manager)
-    views_manager = ViewsManager(subjects_manager, logs_manager)
-    workspace_manager = WorkspaceManager(subjects_manager, logs_manager)
-    documents_manager = DocumentsManager(subjects_manager, logs_manager)
+    server = ServerSocket("localhost", 15649)
+    subjects = SubjectsManager(server)
+    logger = LogsManager(subjects)
+    workspace = WorkspaceManager(subjects, logger)
 
-    populate_extension_manager(ExtensionManager())
-    populate_views_manager(views_manager)
+    populate_view_registry(DefaultViewRegistry())
+    populate_views(workspace.views)
 
-    server_socket.bind_command("subscribe", subjects_manager.subscribe)
-    server_socket.bind_command("unsubscribe", subjects_manager.unsubscribe)
+    server.bind_command("subscribe", subjects.subscribe)
+    server.bind_command("unsubscribe", subjects.unsubscribe)
 
-    workspace_manager_open_file = workspace_manager.open_file(views_manager, documents_manager)
-    server_socket.bind_command("workspace_manager.open_file", workspace_manager_open_file)
-    server_socket.bind_command("workspace_manager.open_workspace", workspace_manager.open_workspace)
-    server_socket.bind_command("workspace_manager.close_workspace", workspace_manager.close_workspace)
+    server.bind_command("workspace.open_view", workspace.open_view)
+    server.bind_command("workspace.open_workspace", workspace.open_workspace)
+    server.bind_command("workspace.close_workspace", workspace.close_workspace)
 
-    files_manager = FilesManager(subjects_manager, logs_manager)
-    server_socket.bind_command("files_manager.get_files", files_manager.get_files_metadatas)
+    files = FilesManager(subjects, logger)
+    server.bind_command("files.get_files", files.get_files_metadatas)
 
-    server_socket.bind_command("views_manager.editor.add_group", views_manager.editor.add_group)
-    server_socket.bind_command("views_manager.editor.select_group", views_manager.editor.select_group)
-    server_socket.bind_command("views_manager.editor.close_group", views_manager.editor.remove_group)
-    server_socket.bind_command("views_manager.editor.close_view", views_manager.editor.remove_view)
-    server_socket.bind_command("views_manager.editor.select_view", views_manager.editor.select_view)
-    server_socket.bind_command("views_manager.panel.close_view", views_manager.panel.remove_view)
-    server_socket.bind_command("views_manager.panel.select_view", views_manager.panel.select_view)
-    server_socket.bind_command("views_manager.panel.select_activity", views_manager.panel.select_activity)
-    server_socket.bind_command("views_manager.sidebar.close_view", views_manager.sidebar.remove_view)
-    server_socket.bind_command("views_manager.sidebar.select_view", views_manager.sidebar.select_view)
-    server_socket.bind_command("views_manager.sidebar.select_activity", views_manager.sidebar.select_activity)
+    server.bind_command("workspace.views.editor.add_group", workspace.views.editor.add_group)
+    server.bind_command("workspace.views.editor.select_group", workspace.views.editor.select_group)
+    server.bind_command("workspace.views.editor.close_group", workspace.views.editor.remove_group)
+    server.bind_command("workspace.views.editor.close_view", workspace.views.editor.remove_view)
+    server.bind_command("workspace.views.editor.select_view", workspace.views.editor.select_view)
+    server.bind_command("workspace.views.panel.close_view", workspace.views.panel.remove_view)
+    server.bind_command("workspace.views.panel.select_view", workspace.views.panel.select_view)
+    server.bind_command("workspace.views.panel.select_activity", workspace.views.panel.select_activity)
+    server.bind_command("workspace.views.sidebar.close_view", workspace.views.sidebar.remove_view)
+    server.bind_command("workspace.views.sidebar.select_view", workspace.views.sidebar.select_view)
+    server.bind_command("workspace.views.sidebar.select_activity", workspace.views.sidebar.select_activity)
 
-    server_socket.bind_command("logs_manager.add_log", logs_manager.add_log)
-    server_socket.bind_command("logs_manager.get_logs", logs_manager.get_logs)
+    server.bind_command("logger.add_log", logger.add_log)
+    server.bind_command("logger.get_logs", logger.get_logs)
 
-    analysis = Analysis(subjects_manager, files_manager)
-    server_socket.bind_command("analysis.update", analysis.update)
-    server_socket.bind_command("analysis.set_study_area", analysis.receive_study_area)
-    server_socket.bind_command("analysis.update_suitability_threshold", analysis.update_suitability_threshold)
-    server_socket.bind_command("analysis.compute_suitability", analysis.compute_suitability)
+    analysis = Analysis(subjects, files)
+    server.bind_command("analysis.update", analysis.update)
+    server.bind_command("analysis.set_study_area", analysis.receive_study_area)
+    server.bind_command("analysis.update_suitability_threshold", analysis.update_suitability_threshold)
+    server.bind_command("analysis.compute_suitability", analysis.compute_suitability)
 
-    server_socket.bind_command("analysis.add_files", analysis.add_files, False)
-    server_socket.bind_command("analysis.remove_file", analysis.remove_file, False)
+    server.bind_command("analysis.add_files", analysis.add_files, False)
+    server.bind_command("analysis.remove_file", analysis.remove_file, False)
 
-    server_socket.bind_command("analysis.export_tiff", analysis.export_tiff)
-    server_socket.bind_command("analysis.get_layer", analysis.get_layer)
+    server.bind_command("analysis.export_tiff", analysis.export_tiff)
+    server.bind_command("analysis.get_layer", analysis.get_layer)
 
-    server_socket.bind_command("analysis.save_project", analysis.export_project_save)
-    server_socket.bind_command("analysis.open_project", analysis.import_project_save)
+    server.bind_command("analysis.save_project", analysis.export_project_save)
+    server.bind_command("analysis.open_project", analysis.import_project_save)
 
-    map = Map(subjects_manager, analysis.get_informations_at_position)
-    server_socket.bind_command("map.set_cursor", map.set_cursor)
+    map = Map(subjects, analysis.get_informations_at_position)
+    server.bind_command("map.set_cursor", map.set_cursor)
 
     guide_builder = GuideBuilder()
-    server_socket.bind_command("guide.get", guide_builder.generate_guide_data)
+    server.bind_command("guide.get", guide_builder.generate_guide_data)
 
     # Main loop
     loop = asyncio.get_running_loop()
@@ -118,7 +114,7 @@ async def main():
 
     # DO NOT DELETE. It is used to open the window.
     print("STARTUP_FINISH")
-    async with server_socket.serve():
+    async with server.serve():
         await stop  # run forever
 
 

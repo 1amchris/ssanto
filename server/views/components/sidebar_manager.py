@@ -11,8 +11,8 @@ class SideBarManager(Serializable):
         self.subjects_manager = subjects_manager
         self.logs_manager = logs_manager
 
-        self.activities = self.subjects_manager.create("views_manager.sidebar.activities", [])
-        self.active = self.subjects_manager.create("views_manager.sidebar.active_view", None)
+        self.activities = self.subjects_manager.create("workspace.views.sidebar.activities", [])
+        self.active = self.subjects_manager.create("workspace.views.sidebar.active_view", None)
 
     def serialize(self):
         return {

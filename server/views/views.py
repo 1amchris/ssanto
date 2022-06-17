@@ -1,5 +1,5 @@
 from files.serializable import Serializable
-from views.extension_manager import ExtensionManager
+from views.default_view_registry import DefaultViewRegistry
 
 
 class View(Serializable):
@@ -7,9 +7,9 @@ class View(Serializable):
         self.name = name
         self.source = source
         self.view_type = (
-            ExtensionManager().get_view_type(self.source)
+            DefaultViewRegistry().get_view_type(self.source)
             if view_type is None
-            else ExtensionManager().normalize_view_type(view_type)
+            else DefaultViewRegistry().normalize_view_type(view_type)
         )
         self.uri = f'{self.view_type}://{source[source.find("://")+3:]}'
 

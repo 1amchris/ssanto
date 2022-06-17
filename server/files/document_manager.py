@@ -1,35 +1,11 @@
-from files.utils import uri_to_path
-from files.serializable import Serializable
+from typing import Union
+from files.document_editor import DocumentEditor
 from logger.log_manager import LogsManager
+from singleton import Singleton
 from subjects.subjects_manager import SubjectsManager
 
 
-class DocumentEditor(Serializable):
-    def __init__(self, uri: str):
-        self.uri: str = uri
-        self.is_modified: bool = False
-        self.content = self.read_from_file()
-
-    def serialize(self):
-        return {"uri": self.uri, "is_modified": self.is_modified, "content": self.content}
-
-    # The "changes" dictionary is a dictionary of changes to be applied to the document
-    # There is no standard structure here. It is based on the needs of the derived editor.
-    def update_document(self, changes: dict):
-        # self.is_modified = True ...
-        raise Exception("Not implemented")
-
-    def save_changes_to_file(self):
-        if self.is_modified:
-            with open(uri_to_path(self.uri), "w") as file:
-                file.write(self.content)
-            self.is_modified = False
-
-    def read_from_file(self):
-        with open(uri_to_path(self.uri), "r") as file:
-            return file.read()
-
-
+# Maybe the documents manager should be a singleton?
 class DocumentsManager:
     def __init__(self, subjects_manager: SubjectsManager, logger: LogsManager):
         self.subjects_manager: LogsManager = subjects_manager
@@ -57,14 +33,18 @@ class DocumentsManager:
         self.logger.info(f"[Documents] Updated document: {uri}")
         return document
 
-    def open_document(self, uri: str) -> DocumentEditor:
+    def open_document(self, uri: str) -> Union[DocumentEditor, None]:
         if uri in self.documents:
             self.logger.info(f"[Documents] Document is already opened: {uri}")
             return self.get_document(uri, False)
 
-        self.documents[uri] = DocumentEditor(uri)
-        self.logger.info(f"[Documents] Opened document: {uri}")
-        return self.get_document(uri, False)
+        try:
+            self.documents[uri] = DocumentEditor(uri)
+            self.logger.info(f"[Documents] Opened document: {uri}")
+            return self.get_document(uri, False)
+        except Exception as e:
+            self.logger.info(f"[Documents] Failed to opened document: {e}")
+            return None
 
     def close_document(self, uri: str, save: bool = True) -> str:
         if save:

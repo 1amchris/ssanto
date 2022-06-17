@@ -6,11 +6,8 @@ import geopandas as gpd
 from files.file_metadata import FileMetaData
 from files.file import File
 from files.shapefile import Shapefile
-from files.document_manager import DocumentsManager
 from logger.log_manager import LogsManager
 from subjects.subjects_manager import SubjectsManager
-from views.manager import ViewsManager
-from views.views import View
 
 
 class FileParser:
@@ -60,10 +57,10 @@ class FilesManager:
         self.subjects_manager = subjects_manager
         self.logger = logger
         self.workspace = None
-        self.files_content = dict()
-        self.files = self.subjects_manager.create("file_manager.files", dict())
+        # self.files_content = dict()
+        # self.files = self.subjects_manager.create("files.files", dict())
         self.writer = FilesWriter()
-        self.shapefiles = self.subjects_manager.create("file_manager.shapefiles", dict())
+        self.shapefiles = self.subjects_manager.create("files.shapefiles", dict())
         self.shapefiles_content = dict()
 
     def serialize(self) -> dict:
@@ -184,38 +181,3 @@ class FilesManager:
         shapefiles_metadatas = self.get_shapefiles_metadatas()
         self.files.notify(metadatas)
         self.shapefiles.notify(shapefiles_metadatas)
-
-    # Add loaded file to the file manager?
-
-
-class WorkspaceManager:
-    def __init__(self, subjects_manager: SubjectsManager, logger: LogsManager):
-        self.subjects_manager = subjects_manager
-        self.logger = logger
-        self.workspace = None
-        self.files = self.subjects_manager.create("workspace_manager.files", dict())
-
-    def open_workspace(self, path):
-        if self.workspace is not None:
-            self.close_workspace()
-
-        self.workspace = path
-        all_files = [FileMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
-        self.files.notify(all_files)
-        self.logger.info(f"[Workspace] Opened workspace: {self.workspace}")
-
-    def close_workspace(self):
-        # TODO: Perhaps we should save the files in the workspace before closing it
-        if self.workspace is not None:
-            self.files.notify([])
-            self.logger.info(f"[Workspace] Closed workspace: {self.workspace}")
-            self.workspace = None
-
-    def open_file(self, views_manager: ViewsManager, documents_manager: DocumentsManager):
-        def hof(file_uri: str, view_type: str = None):
-            view = View(file_uri[file_uri.rfind("/") + 1 :], file_uri, view_type=view_type)
-            views_manager.editor.add_view(view)
-            documents_manager.open_document(file_uri)
-            self.logger.info(f"[Workspace] Opened document: {file_uri}")
-
-        return hof

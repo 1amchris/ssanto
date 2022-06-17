@@ -12,8 +12,8 @@ class EditorManager(Serializable):
         self.logs_manager = logs_manager
 
         initial_group = ViewGroup()
-        self.groups = self.subjects_manager.create("views_manager.editor.views", [initial_group])
-        self.active = self.subjects_manager.create("views_manager.editor.active_views", [initial_group.uri])
+        self.groups = self.subjects_manager.create("workspace.views.editor.views", [initial_group])
+        self.active = self.subjects_manager.create("workspace.views.editor.active_views", [initial_group.uri])
 
     def serialize(self):
         return {

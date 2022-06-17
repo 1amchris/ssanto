@@ -13,7 +13,7 @@ export default function useViewsRegistry() {
       }
 
       const viewType = uri.slice(0, uri.indexOf('://'));
-      const viewActions = (factories as any)[viewType].actions;
+      const viewActions = (factories as any)[viewType]?.actions;
       return viewActions || [];
     },
     getView: (uri?: string) => {
@@ -22,7 +22,7 @@ export default function useViewsRegistry() {
       }
 
       const viewType = uri.slice(0, uri.indexOf('://'));
-      const viewFactory = (factories as any)[viewType].factory;
+      const viewFactory = (factories as any)[viewType]?.factory;
       return viewFactory || UnsupportedFileView;
     },
   };

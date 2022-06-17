@@ -77,7 +77,7 @@ function MenuBar({ style }: any) {
         onClick={() =>
           dispatch(
             call({
-              target: ServerCallTarget.WorkspaceManagerCloseWorkspace,
+              target: ServerCallTarget.WorkspaceCloseWorkspace,
             } as CallModel)
           )
         }
@@ -90,7 +90,7 @@ function MenuBar({ style }: any) {
         onClick={() =>
           dispatch(
             call({
-              target: ServerCallTarget.ViewsManagerOpenEditorGroup,
+              target: ServerCallTarget.WorkspaceViewsOpenEditorGroup,
             } as CallModel)
           )
         }

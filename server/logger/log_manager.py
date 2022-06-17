@@ -27,7 +27,7 @@ class LogsManager(Serializable):
     def __init__(self, subjects_manager: SubjectsManager):
         super().__init__()
         self.subjects_manager = subjects_manager
-        self.logs = self.subjects_manager.create("logs_manager.logs", Logs())
+        self.logs = self.subjects_manager.create("logger.logs", Logs())
 
         # Probably shouldn't be in the logs manager itself, and should be in some parent logger class
         self.info("Starting up...")

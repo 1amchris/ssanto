@@ -139,7 +139,7 @@ function PanelBar({ style }: any) {
               onClick={() =>
                 dispatch(
                   call({
-                    target: ServerCallTarget.ViewsManagerSelectPanel,
+                    target: ServerCallTarget.WorkspaceViewsSelectPanel,
                     args: [panel.uri],
                   } as CallModel)
                 )

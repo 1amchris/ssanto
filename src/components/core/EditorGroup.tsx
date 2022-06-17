@@ -172,7 +172,7 @@ function EditorTabBar({
       action: () => {
         dispatch(
           call({
-            target: ServerCallTarget.ViewsManagerOpenEditorGroup,
+            target: ServerCallTarget.WorkspaceViewsOpenEditorGroup,
           } as CallModel)
         );
       },
@@ -244,7 +244,7 @@ function EditorGroup({ closeable, focused, group, style }: any) {
         if (focused) return;
         dispatch(
           call({
-            target: ServerCallTarget.ViewsManagerSelectEditorGroup,
+            target: ServerCallTarget.WorkspaceViewsSelectEditorGroup,
             args: [group.uri],
           } as CallModel)
         );
@@ -259,7 +259,7 @@ function EditorGroup({ closeable, focused, group, style }: any) {
             onFocus={(uri: string) =>
               dispatch(
                 call({
-                  target: ServerCallTarget.ViewsManagerSelectEditor,
+                  target: ServerCallTarget.WorkspaceViewsSelectEditor,
                   args: [uri, group.uri],
                 } as CallModel)
               )
@@ -267,7 +267,7 @@ function EditorGroup({ closeable, focused, group, style }: any) {
             onClose={(uri: string) =>
               dispatch(
                 call({
-                  target: ServerCallTarget.ViewsManagerCloseEditor,
+                  target: ServerCallTarget.WorkspaceViewsCloseEditor,
                   args: [uri, group.uri],
                 } as CallModel)
               )
@@ -286,7 +286,7 @@ function EditorGroup({ closeable, focused, group, style }: any) {
               if (closeable) {
                 dispatch(
                   call({
-                    target: ServerCallTarget.ViewsManagerCloseEditorGroup,
+                    target: ServerCallTarget.WorkspaceViewsCloseEditorGroup,
                     args: [group.uri],
                   } as CallModel)
                 );

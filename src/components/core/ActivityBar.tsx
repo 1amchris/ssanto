@@ -103,7 +103,7 @@ function ActivityBar() {
   function handleActivityClick(activity: any) {
     dispatch(
       call({
-        target: ServerCallTarget.ViewsManagerSelectActivity,
+        target: ServerCallTarget.WorkspaceViewsSelectActivity,
         args: [activity.uri],
       } as CallModel)
     );

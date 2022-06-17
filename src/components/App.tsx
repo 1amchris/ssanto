@@ -47,60 +47,60 @@ function App() {
     dispatch(openConnection());
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.WorkspaceManagerFiles,
+        subject: ServerSubscriptionTarget.WorkspaceFiles,
         onAction: setWorkspace,
       })
     );
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.LogsManagerLogs,
+        subject: ServerSubscriptionTarget.LoggerLogs,
         onAction: setLogs,
       })
     );
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.ViewsManagerEditorViews,
+        subject: ServerSubscriptionTarget.WorkspaceViewsEditorViews,
         onAction: setEditorViews,
       })
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.ViewsManagerActiveEditorViews,
+        subject: ServerSubscriptionTarget.WorkspaceViewsActiveEditorViews,
         onAction: setActiveEditorViews,
       })
     );
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.ViewsManagerPanelViews,
+        subject: ServerSubscriptionTarget.WorkspaceViewsPanelViews,
         onAction: setPanelViews,
       })
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.ViewsManagerActivePanelView,
+        subject: ServerSubscriptionTarget.WorkspaceViewsActivePanelView,
         onAction: setActivePanelView,
       })
     );
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.ViewsManagerSidebarViews,
+        subject: ServerSubscriptionTarget.WorkspaceViewsSidebarViews,
         onAction: setSidebarViews,
       })
     );
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.ViewsManagerActiveSidebarView,
+        subject: ServerSubscriptionTarget.WorkspaceViewsActiveSidebarView,
         onAction: setActiveSidebarView,
       })
     );
 
     dispatch(
       subscribe({
-        subject: ServerSubscriptionTarget.FileManagerShapefiles,
+        subject: ServerSubscriptionTarget.FilesShapefiles,
         onAction: injectReceivePropertiesCreator('shapefiles'),
       } as SubscriptionModel<string, string>)
     );

@@ -11,8 +11,8 @@ class PanelManager(Serializable):
         self.subjects_manager = subjects_manager
         self.logs_manager = logs_manager
 
-        self.activities = self.subjects_manager.create("views_manager.panel.activities", [])
-        self.active = self.subjects_manager.create("views_manager.panel.active_view", None)
+        self.activities = self.subjects_manager.create("workspace.views.panel.activities", [])
+        self.active = self.subjects_manager.create("workspace.views.panel.active_view", None)
 
     def serialize(self):
         return {
