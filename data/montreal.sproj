@@ -29,6 +29,7 @@
         // TODO: Include intermediate analysis layers
         // TODO: Include final analysis layers
       },
+      // TODO: no need?
       "masks": {}
       // TODO: Include masks layers
     },

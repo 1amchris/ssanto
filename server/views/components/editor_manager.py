@@ -1,7 +1,7 @@
 from files.serializable import Serializable
 from logger.log_manager import LogsManager
 from subjects.subjects_manager import SubjectsManager
-from views.views import View
+from views.views import ViewMetadata
 from views.groups import ViewGroup
 
 
@@ -14,9 +14,11 @@ class EditorManager(Serializable):
         initial_group = ViewGroup()
         self.groups = self.subjects_manager.create("workspace.views.editor.views", [initial_group])
         self.active = self.subjects_manager.create("workspace.views.editor.active_views", [initial_group.uri])
+        self.active_views_data = self.subjects_manager.create("workspace.views.editor.active_views_data", [])
 
     def serialize(self):
         return {
+            "active_views_data": self.active_views_data.value(),
             "active": self.active.value(),
             "groups": [group.serialize() for group in self.groups.value()],
         }
@@ -24,17 +26,17 @@ class EditorManager(Serializable):
     def add_group(self, index=None):
         self.logs_manager.info("[Editor] Adding new group")
 
-        groups = self.groups.value()
-        index = index if index else len(groups)
-        groups.insert(index, ViewGroup())
-        self.active.value().insert(0, groups[index].uri)
+        index = index if index else len(self.groups.value())
+        group = ViewGroup()
+        self.groups.value().insert(index, group)
+        self.active.value().insert(0, group.uri)
         self.active.update()
         self.groups.update()
-        return groups[index].uri
+        return self.select_group(group.uri)
 
     def remove_group(self, group_id: str):
         groups = self.groups.value()
-        group = next(filter(lambda group: group.uri == group_id, groups))
+        group = next(filter(lambda group: group.uri == group_id, groups), None)
 
         if group is None:
             self.logs_manager.error(f"[Editor] No editor group found for {group_id}")
@@ -50,23 +52,24 @@ class EditorManager(Serializable):
 
         self.active.notify(list(filter(lambda g: g != group_id, self.active.value())))
         self.groups.notify(list(filter(lambda g: g.uri != group_id, groups)))
-
         return self.select_group(self.active.value()[0])
 
-    def add_view(self, view: View, group_id: str = None, prevent_duplicates=True):
+    def add_view(self, view: ViewMetadata, group_id: str = None, prevent_duplicates=True):
         groups = self.groups.value()
 
         if prevent_duplicates:
             for group_uri in self.active.value():
                 group = next(filter(lambda group: group.uri == group_uri, groups))
-                if view.uri in map(lambda v: v.uri, group.views):
-                    self.select_view(view.uri, group_uri)
-                    return view.uri
+                existing_view = next(
+                    filter(lambda v: (v.source, v.view_type) == (view.source, view.view_type), group.views), None
+                )
+                if existing_view is not None:
+                    return self.select_view(existing_view.uri, group_uri)
 
         self.logs_manager.info(f"[Editor] Adding {view.uri}")
 
         group_id = group_id if group_id else self.active.value()[0]
-        group = next(filter(lambda group: group.uri == group_id, groups))
+        group = next(filter(lambda group: group.uri == group_id, groups), None)
 
         if group is None:
             self.logs_manager.error(f"[Editor] No editor group found for {group_id}")
@@ -76,13 +79,12 @@ class EditorManager(Serializable):
             group.views.insert(0, view)
             group.active.insert(0, view.uri)
             self.groups.update()
-            self.select_view(view.uri, group.uri)
-            return view.uri
+            return self.select_view(view.uri, group.uri)
 
     def remove_view(self, view_uri: str, group_id: str = None):
         groups = self.groups.value()
         group_id = group_id if group_id else self.active.value()[0]
-        group = next(filter(lambda group: group.uri == group_id, groups))
+        group = next(filter(lambda group: group.uri == group_id, groups), None)
 
         if group is None:
             self.logs_manager.error(f"[Editor] No editor group found for {group_id}")
@@ -112,7 +114,7 @@ class EditorManager(Serializable):
         return view_uri
 
     def select_group(self, group_id: str):
-        if next(filter(lambda group: group.uri == group_id, self.groups.value())) is None:
+        if next(filter(lambda group: group.uri == group_id, self.groups.value()), None) is None:
             self.logs_manager.error(f"[Editor] No editor group found for {group_id}")
             raise KeyError(f"No editor group found for {group_id}")
 
@@ -126,7 +128,7 @@ class EditorManager(Serializable):
     def select_view(self, view_uri: str, group_id: str = None):
         groups = self.groups.value()
         group_id = group_id if group_id else self.active.value()[0]
-        group = next(filter(lambda group: group.uri == group_id, groups))
+        group = next(filter(lambda group: group.uri == group_id, groups), None)
 
         if group is None:
             self.logs_manager.error(f"[Editor] No editor group found for {group_id}")

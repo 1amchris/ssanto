@@ -2,7 +2,7 @@ from files.serializable import Serializable
 from logger.log_manager import LogsManager
 from subjects.subjects_manager import SubjectsManager
 from views.groups import IconedViewGroup
-from views.views import View
+from views.views import ViewMetadata
 
 
 class SideBarManager(Serializable):
@@ -30,7 +30,7 @@ class SideBarManager(Serializable):
         self.active.notify(activities[index].uri)
         return activities[index].uri
 
-    def add_view(self, view: View, activity_id: str = None):
+    def add_view(self, view: ViewMetadata, activity_id: str = None):
         activities = self.activities.value()
         activity_id = activity_id if activity_id else self.active.value()[0]
         activity = next(filter(lambda activity: activity.uri == activity_id, activities))
