@@ -1,5 +1,4 @@
 from uuid import uuid4
-from uuid import uuid4
 from files.serializable import Serializable
 from views.default_view_registry import DefaultViewRegistry
 

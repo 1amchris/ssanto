@@ -17,6 +17,9 @@ class DocumentSubscription:
         if self.callback is not None:
             self.callback(*args, **kwargs)
 
+    def __bool__(self):
+        return self.callback is not None
+
     def unsubscribe(self):
         self.callback = None
 
@@ -31,12 +34,13 @@ class DocumentEditor(Serializable):
     def serialize(self) -> dict:
         return {"uri": self.uri, "is_modified": self.is_modified, "content": self.content}
 
-    def subscribe(self, event: DocumentEvent, callback: Callable) -> DocumentSubscription:
+    def subscribe(self, event: DocumentEvent, callback: Callable, latent: bool = False) -> DocumentSubscription:
         if event not in self.__subscriptions:
             self.__subscriptions[event] = []
         subscription = DocumentSubscription(callback)
         self.__subscriptions[event].append(subscription)
-        subscription(self)
+        if not latent:
+            subscription(self)
         return subscription
 
     # The "changes" dictionary is a dictionary of changes to be applied to the document
@@ -56,9 +60,7 @@ class DocumentEditor(Serializable):
 
     def __notify(self, event: DocumentEvent):
         if event in self.__subscriptions:
-            self.__subscriptions = list(
-                filter(lambda subscription: subscription.callback is not None, self.__subscriptions[event])
-            )
+            self.__subscriptions = list(filter(None, self.__subscriptions[event]))
             for subscription in self.__subscriptions[event]:
                 subscription(self)
 

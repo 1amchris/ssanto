@@ -7,7 +7,6 @@ from logger.log_manager import LogsManager
 class DocumentsManager:
     def __init__(self, logger: LogsManager):
         self.__logger: LogsManager = logger
-
         self.__documents_refs: defaultdict[int] = defaultdict(int)
         self.__documents: dict[str:DocumentEditor] = dict()
 
@@ -31,6 +30,7 @@ class DocumentsManager:
     def open(self, uri: str) -> Union[DocumentEditor, None]:
         try:
             if self.__documents_refs[uri] == 0:
+                # TODO: Create a View->DocumentEditor registry
                 self.__documents[uri] = DocumentEditor(uri)
             self.__documents_refs[uri] += 1
             self.__logger.info(f"[Documents] Opened document [{self.__documents_refs[uri]} refs]: {uri}")
@@ -43,7 +43,8 @@ class DocumentsManager:
         if save:
             self.save(uri)
 
-        if self.__documents_refs[uri] == 1:
+        refs = self.__documents_refs[uri]
+        if refs == 1:
             if not allow_closing_if_modified and self.__documents[uri].is_modified:
                 message = "Document is modified and cannot be closed. Use save=True option to save it automatically or allow_closing_if_modified=True to discard changes."
                 self.__logger.error(f"[Documents] {message}")
@@ -51,11 +52,13 @@ class DocumentsManager:
 
             del self.__documents[uri]
             del self.__documents_refs[uri]
+            refs = 0
 
         else:
             self.__documents_refs[uri] -= 1
+            refs = self.__documents_refs[uri]
 
-        self.__logger.info(f"[Documents] Closed document [{self.__documents_refs[uri]} refs]: {uri}")
+        self.__logger.info(f"[Documents] Closed document [{refs} refs]: {uri}")
         return uri
 
     def save(self, uri: str) -> str:
@@ -63,3 +66,8 @@ class DocumentsManager:
         document.save_changes_to_file()
         self.__logger.info(f"[Documents] Saved document: {uri}")
         return uri
+
+    def save_all(self) -> list[str]:
+        uris = [document.save_changes_to_file() for document in self.__documents.values()]
+        self.__logger.info(f"[Documents] Saved documents: {uris}")
+        return uris
