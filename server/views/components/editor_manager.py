@@ -1,4 +1,5 @@
 from files.serializable import Serializable
+from files.document_manager import DocumentsManager
 from logger.log_manager import LogsManager
 from subjects.subjects_manager import SubjectsManager
 from views.views import ViewMetadata
@@ -6,19 +7,18 @@ from views.groups import ViewGroup
 
 
 class EditorManager(Serializable):
-    def __init__(self, subjects_manager: SubjectsManager, logs_manager: LogsManager):
+    def __init__(self, subjects_manager: SubjectsManager, logs_manager: LogsManager, docs_manager: DocumentsManager):
         super().__init__()
         self.subjects_manager = subjects_manager
         self.logs_manager = logs_manager
+        self.docs_manager = docs_manager
 
         initial_group = ViewGroup()
         self.groups = self.subjects_manager.create("workspace.views.editor.views", [initial_group])
         self.active = self.subjects_manager.create("workspace.views.editor.active_views", [initial_group.uri])
-        self.active_views_data = self.subjects_manager.create("workspace.views.editor.active_views_data", [])
 
     def serialize(self):
         return {
-            "active_views_data": self.active_views_data.value(),
             "active": self.active.value(),
             "groups": [group.serialize() for group in self.groups.value()],
         }

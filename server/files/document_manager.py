@@ -1,65 +1,65 @@
+from collections import defaultdict
 from typing import Union
 from files.document_editor import DocumentEditor
 from logger.log_manager import LogsManager
-from singleton import Singleton
-from subjects.subjects_manager import SubjectsManager
 
 
-# Maybe the documents manager should be a singleton?
 class DocumentsManager:
-    def __init__(self, subjects_manager: SubjectsManager, logger: LogsManager):
-        self.subjects_manager: LogsManager = subjects_manager
-        self.logger: SubjectsManager = logger
-        self.documents: dict[str:DocumentEditor] = dict()
+    def __init__(self, logger: LogsManager):
+        self.__logger: LogsManager = logger
 
-        self.logger.info("[Documents] Documents manager initialized")
+        self.__documents_refs: defaultdict[int] = defaultdict(int)
+        self.__documents: dict[str:DocumentEditor] = dict()
 
-    def get_document(self, uri: str, open_if_need_be: bool = True) -> DocumentEditor:
-        if uri in self.documents:
-            document = self.documents[uri]
-            self.logger.info(f"[Documents] Fetched existing document: {uri}")
-            return document
-        elif open_if_need_be:
-            document = self.open_document(uri)
-            self.logger.info(f"[Documents] Fetched new document: {uri}")
+        self.__logger.info("[Documents] Documents manager initialized")
+
+    def get(self, uri: str) -> DocumentEditor:
+        if uri in self.__documents:
+            document = self.__documents[uri]
+            self.__logger.info(f"[Documents] Fetched document: {uri}")
             return document
         else:
-            self.logger.error(f"[Documents] No document found: {uri}")
+            self.__logger.error(f"[Documents] No document found: {uri}")
             raise KeyError("No document found: {uri}")
 
-    def update_document(self, uri: str, changes: dict) -> DocumentEditor:
-        document = self.get_document(uri)
+    def update(self, uri: str, changes: dict) -> DocumentEditor:
+        document = self.get(uri)
         document.update_document(changes)
-        self.logger.info(f"[Documents] Updated document: {uri}")
+        self.__logger.info(f"[Documents] Updated document: {uri}")
         return document
 
-    def open_document(self, uri: str) -> Union[DocumentEditor, None]:
-        if uri in self.documents:
-            self.logger.info(f"[Documents] Document is already opened: {uri}")
-            return self.get_document(uri, False)
-
+    def open(self, uri: str) -> Union[DocumentEditor, None]:
         try:
-            self.documents[uri] = DocumentEditor(uri)
-            self.logger.info(f"[Documents] Opened document: {uri}")
-            return self.get_document(uri, False)
+            if self.__documents_refs[uri] == 0:
+                self.__documents[uri] = DocumentEditor(uri)
+            self.__documents_refs[uri] += 1
+            self.__logger.info(f"[Documents] Opened document [{self.__documents_refs[uri]} refs]: {uri}")
+            return self.get(uri)
         except Exception as e:
-            self.logger.info(f"[Documents] Failed to opened document: {e}")
+            self.__logger.info(f"[Documents] Failed to opened document: {e}")
             return None
 
-    def close_document(self, uri: str, save: bool = True) -> str:
+    def close(self, uri: str, save: bool = True, allow_closing_if_modified: bool = False) -> str:
         if save:
-            self.save_document(uri)
+            self.save(uri)
 
-        del self.documents[uri]
-        self.logger.info(f"[Documents] Closed document: {uri}")
+        if self.__documents_refs[uri] == 1:
+            if not allow_closing_if_modified and self.__documents[uri].is_modified:
+                message = "Document is modified and cannot be closed. Use save=True option to save it automatically or allow_closing_if_modified=True to discard changes."
+                self.__logger.error(f"[Documents] {message}")
+                raise IOError(message)
+
+            del self.__documents[uri]
+            del self.__documents_refs[uri]
+
+        else:
+            self.__documents_refs[uri] -= 1
+
+        self.__logger.info(f"[Documents] Closed document [{self.__documents_refs[uri]} refs]: {uri}")
         return uri
 
-    def save_document(self, uri: str) -> str:
-        document = self.get_document(uri, False)
+    def save(self, uri: str) -> str:
+        document = self.get(uri)
         document.save_changes_to_file()
-        self.logger.info(f"[Documents] Saved document: {uri}")
-
-    def save_all(self) -> list[str]:
-        uris = [self.save_document(uri) for uri in self.documents]
-        self.logger.info(f"[Documents] Saved all opened documents: {len(uris)}")
-        return uris
+        self.__logger.info(f"[Documents] Saved document: {uri}")
+        return uri

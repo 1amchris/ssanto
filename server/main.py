@@ -6,6 +6,9 @@ import asyncio
 from network.server_socket import ServerSocket
 from subjects.subjects_manager import SubjectsManager
 
+from files.document_manager import DocumentsManager
+from files.workspace_manager import WorkspaceManager
+
 from logger.logger import *
 from logger.log_manager import LogsManager
 
@@ -16,7 +19,6 @@ from views.manager import ViewsManager
 from analysis.analysis import Analysis
 from analysis.map import Map
 from files.file_manager import FilesManager
-from files.workspace_manager import WorkspaceManager
 from guide_builder import GuideBuilder
 
 
@@ -53,7 +55,9 @@ async def main():
     server = ServerSocket("localhost", 15649)
     subjects = SubjectsManager(server)
     logger = LogsManager(subjects)
-    workspace = WorkspaceManager(subjects, logger)
+    documents = DocumentsManager(logger)
+    views = ViewsManager(subjects, logger, documents)
+    workspace = WorkspaceManager(subjects, logger, views)
 
     populate_view_registry(DefaultViewRegistry())
     populate_views(workspace.views)
@@ -61,7 +65,7 @@ async def main():
     server.bind_command("subscribe", subjects.subscribe)
     server.bind_command("unsubscribe", subjects.unsubscribe)
 
-    server.bind_command("workspace.open_view", workspace.open_view)
+    server.bind_command("workspace.open_view", workspace.open_editor)
     server.bind_command("workspace.open_workspace", workspace.open_workspace)
     server.bind_command("workspace.close_workspace", workspace.close_workspace)
 

@@ -8,14 +8,12 @@ from views.views import ViewMetadata
 
 
 class WorkspaceManager:
-    def __init__(self, subjects: SubjectsManager, logger: LogsManager):
+    def __init__(self, subjects: SubjectsManager, logger: LogsManager, views: ViewsManager):
         self.subjects = subjects
         self.logger = logger
         self.workspace = None
+        self.views = views
         self.files = self.subjects.create("workspace.files", dict())
-
-        self.views = ViewsManager(self.subjects, self.logger)
-        self.documents = DocumentsManager(self.subjects, self.logger)
 
     def open_workspace(self, path):
         if self.workspace is not None:
@@ -27,14 +25,13 @@ class WorkspaceManager:
         self.logger.info(f"[Workspace] Opened workspace: {self.workspace}")
 
     def close_workspace(self):
-        # TODO: Perhaps we should save the files in the workspace before closing it
+        # TODO: Perhaps we should close the views workspace before closing it
         if self.workspace is not None:
             self.files.notify([])
             self.logger.info(f"[Workspace] Closed workspace: {self.workspace}")
             self.workspace = None
 
-    def open_view(self, document_uri: str, view_type: str = None):
+    def open_editor(self, document_uri: str, view_type: str = None):
         view = ViewMetadata(document_uri[document_uri.rfind("/") + 1 :], document_uri, view_type=view_type)
         self.views.editor.add_view(view)
-        self.documents.open_document(document_uri)
         self.logger.info(f"[Workspace] Opened view: {document_uri}")
