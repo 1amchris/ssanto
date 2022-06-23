@@ -6,6 +6,7 @@ import asyncio
 from network.server_socket import ServerSocket
 from subjects.subjects_manager import SubjectsManager
 
+from files.document_editors.sproj_document_editor import SSantoDocumentEditor
 from files.document_manager import DocumentsManager
 from files.workspace_manager import WorkspaceManager
 
@@ -13,7 +14,7 @@ from logger.logger import *
 from logger.log_manager import LogsManager
 
 from views.builtin import FileExplorerView, FileSearcherView, ProblemExplorerView, OutputView
-from views.default_view_registry import DefaultViewRegistry
+from views.document_editor_registry import DocumentEditorRegistry
 from views.manager import ViewsManager
 
 from analysis.analysis import Analysis
@@ -22,10 +23,9 @@ from files.file_manager import FilesManager
 from guide_builder import GuideBuilder
 
 
-def populate_view_registry(view_registry: DefaultViewRegistry):
-    # examples of registering new view types for given extensions
-    # TODO populate extension manager with actual view types (maybe even user-editable in the future)
-    view_registry["sproj"] = "ssanto-map"
+def populate_view_registry(registry: DocumentEditorRegistry):
+    # examples of registering new view controllers for given extensions
+    registry["sproj"] = SSantoDocumentEditor
 
 
 def populate_views(views_manager: ViewsManager):
@@ -59,7 +59,7 @@ async def main():
     views = ViewsManager(subjects, logger, documents)
     workspace = WorkspaceManager(subjects, logger, views)
 
-    populate_view_registry(DefaultViewRegistry())
+    populate_view_registry(DocumentEditorRegistry())
     populate_views(workspace.views)
 
     server.bind_command("subscribe", subjects.subscribe)

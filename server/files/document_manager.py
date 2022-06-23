@@ -1,6 +1,6 @@
 from collections import defaultdict
 from typing import Union
-from files.document_editor import DocumentEditor
+from files.document_editors.document_editor import DocumentEditor
 from logger.log_manager import LogsManager
 
 

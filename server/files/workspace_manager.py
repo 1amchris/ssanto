@@ -32,6 +32,6 @@ class WorkspaceManager:
             self.workspace = None
 
     def open_editor(self, document_uri: str, view_type: str = None):
-        view = ViewMetadata(document_uri[document_uri.rfind("/") + 1 :], document_uri, view_type=view_type)
-        self.views.editor.add_view(view)
+        # view = ViewMetadata(document_uri, view_type=view_type)
+        self.views.editor.add_view(document_uri, view_type=view_type)
         self.logger.info(f"[Workspace] Opened view: {document_uri}")
