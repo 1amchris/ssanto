@@ -1,5 +1,6 @@
 from collections import defaultdict
 from typing import Union
+from files.document_editor_registry import DocumentEditorRegistry
 from files.document_editors.document_editor import DocumentEditor
 from logger.log_manager import LogsManager
 
@@ -30,13 +31,13 @@ class DocumentsManager:
     def open(self, uri: str) -> Union[DocumentEditor, None]:
         try:
             if self.__documents_refs[uri] == 0:
-                # TODO: Create a View->DocumentEditor registry
-                self.__documents[uri] = DocumentEditor(uri)
+                self.__documents[uri] = DocumentEditorRegistry()[uri](uri)
             self.__documents_refs[uri] += 1
             self.__logger.info(f"[Documents] Opened document [{self.__documents_refs[uri]} refs]: {uri}")
             return self.get(uri)
         except Exception as e:
-            self.__logger.info(f"[Documents] Failed to opened document: {e}")
+            print("Cannot open document:", e)
+            self.__logger.error(f"[Documents] Failed to opened document: {e}")
             return None
 
     def close(self, uri: str, save: bool = True, allow_closing_if_modified: bool = False) -> str:

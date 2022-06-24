@@ -6,6 +6,7 @@ import asyncio
 from network.server_socket import ServerSocket
 from subjects.subjects_manager import SubjectsManager
 
+from files.document_editor_registry import DocumentEditorRegistry
 from files.document_editors.sproj_document_editor import SSantoDocumentEditor
 from files.document_manager import DocumentsManager
 from files.workspace_manager import WorkspaceManager
@@ -14,8 +15,10 @@ from logger.logger import *
 from logger.log_manager import LogsManager
 
 from views.builtin import FileExplorerView, FileSearcherView, ProblemExplorerView, OutputView
-from views.document_editor_registry import DocumentEditorRegistry
+from views.controllers.ssanto_map import SSantoMapViewController
+from views.controllers.ssanto_settings import SSantoSettingsViewController
 from views.manager import ViewsManager
+from views.view_controller_registry import ViewControllerRegistry
 
 from analysis.analysis import Analysis
 from analysis.map import Map
@@ -23,9 +26,15 @@ from files.file_manager import FilesManager
 from guide_builder import GuideBuilder
 
 
-def populate_view_registry(registry: DocumentEditorRegistry):
-    # examples of registering new view controllers for given extensions
-    registry["sproj"] = SSantoDocumentEditor
+def populate_registries():
+    # examples of registering new document editors for given extensions
+    editor_registry = DocumentEditorRegistry()
+    editor_registry["sproj"] = SSantoDocumentEditor
+
+    # example of registering new view controllers for given view types
+    controller_registry = ViewControllerRegistry()
+    controller_registry["ssanto-map"] = SSantoMapViewController
+    controller_registry["ssanto-settings"] = SSantoSettingsViewController
 
 
 def populate_views(views_manager: ViewsManager):
@@ -59,7 +68,7 @@ async def main():
     views = ViewsManager(subjects, logger, documents)
     workspace = WorkspaceManager(subjects, logger, views)
 
-    populate_view_registry(DocumentEditorRegistry())
+    populate_registries()
     populate_views(workspace.views)
 
     server.bind_command("subscribe", subjects.subscribe)
@@ -111,7 +120,7 @@ async def main():
     # Main loop
     loop = asyncio.get_running_loop()
     stop = loop.create_future()
-    # Windows dont implement these...
+    # Windows doesn't implement these...
     if platform.system() != "Windows":
         loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
         loop.add_signal_handler(signal.SIGINT, stop.set_result, None)

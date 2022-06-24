@@ -12,26 +12,16 @@
   },
   "map": {
     "cellSize": 20,
-    "lastClickCoords": null, // This is the last position of the cursor (when clicked)
+    "lastClickCoords": null,
     "layers": {
-      // base is "radio" type (select one of many)
       "base": {
         "selected": "osm",
         "source": ["osm", "none"]
       },
 
-      // opportunities, needs and masks are "checkbox" types (select zero or more)
-      "opportunities": {
-        // TODO: Include intermediate analysis layers
-        // TODO: Include final analysis layers
-      },
-      "needs": {
-        // TODO: Include intermediate analysis layers
-        // TODO: Include final analysis layers
-      },
-      // TODO: no need?
+      "opportunities": {},
+      "needs": {},
       "masks": {}
-      // TODO: Include masks layers
     },
     "coordinates": {
       "center": {
@@ -162,7 +152,6 @@
           ]
         }
       ]
-      // TODO: add last computed values for each objective (intermediate results)
     },
     "needs": {
       "primaries": [
@@ -285,7 +274,6 @@
           ]
         }
       ]
-      // TODO: add last computed values for each objective (intermediate results)
     }
   }
 }

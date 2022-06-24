@@ -1,10 +1,8 @@
 import os
-from files.document_manager import DocumentsManager
 from files.file_metadata import FileMetaData
 from logger.log_manager import LogsManager
 from subjects.subjects_manager import SubjectsManager
 from views.manager import ViewsManager
-from views.views import ViewMetadata
 
 
 class WorkspaceManager:
@@ -32,6 +30,5 @@ class WorkspaceManager:
             self.workspace = None
 
     def open_editor(self, document_uri: str, view_type: str = None):
-        # view = ViewMetadata(document_uri, view_type=view_type)
         self.views.editor.add_view(document_uri, view_type=view_type)
         self.logger.info(f"[Workspace] Opened view: {document_uri}")

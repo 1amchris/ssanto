@@ -30,9 +30,9 @@ class DocumentEditorRegistry(metaclass=Singleton):
         if extension in self.__registry:
             return self.__registry[extension]
         else:
-            raise KeyError(f"Extension {extension} is not registered. Please register it first.")
+            raise KeyError(f"Extension {extension} is not registered.")
 
     # TODO: We should probably move this to an extension utils/manager
     # TODO: We should probably use a more "versatile" extension manager (ex. patterns or similar)
     def __normalize_extension(self, extension):
-        return extension.lower().split(".")[-1].strip()
+        return extension.lower().split(".")[-1].strip() if extension is not None else "unsupported"

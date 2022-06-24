@@ -26,7 +26,7 @@ class DocumentSubscription:
 
 class DocumentEditor(Serializable):
 
-    default_view_factory = None
+    default_view = None
 
     def __init__(self, uri: str):
         self.uri: str = uri
@@ -49,41 +49,41 @@ class DocumentEditor(Serializable):
     # The "changes" dictionary is a dictionary of changes to be applied to the document
     # There is no standard structure here. It is based on the needs of the derived editor.
     def update_document(self, changes: dict):
-        if self.__update_document(changes):
+        if self.apply_changes(changes):
             self.is_modified = True
-            self.__notify(DocumentEvent.UPDATE)
+            self.notify(DocumentEvent.UPDATE)
 
     def save_changes_to_file(self):
-        if self.__save_changes_to_file():
+        if self.save_changes():
             self.is_modified = False
-            self.__notify(DocumentEvent.SAVE)
+            self.notify(DocumentEvent.SAVE)
 
     def read_from_file(self):
-        return self.__read_from_file()
+        return self.read_content()
 
-    def get_default_view_controller(self):
-        if self.default_view_factory is None:
+    def get_default_view_type(self) -> str:
+        if self.default_view is None:
             raise ValueError(
-                "Property default_view_factory not defined. Don't forget to set the default_view_factory property when initiating a derived document editor. E.g. self.default_view_factory = TextEditorController"
+                'Property default_view not defined. Don\'t forget to set the default_view property when initiating a derived document editor. E.g. self.default_view_factory = "text-editor"'
             )
         else:
-            return self.default_view_factory
+            return self.default_view
 
-    def __notify(self, event: DocumentEvent):
+    def notify(self, event: DocumentEvent):
         if event in self.__subscriptions:
             self.__subscriptions = list(filter(None, self.__subscriptions[event]))
             for subscription in self.__subscriptions[event]:
                 subscription(self)
 
     # The following methods should be overriden by the derived editor to specify behaviour
-    def __update_document(self, changes: dict):
+    def apply_changes(self, changes: dict):
         """
         Updates the local document with the changes.
         Returns True if the local document has been succesfully modified, else False.
         """
         raise Exception("Not implemented")
 
-    def __save_changes_to_file(self):
+    def save_changes(self):
         """
         Saves the document to the source file.
         Returns True if the document has been succesfully saved, else False.
@@ -94,7 +94,7 @@ class DocumentEditor(Serializable):
 
         return True
 
-    def __read_from_file(self):
+    def read_content(self):
         """
         Returns the payload of the `self.content` variable.
         """

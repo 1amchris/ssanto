@@ -50,4 +50,5 @@ class Logger:
 # Create the logger at global scope
 # Replace the number by the number of characters maximum to be displayed
 # in the terminal per log, or -1 to remove the limit
-Logger(debug=True, log=True, max_line_length=80)
+# Logger(debug=True, log=True, max_line_length=80)
+Logger(debug=True, log=True)

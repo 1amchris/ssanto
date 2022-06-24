@@ -1,12 +1,14 @@
-from files.serializable import Serializable
 from uuid import uuid4
+
+from files.serializable import Serializable
+from views.controllers.view_controller import ViewController
 
 
 class ViewGroup(Serializable):
     def __init__(self):
         self.uri = f"view-group://{uuid4()}"
         self.active = []
-        self.views = []
+        self.views: list[ViewController] = []
 
     def serialize(self):
         return {"uri": self.uri, "active": self.active, "views": [view.serialize() for view in self.views]}
