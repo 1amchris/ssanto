@@ -1,5 +1,6 @@
 import React from 'react';
 import { ISettingWithValidationProps } from 'models/SettingsEditorProps';
+import { uniqueId } from 'lodash';
 
 export interface NumberEditorProps {
   setting: NumberSettingProps;
@@ -17,12 +18,10 @@ function NumberEditor({ setting }: NumberEditorProps) {
     string | undefined
   >(undefined);
 
+  const id = uniqueId('number-');
   return (
     <div>
-      <label
-        htmlFor="numberEditorInput"
-        className="form-label form-label-sm visually-hidden"
-      >
+      <label htmlFor={id} className="form-label form-label-sm visually-hidden">
         {setting.displayName}
       </label>
       <input
@@ -43,7 +42,7 @@ function NumberEditor({ setting }: NumberEditorProps) {
         placeholder={`${setting.placeholder || setting.value}`}
         defaultValue={setting.value}
         className="form-control form-control-sm"
-        id="numberEditorInput"
+        id={id}
       />
       {invalidMessage && (
         <p className="small mb-0 mt-1 text-danger">{invalidMessage}</p>

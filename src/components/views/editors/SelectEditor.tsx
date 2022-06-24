@@ -1,3 +1,4 @@
+import { uniqueId } from 'lodash';
 import { ISettingWithValidationProps } from 'models/SettingsEditorProps';
 import React from 'react';
 
@@ -22,17 +23,15 @@ function SelectEditor({ setting }: SelectEditorProps) {
     string | undefined
   >(undefined);
 
+  const id = uniqueId('select-');
   return (
     <div>
-      <label
-        htmlFor="selectEditorInput"
-        className="form-label form-label-sm visually-hidden"
-      >
+      <label htmlFor={id} className="form-label form-label-sm visually-hidden">
         {setting.displayName}
       </label>
       <select
         className="form-select form-select-sm"
-        id="selectEditorInput"
+        id={id}
         defaultValue={setting.value}
         style={{ maxWidth: 400 }}
         onChange={({ target: { value } }) => {

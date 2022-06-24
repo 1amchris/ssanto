@@ -1,5 +1,6 @@
 import React from 'react';
 import { ISettingWithValidationProps } from 'models/SettingsEditorProps';
+import { uniqueId } from 'lodash';
 
 export interface FileEditorProps {
   setting: FileSettingProps;
@@ -17,12 +18,10 @@ function FileSelector({ setting }: FileEditorProps) {
     string | undefined
   >(undefined);
 
+  const id = uniqueId('file-');
   return (
     <div>
-      <label
-        htmlFor="fileSelectorInput"
-        className="form-label form-label-sm visually-hidden"
-      >
+      <label htmlFor={id} className="form-label form-label-sm visually-hidden">
         {setting.displayName}
       </label>
       <input
@@ -42,7 +41,7 @@ function FileSelector({ setting }: FileEditorProps) {
         }}
         type="file"
         className="form-control form-control-sm"
-        id="fileSelectorInput"
+        id={id}
       />
       {invalidMessage && (
         <p className="small mb-0 mt-1 text-danger">{invalidMessage}</p>

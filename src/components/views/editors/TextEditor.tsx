@@ -1,5 +1,6 @@
 import React from 'react';
 import { ISettingWithValidationProps } from 'models/SettingsEditorProps';
+import { uniqueId } from 'lodash';
 
 export interface TextEditorProps {
   setting: TextSettingProps;
@@ -16,12 +17,10 @@ function TextEditor({ setting }: TextEditorProps) {
     string | undefined
   >(undefined);
 
+  const id = uniqueId('text-');
   return (
     <div>
-      <label
-        htmlFor="textEditorInput"
-        className="form-label form-label-sm visually-hidden"
-      >
+      <label htmlFor={id} className="form-label form-label-sm visually-hidden">
         {setting.displayName}
       </label>
       <input
@@ -41,7 +40,7 @@ function TextEditor({ setting }: TextEditorProps) {
         placeholder={setting.placeholder || setting.value}
         defaultValue={setting.value}
         className="form-control form-control-sm"
-        id="textEditorInput"
+        id={id}
       />
       {invalidMessage && (
         <p className="small mb-0 mt-1 text-danger">{invalidMessage}</p>
