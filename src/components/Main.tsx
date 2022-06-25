@@ -127,7 +127,9 @@ function Main() {
             ),
         },
       ],
-      factory: React.lazy(() => import('components/views/SettingsEditor')),
+      factory: React.lazy(
+        () => import('components/views/SSantoSettingsEditor')
+      ),
     },
   });
 

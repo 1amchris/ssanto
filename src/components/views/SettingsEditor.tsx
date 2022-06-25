@@ -1,5 +1,5 @@
-import { settings } from 'consts/settings';
 import { Color } from 'enums/Color';
+import { ISettingProps } from 'models/SettingsEditorProps';
 import React, { Suspense, useContext, useState } from 'react';
 import { VscChevronRight } from 'react-icons/vsc';
 
@@ -82,7 +82,7 @@ function SettingRow({ setting }: any) {
   );
 }
 
-function SettingsEditor() {
+function SettingsEditor({ settings }: any) {
   const [factories, setFactories] = useState({
     ['checkbox']: React.lazy(() => {
       return import('components/views/editors/CheckboxEditor');
@@ -115,9 +115,10 @@ function SettingsEditor() {
   return (
     <div className="p-3">
       <SettingsEditorRegistry.Provider value={value}>
-        {settings.map(setting => (
-          <SettingRow key={setting.uri} setting={setting} />
-        ))}
+        {settings &&
+          settings.map((setting: ISettingProps<any>) => (
+            <SettingRow key={setting.uri} setting={setting} />
+          ))}
       </SettingsEditorRegistry.Provider>
     </div>
   );

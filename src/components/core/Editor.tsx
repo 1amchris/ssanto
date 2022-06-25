@@ -5,11 +5,9 @@ function Editor({ view }: any) {
   const { getView } = useViewsRegistry();
   const View = getView(view.uri);
 
-  console.log({ view });
-
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <View key={view.uri} />
+      <View key={view.uri} view={view} />
     </Suspense>
   );
 }
