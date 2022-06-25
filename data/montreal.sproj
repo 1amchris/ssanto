@@ -1,7 +1,7 @@
 {
   "analysis": {
     "name": "montreal",
-    "description": "This is a brief analysis of the Montreal data set provded by Fred.",
+    "description": "This is a brief analysis of the Montreal data set provided by Fred.",
     "author": {
       "name": "Christophe Beaulieu",
       "email": "beaulieu.christophe23@gmail.com",
