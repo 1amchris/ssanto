@@ -69,7 +69,12 @@ class EditorManager(Serializable):
             for group_uri in self.__active_views.value():
                 group = next(filter(lambda group: group.uri == group_uri, groups))
                 existing_view = next(
-                    filter(lambda v: (v.source, v.view_type) == (view_source, view_type), group.views),
+                    filter(
+                        (lambda view: view.source == view_source)
+                        if view_type is None
+                        else (lambda v: (v.source, v.view_type) == (view_source, view_type)),
+                        group.views,
+                    ),
                     None,
                 )
                 if existing_view is not None:
