@@ -95,7 +95,7 @@ class EditorManager(Serializable):
 
             # TODO: Add endpoints to update the document based on view actions
 
-            group.views.insert(0, controller)
+            group.views.append(controller)
             group.active.insert(0, controller.uri)
             self.__editor_views.update()
 

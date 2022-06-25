@@ -5,8 +5,19 @@ import {
 } from 'models/SettingsEditorProps';
 import SettingsEditor from 'components/views/SettingsEditor';
 import ValidatorsUtils from 'utils/validators-utils';
+// import { useAppDispatch } from 'store/hooks';
+// import { call } from 'store/reducers/server';
 
 function SSantoSettingsEditor({ view }: any) {
+  // const dispatch = useAppDispatch();
+  const updateField = (field: string) => (value: any) => {
+    // dispatch(call(
+    //   { target: ''}
+    // ))
+
+    console.log('updating...', { uri: view.uri, field, value });
+  };
+
   const settings = [
     {
       uri: 'analysis.name',
@@ -16,9 +27,7 @@ function SSantoSettingsEditor({ view }: any) {
       family: 'Analysis',
       shortDescription: 'The name of the author of the analysis.',
       validators: [ValidatorsUtils.required],
-      onValidChange: (value: string) => {
-        console.log({ name: value });
-      },
+      onValidChange: updateField('analysis.name'),
     } as ISettingWithValidationProps<string>,
     {
       uri: 'analysis.description',
@@ -27,9 +36,7 @@ function SSantoSettingsEditor({ view }: any) {
       value: view.content?.analysis?.description,
       family: 'Analysis',
       shortDescription: 'Description of the analysis',
-      onValidChange: (value: string) => {
-        console.log({ description: value });
-      },
+      onValidChange: updateField('analysis.description'),
     } as ISettingProps<string>,
     {
       uri: 'analysis.author.name',
@@ -38,9 +45,7 @@ function SSantoSettingsEditor({ view }: any) {
       value: view.content?.analysis?.author?.name,
       family: 'Analysis.Author',
       shortDescription: 'The name of the author of the analysis.',
-      onValidChange: (value: string) => {
-        console.log({ 'author.name': value });
-      },
+      onValidChange: updateField('analysis.author.name'),
     } as ISettingProps<string>,
     {
       uri: 'analysis.author.email',
@@ -50,9 +55,7 @@ function SSantoSettingsEditor({ view }: any) {
       family: 'Analysis.Author',
       shortDescription: 'The email of the author of the analysis.',
       validators: [ValidatorsUtils.email],
-      onValidChange: (value: string) => {
-        console.log({ 'author.email': value });
-      },
+      onValidChange: updateField('analysis.author.email'),
     } as ISettingProps<string>,
     {
       uri: 'analysis.author.website',
@@ -62,9 +65,7 @@ function SSantoSettingsEditor({ view }: any) {
       family: 'Analysis.Author',
       shortDescription: 'The website of the author of the analysis.',
       validators: [ValidatorsUtils.url],
-      onValidChange: (value: string) => {
-        console.log({ 'author.website': value });
-      },
+      onValidChange: updateField('analysis.author.website'),
     } as ISettingWithValidationProps<string>,
     {
       uri: 'analysis.createdOn',
@@ -73,9 +74,7 @@ function SSantoSettingsEditor({ view }: any) {
       value: view.content?.analysis?.createdOn,
       family: 'Analysis',
       shortDescription: 'The date the analysis was created.',
-      onValidChange: (value: string) => {
-        console.log({ createdOn: value });
-      },
+      onValidChange: updateField('analysis.createdOn'),
     } as ISettingProps<string>,
     {
       uri: 'analysis.modifiedOn',
@@ -84,9 +83,7 @@ function SSantoSettingsEditor({ view }: any) {
       value: view.content?.analysis?.modifiedOn,
       family: 'Analysis',
       shortDescription: 'The date the analysis was last modified.',
-      onValidChange: (value: string) => {
-        console.log({ modifiedOn: value });
-      },
+      onValidChange: updateField('analysis.modifiedOn'),
     } as ISettingProps<string>,
   ];
 
