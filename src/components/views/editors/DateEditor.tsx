@@ -2,46 +2,42 @@ import React from 'react';
 import { ISettingWithValidationProps } from 'models/SettingsEditorProps';
 import { uniqueId } from 'lodash';
 
-export interface NumberEditorProps {
-  setting: NumberSettingProps;
+export interface DateEditorProps {
+  setting: DateSettingProps;
 }
 
-export interface NumberSettingProps
-  extends ISettingWithValidationProps<number> {
-  type: 'number';
-  value?: number;
-  placeholder?: string | number;
-  min?: number;
-  max?: number;
+export interface DateSettingProps extends ISettingWithValidationProps<string> {
+  type: 'date';
+  value?: string;
+  min?: string;
+  max?: string;
 }
 
-function NumberEditor({ setting }: NumberEditorProps) {
+function DateEditor({ setting }: DateEditorProps) {
   const [invalidMessage, setInvalidMessage] = React.useState<
     string | undefined
   >(undefined);
 
-  const id = uniqueId('number-');
+  const id = uniqueId('date-');
   return (
     <div>
       <label htmlFor={id} className="form-label form-label-sm visually-hidden">
         {setting.displayName}
       </label>
       <input
-        style={{ maxWidth: 250 }}
+        style={{ maxWidth: 150 }}
         onChange={({ target: { value } }) => {
-          const numberValue = Number(value);
           for (const validator of setting.validators || []) {
-            if (!validator.assert(numberValue)) {
-              setInvalidMessage(validator.message(numberValue));
+            if (!validator.assert(value)) {
+              setInvalidMessage(validator.message(value));
               return;
             }
           }
 
           setInvalidMessage(undefined);
-          setting.onValidChange?.(numberValue);
+          setting.onValidChange?.(value);
         }}
-        type="number"
-        placeholder={`${setting.placeholder || setting.value}`}
+        type="date"
         defaultValue={setting.value}
         className="form-control form-control-sm"
         id={id}
@@ -55,4 +51,4 @@ function NumberEditor({ setting }: NumberEditorProps) {
   );
 }
 
-export default NumberEditor;
+export default DateEditor;

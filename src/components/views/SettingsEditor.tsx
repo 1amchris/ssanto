@@ -87,6 +87,9 @@ function SettingsEditor({ settings }: any) {
     ['checkbox']: React.lazy(() => {
       return import('components/views/editors/CheckboxEditor');
     }),
+    ['date']: React.lazy(() => {
+      return import('components/views/editors/DateEditor');
+    }),
     ['file']: React.lazy(() => {
       return import('components/views/editors/FileSelector');
     }),

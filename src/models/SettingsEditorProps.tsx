@@ -1,11 +1,12 @@
 import ValidatorModel from 'models/ValidatorModel';
 
 export type SettingsEditorType =
-  | 'text'
-  | 'number'
   | 'checkbox'
+  | 'date'
   | 'file'
-  | 'select';
+  | 'number'
+  | 'select'
+  | 'text';
 
 export interface ISettingProps<T> {
   type: SettingsEditorType;
