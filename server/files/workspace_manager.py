@@ -23,7 +23,6 @@ class WorkspaceManager:
         self.logger.info(f"[Workspace] Opened workspace: {self.workspace}")
 
     def close_workspace(self):
-        # TODO: Perhaps we should close the views workspace before closing it
         if self.workspace is not None:
             try:
                 self.views.editor.remove_all(save=False)
