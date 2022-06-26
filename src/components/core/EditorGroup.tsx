@@ -91,6 +91,8 @@ function EditorTab({
 
   const closeIcon = { label: 'Close', icon: 'VscClose' };
 
+  const modifiedColor = Color.Purple;
+
   const options = { active, hovered, disabled };
   const tabOptions = {
     cursor: disabled ? 'default' : 'pointer',
@@ -106,7 +108,6 @@ function EditorTab({
       onMouseEnter={() => !disabled && setHovered(true)}
       onMouseLeave={() => !disabled && setHovered(false)}
       style={{
-        color: tabOptions.color,
         background: tabOptions.backgroundColor,
         border: `1px solid ${tabOptions.borderColor || 'transparent'}`,
         cursor: tabOptions.cursor,
@@ -114,7 +115,20 @@ function EditorTab({
       }}
     >
       <span className="text-truncate" style={{ fontSize: 13 }}>
-        <BsTextLeft style={{ marginTop: -6 }} /> {tab.name}
+        <BsTextLeft style={{ marginTop: -6, marginRight: 4 }} />
+        <span
+          style={{
+            color:
+              tab.modified === true
+                ? ColorsUtils.applyOpacity(
+                    modifiedColor,
+                    active ? Opacity.Opaque : Opacity.ThreeQuarters
+                  )
+                : tabOptions.color,
+          }}
+        >
+          {tab.name}
+        </span>
       </span>
       <div style={{ marginTop: -6 }}>
         {
