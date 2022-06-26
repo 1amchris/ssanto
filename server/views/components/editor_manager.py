@@ -114,7 +114,7 @@ class EditorManager(Serializable):
             self.__editor_views.notify(groups)
             return self.select_group(active_views[0])
 
-    def remove_view(self, view_uri: str, group_id: str = None):
+    def remove_view(self, view_uri: str, group_id: str = None, save: bool = False):
         groups = self.__editor_views.value()
         group_id = group_id if group_id else self.__active_views.value()[0]
         group = next(filter(lambda group: group.uri == group_id, groups), None)
@@ -130,7 +130,7 @@ class EditorManager(Serializable):
         else:
             try:
                 source_uri = next(filter(lambda v: v.uri == view_uri, group.views)).source
-                self.documents.close(source_uri, save=False)
+                self.documents.close(source_uri, save=save)
                 group.views = list(filter(lambda v: v.uri != view_uri, group.views))
                 group.active.remove(view_uri)
 
@@ -154,6 +154,36 @@ class EditorManager(Serializable):
             except IOError as e:
                 self.logger.error(f"[Editor] Failed to close document {source_uri}: {e}")
                 raise e
+
+    def remove_all(self, save: bool = False):
+        new_groups = []
+        for group in self.__editor_views.value():
+            group_views = []
+            for view in group.views:
+                try:
+                    self.documents.close(view.source, save=save)
+                except IOError:
+                    group_views += [view]
+
+            if len(group_views) > 0:
+                group.views = group_views
+                views_uris = list(map(lambda v: v.uri, group_views))
+                group.active = list(filter(lambda v: v in views_uris, group.active))
+                new_groups += [group]
+
+        if len(new_groups) > 0:
+            group_uris = list(map(lambda g: g.uri, new_groups))
+            new_active = list(filter(lambda g: g in group_uris, self.__active_views.value()))
+            self.__editor_views.notify(new_groups)
+            self.__active_views.notify(new_active)
+            self.logger.error(f"[Editor] Failed to close all documents.")
+            raise IOError("Failed to close all documents.")
+
+        new_groups = [ViewGroup()]
+        new_active = [new_groups[0].uri]
+        self.__editor_views.notify(new_groups)
+        self.__active_views.notify(new_active)
+        self.logger.info(f"[Editor] Closed all documents.")
 
     def save(self):
         if len(self.__active_views.value()) == 0:

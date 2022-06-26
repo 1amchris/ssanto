@@ -25,9 +25,14 @@ class WorkspaceManager:
     def close_workspace(self):
         # TODO: Perhaps we should close the views workspace before closing it
         if self.workspace is not None:
-            self.files.notify([])
-            self.logger.info(f"[Workspace] Closed workspace: {self.workspace}")
-            self.workspace = None
+            try:
+                self.views.editor.remove_all(save=False)
+                self.files.notify([])
+                self.workspace = None
+                self.logger.info(f"[Workspace] Closed the workspace.")
+            except IOError as e:
+                print(f"Failed to close workspace: {e}")
+                self.logger.error(f"[Workspace] Failed to close workspace: {e}")
 
     def open_editor(self, document_uri: str, view_type: str = None):
         self.views.editor.add_view(document_uri, view_type=view_type)
