@@ -24,7 +24,7 @@ class DocumentsManager:
 
     def update(self, uri: str, changes: dict) -> DocumentEditor:
         document = self.get(uri)
-        document.update_document(changes)
+        document.update(changes)
         self.__logger.info(f"[Documents] Updated document: {uri}")
         return document
 

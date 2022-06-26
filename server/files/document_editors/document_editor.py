@@ -48,7 +48,7 @@ class DocumentEditor(Serializable):
 
     # The "changes" dictionary is a dictionary of changes to be applied to the document
     # There is no standard structure here. It is based on the needs of the derived editor.
-    def update_document(self, changes: dict):
+    def update(self, changes: dict):
         if self.apply_changes(changes):
             self.is_modified = True
             self.notify(DocumentEvent.UPDATE)

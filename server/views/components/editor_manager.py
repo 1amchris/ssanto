@@ -62,7 +62,35 @@ class EditorManager(Serializable):
             self.__editor_views.notify(groups)
             return self.select_group(active_views[0])
 
-    def add_view(self, view_source, view_type: str = None, group_id: str = None, prevent_duplicates=True):
+    def has_view(self, view_uri: str):
+        return (
+            next(
+                filter(lambda group: view_uri in list(map(lambda v: v.uri, group.views)), self.__editor_views.value()),
+                None,
+            )
+            is not None
+        )
+
+    def update_view(self, view_uri: str, changes: dict):
+        for group in self.__editor_views.value():
+            for view in group.views:
+                if view.uri == view_uri:
+                    break
+            else:
+                view = None
+
+            if view is not None:
+                break
+
+        if view is None:
+            self.logger.error(f"[Editor] No view found for {view_uri}")
+            raise KeyError(f"No view found for {view_uri}")
+
+        else:
+            self.logger.info(f"[Editor] Updating view {view_uri}")
+            return view.update(changes)
+
+    def add_view(self, view_source, view_type: str = None, group_id: str = None, prevent_duplicates=False):
         groups = self.__editor_views.value()
 
         if prevent_duplicates:

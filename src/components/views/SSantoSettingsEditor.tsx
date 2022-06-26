@@ -5,17 +5,20 @@ import {
 } from 'models/SettingsEditorProps';
 import SettingsEditor from 'components/views/SettingsEditor';
 import ValidatorsUtils from 'utils/validators-utils';
-// import { useAppDispatch } from 'store/hooks';
-// import { call } from 'store/reducers/server';
+import { useAppDispatch } from 'store/hooks';
+import { call } from 'store/reducers/server';
+import ServerCallTarget from 'enums/ServerCallTarget';
 
 function SSantoSettingsEditor({ view }: any) {
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const updateField = (field: string) => (value: any) => {
-    // dispatch(call(
-    //   { target: ''}
-    // ))
-
-    console.log('updating...', { uri: view.uri, field, value });
+    const changes = { [field]: value };
+    dispatch(
+      call({
+        target: ServerCallTarget.WorkspaceViewsPublishChanges,
+        args: [view.uri, changes],
+      })
+    );
   };
 
   const settings = [

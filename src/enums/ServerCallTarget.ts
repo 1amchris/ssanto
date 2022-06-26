@@ -15,6 +15,7 @@ enum ServerCallTarget {
   WorkspaceViewsSelectEditor = 'workspace.views.editor.select_view',
   WorkspaceViewsOpenEditor = 'workspace.views.editor.open_view',
   WorkspaceViewsCloseEditor = 'workspace.views.editor.close_view',
+  WorkspaceViewsPublishChanges = 'workspace.views.publish_changes',
 
   WorkspaceViewsSelectPanel = 'workspace.views.panel.select_activity',
   WorkspaceViewsSelectPanelView = 'workspace.views.panel.select_view',

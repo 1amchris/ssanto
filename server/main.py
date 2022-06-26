@@ -81,14 +81,18 @@ async def main():
     files = FilesManager(subjects, logger)
     server.bind_command("files.get_files", files.get_files_metadatas)
 
+    server.bind_command("workspace.views.publish_changes", workspace.views.update)
+
     server.bind_command("workspace.views.editor.add_group", workspace.views.editor.add_group)
     server.bind_command("workspace.views.editor.select_group", workspace.views.editor.select_group)
     server.bind_command("workspace.views.editor.close_group", workspace.views.editor.remove_group)
     server.bind_command("workspace.views.editor.close_view", workspace.views.editor.remove_view)
     server.bind_command("workspace.views.editor.select_view", workspace.views.editor.select_view)
+
     server.bind_command("workspace.views.panel.close_view", workspace.views.panel.remove_view)
     server.bind_command("workspace.views.panel.select_view", workspace.views.panel.select_view)
     server.bind_command("workspace.views.panel.select_activity", workspace.views.panel.select_activity)
+
     server.bind_command("workspace.views.sidebar.close_view", workspace.views.sidebar.remove_view)
     server.bind_command("workspace.views.sidebar.select_view", workspace.views.sidebar.select_view)
     server.bind_command("workspace.views.sidebar.select_activity", workspace.views.sidebar.select_activity)

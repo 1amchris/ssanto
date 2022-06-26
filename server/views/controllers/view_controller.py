@@ -40,6 +40,10 @@ class ViewController(Serializable):
     def serialize(self):
         return {"name": self.name, "uri": self.uri, "source": self.source, "content": self.content}
 
+    def update(self, changes: dict = None):
+        if self.document is not None and changes is not None:
+            self.document.update(changes)
+
     # All derived class should redefine the get_view_type() method to return the name of the view_type it supports
     def get_view_type(self):
         raise Exception("Not implemented")

@@ -26,3 +26,14 @@ class ViewsManager(Serializable):
             "panel": self.panel.serialize(),
             "sidebar": self.sidebar.serialize(),
         }
+
+    def update(self, view_uri, changes):
+        for manager in [self.sidebar, self.editor, self.panel]:
+            try:
+                if manager.has_view(view_uri):
+                    manager.update_view(view_uri, changes)
+            except AttributeError:
+                # ignore all managers that don't have a `has_view` method or don't have a `update_view` method
+                pass
+
+        self.logger.info(f"[Workspace] Updated view: {view_uri}")
