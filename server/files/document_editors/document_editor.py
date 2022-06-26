@@ -31,7 +31,7 @@ class DocumentEditor(Serializable):
     def __init__(self, uri: str):
         self.uri: str = uri
         self.is_modified: bool = False
-        self.content = self.read_from_file()
+        self.content = self.get_content()
         self.__subscriptions: dict[DocumentEvent : list[DocumentSubscription]] = {}
 
     def serialize(self) -> dict:
@@ -49,17 +49,17 @@ class DocumentEditor(Serializable):
     # The "changes" dictionary is a dictionary of changes to be applied to the document
     # There is no standard structure here. It is based on the needs of the derived editor.
     def update(self, changes: dict):
-        if self.apply_changes(changes):
+        if self._update(changes):
             self.is_modified = True
             self.notify(DocumentEvent.UPDATE)
 
-    def save_changes_to_file(self):
-        if self.save_changes():
+    def save(self):
+        if self._save():
             self.is_modified = False
             self.notify(DocumentEvent.SAVE)
 
-    def read_from_file(self):
-        return self.read_content()
+    def get_content(self):
+        return self._get_content()
 
     def get_default_view_type(self) -> str:
         if self.default_view is None:
@@ -76,14 +76,14 @@ class DocumentEditor(Serializable):
                 subscription(self)
 
     # The following methods should be overriden by the derived editor to specify behaviour
-    def apply_changes(self, changes: dict):
+    def _update(self, changes: dict):
         """
         Updates the local document with the changes.
         Returns True if the local document has been succesfully modified, else False.
         """
         raise Exception("Not implemented")
 
-    def save_changes(self):
+    def _save(self):
         """
         Saves the document to the source file.
         Returns True if the document has been succesfully saved, else False.
@@ -94,7 +94,7 @@ class DocumentEditor(Serializable):
 
         return True
 
-    def read_content(self):
+    def _get_content(self):
         """
         Returns the payload of the `self.content` variable.
         """

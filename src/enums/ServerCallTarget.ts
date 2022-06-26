@@ -9,6 +9,8 @@ enum ServerCallTarget {
   WorkspaceOpenWorkspace = 'workspace.open_workspace',
   WorkspaceCloseWorkspace = 'workspace.close_workspace',
 
+  WorkspaceViewsSaveAllEditors = 'workspace.views.editor.save_all',
+  WorkspaceViewsSaveActiveEditor = 'workspace.views.editor.save',
   WorkspaceViewsOpenEditorGroup = 'workspace.views.editor.add_group',
   WorkspaceViewsSelectEditorGroup = 'workspace.views.editor.select_group',
   WorkspaceViewsCloseEditorGroup = 'workspace.views.editor.close_group',

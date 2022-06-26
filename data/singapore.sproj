@@ -1,13 +1,1 @@
-{
-  "analysis": {
-    "name": "singapore",
-    "description": "This is a brief analysis of the Singapore data set.",
-    "author": {
-      "name": "Christophe Beaulieu",
-      "email": "beaulieu.christophe23@gmail.com",
-      "website": "http://github.com/1amchris"
-    },
-    "createdOn": "2022-06-23",
-    "modifiedOn": "2022-06-25"
-  }
-}
+{"analysis": {"name": "singapore", "description": "This is a brief analysis of the Singapore data set.", "author": {"name": "Christophe Beaulieu", "email": "beaulieu.christophe23@gmail.com", "website": "http://github.com/1amchris"}, "createdOn": "2022-06-23", "modifiedOn": "2022-06-25"}}

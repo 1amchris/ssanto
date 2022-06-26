@@ -5,19 +5,19 @@ import json
 
 
 class JSONDocumentEditor(DocumentEditor):
-    def apply_changes(self, changes: dict):
+    def _update(self, changes: dict):
         if changes:
             self.content.update(changes)
             return True
         return False
 
-    def save_changes(self):
+    def _save(self):
         if self.is_modified:
             with open(uri_to_path(self.uri), "w") as file:
                 json.dump(self.content, file)
             return True
         return False
 
-    def read_content(self):
+    def _get_content(self):
         with open(uri_to_path(self.uri), "r") as file:
             return json.load(file)

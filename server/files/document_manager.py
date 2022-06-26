@@ -64,7 +64,7 @@ class DocumentsManager:
 
     def save(self, uri: str) -> str:
         document = self.get(uri)
-        document.save_changes_to_file()
+        document.save()
         self.__logger.info(f"[Documents] Saved document: {uri}")
         return uri
 

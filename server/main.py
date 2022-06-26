@@ -83,6 +83,8 @@ async def main():
 
     server.bind_command("workspace.views.publish_changes", workspace.views.update)
 
+    server.bind_command("workspace.views.editor.save", workspace.views.editor.save)
+    server.bind_command("workspace.views.editor.save_all", workspace.views.editor.save_all)
     server.bind_command("workspace.views.editor.add_group", workspace.views.editor.add_group)
     server.bind_command("workspace.views.editor.select_group", workspace.views.editor.select_group)
     server.bind_command("workspace.views.editor.close_group", workspace.views.editor.remove_group)

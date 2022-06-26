@@ -10,14 +10,10 @@ class ViewController(Serializable):
         self.name = source[source.rfind("/") + 1 :]
         self.source = source
         self.document = document
+        self.content = self.get_content()
 
         self.onchange = onchange
         self.onsave = onsave
-
-        try:
-            self.content = self.get_content()
-        except Exception:
-            self.content = None
 
         self.view_type = self.get_view_type()
         self.uri = f"{self.view_type}://{uuid4()}"
@@ -49,6 +45,10 @@ class ViewController(Serializable):
             "modified": self.document.is_modified if self.document else False,
             "content": self.content,
         }
+
+    def save(self):
+        if self.document is not None:
+            self.document.save()
 
     def update(self, changes: dict = None):
         if self.document is not None and changes is not None:

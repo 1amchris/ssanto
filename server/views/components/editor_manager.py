@@ -123,33 +123,74 @@ class EditorManager(Serializable):
             self.logger.error(f"[Editor] No editor group found for {group_id}")
             raise KeyError(f"No editor group found for {group_id}")
 
-        elif view_uri not in map(lambda v: v.uri, group.views) or view_uri not in group.active:
+        elif view_uri not in list(map(lambda v: v.uri, group.views)) or view_uri not in group.active:
             self.logger.error(f"[Editor] No view found for {view_uri} in editor group {group_id}")
             raise KeyError(f"No view found for {view_uri} in editor group {group_id}")
 
         else:
-            # TODO: This should throw an exception if the view is not saved when closed
-            source_uri = next(filter(lambda v: v.uri == view_uri, group.views)).source
-            group.views = list(filter(lambda v: v.uri != view_uri, group.views))
-            group.active.remove(view_uri)
-            self.documents.close(source_uri, save=False)
+            try:
+                source_uri = next(filter(lambda v: v.uri == view_uri, group.views)).source
+                self.documents.close(source_uri, save=False)
+                group.views = list(filter(lambda v: v.uri != view_uri, group.views))
+                group.active.remove(view_uri)
 
-            active = self.__active_views.value()
+                active = self.__active_views.value()
 
-            if len(group.views) == 0:
-                groups = list(filter(lambda g: g.uri != group.uri, groups))
-                active.remove(group.uri)
+                if len(group.views) == 0:
+                    groups = list(filter(lambda g: g.uri != group.uri, groups))
+                    active.remove(group.uri)
 
-            if len(groups) == 0:
-                new_group = ViewGroup()
-                groups.insert(0, new_group)
-                active.insert(0, new_group.uri)
+                if len(groups) == 0:
+                    new_group = ViewGroup()
+                    groups.insert(0, new_group)
+                    active.insert(0, new_group.uri)
 
-            self.logger.info(f"[Editor] Deleted {view_uri}")
+                self.logger.info(f"[Editor] Deleted {view_uri}")
 
-            self.__editor_views.notify(groups)
-            self.__active_views.notify(active)
-            return view_uri
+                self.__editor_views.notify(groups)
+                self.__active_views.notify(active)
+                return view_uri
+
+            except IOError as e:
+                self.logger.error(f"[Editor] Failed to close document {source_uri}: {e}")
+                raise e
+
+    def save(self):
+        if len(self.__active_views.value()) == 0:
+            self.logger.error("[Editor] No editor groups found")
+            raise KeyError("No editor groups found")
+
+        active_group_uri = self.__active_views.value()[0]
+        group = next(filter(lambda group: group.uri == active_group_uri, self.__editor_views.value()), None)
+
+        if group is None:
+            self.logger.error(f"[Editor] No editor group found for {active_group_uri}")
+            raise KeyError(f"No editor group found for {active_group_uri}")
+
+        if len(group.active) == 0:
+            self.logger.info(f"[Editor] Nothing to save")
+            return None
+
+        active_view_uri = group.active[0]
+        view = next(filter(lambda view: view.uri == active_view_uri, group.views), None)
+
+        if view is None:
+            self.logger.error(f"[Editor] No view found for {active_view_uri} in editor group {group.uri}")
+            raise KeyError(f"No view found for {active_view_uri} in editor group {group.uri}")
+
+        view.save()
+        self.logger.info(f"[Editor] Saved {view.uri}")
+        return view.uri
+
+    def save_all(self):
+        saved = []
+        for group in self.__editor_views.value():
+            for view in group.views:
+                view.save()
+                saved.append(view.uri)
+
+        self.logger.info("[Editor] Saved all views")
+        return saved
 
     def select_group(self, group_id: str):
         if next(filter(lambda group: group.uri == group_id, self.__editor_views.value()), None) is None:
@@ -202,5 +243,5 @@ class EditorManager(Serializable):
             raise KeyError(f"No view found for {view_uri}")
 
         else:
-            self.logger.info(f"[Editor] Updating view {view_uri}")
+            # self.logger.info(f"[Editor] Updating view {view_uri}")
             return view.update(changes)

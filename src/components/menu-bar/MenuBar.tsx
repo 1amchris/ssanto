@@ -1,14 +1,14 @@
 import React from 'react';
-import FileContentModel from 'models/file/FileContentModel';
+// import FileContentModel from 'models/file/FileContentModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { exportData } from 'store/reducers/export';
+// import { exportData } from 'store/reducers/export';
 import { Action, Divider, ImportFolder, Link } from './components';
 import { call } from 'store/reducers/server';
 import Menu from './Menu';
 import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import FilesUtils from 'utils/files-utils';
-import { selectMap } from 'store/reducers/map';
+// import { selectMap } from 'store/reducers/map';
 import { openWorkspace, selectFiles } from 'store/reducers/files';
 
 /**
@@ -17,7 +17,7 @@ import { openWorkspace, selectFiles } from 'store/reducers/files';
  * @return {JSX.Element} Html.
  */
 function MenuBar({ style }: any) {
-  const mapLayers = useAppSelector(selectMap).layers;
+  // const mapLayers = useAppSelector(selectMap).layers;
   const { files } = useAppSelector(selectFiles);
   const dispatch = useAppDispatch();
 
@@ -55,20 +55,32 @@ function MenuBar({ style }: any) {
           )
         }
       />
+      <Divider />
       <Action
-        key="action"
-        label="save project"
-        // TODO: It should also account for modifications in files
+        key="save-active"
+        label="save"
         disabled={!files || files.length === 0}
         onClick={() =>
           dispatch(
             call({
-              target: ServerCallTarget.AnalysisSaveProject,
-              onSuccessAction: exportData,
-            } as CallModel<void, FileContentModel<string>>)
+              target: ServerCallTarget.WorkspaceViewsSaveActiveEditor,
+            } as CallModel)
           )
         }
       />
+      <Action
+        key="save-all"
+        label="save all"
+        disabled={!files || files.length === 0}
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerCallTarget.WorkspaceViewsSaveAllEditors,
+            } as CallModel)
+          )
+        }
+      />
+      <Divider />
       <Action
         key="close-workspace"
         label="close workspace"
@@ -82,20 +94,7 @@ function MenuBar({ style }: any) {
           )
         }
       />
-      <Divider />
-      <Action
-        key="add-group"
-        label="open editor group"
-        disabled={!files || files.length === 0}
-        onClick={() =>
-          dispatch(
-            call({
-              target: ServerCallTarget.WorkspaceViewsOpenEditorGroup,
-            } as CallModel)
-          )
-        }
-      />
-      <Divider />
+      {/* <Divider />
       <Action
         label="export analysis as tiff"
         disabled={
@@ -114,7 +113,7 @@ function MenuBar({ style }: any) {
             } as CallModel<[string], FileContentModel<string>>)
           )
         }
-      />
+      /> */}
     </Menu>,
     <Menu key="menu-help" label="help">
       <Link label="show guide" targetUrl="/guide" />

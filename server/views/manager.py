@@ -33,4 +33,4 @@ class ViewsManager(Serializable):
             if manager.has_view(view_uri):
                 manager.update_view(view_uri, changes)
 
-        self.logger.info(f"[Workspace] Updated view: {view_uri}")
+        # self.logger.info(f"[Workspace] Updated view: {view_uri}")
