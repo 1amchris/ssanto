@@ -20,7 +20,7 @@ class DocumentsManager:
             return document
         else:
             self.__logger.error(f"[Documents] No document found: {uri}")
-            raise KeyError("No document found: {uri}")
+            raise KeyError(f"No document found: {uri}")
 
     def update(self, uri: str, changes: dict) -> DocumentEditor:
         document = self.get(uri)
@@ -41,6 +41,13 @@ class DocumentsManager:
             return None
 
     def close(self, uri: str, save: bool = True, allow_closing_if_modified: bool = False) -> str:
+        if uri not in self.__documents_refs:
+            return uri
+
+        elif self.__documents_refs[uri] == 0:
+            del self.__documents_refs[uri]
+            return uri
+
         if save:
             self.save(uri)
 
@@ -67,8 +74,3 @@ class DocumentsManager:
         document.save()
         self.__logger.info(f"[Documents] Saved document: {uri}")
         return uri
-
-    def save_all(self) -> list[str]:
-        uris = [document.save_changes_to_file() for document in self.__documents.values()]
-        self.__logger.info(f"[Documents] Saved documents: {uris}")
-        return uris
