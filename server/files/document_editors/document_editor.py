@@ -71,7 +71,7 @@ class DocumentEditor(Serializable):
 
     def notify(self, event: DocumentEvent):
         if event in self.__subscriptions:
-            self.__subscriptions = list(filter(None, self.__subscriptions[event]))
+            self.__subscriptions[event] = list(filter(None, self.__subscriptions[event]))
             for subscription in self.__subscriptions[event]:
                 subscription(self)
 

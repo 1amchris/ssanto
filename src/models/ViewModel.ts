@@ -3,4 +3,5 @@ export default interface ViewModel {
   uri: string;
   name: string;
   content?: any;
+  modified?: boolean;
 }

@@ -1,3 +1,4 @@
+from typing import Callable
 from uuid import uuid4
 
 from files.serializable import Serializable
@@ -5,10 +6,13 @@ from files.document_editors.document_editor import DocumentEditor, DocumentEvent
 
 
 class ViewController(Serializable):
-    def __init__(self, source: str, document: DocumentEditor):
+    def __init__(self, source: str, document: DocumentEditor, onchange: Callable = None, onsave: Callable = None):
         self.name = source[source.rfind("/") + 1 :]
         self.source = source
         self.document = document
+
+        self.onchange = onchange
+        self.onsave = onsave
 
         try:
             self.content = self.get_content()
@@ -38,7 +42,13 @@ class ViewController(Serializable):
             print(f"An error occured while deleting ViewController: {e}")
 
     def serialize(self):
-        return {"name": self.name, "uri": self.uri, "source": self.source, "content": self.content}
+        return {
+            "name": self.name,
+            "uri": self.uri,
+            "source": self.source,
+            "modified": self.document.is_modified if self.document else False,
+            "content": self.content,
+        }
 
     def update(self, changes: dict = None):
         if self.document is not None and changes is not None:
@@ -55,9 +65,9 @@ class ViewController(Serializable):
     # All derived class should redefine the methods below if needed
     # These methods are called when the view is activated, and when the document is updated
     def on_document_change(self, document: DocumentEditor):
-        print(f"{self.uri} on_document_change")
-        pass
+        if self.onchange is not None:
+            self.onchange(self)
 
     def on_document_save(self, document: DocumentEditor):
-        print(f"{self.uri} on_document_save")
-        pass
+        if self.onsave is not None:
+            self.onsave(self)

@@ -90,6 +90,8 @@ function SSantoSettingsEditor({ view }: any) {
     } as ISettingProps<string>,
   ];
 
+  console.log({ view });
+
   return <SettingsEditor settings={settings} />;
 }
 

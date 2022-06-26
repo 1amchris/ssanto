@@ -33,63 +33,6 @@ class EditorManager(Serializable):
         self.logger.info(f"[Editor] Added editor group {group.uri}")
         return self.select_group(group.uri)
 
-    def remove_group(self, group_id: str):
-        groups = self.__editor_views.value()
-        group = next(filter(lambda group: group.uri == group_id, groups), None)
-
-        if group is None:
-            self.logger.error(f"[Editor] No editor group found for {group_id}")
-            raise KeyError(f"No editor group found for {group_id}")
-
-        elif len(group.views) > 0:
-            self.logger.error(
-                f"[Editor] Found views in editor group {group_id}. Cannot close editor group containing views."
-            )
-            raise KeyError(f"Found views in editor group {group_id}. Cannot close editor group containing views.")
-
-        else:
-            active_views = list(filter(lambda g: g != group_id, self.__active_views.value()))
-            groups = list(filter(lambda g: g.uri != group_id, groups))
-
-            self.logger.info(f"[Editor] Deleted editor group {group_id}")
-
-            if len(groups) == 0:
-                group = ViewGroup()
-                active_views = [group.uri]
-                groups = [group]
-
-            self.__active_views.notify(active_views)
-            self.__editor_views.notify(groups)
-            return self.select_group(active_views[0])
-
-    def has_view(self, view_uri: str):
-        return (
-            next(
-                filter(lambda group: view_uri in list(map(lambda v: v.uri, group.views)), self.__editor_views.value()),
-                None,
-            )
-            is not None
-        )
-
-    def update_view(self, view_uri: str, changes: dict):
-        for group in self.__editor_views.value():
-            for view in group.views:
-                if view.uri == view_uri:
-                    break
-            else:
-                view = None
-
-            if view is not None:
-                break
-
-        if view is None:
-            self.logger.error(f"[Editor] No view found for {view_uri}")
-            raise KeyError(f"No view found for {view_uri}")
-
-        else:
-            self.logger.info(f"[Editor] Updating view {view_uri}")
-            return view.update(changes)
-
     def add_view(self, view_source, view_type: str = None, group_id: str = None, prevent_duplicates=False):
         groups = self.__editor_views.value()
 
@@ -119,9 +62,12 @@ class EditorManager(Serializable):
             document = self.documents.open(view_source)
             if document is not None and view_type is None:
                 view_type = document.get_default_view_type()
-            controller = ViewControllerRegistry()[view_type](view_source, document)
-
-            # TODO: Add endpoints to update the document based on view actions
+            controller = ViewControllerRegistry()[view_type](
+                source=view_source,
+                document=document,
+                onchange=lambda *_: self.__editor_views.update(),
+                onsave=lambda *_: self.__editor_views.update(),
+            )
 
             group.views.append(controller)
             group.active.insert(0, controller.uri)
@@ -129,6 +75,44 @@ class EditorManager(Serializable):
 
             self.logger.info(f"[Editor] Added view {controller.uri}")
             return self.select_view(controller.uri, group.uri)
+
+    def has_view(self, view_uri: str):
+        return (
+            next(
+                filter(lambda group: view_uri in list(map(lambda v: v.uri, group.views)), self.__editor_views.value()),
+                None,
+            )
+            is not None
+        )
+
+    def remove_group(self, group_id: str):
+        groups = self.__editor_views.value()
+        group = next(filter(lambda group: group.uri == group_id, groups), None)
+
+        if group is None:
+            self.logger.error(f"[Editor] No editor group found for {group_id}")
+            raise KeyError(f"No editor group found for {group_id}")
+
+        elif len(group.views) > 0:
+            self.logger.error(
+                f"[Editor] Found views in editor group {group_id}. Cannot close editor group containing views."
+            )
+            raise KeyError(f"Found views in editor group {group_id}. Cannot close editor group containing views.")
+
+        else:
+            active_views = list(filter(lambda g: g != group_id, self.__active_views.value()))
+            groups = list(filter(lambda g: g.uri != group_id, groups))
+
+            self.logger.info(f"[Editor] Deleted editor group {group_id}")
+
+            if len(groups) == 0:
+                group = ViewGroup()
+                active_views = [group.uri]
+                groups = [group]
+
+            self.__active_views.notify(active_views)
+            self.__editor_views.notify(groups)
+            return self.select_group(active_views[0])
 
     def remove_view(self, view_uri: str, group_id: str = None):
         groups = self.__editor_views.value()
@@ -201,3 +185,22 @@ class EditorManager(Serializable):
         self.__active_views.value().insert(0, group_id)
         self.__active_views.update()
         return view_uri
+
+    def update_view(self, view_uri: str, changes: dict):
+        for group in self.__editor_views.value():
+            for view in group.views:
+                if view.uri == view_uri:
+                    break
+            else:
+                view = None
+
+            if view is not None:
+                break
+
+        if view is None:
+            self.logger.error(f"[Editor] No view found for {view_uri}")
+            raise KeyError(f"No view found for {view_uri}")
+
+        else:
+            self.logger.info(f"[Editor] Updating view {view_uri}")
+            return view.update(changes)

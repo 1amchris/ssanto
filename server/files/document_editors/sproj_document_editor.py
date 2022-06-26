@@ -12,3 +12,4 @@ class SSantoDocumentEditor(JSONDocumentEditor):
                     scope[segment] = {}
                 scope = scope[segment]
             scope[segments[-1]] = changes[".".join(segments)]
+        return segments is not None
