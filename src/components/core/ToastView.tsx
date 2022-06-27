@@ -26,7 +26,7 @@ function ToastView() {
     >
       {toasts.map((toast, index) => (
         <div
-          key={index}
+          key={toast.id}
           className={index < toasts.length - 1 ? 'mb-2 shadow' : 'shadow'}
         >
           <Toast {...toast} />
