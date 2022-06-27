@@ -5,6 +5,9 @@ enum ServerCallTarget {
 
   LoggerLog = 'logger.add_log',
 
+  ToasterCloseToast = 'toaster.close_toast',
+  ToasterTriggerAction = 'toaster.trigger_action',
+
   WorkspaceOpenView = 'workspace.open_view',
   WorkspaceOpenWorkspace = 'workspace.open_workspace',
   WorkspaceCloseWorkspace = 'workspace.close_workspace',

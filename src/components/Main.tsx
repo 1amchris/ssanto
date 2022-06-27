@@ -4,6 +4,7 @@ import ActivityBar from 'components/core/ActivityBar';
 import SideBar from 'components/core/SideBar';
 import StatusBar from 'components/core/StatusBar';
 import SplitView from 'components/core/SplitView';
+import ToastView from 'components/core/ToastView';
 import EditorGroups from 'components/core/EditorGroups';
 import PanelBar from 'components/core/PanelBar';
 import ViewsRegistry from 'components/ViewsRegistry';
@@ -146,6 +147,8 @@ function Main() {
 
   return (
     <ViewsRegistry.Provider value={value}>
+      <ToastView />
+
       <div className="d-flex flex-column" style={{ maxHeight: '100vh' }}>
         <MenuBar style={{ height: '24px' }} />
         <div

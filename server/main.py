@@ -9,7 +9,6 @@ from subjects.subjects_manager import SubjectsManager
 from files.document_editor_registry import DocumentEditorRegistry
 from files.document_editors.sproj_document_editor import SSantoDocumentEditor
 from files.document_manager import DocumentsManager
-from files.workspace_manager import WorkspaceManager
 
 from logger.logger import *
 from logger.log_manager import LogsManager
@@ -24,6 +23,8 @@ from analysis.analysis import Analysis
 from analysis.map import Map
 from files.file_manager import FilesManager
 from guide_builder import GuideBuilder
+from toasts_manager import ToastsManager, ToastAction
+from workspace_manager import WorkspaceManager
 
 
 def populate_registries():
@@ -60,19 +61,42 @@ def populate_views(views_manager: ViewsManager):
     views_manager.sidebar.select_activity(explorer_uri, allow_none=False)
 
 
+def populate_toaster(toaster: ToastsManager):
+    toaster.info(
+        "Welcome to SSanto! This message is automated, and will be removed after 5 seconds.",
+        duration=5,
+        actions=[ToastAction("Hello", print), ToastAction("World", print)],
+    )
+    toaster.warn(
+        "WeLcOme tO SSAnTo! This message is automated, and will be removed after 2 seconds.",
+        duration=2,
+        actions=[ToastAction("hElLo", print), ToastAction("WOrld", print)],
+    )
+    toaster.error(
+        "WELCOME TO SANTO! This message is automated, and will never be removed automatically because it is an error. To remove it, press any action, or the close button.",
+        duration=None,
+        actions=[ToastAction("HELLO", print), ToastAction("WORLD", print)],
+    )
+
+
 async def main():
     server = ServerSocket("localhost", 15649)
     subjects = SubjectsManager(server)
     logger = LogsManager(subjects)
     documents = DocumentsManager(logger)
     views = ViewsManager(subjects, logger, documents)
+    toaster = ToastsManager(subjects, logger)
     workspace = WorkspaceManager(subjects, logger, views)
 
     populate_registries()
     populate_views(workspace.views)
+    populate_toaster(toaster)
 
     server.bind_command("subscribe", subjects.subscribe)
     server.bind_command("unsubscribe", subjects.unsubscribe)
+
+    server.bind_command("toaster.close_toast", toaster.close_toast)
+    server.bind_command("toaster.trigger_action", toaster.trigger_action)
 
     server.bind_command("workspace.open_view", workspace.open_editor)
     server.bind_command("workspace.open_workspace", workspace.open_workspace)
@@ -99,8 +123,10 @@ async def main():
     server.bind_command("workspace.views.sidebar.select_view", workspace.views.sidebar.select_view)
     server.bind_command("workspace.views.sidebar.select_activity", workspace.views.sidebar.select_activity)
 
+    # Are they actually required?
     server.bind_command("logger.add_log", logger.add_log)
     server.bind_command("logger.get_logs", logger.get_logs)
+    ###
 
     analysis = Analysis(subjects, files)
     server.bind_command("analysis.update", analysis.update)

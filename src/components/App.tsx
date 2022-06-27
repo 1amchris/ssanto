@@ -27,6 +27,7 @@ import ServerSubscriptionTarget from 'enums/ServerSubscriptionTarget';
 import { LayersGroups } from 'models/map/Layers';
 import { setWorkspace } from 'store/reducers/files';
 import { setLogs } from 'store/reducers/logger';
+import { setToasts } from 'store/reducers/toaster';
 import {
   setEditorViews,
   setActiveEditorViews,
@@ -56,6 +57,13 @@ function App() {
       subscribe({
         subject: ServerSubscriptionTarget.LoggerLogs,
         onAction: setLogs,
+      })
+    );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTarget.ToasterToasts,
+        onAction: setToasts,
       })
     );
 

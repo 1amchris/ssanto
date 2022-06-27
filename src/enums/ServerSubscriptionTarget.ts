@@ -7,6 +7,8 @@ enum ServerSubscriptionTarget {
 
   LoggerLogs = 'logger.logs',
 
+  ToasterToasts = 'toaster.toasts',
+
   WorkspaceViewsEditorViews = 'workspace.views.editor.views',
   WorkspaceViewsActiveEditorViews = 'workspace.views.editor.active_views',
   WorkspaceViewsPanelViews = 'workspace.views.panel.activities',
