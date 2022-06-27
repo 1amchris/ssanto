@@ -61,36 +61,17 @@ def populate_views(views_manager: ViewsManager):
     views_manager.sidebar.select_activity(explorer_uri, allow_none=False)
 
 
-def populate_toaster(toaster: ToastsManager):
-    toaster.info(
-        "Welcome to SSanto! This message is automated, and will be removed after 5 seconds.",
-        duration=5,
-        actions=[ToastAction("Hello", print), ToastAction("World", print)],
-    )
-    toaster.warn(
-        "WeLcOme tO SSAnTo! This message is automated, and will be removed after 2 seconds.",
-        duration=2,
-        actions=[ToastAction("hElLo", print), ToastAction("WOrld", print)],
-    )
-    toaster.error(
-        "WELCOME TO SANTO! This message is automated, and will never be removed automatically because it is an error. To remove it, press any action, or the close button.",
-        duration=None,
-        actions=[ToastAction("HELLO", print), ToastAction("WORLD", print)],
-    )
-
-
 async def main():
     server = ServerSocket("localhost", 15649)
     subjects = SubjectsManager(server)
     logger = LogsManager(subjects)
     documents = DocumentsManager(logger)
-    views = ViewsManager(subjects, logger, documents)
     toaster = ToastsManager(subjects, logger)
-    workspace = WorkspaceManager(subjects, logger, views)
+    views = ViewsManager(subjects, logger, documents, toaster)
+    workspace = WorkspaceManager(subjects, logger, views, toaster)
 
     populate_registries()
     populate_views(workspace.views)
-    populate_toaster(toaster)
 
     server.bind_command("subscribe", subjects.subscribe)
     server.bind_command("unsubscribe", subjects.unsubscribe)

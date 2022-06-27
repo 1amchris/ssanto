@@ -5,20 +5,24 @@ from subjects.subjects_manager import SubjectsManager
 from views.components.editor_manager import EditorManager
 from views.components.sidebar_manager import SideBarManager
 from views.components.panel_manager import PanelManager
+from toasts_manager import ToastsManager
 
 
 class ViewsManager(Serializable):
-    def __init__(self, subjects: SubjectsManager, logger: LogsManager, documents: DocumentsManager):
+    def __init__(
+        self, subjects: SubjectsManager, logger: LogsManager, documents: DocumentsManager, toaster: ToastsManager
+    ):
         super().__init__()
-        self.subjects = subjects
-        self.logger = logger
-        self.documents = documents
+        self.__subjects = subjects
+        self.__logger = logger
+        self.__documents = documents
+        self.__toaster = toaster
 
-        self.editor = EditorManager(subjects, logger, documents)
-        self.panel = PanelManager(subjects, logger)
-        self.sidebar = SideBarManager(subjects, logger)
+        self.editor = EditorManager(subjects, logger, documents, toaster)
+        self.panel = PanelManager(subjects, logger, toaster)
+        self.sidebar = SideBarManager(subjects, logger, toaster)
 
-        self.logger.info("ViewManager initialized.")
+        self.__logger.info("ViewManager initialized.")
 
     def serialize(self) -> dict:
         return {

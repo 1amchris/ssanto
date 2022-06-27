@@ -20,7 +20,8 @@ class ToastAction(Serializable):
         }
 
     def __call__(self, *args, **kwargs):
-        self.action(*args, **kwargs)
+        if self.action is not None:
+            self.action(*args, **kwargs)
 
 
 class ToastSeverity(Enum):
@@ -97,19 +98,22 @@ class ToastsManager:
             actions=actions,
             source=source,
             closeable=closeable,
-            close_callback=lambda: self.remove_toast(toast),
+            close_callback=lambda: self.remove_toast(toast, fail_quietly=True),
         )
         self.__toasts.value().append(toast)
         self.__toasts.update()
 
         self.__logger.info(f"[Toast Manager] Created toast with id {toast.id}")
 
-    def remove_toast(self, toast):
-        # TODO: Perhaps we should validate that the toast exists
-        self.__toasts.value().remove(toast)
-        self.__toasts.update()
-
-        self.__logger.info(f"[Toast Manager] Removed toast with id {toast.id}")
+    def remove_toast(self, toast, fail_quietly=False):
+        try:
+            self.__toasts.value().remove(toast)
+            self.__toasts.update()
+            self.__logger.info(f"[Toast Manager] Removed toast with id {toast.id}")
+        except ValueError as e:
+            if not fail_quietly:
+                self.__logger.error(f"[Toast Manager] Toast not found {toast.id}")
+                raise e from None
 
     def get_toasts(self):
         return self.__toasts.value()
@@ -142,12 +146,18 @@ class ToastsManager:
         self.__logger.info(f"[Toast Manager] Action triggered {actionId} for toast {toastId}")
         self.remove_toast(toast)
 
-    # shortcut for convenience
+    # shortcuts (convenient)
     def info(self, *args, **kwargs):
-        self.add_toast(*args, **kwargs, severity=ToastSeverity.INFO)
+        kwargs["severity"] = ToastSeverity.INFO
+        kwargs["duration"] = kwargs["duration"] if "duration" in kwargs else 5
+        self.add_toast(*args, **kwargs)
 
     def warn(self, *args, **kwargs):
-        self.add_toast(*args, **kwargs, severity=ToastSeverity.WARNING)
+        kwargs["severity"] = ToastSeverity.WARNING
+        kwargs["duration"] = kwargs["duration"] if "duration" in kwargs else 10
+        self.add_toast(*args, **kwargs)
 
     def error(self, *args, **kwargs):
-        self.add_toast(*args, **kwargs, severity=ToastSeverity.ERROR)
+        kwargs["severity"] = ToastSeverity.ERROR
+        kwargs["duration"] = kwargs["duration"] if "duration" in kwargs else None
+        self.add_toast(*args, **kwargs)

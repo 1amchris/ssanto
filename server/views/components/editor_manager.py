@@ -1,16 +1,21 @@
-from files.serializable import Serializable
 from files.document_manager import DocumentsManager
+from files.errors import UnsavedFileError
+from files.serializable import Serializable
 from logger.log_manager import LogsManager
 from subjects.subjects_manager import SubjectsManager
 from views.groups import ViewGroup
 from views.view_controller_registry import ViewControllerRegistry
+from toasts_manager import ToastsManager, ToastAction
 
 
 class EditorManager(Serializable):
-    def __init__(self, subjects: SubjectsManager, logger: LogsManager, documents: DocumentsManager):
+    def __init__(
+        self, subjects: SubjectsManager, logger: LogsManager, documents: DocumentsManager, toaster: ToastsManager
+    ):
         super().__init__()
         self.subjects = subjects
         self.logger = logger
+        self.toaster = toaster
         self.documents = documents
 
         initial_group = ViewGroup()
@@ -114,7 +119,7 @@ class EditorManager(Serializable):
             self.__editor_views.notify(groups)
             return self.select_group(active_views[0])
 
-    def remove_view(self, view_uri: str, group_id: str = None, save: bool = False):
+    def remove_view(self, view_uri: str, group_id: str = None, save: bool = False, allow_closing_if_modified=False):
         groups = self.__editor_views.value()
         group_id = group_id if group_id else self.__active_views.value()[0]
         group = next(filter(lambda group: group.uri == group_id, groups), None)
@@ -130,7 +135,7 @@ class EditorManager(Serializable):
         else:
             try:
                 source_uri = next(filter(lambda v: v.uri == view_uri, group.views)).source
-                self.documents.close(source_uri, save=save)
+                self.documents.close(source_uri, save=save, allow_closing_if_modified=allow_closing_if_modified)
                 group.views = list(filter(lambda v: v.uri != view_uri, group.views))
                 group.active.remove(view_uri)
 
@@ -151,18 +156,41 @@ class EditorManager(Serializable):
                 self.__active_views.notify(active)
                 return view_uri
 
+            except UnsavedFileError as e:
+                self.logger.error(
+                    f"[Editor] An attempt at closing the document was made. The operation failed, as the document contained unsaved modifications."
+                )
+                self.toaster.error(
+                    message=f"Unsaved modifications in {source_uri.split('/')[-1]}. What would you like to do?",
+                    duration=None,
+                    actions=[
+                        ToastAction("Save and close", lambda *_, **__: self.remove_view(view_uri, group_id, save=True)),
+                        ToastAction(
+                            "Close without saving",
+                            lambda *_, **__: self.remove_view(
+                                view_uri,
+                                group_id,
+                                save=False,
+                                allow_closing_if_modified=True,
+                            ),
+                        ),
+                        ToastAction("Cancel", None),
+                    ],
+                )
+
             except IOError as e:
                 self.logger.error(f"[Editor] Failed to close document {source_uri}: {e}")
                 raise e
 
-    def remove_all(self, save: bool = False):
+    def remove_all(self, save: bool = False, allow_closing_if_modified=False):
         new_groups = []
         for group in self.__editor_views.value():
             group_views = []
             for view in group.views:
                 try:
-                    self.documents.close(view.source, save=save)
-                except IOError:
+                    self.documents.close(view.source, save=save, allow_closing_if_modified=allow_closing_if_modified)
+
+                except UnsavedFileError:
                     group_views += [view]
 
             if len(group_views) > 0:
@@ -177,7 +205,7 @@ class EditorManager(Serializable):
             self.__editor_views.notify(new_groups)
             self.__active_views.notify(new_active)
             self.logger.error(f"[Editor] Failed to close all documents.")
-            raise IOError("Failed to close all documents.")
+            raise UnsavedFileError("Failed to close all documents.")
 
         new_groups = [ViewGroup()]
         new_active = [new_groups[0].uri]

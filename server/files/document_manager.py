@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import Union
 from files.document_editor_registry import DocumentEditorRegistry
 from files.document_editors.document_editor import DocumentEditor
+from files.errors import UnsavedFileError
 from logger.log_manager import LogsManager
 
 
@@ -56,7 +57,7 @@ class DocumentsManager:
             if not allow_closing_if_modified and self.__documents[uri].is_modified:
                 message = "Document is modified and cannot be closed. Use save=True option to save it automatically or allow_closing_if_modified=True to discard changes."
                 self.__logger.error(f"[Documents] {message}")
-                raise IOError(message)
+                raise UnsavedFileError(message)
 
             del self.__documents[uri]
             del self.__documents_refs[uri]

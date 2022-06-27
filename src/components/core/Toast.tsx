@@ -54,7 +54,7 @@ function Toast({ id, message, severity, source, actions, closeable }: any) {
                 color: severityIcon.color,
               })}
             </span>
-            <div className="text-wrap" style={{ fontSize: 14 }}>
+            <div className="text-break" style={{ fontSize: 14 }}>
               {message}
             </div>
           </div>
@@ -84,7 +84,7 @@ function Toast({ id, message, severity, source, actions, closeable }: any) {
         </div>
       )}
       <div className="d-flex flex-row justify-content-between align-content-center mt-3">
-        <div className="d-flex align-items-center text-wrap text-muted">
+        <div className="d-flex align-items-center text-muted text-truncate">
           <span style={{ fontSize: 12 }}>{source}</span>
         </div>
         {actions && (
