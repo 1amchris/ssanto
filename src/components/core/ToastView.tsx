@@ -3,13 +3,6 @@ import Toast from 'components/core/Toast';
 import { useAppSelector } from 'store/hooks';
 import { selectToaster } from 'store/reducers/toaster';
 
-export enum ToastSeverity {
-  /* eslint-disable no-unused-vars */
-  Info = 'info',
-  Warning = 'warning',
-  Error = 'error',
-}
-
 function ToastView() {
   const toasts = useAppSelector(selectToaster).toasts;
 
