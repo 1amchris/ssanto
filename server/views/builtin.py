@@ -3,19 +3,19 @@ from views.views import ViewMetadata
 
 class FileExplorerView(ViewMetadata):
     def __init__(self, root: str):
-        super().__init__("explorer", root, "file-explorer")
+        super().__init__(name="explorer", source=root, view_type="file-explorer")
 
 
 class FileSearcherView(ViewMetadata):
     def __init__(self, root: str):
-        super().__init__("search", root, "file-searcher")
+        super().__init__(name="search", source=root, view_type="file-searcher")
 
 
 class OutputView(ViewMetadata):
     def __init__(self, root: str):
-        super().__init__("output", root, "output")
+        super().__init__(name="output", source=root, view_type="output")
 
 
 class ProblemExplorerView(ViewMetadata):
     def __init__(self, root: str):
-        super().__init__("problems-explorer", root, "problems-explorer")
+        super().__init__(name="problems-explorer", source=root, view_type="problems-explorer")
