@@ -3,14 +3,14 @@
 enum ServerCallTarget {
   FilesGetFiles = 'files.get_files',
 
-  LoggerLog = 'logger.add_log',
-
   ToasterCloseToast = 'toaster.close_toast',
   ToasterTriggerAction = 'toaster.trigger_action',
 
   WorkspaceOpenView = 'workspace.open_view',
   WorkspaceOpenWorkspace = 'workspace.open_workspace',
   WorkspaceCloseWorkspace = 'workspace.close_workspace',
+
+  WorkspaceViewsPublishChanges = 'workspace.views.publish_changes',
 
   WorkspaceViewsSaveAllEditors = 'workspace.views.editor.save_all',
   WorkspaceViewsSaveActiveEditor = 'workspace.views.editor.save',
@@ -20,7 +20,6 @@ enum ServerCallTarget {
   WorkspaceViewsSelectEditor = 'workspace.views.editor.select_view',
   WorkspaceViewsOpenEditor = 'workspace.views.editor.open_view',
   WorkspaceViewsCloseEditor = 'workspace.views.editor.close_view',
-  WorkspaceViewsPublishChanges = 'workspace.views.publish_changes',
 
   WorkspaceViewsSelectPanel = 'workspace.views.panel.select_activity',
   WorkspaceViewsSelectPanelView = 'workspace.views.panel.select_view',

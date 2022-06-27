@@ -104,11 +104,6 @@ async def main():
     server.bind_command("workspace.views.sidebar.select_view", workspace.views.sidebar.select_view)
     server.bind_command("workspace.views.sidebar.select_activity", workspace.views.sidebar.select_activity)
 
-    # Are they actually required?
-    server.bind_command("logger.add_log", logger.add_log)
-    server.bind_command("logger.get_logs", logger.get_logs)
-    ###
-
     analysis = Analysis(subjects, files)
     server.bind_command("analysis.update", analysis.update)
     server.bind_command("analysis.set_study_area", analysis.receive_study_area)
