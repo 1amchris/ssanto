@@ -112,7 +112,7 @@ function Main() {
             ),
         },
       ],
-      factory: React.lazy(() => import('components/views/Map')),
+      factory: React.lazy(() => import('components/views/SSantoMap')),
     },
     ['ssanto-settings']: {
       actions: [
