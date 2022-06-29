@@ -19,12 +19,31 @@ function FileSelector({ setting }: FileEditorProps) {
     string | undefined
   >(undefined);
 
+  const files = ([] as (string | undefined)[]).concat(setting.value);
   const id = uniqueId('file-');
   return (
-    <div>
+    <div className="d-flex flex-column">
       <label htmlFor={id} className="form-label form-label-sm visually-hidden">
         {setting.displayName}
       </label>
+      {setting.value && (
+        <small
+          key={`${setting.uri}-${setting.value}`}
+          className="text-secondary text-wrap d-flex align-items-center"
+        >
+          Selected file: {files[0]?.split('/').slice(-1)[0]}
+          {files.length > 1 &&
+            ` and ${files.length - 1} ${
+              files.length - 1 > 1 ? 'others' : 'other'
+            }`}
+          <a
+            onClick={() => setting.onValidChange?.(null)}
+            className="btn btn-sm text-danger"
+          >
+            clear
+          </a>
+        </small>
+      )}
       <input
         accept={setting.accept}
         multiple={setting.multiple}

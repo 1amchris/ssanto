@@ -9,7 +9,7 @@
     },
     "createdOn": "2022-01-03",
     "modifiedOn": "2022-06-28",
-    "studyArea": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/ile_de_montreal/terre_shp.shp"
+    "studyArea": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/Espace_Vert.shp"
   },
   "map": {
     "cellSize": 25,

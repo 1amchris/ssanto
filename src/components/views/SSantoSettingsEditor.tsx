@@ -24,7 +24,7 @@ function SSantoSettingsEditor({ view }: any) {
 
   const updateFile = (field: string) => (value: FileList) => {
     updateField(field)(
-      value.length > 0 ? `file://${(value[0] as any).path}` : null
+      value?.length > 0 ? `file://${(value[0] as any).path}` : null
     );
   };
 
