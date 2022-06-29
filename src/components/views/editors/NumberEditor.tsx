@@ -20,6 +20,8 @@ function NumberEditor({ setting }: NumberEditorProps) {
     string | undefined
   >(undefined);
 
+  const [focused, setFocused] = React.useState(false);
+
   const id = uniqueId('number-');
   return (
     <div>
@@ -27,7 +29,11 @@ function NumberEditor({ setting }: NumberEditorProps) {
         {setting.displayName}
       </label>
       <input
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        key={setting.uri + `${focused ? '' : setting.value}`}
         style={{ maxWidth: 250 }}
+        disabled={setting.disabled}
         onChange={({ target: { value } }) => {
           const numberValue = Number(value);
           for (const validator of setting.validators || []) {

@@ -27,6 +27,7 @@ function FileSelector({ setting }: FileEditorProps) {
       <input
         accept={setting.accept}
         multiple={setting.multiple}
+        disabled={setting.disabled}
         style={{ maxWidth: 500 }}
         onChange={({ target: { files } }) => {
           for (const validator of setting.validators || []) {

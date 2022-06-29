@@ -14,6 +14,7 @@ export interface ISettingProps<T> {
   displayName: string;
   shortDescription: string;
   family?: string;
+  disabled?: boolean;
   onValidChange?: (value: T) => void;
 }
 

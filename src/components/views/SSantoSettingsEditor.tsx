@@ -78,6 +78,7 @@ function SSantoSettingsEditor({ view }: any) {
       family: 'Analysis',
       shortDescription: 'The date the analysis was created.',
       max: new Date().toISOString().split('T')[0],
+      disabled: true,
       onValidChange: updateField('analysis.createdOn'),
     } as ISettingProps<string>,
     {
@@ -89,6 +90,7 @@ function SSantoSettingsEditor({ view }: any) {
       shortDescription: 'The date the analysis was last modified.',
       min: view.content?.analysis?.createdOn,
       max: new Date().toISOString().split('T')[0],
+      disabled: true,
       onValidChange: updateField('analysis.modifiedOn'),
     } as ISettingProps<string>,
   ];

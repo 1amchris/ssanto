@@ -17,6 +17,8 @@ function TextEditor({ setting }: TextEditorProps) {
     string | undefined
   >(undefined);
 
+  const [focused, setFocused] = React.useState(false);
+
   const id = uniqueId('text-');
   return (
     <div>
@@ -24,7 +26,11 @@ function TextEditor({ setting }: TextEditorProps) {
         {setting.displayName}
       </label>
       <input
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        key={setting.uri + `${focused ? '' : setting.value}`}
         style={{ maxWidth: 500 }}
+        disabled={setting.disabled}
         onChange={({ target: { value } }) => {
           for (const validator of setting.validators || []) {
             if (!validator.assert(value)) {

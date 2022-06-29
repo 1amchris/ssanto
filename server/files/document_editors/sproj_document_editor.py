@@ -1,10 +1,14 @@
 from files.document_editors.json_document_editor import JSONDocumentEditor
+from datetime import datetime
 
 
 class SSantoDocumentEditor(JSONDocumentEditor):
     default_view = "ssanto-map"
 
     def _update(self, changes: dict):
+
+        changes["analysis.modifiedOn"] = str(datetime.date(datetime.now()))
+
         for segments in filter(None, map(lambda key: key.split("."), changes.keys())):
             scope = self.content
             for segment in segments[:-1]:

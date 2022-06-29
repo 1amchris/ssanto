@@ -23,6 +23,8 @@ function SelectEditor({ setting }: SelectEditorProps) {
     string | undefined
   >(undefined);
 
+  const [focused, setFocused] = React.useState(false);
+
   const id = uniqueId('select-');
   return (
     <div>
@@ -30,9 +32,13 @@ function SelectEditor({ setting }: SelectEditorProps) {
         {setting.displayName}
       </label>
       <select
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        key={setting.uri + `${focused ? '' : setting.value}`}
         className="form-select form-select-sm"
         id={id}
         defaultValue={setting.value}
+        disabled={setting.disabled}
         style={{ maxWidth: 400 }}
         onChange={({ target: { value } }) => {
           for (const validator of setting.validators || []) {

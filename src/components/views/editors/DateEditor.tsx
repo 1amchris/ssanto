@@ -18,6 +18,8 @@ function DateEditor({ setting }: DateEditorProps) {
     string | undefined
   >(undefined);
 
+  const [focused, setFocused] = React.useState(false);
+
   const id = uniqueId('date-');
   return (
     <div>
@@ -25,7 +27,11 @@ function DateEditor({ setting }: DateEditorProps) {
         {setting.displayName}
       </label>
       <input
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        key={setting.uri + `${focused ? '' : setting.value}`}
         style={{ maxWidth: 150 }}
+        disabled={setting.disabled}
         onChange={({ target: { value } }) => {
           for (const validator of setting.validators || []) {
             if (!validator.assert(value)) {
