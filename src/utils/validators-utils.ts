@@ -1,7 +1,7 @@
 namespace ValidatorsUtils {
   export const required = {
     assert: (value: any) => value || value === 0 || value === false,
-    message: (value: string) => `Required`,
+    message: (value: any) => `Required`,
   };
 
   export const email = {

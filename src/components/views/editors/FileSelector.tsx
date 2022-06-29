@@ -9,6 +9,7 @@ export interface FileEditorProps {
 export interface FileSettingProps
   extends ISettingWithValidationProps<FileList | null> {
   type: 'file';
+  value?: string;
   accept?: string;
   multiple?: boolean;
 }

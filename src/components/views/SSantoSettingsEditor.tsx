@@ -8,6 +8,7 @@ import ValidatorsUtils from 'utils/validators-utils';
 import { useAppDispatch } from 'store/hooks';
 import { call } from 'store/reducers/server';
 import ServerCallTarget from 'enums/ServerCallTarget';
+import { FileSettingProps } from 'components/views/editors/FileSelector';
 
 function SSantoSettingsEditor({ view }: any) {
   const dispatch = useAppDispatch();
@@ -18,6 +19,12 @@ function SSantoSettingsEditor({ view }: any) {
         target: ServerCallTarget.WorkspaceViewsPublishChanges,
         args: [view.uri, changes],
       })
+    );
+  };
+
+  const updateFile = (field: string) => (value: FileList) => {
+    updateField(field)(
+      value.length > 0 ? `file://${(value[0] as any).path}` : null
     );
   };
 
@@ -70,6 +77,18 @@ function SSantoSettingsEditor({ view }: any) {
       validators: [ValidatorsUtils.url],
       onValidChange: updateField('analysis.author.website'),
     } as ISettingWithValidationProps<string>,
+    {
+      // TODO: it would be great if the user could have a list of files to select from instead
+      uri: 'analysis.studyArea',
+      type: 'file',
+      displayName: 'Study Area',
+      family: 'Analysis',
+      value: view.content?.analysis?.studyArea,
+      shortDescription: 'The study area of the analysis.',
+      validators: [ValidatorsUtils.required],
+      accept: '.shp',
+      onValidChange: updateFile('analysis.studyArea'),
+    } as FileSettingProps,
     {
       uri: 'analysis.createdOn',
       type: 'date',
