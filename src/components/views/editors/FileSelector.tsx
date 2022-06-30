@@ -31,7 +31,7 @@ function FileSelector({ setting }: FileEditorProps) {
           key={`${setting.uri}-${setting.value}`}
           className="text-secondary text-wrap d-flex align-items-center"
         >
-          Selected file: {files[0]?.split('/').slice(-1)[0]}
+          Selected: {files[0]?.split('/').slice(-1)[0]}
           {files.length > 1 &&
             ` and ${files.length - 1} ${
               files.length - 1 > 1 ? 'others' : 'other'

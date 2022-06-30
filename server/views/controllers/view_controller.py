@@ -20,6 +20,7 @@ class ViewController(Serializable):
 
         self.subscriptions = (
             [
+                self.document.subscribe(DocumentEvent.ERROR, self.on_document_error, latent=True),
                 self.document.subscribe(DocumentEvent.UPDATE, self.on_document_change),
                 self.document.subscribe(DocumentEvent.SAVE, self.on_document_save),
             ]
@@ -64,6 +65,9 @@ class ViewController(Serializable):
 
     # All derived class should redefine the methods below if needed
     # These methods are called when the view is activated, and when the document is updated
+    def on_document_error(self, document: DocumentEditor, error: Exception):
+        raise error
+
     def on_document_change(self, document: DocumentEditor):
         if self.onchange is not None:
             self.onchange(self)

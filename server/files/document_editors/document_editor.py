@@ -7,6 +7,7 @@ from files.utils import uri_to_path
 class DocumentEvent(Enum):
     SAVE = "save"
     UPDATE = "update"
+    ERROR = "error"
 
 
 class DocumentSubscription:
@@ -37,29 +38,40 @@ class DocumentEditor(Serializable):
     def serialize(self) -> dict:
         return {"uri": self.uri, "is_modified": self.is_modified, "content": self.content}
 
-    def subscribe(self, event: DocumentEvent, callback: Callable, latent: bool = False) -> DocumentSubscription:
+    def subscribe(
+        self, event: DocumentEvent, callback: Callable, latent: bool = False, *args, **kwargs
+    ) -> DocumentSubscription:
         if event not in self.__subscriptions:
             self.__subscriptions[event] = []
         subscription = DocumentSubscription(callback)
         self.__subscriptions[event].append(subscription)
         if not latent:
-            subscription(self)
+            subscription(self, *args, **kwargs)
         return subscription
 
     # The "changes" dictionary is a dictionary of changes to be applied to the document
     # There is no standard structure here. It is based on the needs of the derived editor.
     def update(self, changes: dict):
-        if self._update(changes):
-            self.is_modified = True
-            self.notify(DocumentEvent.UPDATE)
+        try:
+            if self._update(changes):
+                self.is_modified = True
+                self.notify(DocumentEvent.UPDATE)
+        except Exception as e:
+            self.notify(DocumentEvent.ERROR, e)
 
     def save(self):
-        if self._save():
-            self.is_modified = False
-            self.notify(DocumentEvent.SAVE)
+        try:
+            if self._save():
+                self.is_modified = False
+                self.notify(DocumentEvent.SAVE)
+        except Exception as e:
+            self.notify(DocumentEvent.ERROR, e)
 
     def get_content(self):
-        return self._get_content()
+        try:
+            return self._get_content()
+        except Exception as e:
+            self.notify(DocumentEvent.ERROR, e)
 
     def get_default_view_type(self) -> str:
         if self.default_view is None:
@@ -69,11 +81,11 @@ class DocumentEditor(Serializable):
         else:
             return self.default_view
 
-    def notify(self, event: DocumentEvent):
+    def notify(self, event: DocumentEvent, *args, **kwargs):
         if event in self.__subscriptions:
             self.__subscriptions[event] = list(filter(None, self.__subscriptions[event]))
             for subscription in self.__subscriptions[event]:
-                subscription(self)
+                subscription(self, *args, **kwargs)
 
     # The following methods should be overriden by the derived editor to specify behaviour
     def _update(self, changes: dict):
