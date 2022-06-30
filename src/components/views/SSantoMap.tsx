@@ -14,28 +14,28 @@ import { useAppDispatch } from 'store/hooks';
 import { call } from 'store/reducers/server';
 import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
-// import ColorsUtils from 'utils/colors-utils';
+import ColorsUtils from 'utils/colors-utils';
 // import LayersGroups from 'components/map/LayersGroups';
 // import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 
-// const style = (feature: any) => {
-//   if (feature.properties !== undefined && feature.properties.sutability >= 0) {
-//     const color = ColorsUtils.greenToRed(feature.properties.sutability);
-//     return {
-//       color: color,
-//       fillColor: color,
-//       fillOpacity: 0.65,
-//       weight: 0.35,
-//     };
-//   } else if (
-//     feature.properties !== undefined &&
-//     feature.properties.sutability < 0
-//   ) {
-//     return { color: '#00000000', fillOpacity: 0 };
-//   } else {
-//     return { color: '#0000ff', fillOpacity: 0 };
-//   }
-// };
+const style = (feature: any) => {
+  if (feature.properties !== undefined && feature.properties.sutability >= 0) {
+    const color = ColorsUtils.greenToRed(feature.properties.sutability);
+    return {
+      color: color,
+      fillColor: color,
+      fillOpacity: 0.65,
+      weight: 0.35,
+    };
+  } else if (
+    feature.properties !== undefined &&
+    feature.properties.sutability < 0
+  ) {
+    return { color: '#00000000', fillOpacity: 0 };
+  } else {
+    return { color: '#0000ff', fillOpacity: 0 };
+  }
+};
 
 function SSantoMap({ view }: any) {
   const dispatch = useAppDispatch();
@@ -60,17 +60,40 @@ function SSantoMap({ view }: any) {
     content: { map },
   } = view;
 
+  const findLayerOverlayByName = (name: string) => {
+    const possibles = Object.entries(map?.layers?.overlays)
+      .filter(([, layer]) => (layer as any).name === name)
+      .map(([key]) => key);
+
+    return possibles.length > 0 ? possibles[0] : null;
+  };
+
   const MapEvents = () => {
     useMapEvents({
       baselayerchange: e => {
         publishChanges('map.layers.base', e.name);
       },
       overlayadd: e => {
-        // publishChanges(`map.layers.overlays.${e.name}`);
-        console.log('overlayadd', e);
+        // For lack of a better way to do this, we'll just find it using it's name
+        const overlayId = findLayerOverlayByName(e.name);
+        if (overlayId !== null) {
+          publishChanges(`map.layers.overlays.${overlayId}.checked`, true);
+        } else {
+          console.warn(
+            `Could not find layer ${e.name}. Couldn't publish changes`
+          );
+        }
       },
       overlayremove: e => {
-        console.log('overlayremove', e);
+        // For lack of a better way to do this, we'll just find it using it's name
+        const overlayId = findLayerOverlayByName(e.name);
+        if (overlayId !== null) {
+          publishChanges(`map.layers.overlays.${overlayId}.checked`, false);
+        } else {
+          console.warn(
+            `Could not find layer ${e.name}. Couldn't publish changes`
+          );
+        }
       },
       zoomend: e => {
         publishChanges('map.coords.zoom', e.target.getZoom());
@@ -125,18 +148,20 @@ function SSantoMap({ view }: any) {
           <TileLayer url="" />
         </LayersControl.BaseLayer>
         <LayerGroup
-          key={`${uri}-${map?.studyArea?.geojson}`}
+          key={`${uri}-${JSON.stringify(map?.layers?.overlays?.studyArea)}`}
           // key={`${group}/${Object.keys(layers).reduce(
           //   (prev, curr) => prev + curr
           // )}`}
         >
           {/* {Object.entries(layers).map(([name, layer]: [string, Layer]) => ( */}
           <LayersControl.Overlay
-            checked={map?.studyArea?.checked != false}
-            name={map?.studyArea?.name}
+            checked={map?.layers?.overlays?.studyArea?.checked != false}
+            name={map?.layers?.overlays?.studyArea?.name}
           >
-            {/* <GeoJSON data={layer.geojson}  /> */}
-            <GeoJSON data={map?.studyArea?.geojson} />
+            <GeoJSON
+              data={map?.layers?.overlays?.studyArea?.geojson}
+              style={style}
+            />
           </LayersControl.Overlay>
           {/* ))} */}
         </LayerGroup>

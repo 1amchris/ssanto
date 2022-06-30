@@ -86,7 +86,7 @@ function SSantoSettingsEditor({ view }: any) {
       value: view.content?.analysis?.studyArea,
       shortDescription: 'The study area of the analysis.',
       validators: [ValidatorsUtils.required],
-      accept: '.shp, .geojson',
+      accept: '.shp, .geojson, .gpkg',
       onValidChange: updateFile('analysis.studyArea'),
     } as FileSettingProps,
     {

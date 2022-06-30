@@ -3,6 +3,8 @@ from files.document_editors.json_document_editor import JSONDocumentEditor
 from datetime import datetime
 import geopandas
 import json
+import rasterio
+import numpy as np
 
 
 class StudyAreaHelper:
@@ -10,13 +12,31 @@ class StudyAreaHelper:
     def get_registry():
         return [
             (lambda file: file is None, lambda *_: None),
-            (lambda file: file.endswith(".shp"), StudyAreaHelper.shapefile_to_geojson),
-            (lambda file: file.endswith(".geojson"), StudyAreaHelper.geojsonfile_to_geojson),
+            (lambda file: file.lower().endswith(".shp"), StudyAreaHelper.shapefile_to_geojson),
+            (lambda file: file.lower().endswith(".geojson"), StudyAreaHelper.geojsonfile_to_geojson),
+            # (
+            #     lambda file: file.lower().endswith(".tif") or file.lower().endswith(".tiff"),
+            #     StudyAreaHelper.rasterfile_to_geojson,
+            # ),
         ]
 
     @staticmethod
     def shapefile_to_geojson(file):
-        return json.loads(geopandas.read_file(file).to_json())
+        return json.loads(geopandas.read_file(file).to_crs("epsg:4326").to_json())
+
+    @staticmethod
+    def rasterfile_to_geojson(file):
+        # TODO: Takes roughly forever to work, and eats memory until it crashes.
+        with rasterio.open(file) as f:
+            data = f.meta
+            image = f.read()  # first band
+            image = np.int16(image)
+            geoms = list(
+                {"properties": {"suitability": v}, "geometry": s}
+                for s, v in rasterio.features.shapes(image, mask=None, transform=data["transform"])
+            )
+            gdf = geopandas.GeoDataFrame.from_features(geoms, crs=data["crs"])
+            return json.loads(gdf.to_crs("epsg:4326").to_json())
 
     @staticmethod
     def geojsonfile_to_geojson(file):
@@ -58,7 +78,7 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         study_area_key = "analysis.studyArea"
         if study_area_key in changes and changes[study_area_key] != self.__get_value(study_area_key):
             study_area_uri = changes[study_area_key]
-            study_area_root = "map.studyArea"
+            study_area_root = "map.layers.overlays.studyArea"
             if study_area_uri is not None:
                 geojson = StudyAreaHelper.convert_to_geojson(study_area_uri[len("file://") :])
                 changes[f"{study_area_root}.geojson"] = geojson
@@ -67,11 +87,14 @@ class SSantoDocumentEditor(JSONDocumentEditor):
                 changes[f"{study_area_root}.center"] = StudyAreaHelper.get_center_from_geojson(geojson)
             else:
                 changes[study_area_key] = None
+                changes[study_area_root] = None
 
         for segments in filter(None, map(lambda key: key.split("."), changes.keys())):
             scope = self.content
             for segment in segments[:-1]:
-                if segment not in scope:
+                # The former is technically better, but it will overwrite any existing value, which sucks for debugging and hides the issues.
+                # if segment not in scope or not isinstance(scope[segment], dict):
+                if segment not in scope or scope[segment] is None:
                     scope[segment] = {}
                 scope = scope[segment]
             scope[segments[-1]] = changes[".".join(segments)]
