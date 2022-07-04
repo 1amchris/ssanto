@@ -19,8 +19,8 @@ import ColorsUtils from 'utils/colors-utils';
 // import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 
 const style = (feature: any) => {
-  if (feature.properties !== undefined && feature.properties.sutability >= 0) {
-    const color = ColorsUtils.greenToRed(feature.properties.sutability);
+  if (feature.properties !== undefined && feature.properties.suitability >= 0) {
+    const color = ColorsUtils.greenToRed(feature.properties.suitability);
     return {
       color: color,
       fillColor: color,
@@ -29,7 +29,7 @@ const style = (feature: any) => {
     };
   } else if (
     feature.properties !== undefined &&
-    feature.properties.sutability < 0
+    feature.properties.suitability < 0
   ) {
     return { color: '#00000000', fillOpacity: 0 };
   } else {
@@ -85,13 +85,14 @@ function SSantoMap({ view }: any) {
         }
       },
       overlayremove: e => {
+        console.log('overlayadd', e);
         // For lack of a better way to do this, we'll just find it using it's name
         const overlayId = findLayerOverlayByName(e.name);
         if (overlayId !== null) {
           publishChanges(`map.layers.overlays.${overlayId}.checked`, false);
         } else {
           console.warn(
-            `Could not find layer ${e.name}. Couldn't publish changes`
+            `Couldn't find layer "${e.name}". Failed to publish changes`
           );
         }
       },
@@ -148,22 +149,19 @@ function SSantoMap({ view }: any) {
           <TileLayer url="" />
         </LayersControl.BaseLayer>
         <LayerGroup
-          key={`${uri}-${JSON.stringify(map?.layers?.overlays?.studyArea)}`}
-          // key={`${group}/${Object.keys(layers).reduce(
-          //   (prev, curr) => prev + curr
-          // )}`}
+          key={`${uri}-${JSON.stringify(map?.layers?.overlays || {})}`}
         >
-          {/* {Object.entries(layers).map(([name, layer]: [string, Layer]) => ( */}
-          <LayersControl.Overlay
-            checked={map?.layers?.overlays?.studyArea?.checked != false}
-            name={map?.layers?.overlays?.studyArea?.name}
-          >
-            <GeoJSON
-              data={map?.layers?.overlays?.studyArea?.geojson}
-              style={style}
-            />
-          </LayersControl.Overlay>
-          {/* ))} */}
+          {Object.values(map?.layers?.overlays || {}).map(
+            (overlay: any, index: number) => (
+              <LayersControl.Overlay
+                key={`${uri}-${index}-${JSON.stringify(overlay)}`}
+                checked={overlay.checked != false}
+                name={overlay.name}
+              >
+                <GeoJSON data={overlay.geojson} style={style} />
+              </LayersControl.Overlay>
+            )
+          )}
         </LayerGroup>
       </LayersControl>
 
