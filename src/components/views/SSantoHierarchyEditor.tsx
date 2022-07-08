@@ -3,17 +3,18 @@ import React, { CSSProperties } from 'react';
 import { useAppDispatch } from 'store/hooks';
 import { call } from 'store/reducers/server';
 import ServerCallTarget from 'enums/ServerCallTarget';
-import { VscEdit } from 'react-icons/vsc';
+import { VscAdd, VscEdit } from 'react-icons/vsc';
 import ReactTextareaAutosize from 'react-textarea-autosize';
 import ColorsUtils from 'utils/colors-utils';
 
-const SecondaryObjective = ({
+function SecondaryObjective({
   objective,
   style,
   className,
   onChange: changeHandler,
-}: any & { style?: CSSProperties; className: string }) => {
+}: any & { style?: CSSProperties; className: string }) {
   const [focused, setFocused] = React.useState(false);
+  const [editing, setEditing] = React.useState<string | undefined>();
 
   return (
     <div
@@ -54,6 +55,9 @@ const SecondaryObjective = ({
         style={{ resize: 'none' }}
         onClick={e => e.stopPropagation()}
         onChange={e => changeHandler('name')(e.target.value)}
+        key={editing !== 'name' && objective.name}
+        onFocus={() => setEditing('name')}
+        onBlur={() => setEditing(undefined)}
       />
       {objective.attributes?.length > 0 && (
         <div className="pt-1">
@@ -71,15 +75,16 @@ const SecondaryObjective = ({
       )}
     </div>
   );
-};
+}
 
-const PrimaryObjective = ({
+function PrimaryObjective({
   objective,
   style,
   className,
   onChange: changeHandler,
-}: any & { style?: CSSProperties; className?: string }) => {
+}: any & { style?: CSSProperties; className?: string }) {
   const [focused, setFocused] = React.useState(false);
+  const [editing, setEditing] = React.useState<string | undefined>();
 
   const secondaryObjectives = objective.secondaries || [];
 
@@ -111,6 +116,9 @@ const PrimaryObjective = ({
             className="form-control form-control-sm form-control-plaintext fw-bold text-truncate px-1"
             defaultValue={objective.name}
             onChange={e => changeHandler('name')(e.target.value)}
+            key={editing !== 'name' && objective.name}
+            onFocus={() => setEditing('name')}
+            onBlur={() => setEditing(undefined)}
           />
           {/* <button className="btn btn-sm ms-2" style={{ width: 32, height: 32 }}>
             <VscEllipsis />
@@ -122,34 +130,28 @@ const PrimaryObjective = ({
               <SecondaryObjective
                 key={objective + index}
                 objective={objective}
-                className={index < objectives.length - 1 && 'mb-2'}
+                className={'mb-2'}
                 onChange={(partialKey: string) =>
                   changeHandler(`secondaries.${index}.${partialKey}`)
                 }
               />
             )
           )}
-          {/* {secondaryObjectives.map(
-            (objective: any, index: number, objectives: any[]) => (
-              <SecondaryObjective
-                key={objective + index}
-                objective={objective}
-                className={index < objectives.length - 1 && 'mb-2'}
-              />
-            )
-          )} */}
+          <AddSecondaryObjective />
         </div>
       </div>
     </div>
   );
-};
+}
 
-const MainObjective = ({
+function MainObjective({
   objective,
   style,
   className,
   onChange: changeHandler,
-}: any & { style?: CSSProperties; className?: string }) => {
+}: any & { style?: CSSProperties; className?: string }) {
+  const [editing, setEditing] = React.useState<string | undefined>();
+
   return (
     <select
       className={
@@ -158,12 +160,60 @@ const MainObjective = ({
       style={{ maxWidth: 200, ...style }}
       onChange={e => changeHandler('main')(e.target.value)}
       defaultValue={objective}
+      key={editing !== 'main' && objective}
+      onFocus={() => setEditing('main')}
+      onBlur={() => setEditing(undefined)}
     >
       <option value="needs">Needs</option>
       <option value="opportunities">Opportunities</option>
     </select>
   );
-};
+}
+
+function AddPrimaryObjective({ style, className }: any) {
+  const [focused, setFocused] = React.useState(false);
+
+  return (
+    <div
+      className={
+        'p-2' +
+        (focused ? ' bg-light' : '') +
+        (className ? ` ${className}` : '')
+      }
+      style={{ width: 300, minWidth: 300, ...style }}
+      onFocus={() => setFocused(true)}
+      onMouseEnter={() => setFocused(true)}
+      onMouseLeave={() => setFocused(false)}
+      onBlur={() => setFocused(false)}
+    >
+      <div
+        className="p-2"
+        style={{
+          borderLeft: '2px solid',
+          borderColor: focused ? Color.Primary : 'transparent',
+        }}
+      >
+        <button
+          className="btn btn-sm btn-outline-secondary w-100 text-truncate"
+          onClick={() => alert('Adding a primary objective')}
+        >
+          <VscAdd /> Add another list
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function AddSecondaryObjective() {
+  return (
+    <button
+      className="btn btn-sm w-100 text-start"
+      onClick={() => alert('Adding a secondary objective')}
+    >
+      <VscAdd /> Add another objective
+    </button>
+  );
+}
 
 function SSantoHierarchyEditor({ view }: any) {
   const dispatch = useAppDispatch();
@@ -204,6 +254,7 @@ function SSantoHierarchyEditor({ view }: any) {
             }
           />
         ))}
+        <AddPrimaryObjective />
       </div>
     </div>
   );
