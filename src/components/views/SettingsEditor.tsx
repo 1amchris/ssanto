@@ -43,7 +43,7 @@ function SettingRow({ setting }: any) {
         className="px-2 py-1"
         style={{
           borderLeft: '2px solid',
-          borderColor: focused ? Color.Primary : '#00000000',
+          borderColor: focused ? Color.Primary : 'transparent',
         }}
       >
         <b className="small mb-2">

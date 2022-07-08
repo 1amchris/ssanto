@@ -22,6 +22,42 @@ import { call } from 'store/reducers/server';
 function Main() {
   const dispatch = useAppDispatch();
 
+  const showMap = () => ({
+    label: 'Show map',
+    iconName: 'VscGlobe',
+    action: ({ view }: ViewActionCallbackProps) =>
+      dispatch(
+        call({
+          target: ServerCallTarget.WorkspaceOpenView,
+          args: [view.source, 'ssanto-map'],
+        } as CallModel)
+      ),
+  });
+
+  const showSettings = () => ({
+    label: 'Show Settings',
+    iconName: 'VscSettings',
+    action: ({ view }: ViewActionCallbackProps) =>
+      dispatch(
+        call({
+          target: ServerCallTarget.WorkspaceOpenView,
+          args: [view.source, 'ssanto-settings'],
+        } as CallModel)
+      ),
+  });
+
+  const showObjectiveHierarchy = () => ({
+    label: 'Show Objective Hierarchy Editor',
+    iconName: 'VscTypeHierarchy',
+    action: ({ view }: ViewActionCallbackProps) =>
+      dispatch(
+        call({
+          target: ServerCallTarget.WorkspaceOpenView,
+          args: [view.source, 'ssanto-hierarchy'],
+        } as CallModel)
+      ),
+  });
+
   const [factories, setFactories] = useState({
     ['file-explorer']: {
       actions: [
@@ -99,37 +135,19 @@ function Main() {
       factory: React.lazy(() => import('components/views/ProblemsExplorer')),
     },
     ['ssanto-map']: {
-      actions: [
-        {
-          label: 'Show Settings',
-          iconName: 'VscSettings',
-          action: ({ view }: ViewActionCallbackProps) =>
-            dispatch(
-              call({
-                target: ServerCallTarget.WorkspaceOpenView,
-                args: [view.source, 'ssanto-settings'],
-              } as CallModel)
-            ),
-        },
-      ],
+      actions: [showObjectiveHierarchy(), showSettings()],
       factory: React.lazy(() => import('components/views/SSantoMap')),
     },
     ['ssanto-settings']: {
-      actions: [
-        {
-          label: 'Show map',
-          iconName: 'VscGlobe',
-          action: ({ view }: ViewActionCallbackProps) =>
-            dispatch(
-              call({
-                target: ServerCallTarget.WorkspaceOpenView,
-                args: [view.source, 'ssanto-map'],
-              } as CallModel)
-            ),
-        },
-      ],
+      actions: [showObjectiveHierarchy(), showMap()],
       factory: React.lazy(
         () => import('components/views/SSantoSettingsEditor')
+      ),
+    },
+    ['ssanto-hierarchy']: {
+      actions: [showSettings(), showMap()],
+      factory: React.lazy(
+        () => import('components/views/SSantoHierarchyEditor')
       ),
     },
   });

@@ -92,10 +92,18 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         for segments in filter(None, map(lambda key: key.split("."), changes.keys())):
             scope = self.content
             for segment in segments[:-1]:
+
+                # check if the scope is a list
+                if isinstance(scope, list):
+                    segment = int(segment)
+                    if segment >= len(scope):
+                        scope.append({})
+
                 # The former is technically better, but it will overwrite any existing value, which sucks for debugging and hides the issues.
                 # if segment not in scope or not isinstance(scope[segment], dict):
-                if segment not in scope or scope[segment] is None:
+                elif segment not in scope or scope[segment] is None:
                     scope[segment] = {}
+
                 scope = scope[segment]
             scope[segments[-1]] = changes[".".join(segments)]
 

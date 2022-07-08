@@ -16,6 +16,7 @@ from logger.log_manager import LogsManager
 from views.builtin import FileExplorerView, FileSearcherView, ProblemExplorerView, OutputView
 from views.controllers.ssanto_map import SSantoMapViewController
 from views.controllers.ssanto_settings import SSantoSettingsViewController
+from views.controllers.ssanto_hierarchy import SSantoHierarchyViewController
 from views.manager import ViewsManager
 from views.view_controller_registry import ViewControllerRegistry
 
@@ -23,7 +24,7 @@ from analysis.analysis import Analysis
 from analysis.map import Map
 from files.file_manager import FilesManager
 from guide_builder import GuideBuilder
-from toasts_manager import ToastsManager, ToastAction
+from toasts_manager import ToastsManager
 from workspace_manager import WorkspaceManager
 
 
@@ -36,6 +37,7 @@ def populate_registries():
     controller_registry = ViewControllerRegistry()
     controller_registry["ssanto-map"] = SSantoMapViewController
     controller_registry["ssanto-settings"] = SSantoSettingsViewController
+    controller_registry["ssanto-hierarchy"] = SSantoHierarchyViewController
 
 
 def populate_views(views_manager: ViewsManager):
