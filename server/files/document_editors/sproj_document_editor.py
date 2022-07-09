@@ -109,7 +109,6 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         }
 
         changes[f"objectives.{main}.primaries.{primary}.secondaries.{index}"] = prototype
-        print({"primary": primary, "index": index, "secondaries": secondaries, "changes": changes})
         return changes
 
     def __handle_attribute_creation(
@@ -123,7 +122,7 @@ class SSantoDocumentEditor(JSONDocumentEditor):
     ):
         primary, secondary = int(primary), int(secondary)
 
-        print(f"Creating attribute with options {options} at {main}.{primary}.{secondary}")
+        raise Exception("Not implemented")
         return changes
 
     def __handle_any_change(self, changes: dict):
@@ -179,7 +178,6 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             for segment in segments[:-1]:
 
                 if isinstance(scope, dict) and segment not in scope or not isinstance(scope[segment], (dict, list)):
-                    print("segment not in scope", segment, segments, scope)
                     scope[segment] = {}
                 elif isinstance(scope, list) and segment == len(scope):
                     scope.append({})
@@ -187,7 +185,6 @@ class SSantoDocumentEditor(JSONDocumentEditor):
                 scope = scope[segment]
 
             res = changes[".".join(map(str, segments))]
-            print("res", res, scope, type(scope))
             if isinstance(scope, list) and segments[-1] >= len(scope):
                 scope.append(res)
             else:
