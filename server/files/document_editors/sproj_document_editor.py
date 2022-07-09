@@ -1,4 +1,6 @@
+from curses.ascii import isdigit
 from io import UnsupportedOperation
+from typing import Union
 from files.document_editors.json_document_editor import JSONDocumentEditor
 from datetime import datetime
 import geopandas
@@ -61,6 +63,72 @@ class StudyAreaHelper:
 
 class SSantoDocumentEditor(JSONDocumentEditor):
     default_view = "ssanto-map"
+    supported_create_types = {}
+    pre_update_hooks = []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.supported_create_types = {
+            "primary": self.__handle_primary_creation,
+            "secondary": self.__handle_secondary_creation,
+            "attribute": self.__handle_attribute_creation,
+        }
+        self.pre_update_hooks = [
+            self.__handle_create_directive,
+            self.__handle_any_change,
+            self.__handle_study_area_change,
+        ]
+
+    def __handle_primary_creation(self, changes: dict, type: str, main: str, options: dict = {}):
+        primaries: list = self.get_content()["objectives"][main]["primaries"]
+        index = 0 if primaries is None else len(primaries)
+
+        prototype = {
+            "name": options["name"] if "name" in options else f"Primary Objective ({index + 1})",
+            "weight": options["weight"] if "weight" in options else 1,
+            "aggregation": options["aggregation"] if "aggregation" in options else {"function": "sum"},
+            "secondaries": options["secondaries"] if "secondaries" in options else [],
+        }
+
+        changes[f"objectives.{main}.primaries.{index}"] = prototype
+        return changes
+
+    def __handle_secondary_creation(
+        self, changes: dict, type: str, main: str, primary: Union[int, str], options: dict = {}
+    ):
+        primary = int(primary)
+
+        secondaries: list = self.get_content()["objectives"][main]["primaries"][primary]["secondaries"]
+        index = 0 if secondaries is None else len(secondaries)
+
+        prototype = {
+            "name": options["name"] if "name" in options else f"Secondary Objective ({index + 1})",
+            "weight": options["weight"] if "weight" in options else 1,
+            "aggregation": options["aggregation"] if "aggregation" in options else {"function": "sum"},
+            "attributes": options["attributes"] if "attributes" in options else [],
+        }
+
+        changes[f"objectives.{main}.primaries.{primary}.secondaries.{index}"] = prototype
+        print({"primary": primary, "index": index, "secondaries": secondaries, "changes": changes})
+        return changes
+
+    def __handle_attribute_creation(
+        self,
+        changes: dict,
+        type: str,
+        main: str,
+        primary: Union[int, str],
+        secondary: Union[int, str],
+        options: dict = {},
+    ):
+        primary, secondary = int(primary), int(secondary)
+
+        print(f"Creating attribute with options {options} at {main}.{primary}.{secondary}")
+        return changes
+
+    def __handle_any_change(self, changes: dict):
+        changes["analysis.modifiedOn"] = str(datetime.date(datetime.now()))
+        return changes
 
     def __get_value(self, key):
         segments = key.split(".")
@@ -71,10 +139,7 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             scope = scope[segment]
         return scope[segments[-1]]
 
-    def _update(self, changes: dict):
-
-        changes["analysis.modifiedOn"] = str(datetime.date(datetime.now()))
-
+    def __handle_study_area_change(self, changes: dict):
         study_area_key = "analysis.studyArea"
         if study_area_key in changes and changes[study_area_key] != self.__get_value(study_area_key):
             study_area_uri = changes[study_area_key]
@@ -89,22 +154,43 @@ class SSantoDocumentEditor(JSONDocumentEditor):
                 changes[study_area_key] = None
                 changes[study_area_root] = None
 
-        for segments in filter(None, map(lambda key: key.split("."), changes.keys())):
+        return changes
+
+    def __handle_create_directive(self, changes: dict):
+        if ":create" in changes:
+            payload = changes[":create"]
+            del changes[":create"]
+
+            changes = self.supported_create_types[payload["type"]](changes, **payload)
+
+        return changes
+
+    def _update(self, changes: dict):
+
+        changes = self.__handle_any_change(changes)
+        changes = self.__handle_study_area_change(changes)
+        changes = self.__handle_create_directive(changes)
+
+        for segments in [
+            [int(key) if key.isdigit() else key for key in keys]
+            for keys in filter(None, [key.split(".") for key in changes.keys()])
+        ]:
             scope = self.content
             for segment in segments[:-1]:
 
-                # check if the scope is a list
-                if isinstance(scope, list):
-                    segment = int(segment)
-                    if segment >= len(scope):
-                        scope.append({})
-
-                # The former is technically better, but it will overwrite any existing value, which sucks for debugging and hides the issues.
-                # if segment not in scope or not isinstance(scope[segment], dict):
-                elif segment not in scope or scope[segment] is None:
+                if isinstance(scope, dict) and segment not in scope or not isinstance(scope[segment], (dict, list)):
+                    print("segment not in scope", segment, segments, scope)
                     scope[segment] = {}
+                elif isinstance(scope, list) and segment == len(scope):
+                    scope.append({})
 
                 scope = scope[segment]
-            scope[segments[-1]] = changes[".".join(segments)]
+
+            res = changes[".".join(map(str, segments))]
+            print("res", res, scope, type(scope))
+            if isinstance(scope, list) and segments[-1] >= len(scope):
+                scope.append(res)
+            else:
+                scope[segments[-1]] = res
 
         return segments is not None

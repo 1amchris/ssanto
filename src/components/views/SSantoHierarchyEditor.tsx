@@ -82,11 +82,14 @@ function PrimaryObjective({
   style,
   className,
   onChange: changeHandler,
+  onCreate: publishCreateRequest,
 }: any & { style?: CSSProperties; className?: string }) {
   const [focused, setFocused] = React.useState(false);
   const [editing, setEditing] = React.useState<string | undefined>();
 
   const secondaryObjectives = objective.secondaries || [];
+
+  console.log({ secondaryObjectives });
 
   return (
     <div
@@ -124,20 +127,32 @@ function PrimaryObjective({
             <VscEllipsis />
           </button> */}
         </div>
-        <div className="d-flex flex-column w-100 p-2 overflow-auto">
+        <div className="d-flex flex-column w-100 p-2 pb-1 overflow-auto">
           {secondaryObjectives.map(
             (objective: any, index: number, objectives: any[]) => (
               <SecondaryObjective
                 key={objective + index}
                 objective={objective}
-                className={'mb-2'}
+                className={index < objectives.length - 1 && 'mb-2'}
                 onChange={(partialKey: string) =>
                   changeHandler(`secondaries.${index}.${partialKey}`)
+                }
+                onCreate={(options: any) =>
+                  publishCreateRequest({ ...options, secondary: index })
                 }
               />
             )
           )}
-          <AddSecondaryObjective />
+        </div>
+        <div className="d-flex flex-row pt-1">
+          <AddSecondaryObjective
+            onCreate={(options: any) =>
+              publishCreateRequest({
+                ...options,
+                type: 'secondary',
+              })
+            }
+          />
         </div>
       </div>
     </div>
@@ -170,8 +185,14 @@ function MainObjective({
   );
 }
 
-function AddPrimaryObjective({ style, className }: any) {
+function AddPrimaryObjective({
+  style,
+  className,
+  onCreate: publishCreateRequest,
+}: any) {
   const [focused, setFocused] = React.useState(false);
+
+  const createDefaultOptions = {};
 
   return (
     <div
@@ -195,7 +216,7 @@ function AddPrimaryObjective({ style, className }: any) {
       >
         <button
           className="btn btn-sm btn-outline-secondary w-100 text-truncate"
-          onClick={() => alert('Adding a primary objective')}
+          onClick={() => publishCreateRequest(createDefaultOptions)}
         >
           <VscAdd /> Add another list
         </button>
@@ -204,22 +225,32 @@ function AddPrimaryObjective({ style, className }: any) {
   );
 }
 
-function AddSecondaryObjective() {
+function AddSecondaryObjective({ onCreate: publishCreateRequest }: any) {
+  const createDefaultOptions = {};
+
   return (
-    <button
-      className="btn btn-sm w-100 text-start"
-      onClick={() => alert('Adding a secondary objective')}
-    >
-      <VscAdd /> Add another objective
-    </button>
+    <div className="w-100 px-2">
+      <button
+        className="btn btn-sm w-100 text-start text-secondary"
+        onClick={() => publishCreateRequest(createDefaultOptions)}
+      >
+        <VscAdd /> Add another objective
+      </button>
+    </div>
   );
 }
 
 function SSantoHierarchyEditor({ view }: any) {
   const dispatch = useAppDispatch();
   const changeHandler = (field: string) => (value: any) => {
-    const changes = { [field]: value };
-    console.log({ changes });
+    publishChanges({ [field]: value });
+  };
+
+  const publishCreateRequest = (payload: any) => {
+    publishChanges({ ':create': payload });
+  };
+
+  const publishChanges = (changes: any) => {
     dispatch(
       call({
         target: ServerCallTarget.WorkspaceViewsPublishChanges,
@@ -231,6 +262,8 @@ function SSantoHierarchyEditor({ view }: any) {
   const mainObjective = view.content?.objectives?.main;
   const primaryObjectives =
     view.content?.objectives?.[mainObjective].primaries || [];
+
+  console.log({ primaryObjectives });
 
   return (
     <div className="d-flex flex-column h-100 w-100">
@@ -252,9 +285,24 @@ function SSantoHierarchyEditor({ view }: any) {
                 `objectives.${mainObjective}.primaries.${index}.${partialKey}`
               )
             }
+            onCreate={(options: any) =>
+              publishCreateRequest({
+                ...options,
+                main: mainObjective,
+                primary: index,
+              })
+            }
           />
         ))}
-        <AddPrimaryObjective />
+        <AddPrimaryObjective
+          onCreate={(options: any) =>
+            publishCreateRequest({
+              ...options,
+              type: 'primary',
+              main: mainObjective,
+            })
+          }
+        />
       </div>
     </div>
   );

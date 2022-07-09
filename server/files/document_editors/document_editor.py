@@ -32,7 +32,7 @@ class DocumentEditor(Serializable):
     def __init__(self, uri: str):
         self.uri: str = uri
         self.is_modified: bool = False
-        self.content = self.get_content()
+        self.content = self._get_content()
         self.__subscriptions: dict[DocumentEvent : list[DocumentSubscription]] = {}
 
     def serialize(self) -> dict:
@@ -69,7 +69,7 @@ class DocumentEditor(Serializable):
 
     def get_content(self):
         try:
-            return self._get_content()
+            return self.content if self.content is not None else self._get_content()
         except Exception as e:
             self.notify(DocumentEvent.ERROR, e)
 
