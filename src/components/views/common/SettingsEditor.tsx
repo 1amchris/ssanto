@@ -85,22 +85,22 @@ function SettingRow({ setting }: any) {
 function SettingsEditor({ settings }: any) {
   const [factories, setFactories] = useState({
     ['checkbox']: React.lazy(() => {
-      return import('components/views/editors/CheckboxEditor');
+      return import('components/views/common/editors/CheckboxEditor');
     }),
     ['date']: React.lazy(() => {
-      return import('components/views/editors/DateEditor');
+      return import('components/views/common/editors/DateEditor');
     }),
     ['file']: React.lazy(() => {
-      return import('components/views/editors/FileSelector');
+      return import('components/views/common/editors/FileSelector');
     }),
     ['number']: React.lazy(() => {
-      return import('components/views/editors/NumberEditor');
+      return import('components/views/common/editors/NumberEditor');
     }),
     ['select']: React.lazy(() => {
-      return import('components/views/editors/SelectEditor');
+      return import('components/views/common/editors/SelectEditor');
     }),
     ['text']: React.lazy(() => {
-      return import('components/views/editors/TextEditor');
+      return import('components/views/common/editors/TextEditor');
     }),
     // No text area (should be a full editor)
   });

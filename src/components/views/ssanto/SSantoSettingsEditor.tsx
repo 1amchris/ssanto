@@ -3,12 +3,12 @@ import {
   ISettingProps,
   ISettingWithValidationProps,
 } from 'models/SettingsEditorProps';
-import SettingsEditor from 'components/views/SettingsEditor';
+import SettingsEditor from 'components/views/common/SettingsEditor';
 import ValidatorsUtils from 'utils/validators-utils';
 import { useAppDispatch } from 'store/hooks';
 import { call } from 'store/reducers/server';
 import ServerCallTarget from 'enums/ServerCallTarget';
-import { FileSettingProps } from 'components/views/editors/FileSelector';
+import { FileSettingProps } from 'components/views/common/editors/FileSelector';
 
 function SSantoSettingsEditor({ view }: any) {
   const dispatch = useAppDispatch();

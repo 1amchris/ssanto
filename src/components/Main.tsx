@@ -82,7 +82,7 @@ function Main() {
           action: () => console.log('[Explorer] Collapse folders in explorer'),
         },
       ],
-      factory: React.lazy(() => import('components/views/FileExplorer')),
+      factory: React.lazy(() => import('components/views/core/FileExplorer')),
     },
     ['file-searcher']: {
       actions: [
@@ -97,7 +97,7 @@ function Main() {
           action: () => console.log('[Searcher] Clear Search Results'),
         },
       ],
-      factory: React.lazy(() => import('components/views/FileSearcher')),
+      factory: React.lazy(() => import('components/views/core/FileSearcher')),
     },
     ['output']: {
       actions: [
@@ -117,7 +117,7 @@ function Main() {
           action: () => console.log('[Output] Open Log Output File'),
         },
       ],
-      factory: React.lazy(() => import('components/views/Output')),
+      factory: React.lazy(() => import('components/views/core/Output')),
     },
     ['problems-explorer']: {
       actions: [
@@ -132,22 +132,24 @@ function Main() {
           action: () => console.log('[Problems] Turn Auto Scrolling Off'),
         },
       ],
-      factory: React.lazy(() => import('components/views/ProblemsExplorer')),
+      factory: React.lazy(
+        () => import('components/views/core/ProblemsExplorer')
+      ),
     },
     ['ssanto-map']: {
       actions: [showObjectiveHierarchy(), showSettings()],
-      factory: React.lazy(() => import('components/views/SSantoMap')),
+      factory: React.lazy(() => import('components/views/ssanto/SSantoMap')),
     },
     ['ssanto-settings']: {
       actions: [showObjectiveHierarchy(), showMap()],
       factory: React.lazy(
-        () => import('components/views/SSantoSettingsEditor')
+        () => import('components/views/ssanto/SSantoSettingsEditor')
       ),
     },
     ['ssanto-hierarchy']: {
       actions: [showSettings(), showMap()],
       factory: React.lazy(
-        () => import('components/views/SSantoHierarchyEditor')
+        () => import('components/views/ssanto/SSantoHierarchyEditor')
       ),
     },
   });

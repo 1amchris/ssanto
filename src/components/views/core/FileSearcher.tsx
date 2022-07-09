@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectFiles, setFileSelection, setFocus } from 'store/reducers/files';
 import FileMetadataModel from 'models/file/FileMetadataModel';
 import FolderMetadataModel from 'models/file/FolderMetadataModel';
-import NoWorkspaceSelected from 'components/views/NoWorkspaceSelected';
+import NoWorkspaceSelected from 'components/views/core/NoWorkspaceSelected';
 import ListView from 'components/common/ListView';
 import FormControl from 'components/forms/components/FormControl';
 import ServerCallTarget from 'enums/ServerCallTarget';
