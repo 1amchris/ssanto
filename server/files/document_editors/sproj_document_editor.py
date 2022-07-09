@@ -1,4 +1,3 @@
-from curses.ascii import isdigit
 from functools import reduce
 from io import UnsupportedOperation
 from typing import Union
