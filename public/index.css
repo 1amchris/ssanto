@@ -1,0 +1,4 @@
+/* Removes bootstrap's dropdown caret application-wide */
+.dropdown-toggle::after {
+  display: none !important;
+}

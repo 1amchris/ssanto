@@ -1,4 +1,5 @@
 from curses.ascii import isdigit
+from functools import reduce
 from io import UnsupportedOperation
 from typing import Union
 from files.document_editors.json_document_editor import JSONDocumentEditor
@@ -63,8 +64,6 @@ class StudyAreaHelper:
 
 class SSantoDocumentEditor(JSONDocumentEditor):
     default_view = "ssanto-map"
-    supported_create_types = {}
-    pre_update_hooks = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -73,8 +72,14 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             "secondary": self.__handle_secondary_creation,
             "attribute": self.__handle_attribute_creation,
         }
+        self.supported_delete_types = {
+            "primary": self.__handle_primary_deletion,
+            "secondary": self.__handle_secondary_deletion,
+            "attribute": self.__handle_attribute_deletion,
+        }
         self.pre_update_hooks = [
             self.__handle_create_directive,
+            self.__handle_delete_directive,
             self.__handle_any_change,
             self.__handle_study_area_change,
         ]
@@ -93,11 +98,24 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         changes[f"objectives.{main}.primaries.{index}"] = prototype
         return changes
 
-    def __handle_secondary_creation(
-        self, changes: dict, type: str, main: str, primary: Union[int, str], options: dict = {}
+    def __handle_primary_deletion(
+        self, changes: dict, type: str, main: str, primary: Union[str, int], options: dict = {}
     ):
         primary = int(primary)
+        primaries: list = self.get_content()["objectives"][main]["primaries"]
+        primaries.remove(primaries[primary])
 
+        return changes
+
+    def __handle_secondary_creation(
+        self,
+        changes: dict,
+        type: str,
+        main: str,
+        primary: Union[int, str],
+        options: dict = {},
+    ):
+        primary = int(primary)
         secondaries: list = self.get_content()["objectives"][main]["primaries"][primary]["secondaries"]
         index = 0 if secondaries is None else len(secondaries)
 
@@ -111,7 +129,36 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         changes[f"objectives.{main}.primaries.{primary}.secondaries.{index}"] = prototype
         return changes
 
+    def __handle_secondary_deletion(
+        self,
+        changes: dict,
+        type: str,
+        main: str,
+        primary: Union[int, str],
+        secondary: Union[int, str],
+        options: dict = {},
+    ):
+        primary, secondary = int(primary), int(secondary)
+        secondaries: list = self.get_content()["objectives"][main]["primaries"][primary]["secondaries"]
+        secondaries.remove(secondaries[secondary])
+
+        return changes
+
     def __handle_attribute_creation(
+        self,
+        changes: dict,
+        type: str,
+        main: str,
+        primary: Union[int, str],
+        secondary: Union[int, str],
+        options: dict = {},
+    ):
+        primary, secondary = int(primary), int(secondary)
+
+        raise Exception("Not implemented")
+        return changes
+
+    def __handle_attribute_deletion(
         self,
         changes: dict,
         type: str,
@@ -164,17 +211,28 @@ class SSantoDocumentEditor(JSONDocumentEditor):
 
         return changes
 
+    def __handle_delete_directive(self, changes: dict):
+        if ":delete" in changes:
+            payload = changes[":delete"]
+            del changes[":delete"]
+
+            # We should probably request some kind of confirmation here
+            #  (perhaps a toast) before proceeding
+
+            changes = self.supported_delete_types[payload["type"]](changes, **payload)
+
+        return changes
+
     def _update(self, changes: dict):
 
-        changes = self.__handle_any_change(changes)
-        changes = self.__handle_study_area_change(changes)
-        changes = self.__handle_create_directive(changes)
+        if self.pre_update_hooks is not None:
+            changes = reduce(lambda changes, hook: hook(changes), self.pre_update_hooks, changes)
 
         for segments in [
-            [int(key) if key.isdigit() else key for key in keys]
-            for keys in filter(None, [key.split(".") for key in changes.keys()])
+            [int(segment) if segment.isdigit() else segment for segment in segments]
+            for segments in filter(None, [key.split(".") for key in changes.keys()])
         ]:
-            scope = self.content
+            scope = self.get_content()
             for segment in segments[:-1]:
 
                 if isinstance(scope, dict) and segment not in scope or not isinstance(scope[segment], (dict, list)):

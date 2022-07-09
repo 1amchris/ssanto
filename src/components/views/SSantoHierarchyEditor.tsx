@@ -3,9 +3,10 @@ import React, { CSSProperties } from 'react';
 import { useAppDispatch } from 'store/hooks';
 import { call } from 'store/reducers/server';
 import ServerCallTarget from 'enums/ServerCallTarget';
-import { VscAdd, VscEdit } from 'react-icons/vsc';
+import { VscAdd, VscEdit, VscEllipsis } from 'react-icons/vsc';
 import ReactTextareaAutosize from 'react-textarea-autosize';
 import ColorsUtils from 'utils/colors-utils';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 function SecondaryObjective({
   objective,
@@ -83,13 +84,12 @@ function PrimaryObjective({
   className,
   onChange: changeHandler,
   onCreate: publishCreateRequest,
+  onDelete: publishDeleteRequest,
 }: any & { style?: CSSProperties; className?: string }) {
   const [focused, setFocused] = React.useState(false);
   const [editing, setEditing] = React.useState<string | undefined>();
 
   const secondaryObjectives = objective.secondaries || [];
-
-  console.log({ secondaryObjectives });
 
   return (
     <div
@@ -114,7 +114,7 @@ function PrimaryObjective({
           borderColor: focused ? Color.Primary : 'transparent',
         }}
       >
-        <div className="d-flex flex-row justify-content-between px-2">
+        <div className="d-flex flex-row justify-content-between px-2 pb-1">
           <input
             className="form-control form-control-sm form-control-plaintext fw-bold text-truncate px-1"
             defaultValue={objective.name}
@@ -123,11 +123,26 @@ function PrimaryObjective({
             onFocus={() => setEditing('name')}
             onBlur={() => setEditing(undefined)}
           />
-          {/* <button className="btn btn-sm ms-2" style={{ width: 32, height: 32 }}>
-            <VscEllipsis />
-          </button> */}
+          <DropdownButton
+            title={<VscEllipsis />}
+            variant="none"
+            size="sm"
+            className="ms-2"
+            style={{ width: 32, height: 32 }}
+          >
+            {[
+              {
+                label: 'Remove',
+                onClick: () => publishDeleteRequest({ type: 'primary' }),
+              },
+            ].map(({ label, ...props }, index: number) => (
+              <small key={label + index}>
+                <Dropdown.Item {...props}>{label}</Dropdown.Item>
+              </small>
+            ))}
+          </DropdownButton>
         </div>
-        <div className="d-flex flex-column w-100 p-2 pb-1 overflow-auto">
+        <div className="d-flex flex-column w-100 px-2 py-1 overflow-auto">
           {secondaryObjectives.map(
             (objective: any, index: number, objectives: any[]) => (
               <SecondaryObjective
@@ -241,29 +256,27 @@ function AddSecondaryObjective({ onCreate: publishCreateRequest }: any) {
 }
 
 function SSantoHierarchyEditor({ view }: any) {
-  const dispatch = useAppDispatch();
-  const changeHandler = (field: string) => (value: any) => {
-    publishChanges({ [field]: value });
-  };
-
-  const publishCreateRequest = (payload: any) => {
-    publishChanges({ ':create': payload });
-  };
-
-  const publishChanges = (changes: any) => {
+  const dispatch: any = useAppDispatch();
+  const publishChanges = (changes: any) =>
     dispatch(
       call({
         target: ServerCallTarget.WorkspaceViewsPublishChanges,
         args: [view.uri, changes],
       })
     );
-  };
+
+  const changeHandler = (field: string) => (value: any) =>
+    publishChanges({ [field]: value });
+
+  const publishCreateRequest = (payload: any) =>
+    publishChanges({ ':create': payload });
+
+  const publishDeleteRequest = (payload: any) =>
+    publishChanges({ ':delete': payload });
 
   const mainObjective = view.content?.objectives?.main;
   const primaryObjectives =
     view.content?.objectives?.[mainObjective].primaries || [];
-
-  console.log({ primaryObjectives });
 
   return (
     <div className="d-flex flex-column h-100 w-100">
@@ -287,6 +300,13 @@ function SSantoHierarchyEditor({ view }: any) {
             }
             onCreate={(options: any) =>
               publishCreateRequest({
+                ...options,
+                main: mainObjective,
+                primary: index,
+              })
+            }
+            onDelete={(options: any) =>
+              publishDeleteRequest({
                 ...options,
                 main: mainObjective,
                 primary: index,
