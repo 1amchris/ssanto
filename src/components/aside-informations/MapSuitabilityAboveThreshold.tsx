@@ -10,6 +10,7 @@ import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 
 /**
+ * @deprecated
  * Map suitability above threshold component.
  * @param {any} param0 Parameters for the map suitability above threshold.
  * @return {JSX.Element} Html.

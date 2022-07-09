@@ -3,13 +3,13 @@ import { uniqueId } from 'lodash';
 import { unflatten } from 'flattenizer';
 import { Alert } from './components';
 
-
 /**
-   * @callback onCallback
-   * @param {Object} e Data
-   * @return {void}
-   */
+ * @callback onCallback
+ * @param {Object} e Data
+ * @return {void}
+ */
 /**
+ * @deprecated
  * Form
  * @param {ReactElement | ReactElement[]} controls A list of controls which will be added to the form
  * @param {onCallback} onSubmit Specify what to do with the fields in the form upon submission

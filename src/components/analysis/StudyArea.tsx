@@ -19,6 +19,7 @@ import FileContentModel from 'models/file/FileContentModel';
 import { exportData } from 'store/reducers/export';
 
 /**
+ * @deprecated
  * Study area component.
  * @param {any} param0 Parameters for the study area.
  * @return {JSX.Element} Html.

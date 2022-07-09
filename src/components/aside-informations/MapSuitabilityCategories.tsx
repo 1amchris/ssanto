@@ -5,6 +5,7 @@ import { Bar } from 'react-chartjs-2';
 import { colors, bgColors, horizontalBarHeight } from 'consts/graph';
 
 /**
+ * @deprecated
  * Map cursor information component.
  * @param {any} param0 Parameters for the map cursor information.
  * @return {JSX.Element} Html.

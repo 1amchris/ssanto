@@ -7,12 +7,13 @@ import { HashLink } from 'react-router-hash-link';
 import FormComponent from './FormComponent';
 
 /**
+ * @deprecated
  * FormCheckbox
  * @return {JSX.Element} An augmented checkbox control
  */
 class FormCheckbox extends FormComponent {
   /**
-   * @constructor 
+   * @constructor
    * @param {any} props .children will be displayed as the body of the checkbox
    * @param {string} [key] Key name
    */

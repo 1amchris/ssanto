@@ -6,6 +6,7 @@ import { capitalize } from 'lodash';
 import { colors, bgColors, horizontalBarHeight } from 'consts/graph';
 
 /**
+ * @deprecated
  * Map cursor information component.
  * @return {JSX.Element} Html.
  */

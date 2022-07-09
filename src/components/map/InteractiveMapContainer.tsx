@@ -7,10 +7,10 @@ import { call } from 'store/reducers/server';
 import LayersGroups from 'components/map/LayersGroups';
 import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
-// import LoadingValue from 'models/LoadingValue';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 
 /**
+ * @deprecated
  * Interactive map container component.
  * @param {any} param0 Parameters for the interactive map container.
  * @return {JSX.Element} Html.

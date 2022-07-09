@@ -94,6 +94,7 @@ function normalizeWeights({ primaries }: WeightsHierarchy): WeightsHierarchy {
 }
 
 /**
+ * @deprecated
  * Weighting component.
  * @param {any} param0 Parameters for the weighting.
  * @return {JSX.Element} Html.

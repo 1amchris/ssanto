@@ -7,6 +7,7 @@ import { HashLink } from 'react-router-hash-link';
 import FormComponent from './FormComponent';
 
 /**
+ * @deprecated
  * FormControl
  * @return {JSX.Element} an augmented input control
  */

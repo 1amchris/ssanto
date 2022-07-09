@@ -15,6 +15,7 @@ import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 
 /**
+ * @deprecated
  * Parameters component.
  * @param {any} param0 Parameters for the parameters.
  * @return {JSX.Element} Html.

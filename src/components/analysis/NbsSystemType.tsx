@@ -20,6 +20,7 @@ import { exportData } from 'store/reducers/export';
 import FileContentModel from 'models/file/FileContentModel';
 
 /**
+ * @deprecated
  * Nbs system component.
  * @param {any} param0 Parameters for the nbs system.
  * @return {JSX.Element} Html.

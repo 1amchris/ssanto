@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 
 /**
+ * @deprecated
  * Information card component.
  * @param {any} param0 Parameters for the information card.
  * @param {string} [key] Key name.

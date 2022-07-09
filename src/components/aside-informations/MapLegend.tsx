@@ -64,6 +64,7 @@ const generateLegendData = () => {
 };
 
 /**
+ * @deprecated
  * Map legend component.
  * @return {JSX.Element} Html.
  */

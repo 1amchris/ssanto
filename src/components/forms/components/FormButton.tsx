@@ -4,12 +4,13 @@ import { Button, Spinner } from 'react-bootstrap';
 import FormComponent from './FormComponent';
 
 /**
+ * @deprecated
  * FormButton
  * @return {JSX.Element} An augmented button
  */
 class FormButton extends FormComponent {
   /**
-   * @constructor 
+   * @constructor
    * @param {any} props .children will be displayed as the body of the button
    * @param {string} [key] Key name
    */

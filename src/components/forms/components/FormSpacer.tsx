@@ -3,6 +3,7 @@ import { uniqueId } from 'lodash';
 import FormComponent from './FormComponent';
 
 /**
+ * @deprecated
  * FormSpacer
  * Adds space between two controls in a form
  * @return {JSX.Element} space between two controls in a form

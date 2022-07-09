@@ -20,6 +20,7 @@ export interface FactoryProps extends PropsModel {
  */
 
 /**
+ * @deprecated
  * Row
  * @param {string} parentId the id of the calling parent
  * @param {number} index the index at which the row is placed in a list

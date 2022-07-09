@@ -100,6 +100,7 @@ function findDuplicateAttributes(objectiveHierarchy: ObjectivesHierarchyModel) {
 }
 
 /**
+ * @deprecated
  * Objectives hierarchy component.
  * @param {any} param0 Parameters for the objectives hierarchy.
  * @return {JSX.Element} Html.

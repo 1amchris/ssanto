@@ -1,10 +1,4 @@
-import { uniqueId } from 'lodash';
-import { parse } from 'path';
-import React, { useEffect } from 'react';
-import { useRef, createRef, ReactElement, RefObject, useState } from 'react';
-import { Button, Spinner } from 'react-bootstrap';
-import { Control } from '.';
-import FormComponent from './FormComponent';
+import React from 'react';
 
 type Coordinates = {
   x: number;
@@ -13,8 +7,7 @@ type Coordinates = {
 
 // This must be done in the server indeed.
 function parseFunction(stringFunction: string) {
-  const parsedFunction = (x: number) => -x + 150;
-  return parsedFunction;
+  return (x: number) => -x + 150;
 }
 
 function FormScalingGraph(props: any) {
@@ -22,7 +15,7 @@ function FormScalingGraph(props: any) {
   const [context, setContext] = React.useState<CanvasRenderingContext2D | null>(
     null
   );
-  const value_scaling_function = parseFunction(props.value_scaling_function);
+  const valueScalingFunction = parseFunction(props.value_scaling_function);
   const index = props.index;
   const width = 150;
   const height = 150;
@@ -30,7 +23,6 @@ function FormScalingGraph(props: any) {
   React.useEffect(() => {
     let mouseDown: boolean = false;
     let start: Coordinates = { x: 0, y: 0 };
-    let end: Coordinates = { x: 0, y: 0 };
     let canvasOffsetLeft: number = 0;
     let canvasOffsetTop: number = 0;
 
@@ -71,9 +63,9 @@ function FormScalingGraph(props: any) {
     // Draw a rectangle
     if (context) {
       context.beginPath();
-      context.moveTo(0, value_scaling_function(0));
+      context.moveTo(0, valueScalingFunction(0));
       for (let x = 0; x < width; x++) {
-        let y = value_scaling_function(x);
+        const y = valueScalingFunction(x);
         context.lineTo(x, y);
       }
       context.stroke();

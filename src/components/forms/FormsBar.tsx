@@ -15,6 +15,7 @@ import LoadingValue from 'models/LoadingValue';
 import { Modal } from 'react-bootstrap';
 
 /**
+ * @deprecated
  * Forms bar component.
  * @param {any} param0 Parameters for the forms bar.
  * @param {string} [key] Key name

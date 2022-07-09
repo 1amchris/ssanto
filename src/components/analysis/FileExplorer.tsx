@@ -43,6 +43,7 @@ const FileRowFactory = ({
 );
 
 /**
+ * @deprecated
  * File explorer component.
  * Used to upload and visualise the files in the system.
  * @param {any} param0 Parameters for the file explorer.

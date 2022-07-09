@@ -2,6 +2,7 @@ import React from 'react';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 
 /**
+ * @deprecated
  * FormComponent
  * @param {any} children Children of the form overlay
  * @return {JSX.Element} Html.

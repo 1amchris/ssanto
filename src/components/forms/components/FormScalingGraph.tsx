@@ -83,6 +83,7 @@ const generateLineData = (labels: string[], values: number[]) => {
 };
 
 /**
+ * @deprecated
  * Form scaling graph component.
  * @return {JSX.Element} Html.
  */

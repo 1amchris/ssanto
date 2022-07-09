@@ -21,6 +21,12 @@ const usePrevious = (value: any) => {
   return ref.current;
 };
 
+/**
+ * @deprecated
+ * Interactive map container component.
+ * @param {any} param0 Parameters for the layers of the interactive map container.
+ * @return {JSX.Element} Html.
+ */
 const LayersGroups = ({ t }: any) => {
   const { layers, update_layers: updateLayers } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();

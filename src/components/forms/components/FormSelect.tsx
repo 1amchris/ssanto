@@ -8,6 +8,7 @@ import { HashLink } from 'react-router-hash-link';
 import { FiInfo } from 'react-icons/fi';
 
 /**
+ * @deprecated
  * FormSelect
  * @return {JSX.Element} an augmented select
  */

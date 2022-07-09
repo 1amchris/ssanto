@@ -65,7 +65,7 @@ class Row extends React.Component<{
 }
 
 /**
- * TODO: [optional] add the ability to reorder the elements in the list
+ * @deprecated
  * FormSimpleList
  * @param {FactoryProps} props .factory is a generator function that, provided with a few props will return a ReactElement or a list of em
  *              .controls is the existing controls upon generating the expandable list

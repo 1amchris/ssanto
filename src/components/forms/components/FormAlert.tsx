@@ -4,6 +4,7 @@ import { Alert } from 'react-bootstrap';
 import FormComponent from './FormComponent';
 
 /**
+ * @deprecated
  * FormAlert
  * @return {JSX.Element} An augmented alert
  */

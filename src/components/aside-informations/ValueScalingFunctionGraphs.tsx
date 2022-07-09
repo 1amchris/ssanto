@@ -11,6 +11,7 @@ import {
 import { FactoryProps } from 'components/forms/components/FormSimpleList';
 
 /**
+ * @deprecated
  * Value scaling function component.
  * @param {any} param0 Parameters for the value scaling function.
  * @return {JSX.Element} Html.

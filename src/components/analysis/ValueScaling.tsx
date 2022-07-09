@@ -84,6 +84,7 @@ const merge = (
 };
 
 /**
+ * @deprecated
  * Value scaling component.
  * @param {any} param0 Parameters for the value scaling.
  * @return {JSX.Element} Html.
