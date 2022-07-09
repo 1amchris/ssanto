@@ -21,6 +21,8 @@ export const filesSlice = createSlice({
       if (!files || files.length === 0) {
         state.workspaceRoot = undefined;
         state.files = [];
+        state.focusedFile = undefined;
+        state.fileSelection = [];
         return;
       }
 
