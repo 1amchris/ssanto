@@ -6,10 +6,18 @@ from files.document_editors.document_editor import DocumentEditor, DocumentEvent
 
 
 class ViewController(Serializable):
-    def __init__(self, source: str, document: DocumentEditor, onchange: Callable = None, onsave: Callable = None):
+    def __init__(
+        self,
+        source: str,
+        document: DocumentEditor,
+        onchange: Callable = None,
+        onsave: Callable = None,
+        configs: dict = None,
+    ):
         self.name = source[source.rfind("/") + 1 :]
         self.source = source
         self.document = document
+        self.configs = configs
         self.content = self.get_content()
 
         self.onchange = onchange
@@ -45,6 +53,7 @@ class ViewController(Serializable):
             "source": self.source,
             "modified": self.document.is_modified if self.document else False,
             "content": self.content,
+            "configs": self.configs,
         }
 
     def save(self):

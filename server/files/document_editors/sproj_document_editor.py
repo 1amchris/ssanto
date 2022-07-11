@@ -154,7 +154,19 @@ class SSantoDocumentEditor(JSONDocumentEditor):
     ):
         primary, secondary = int(primary), int(secondary)
 
-        raise Exception("Not implemented")
+        primaries = self.get_content()["objectives"][main]["primaries"]
+        secondaries = primaries[primary]["secondaries"]
+        attributes: list = secondaries[secondary]["attributes"]
+        index = 0 if attributes is None else len(attributes)
+
+        prototype = {
+            "name": options["name"] if "name" in options else f"Attribute ({index + 1})",
+            "dataset": options["dataset"] if "dataset" in options else None,
+            "weight": options["weight"] if "weight" in options else 1,
+            "scale": options["scale"] if "scale" in options else {"function": "x"},
+        }
+
+        changes[f"objectives.{main}.primaries.{primary}.secondaries.{secondary}.attributes.{index}"] = prototype
         return changes
 
     def __handle_attribute_deletion(
@@ -164,11 +176,16 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         main: str,
         primary: Union[int, str],
         secondary: Union[int, str],
+        attribute: Union[int, str],
         options: dict = {},
     ):
-        primary, secondary = int(primary), int(secondary)
+        primary, secondary, attribute = int(primary), int(secondary), int(attribute)
 
-        raise Exception("Not implemented")
+        primaries = self.get_content()["objectives"][main]["primaries"]
+        secondaries = primaries[primary]["secondaries"]
+        attributes: list = secondaries[secondary]["attributes"]
+        attributes.remove(attributes[attribute])
+
         return changes
 
     def __handle_any_change(self, changes: dict):

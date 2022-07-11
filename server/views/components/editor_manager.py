@@ -38,10 +38,18 @@ class EditorManager(Serializable):
         self.logger.info(f"[Editor] Added editor group {group.uri}")
         return self.select_group(group.uri)
 
-    def add_view(self, view_source, view_type: str = None, group_id: str = None, prevent_duplicates=False):
+    def add_view(
+        self,
+        view_source,
+        view_type: str = None,
+        group_id: str = None,
+        prevent_duplicates=False,
+        view_configs: dict = None,
+    ):
         groups = self.__editor_views.value()
 
         if prevent_duplicates:
+            # TODO Check if configs are the same as well
             for group_uri in self.__active_views.value():
                 group = next(filter(lambda group: group.uri == group_uri, groups))
                 existing_view = next(
@@ -70,6 +78,7 @@ class EditorManager(Serializable):
             controller = ViewControllerRegistry()[view_type](
                 source=view_source,
                 document=document,
+                configs=view_configs,
                 onchange=lambda *_: self.__editor_views.update(),
                 onsave=lambda *_: self.__editor_views.update(),
             )

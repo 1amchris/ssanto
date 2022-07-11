@@ -1,21 +1,93 @@
-import { Color, Opacity } from 'enums/Color';
-import React, { CSSProperties } from 'react';
+import { Color } from 'enums/Color';
+import React, { CSSProperties, useState } from 'react';
 import { useAppDispatch } from 'store/hooks';
 import { call } from 'store/reducers/server';
 import ServerCallTarget from 'enums/ServerCallTarget';
-import { VscAdd, VscEdit, VscEllipsis } from 'react-icons/vsc';
+import { VscAdd, VscEdit, VscEllipsis, VscTrash } from 'react-icons/vsc';
 import ReactTextareaAutosize from 'react-textarea-autosize';
-import ColorsUtils from 'utils/colors-utils';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
+
+function AttributeRow({
+  attribute,
+  style,
+  className,
+  onChange: changeHandler,
+  onDelete: deleteHandler,
+  onSelect: selectHandler,
+}: any & { style?: CSSProperties; className: string }) {
+  const [focused, setFocused] = React.useState(false);
+  const [editing, setEditing] = React.useState<string | undefined>();
+
+  return (
+    <div
+      className={
+        'small d-flex flex-row rounded' +
+        (focused ? ' bg-light' : '') +
+        (className ? ` ${className}` : '')
+      }
+      style={{
+        cursor: 'pointer',
+        ...style,
+      }}
+      onMouseEnter={e => {
+        setFocused(true);
+      }}
+      onMouseLeave={e => {
+        setFocused(false);
+      }}
+    >
+      <input
+        className={
+          'form-control form-control-sm text-truncate fst-italic px-1' +
+          (editing ? ' bg-light' : ' form-control-plaintext')
+        }
+        style={{ boxShadow: 'none' }}
+        defaultValue={attribute.name}
+        onClick={e => e.stopPropagation()}
+        onChange={e => changeHandler('name')(e.target.value)}
+        key={editing !== 'name' && attribute.name}
+        autoFocus={editing === 'name'}
+        onFocus={() => setEditing('name')}
+        onBlur={() => setEditing(undefined)}
+      />
+      {(focused || !!editing) && (
+        <div className="d-flex flex-row">
+          <button
+            className="btn btn-sm text-primary"
+            onClick={(e: any) => {
+              e.stopPropagation();
+              selectHandler({ viewType: 'ssanto-attribute' });
+            }}
+          >
+            <VscEdit />
+          </button>
+          <button
+            className="btn btn-sm text-danger"
+            onClick={(e: any) => {
+              e.stopPropagation();
+              deleteHandler({ type: 'attribute' });
+            }}
+          >
+            <VscTrash />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function SecondaryObjective({
   objective,
   style,
   className,
   onChange: changeHandler,
+  onCreate: createHandler,
+  onDelete: deleteHandler,
+  onSelect: selectHandler,
 }: any & { style?: CSSProperties; className: string }) {
-  const [focused, setFocused] = React.useState(false);
   const [editing, setEditing] = React.useState<string | undefined>();
+
+  const attributes = objective.attributes || [];
 
   return (
     <div
@@ -27,53 +99,87 @@ function SecondaryObjective({
         cursor: 'pointer',
         ...style,
       }}
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
-      onClick={() => {
-        console.log('clicked', objective.name);
-      }}
     >
-      <div
-        className="btn btn-sm position-absolute"
-        style={{
-          background: ColorsUtils.applyOpacity(
-            Color.White,
-            Opacity.SevenEighths
-          ),
-          top: 0,
-          right: 0,
-          width: 32,
-          height: 32,
-          display: focused ? undefined : 'none',
-          color: Color.Primary,
-        }}
-      >
-        <VscEdit />
+      <div className="d-flex flex-row justify-content-between pb-1">
+        <ReactTextareaAutosize
+          className={
+            'form-control form-control-sm px-1' +
+            (editing ? '' : ' form-control-plaintext')
+          }
+          defaultValue={objective.name}
+          style={{ resize: 'none', boxShadow: 'none' }}
+          onClick={e => e.stopPropagation()}
+          onChange={e => changeHandler('name')(e.target.value)}
+          key={editing !== 'name' && objective.name}
+          autoFocus={editing === 'name'}
+          onFocus={() => setEditing('name')}
+          onBlur={() => setEditing(undefined)}
+        />
+        <DropdownButton
+          title={<VscEllipsis />}
+          variant="none"
+          size="sm"
+          className="ms-2"
+          style={{ width: 32, height: 32 }}
+        >
+          {[
+            {
+              label: 'Remove',
+              onClick: (e: any) => {
+                e.stopPropagation();
+                deleteHandler({ type: 'secondary' });
+              },
+            },
+          ].map(({ label, ...props }, index: number) => (
+            <small key={label + index}>
+              <Dropdown.Item {...props}>{label}</Dropdown.Item>
+            </small>
+          ))}
+        </DropdownButton>
       </div>
-      <ReactTextareaAutosize
-        className="form-control form-control-sm form-control-plaintext px-1"
-        defaultValue={objective.name}
-        style={{ resize: 'none' }}
-        onClick={e => e.stopPropagation()}
-        onChange={e => changeHandler('name')(e.target.value)}
-        key={editing !== 'name' && objective.name}
-        onFocus={() => setEditing('name')}
-        onBlur={() => setEditing(undefined)}
-      />
-      {objective.attributes?.length > 0 && (
-        <div className="pt-1">
-          <small className="text-secondary">
-            Attributes ({objective.attributes.length})
-          </small>
-          <ul className="list-unstyled fst-italic mb-0 ps-1">
-            {objective.attributes.map((attribute: any, index: number) => (
+      <div className="pt-1">
+        <small className="text-secondary">
+          Attributes ({attributes.length})
+        </small>
+        {attributes.length > 0 && (
+          <ul className="list-unstyled fst-italic mb-0">
+            {attributes.map((attribute: any, index: number) => (
               <li key={attribute.name + index} className="text-truncate">
-                <span>{attribute.name}</span>
+                <AttributeRow
+                  attribute={attribute}
+                  onDelete={(options: any) =>
+                    deleteHandler({ ...options, attribute: index })
+                  }
+                  onSelect={({
+                    viewType,
+                    viewConfigs,
+                  }: {
+                    viewType: string;
+                    viewConfigs: any;
+                  }) =>
+                    selectHandler({
+                      viewType,
+                      viewConfigs: {
+                        ...viewConfigs,
+                        attribute: index,
+                      },
+                    })
+                  }
+                />
               </li>
             ))}
           </ul>
-        </div>
-      )}
+        )}
+      </div>
+      <AddAttribute
+        attributeCount={attributes.length ?? 0}
+        onCreate={(options: any) =>
+          createHandler({
+            ...options,
+            type: 'attribute',
+          })
+        }
+      />
     </div>
   );
 }
@@ -82,9 +188,10 @@ function PrimaryObjective({
   objective,
   style,
   className,
+  onSelect: selectHandler,
   onChange: changeHandler,
-  onCreate: publishCreateRequest,
-  onDelete: publishDeleteRequest,
+  onCreate: createHandler,
+  onDelete: deleteHandler,
 }: any & { style?: CSSProperties; className?: string }) {
   const [focused, setFocused] = React.useState(false);
   const [editing, setEditing] = React.useState<string | undefined>();
@@ -116,10 +223,15 @@ function PrimaryObjective({
       >
         <div className="d-flex flex-row justify-content-between px-2 pb-1">
           <input
-            className="form-control form-control-sm form-control-plaintext fw-bold text-truncate px-1"
+            className={
+              'form-control form-control-sm fw-bold text-truncate px-1' +
+              (editing ? '' : ' form-control-plaintext')
+            }
+            style={{ boxShadow: 'none' }}
             defaultValue={objective.name}
             onChange={e => changeHandler('name')(e.target.value)}
             key={editing !== 'name' && objective.name}
+            autoFocus={editing === 'name'}
             onFocus={() => setEditing('name')}
             onBlur={() => setEditing(undefined)}
           />
@@ -133,7 +245,7 @@ function PrimaryObjective({
             {[
               {
                 label: 'Remove',
-                onClick: () => publishDeleteRequest({ type: 'primary' }),
+                onClick: () => deleteHandler({ type: 'primary' }),
               },
             ].map(({ label, ...props }, index: number) => (
               <small key={label + index}>
@@ -153,7 +265,25 @@ function PrimaryObjective({
                   changeHandler(`secondaries.${index}.${partialKey}`)
                 }
                 onCreate={(options: any) =>
-                  publishCreateRequest({ ...options, secondary: index })
+                  createHandler({ ...options, secondary: index })
+                }
+                onDelete={(options: any) => {
+                  deleteHandler({ ...options, secondary: index });
+                }}
+                onSelect={({
+                  viewType,
+                  viewConfigs,
+                }: {
+                  viewType: string;
+                  viewConfigs: any;
+                }) =>
+                  selectHandler({
+                    viewType,
+                    viewConfigs: {
+                      ...viewConfigs,
+                      secondary: index,
+                    },
+                  })
                 }
               />
             )
@@ -161,8 +291,9 @@ function PrimaryObjective({
         </div>
         <div className="d-flex flex-row pt-1">
           <AddSecondaryObjective
+            objectiveCount={secondaryObjectives.length}
             onCreate={(options: any) =>
-              publishCreateRequest({
+              createHandler({
                 ...options,
                 type: 'secondary',
               })
@@ -191,6 +322,7 @@ function MainObjective({
       onChange={e => changeHandler('main')(e.target.value)}
       defaultValue={objective}
       key={editing !== 'main' && objective}
+      autoFocus={editing === 'main'}
       onFocus={() => setEditing('main')}
       onBlur={() => setEditing(undefined)}
     >
@@ -203,7 +335,8 @@ function MainObjective({
 function AddPrimaryObjective({
   style,
   className,
-  onCreate: publishCreateRequest,
+  objectiveCount,
+  onCreate: createHandler,
 }: any) {
   const [focused, setFocused] = React.useState(false);
 
@@ -231,25 +364,63 @@ function AddPrimaryObjective({
       >
         <button
           className="btn btn-sm btn-outline-secondary w-100 text-truncate"
-          onClick={() => publishCreateRequest(createDefaultOptions)}
+          onClick={e => {
+            e.stopPropagation();
+            createHandler(createDefaultOptions);
+          }}
         >
-          <VscAdd /> Add another list
+          <VscAdd /> Add{' '}
+          {objectiveCount && objectiveCount > 0 ? 'another' : 'a'} list
         </button>
       </div>
     </div>
   );
 }
 
-function AddSecondaryObjective({ onCreate: publishCreateRequest }: any) {
+function AddSecondaryObjective({
+  objectiveCount,
+  onCreate: createHandler,
+}: any) {
   const createDefaultOptions = {};
 
   return (
     <div className="w-100 px-2">
       <button
         className="btn btn-sm w-100 text-start text-secondary"
-        onClick={() => publishCreateRequest(createDefaultOptions)}
+        onClick={e => {
+          e.stopPropagation();
+          createHandler(createDefaultOptions);
+        }}
       >
-        <VscAdd /> Add another objective
+        <VscAdd /> Add {objectiveCount && objectiveCount > 0 ? 'another' : 'a'}{' '}
+        objective
+      </button>
+    </div>
+  );
+}
+
+function AddAttribute({ attributeCount, onCreate: createHandler }: any) {
+  const createDefaultOptions = {};
+
+  const [focused, setFocused] = useState(false);
+
+  return (
+    <div
+      className={'w-100 rounded' + (focused ? ' bg-light' : '')}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      onMouseEnter={() => setFocused(true)}
+      onMouseLeave={() => setFocused(false)}
+    >
+      <button
+        className="btn btn-sm text-secondary w-100 text-start fst-italic"
+        onClick={e => {
+          e.stopPropagation();
+          createHandler(createDefaultOptions);
+        }}
+      >
+        <VscAdd /> Add {attributeCount && attributeCount > 0 ? 'another' : 'a'}{' '}
+        attribute
       </button>
     </div>
   );
@@ -268,11 +439,30 @@ function SSantoHierarchyEditor({ view }: any) {
   const changeHandler = (field: string) => (value: any) =>
     publishChanges({ [field]: value });
 
-  const publishCreateRequest = (payload: any) =>
+  const createHandler = (payload: any) =>
     publishChanges({ ':create': payload });
 
-  const publishDeleteRequest = (payload: any) =>
+  const deleteHandler = (payload: any) =>
     publishChanges({ ':delete': payload });
+
+  const selectHandler = ({
+    viewType: type,
+    viewConfigs: configs,
+  }: {
+    viewType: string;
+    viewConfigs: {
+      main?: 'needs' | 'opportunities';
+      primary?: number;
+      secondary?: number;
+      attribute?: number;
+    };
+  }) =>
+    dispatch(
+      call({
+        target: ServerCallTarget.WorkspaceOpenView,
+        args: [view.source, type, configs],
+      })
+    );
 
   const mainObjective = view.content?.objectives?.main;
   const primaryObjectives =
@@ -299,24 +489,41 @@ function SSantoHierarchyEditor({ view }: any) {
               )
             }
             onCreate={(options: any) =>
-              publishCreateRequest({
+              createHandler({
                 ...options,
                 main: mainObjective,
                 primary: index,
               })
             }
             onDelete={(options: any) =>
-              publishDeleteRequest({
+              deleteHandler({
                 ...options,
                 main: mainObjective,
                 primary: index,
               })
             }
+            onSelect={({
+              viewType,
+              viewConfigs,
+            }: {
+              viewType: string;
+              viewConfigs: any;
+            }) =>
+              selectHandler({
+                viewType,
+                viewConfigs: {
+                  ...viewConfigs,
+                  main: mainObjective,
+                  primary: index,
+                },
+              })
+            }
           />
         ))}
         <AddPrimaryObjective
+          objectiveCount={primaryObjectives.length}
           onCreate={(options: any) =>
-            publishCreateRequest({
+            createHandler({
               ...options,
               type: 'primary',
               main: mainObjective,

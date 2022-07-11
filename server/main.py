@@ -17,6 +17,7 @@ from views.builtin import FileExplorerView, FileSearcherView, ProblemExplorerVie
 from views.controllers.ssanto_map import SSantoMapViewController
 from views.controllers.ssanto_settings import SSantoSettingsViewController
 from views.controllers.ssanto_hierarchy import SSantoHierarchyViewController
+from views.controllers.ssanto_attribute import SSantoAttributeViewController
 from views.manager import ViewsManager
 from views.view_controller_registry import ViewControllerRegistry
 
@@ -38,6 +39,7 @@ def populate_registries():
     controller_registry["ssanto-map"] = SSantoMapViewController
     controller_registry["ssanto-settings"] = SSantoSettingsViewController
     controller_registry["ssanto-hierarchy"] = SSantoHierarchyViewController
+    controller_registry["ssanto-attribute"] = SSantoAttributeViewController
 
 
 def populate_views(views_manager: ViewsManager):

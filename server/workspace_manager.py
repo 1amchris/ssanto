@@ -55,6 +55,6 @@ class WorkspaceManager:
                 print(f"Failed to close workspace: {e}")
                 self.logger.error(f"[Workspace] Failed to close workspace: {e}")
 
-    def open_editor(self, document_uri: str, view_type: str = None):
-        self.views.editor.add_view(document_uri, view_type=view_type)
+    def open_editor(self, document_uri: str, view_type: str = None, view_configs: dict = None):
+        self.views.editor.add_view(document_uri, view_type=view_type, view_configs=view_configs)
         self.logger.info(f"[Workspace] Opened view: {document_uri}")

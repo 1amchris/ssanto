@@ -40,5 +40,5 @@ class ViewControllerRegistry(metaclass=Singleton):
             return self.__default_view_controller
 
     # TODO: We should probably move this to an view_type utils/manager
-    def __normalize_view_type(self, view_type):
-        return view_type.lower().strip() if view_type is not None else "unsupported"
+    def __normalize_view_type(self, view_type: str):
+        return view_type.lower().strip() if view_type is not None and isinstance(view_type, str) else "unsupported"

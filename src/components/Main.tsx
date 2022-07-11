@@ -152,6 +152,12 @@ function Main() {
         () => import('components/views/ssanto/SSantoHierarchyEditor')
       ),
     },
+    ['ssanto-attribute']: {
+      actions: [showObjectiveHierarchy(), showSettings(), showMap()],
+      factory: React.lazy(
+        () => import('components/views/ssanto/SSantoAttributeEditor')
+      ),
+    },
   });
 
   const value = {
