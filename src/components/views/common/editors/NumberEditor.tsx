@@ -34,6 +34,7 @@ function NumberEditor({ setting }: NumberEditorProps) {
         key={setting.uri + `${focused ? '' : setting.value}`}
         style={{ maxWidth: 250 }}
         disabled={setting.disabled}
+        autoFocus={focused}
         onChange={({ target: { value } }) => {
           const numberValue = Number(value);
           for (const validator of setting.validators || []) {

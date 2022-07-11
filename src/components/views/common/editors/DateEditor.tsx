@@ -47,6 +47,7 @@ function DateEditor({ setting }: DateEditorProps) {
         defaultValue={setting.value}
         className="form-control form-control-sm"
         id={id}
+        autoFocus={focused}
         min={setting.min}
         max={setting.max}
       />

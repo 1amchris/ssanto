@@ -52,7 +52,7 @@ function AttributeRow({
       />
       {(focused || !!editing) && (
         <div className="d-flex flex-row">
-          <button
+          <div
             className="btn btn-sm text-primary"
             onClick={(e: any) => {
               e.stopPropagation();
@@ -60,8 +60,8 @@ function AttributeRow({
             }}
           >
             <VscEdit />
-          </button>
-          <button
+          </div>
+          <div
             className="btn btn-sm text-danger"
             onClick={(e: any) => {
               e.stopPropagation();
@@ -69,7 +69,7 @@ function AttributeRow({
             }}
           >
             <VscTrash />
-          </button>
+          </div>
         </div>
       )}
     </div>

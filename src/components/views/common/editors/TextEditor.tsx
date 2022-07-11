@@ -30,6 +30,7 @@ function TextEditor({ setting }: TextEditorProps) {
         onBlur={() => setFocused(false)}
         key={setting.uri + `${focused ? '' : setting.value}`}
         style={{ maxWidth: 500 }}
+        autoFocus={focused}
         disabled={setting.disabled}
         onChange={({ target: { value } }) => {
           for (const validator of setting.validators || []) {

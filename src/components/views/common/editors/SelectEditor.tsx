@@ -37,6 +37,7 @@ function SelectEditor({ setting }: SelectEditorProps) {
         key={setting.uri + `${focused ? '' : setting.value}`}
         className="form-select form-select-sm"
         id={id}
+        autoFocus={focused}
         defaultValue={setting.value}
         disabled={setting.disabled}
         style={{ maxWidth: 400 }}

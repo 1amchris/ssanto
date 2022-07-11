@@ -20,6 +20,22 @@ namespace ValidatorsUtils {
     message: (value: string) =>
       `Invalid value: ${value} is not a valid website.`,
   };
+
+  export const atLeast = (n: number) => {
+    return {
+      assert: (value: number) => value >= n,
+      message: (value: number) =>
+        `Invalid value: ${value} is lesser than ${n}.`,
+    };
+  };
+
+  export const atMost = (n: number) => {
+    return {
+      assert: (value: number) => value <= n,
+      message: (value: number) =>
+        `Invalid value: ${value} is greater than ${n}.`,
+    };
+  };
 }
 
 export default ValidatorsUtils;

@@ -8,7 +8,7 @@
       "website": "http://github.com/1amchris"
     },
     "createdOn": "2022-01-03",
-    "modifiedOn": "2022-07-09",
+    "modifiedOn": "2022-07-11",
     "studyArea": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/limites-terrestres/limites-terrestres.shp"
   },
   "map": {
@@ -38953,13 +38953,13 @@
               "attributes": [
                 {
                   "name": "Distance to landfill site or contaminated site",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x" }
                 },
                 {
                   "name": "Distance from a spent snow deposition site or a salt de-icing storage site",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/plaines_inondables.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/plaines_inondables/plaines_inondables.shp",
                   "weight": 1,
                   "scale": { "function": "x^2" }
                 }
@@ -38972,13 +38972,13 @@
               "attributes": [
                 {
                   "name": "Groundwater level",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 },
                 {
                   "name": "Hydraulic conductivity",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/plaines_inondables.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/plaines_inondables/plaines_inondables.shp",
                   "weight": 1,
                   "scale": { "function": "1 - x" }
                 }
@@ -38991,7 +38991,7 @@
               "attributes": [
                 {
                   "name": "Number of days per year with more than 1 mm of rain",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 }
@@ -39011,7 +39011,7 @@
               "attributes": [
                 {
                   "name": "Percent slope",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x" }
                 }
@@ -39024,7 +39024,7 @@
               "attributes": [
                 {
                   "name": "Distance to rainwater sewer infrastructure",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 }
@@ -39037,7 +39037,7 @@
               "attributes": [
                 {
                   "name": "Municipal property tax rates",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 }
@@ -39057,13 +39057,13 @@
               "attributes": [
                 {
                   "name": "Municipal property tax rates",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x" }
                 },
                 {
                   "name": "Level of opportunities offered by an easement site",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x" }
                 }
@@ -39076,7 +39076,7 @@
               "attributes": [
                 {
                   "name": "Size of land",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 }
@@ -39089,7 +39089,7 @@
               "attributes": [
                 {
                   "name": "Speed limit",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x" }
                 }
@@ -39102,13 +39102,13 @@
               "attributes": [
                 {
                   "name": "Presence of planned (re)developments project",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 },
                 {
                   "name": "Presence of road renewal project",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 }
@@ -39132,13 +39132,13 @@
               "attributes": [
                 {
                   "name": "Distance to landfill site or contaminated site",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
-                  "weight": 1,
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/Espace_Vert.shp",
+                  "weight": 0.46,
                   "scale": { "function": "x" }
                 },
                 {
                   "name": "Distance from a spent snow deposition site or a salt de-icing storage site",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/plaines_inondables.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/plaines_inondables/plaines_inondables.shp",
                   "weight": 1,
                   "scale": { "function": "x^2" }
                 }
@@ -39151,13 +39151,13 @@
               "attributes": [
                 {
                   "name": "Groundwater level",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 },
                 {
                   "name": "Hydraulic conductivity",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/plaines_inondables.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/plaines_inondables/plaines_inondables.shp",
                   "weight": 1,
                   "scale": { "function": "1 - x" }
                 }
@@ -39170,7 +39170,7 @@
               "attributes": [
                 {
                   "name": "Number of days per year with more than 1 mm of rain",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 }
@@ -39190,8 +39190,8 @@
               "attributes": [
                 {
                   "name": "Percent slope",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
-                  "weight": 1,
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
+                  "weight": 0.56,
                   "scale": { "function": "x" }
                 }
               ]
@@ -39203,7 +39203,7 @@
               "attributes": [
                 {
                   "name": "Distance to rainwater sewer infrastructure",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 }
@@ -39216,7 +39216,7 @@
               "attributes": [
                 {
                   "name": "Municipal property tax rates",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 }
@@ -39236,13 +39236,13 @@
               "attributes": [
                 {
                   "name": "Municipal property tax rates",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x" }
                 },
                 {
                   "name": "Level of opportunities offered by an easement site",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x" }
                 }
@@ -39255,7 +39255,7 @@
               "attributes": [
                 {
                   "name": "Size of land",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 }
@@ -39268,7 +39268,7 @@
               "attributes": [
                 {
                   "name": "Speed limit",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x" }
                 }
@@ -39281,13 +39281,13 @@
               "attributes": [
                 {
                   "name": "Presence of planned (re)developments project",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 },
                 {
                   "name": "Presence of road renewal project",
-                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espace_vert.shp",
+                  "dataset": "file:///Users/christophebeaulieu/Developer/ssanto/data/montreal_dataset/espaces_vert/espace_vert.shp",
                   "weight": 1,
                   "scale": { "function": "x + 0.1" }
                 }

@@ -25,6 +25,7 @@ function CheckboxEditor({ setting }: CheckboxEditorProps) {
         className="form-check-input"
         type="checkbox"
         id={id}
+        autoFocus={focused}
         disabled={setting.disabled}
         defaultChecked={setting.checked}
         onChange={({ target: { checked } }) => {
