@@ -9,6 +9,7 @@ import {
 import SettingsEditor from 'components/views/common/SettingsEditor';
 import ValidatorsUtils from 'utils/validators-utils';
 import { FileSettingProps } from 'components/views/common/editors/FileSelector';
+import IAttribute from 'models/IAttribute';
 
 function SSantoSecondaryObjectiveEditor({ view }: any) {
   const { main, primary, secondary, attribute } = view.configs;
@@ -32,12 +33,13 @@ function SSantoSecondaryObjectiveEditor({ view }: any) {
     );
   };
 
+  const content: IAttribute | undefined = view.content;
   const settings = [
     {
       uri: `${uriBase}.name`,
       type: 'text',
       displayName: 'Name',
-      value: view.content?.name,
+      value: content?.name,
       family: 'Attribute',
       shortDescription: 'The name of the attribute.',
       validators: [ValidatorsUtils.required],
@@ -47,7 +49,7 @@ function SSantoSecondaryObjectiveEditor({ view }: any) {
       uri: `${uriBase}.weight`,
       type: 'number',
       displayName: 'Weight',
-      value: view.content?.weight,
+      value: content?.weight,
       family: `Attribute`,
       shortDescription: 'The weight of the attribute.',
       min: 0,
@@ -65,7 +67,7 @@ function SSantoSecondaryObjectiveEditor({ view }: any) {
       type: 'file',
       displayName: 'Dataset',
       family: 'Attribute',
-      value: view.content?.dataset,
+      value: content?.dataset,
       shortDescription: 'The dataset of the attribute.',
       validators: [ValidatorsUtils.required],
       accept: '.shp, .gpkg',
@@ -75,7 +77,7 @@ function SSantoSecondaryObjectiveEditor({ view }: any) {
       uri: `${uriBase}.scale.function`,
       type: 'text',
       displayName: 'Function',
-      value: view.content?.scale?.function,
+      value: content?.scale?.function,
       family: 'Attribute.Scale',
       shortDescription: 'The scaling function of the attribute.',
       validators: [ValidatorsUtils.required],
