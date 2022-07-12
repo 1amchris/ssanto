@@ -6,15 +6,48 @@ import ServerCallTarget from 'enums/ServerCallTarget';
 import { VscAdd, VscEdit, VscEllipsis, VscTrash } from 'react-icons/vsc';
 import ReactTextareaAutosize from 'react-textarea-autosize';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
+import IAttribute from 'models/IAttribute';
+import ISecondaryHierarchy from 'models/ISecondaryHierarchy';
+import IPrimaryHierarchy from 'models/IPrimaryHierarchy';
+import IMainObjective from 'models/IMainObjective';
+import IObjectiveHierarchy from 'models/IObjectiveHierarchy';
 
-function AttributeRow({
+interface ICreateElement {
+  type?: 'main' | 'primary' | 'secondary' | 'attribute';
+  main?: IMainObjective;
+  primary?: number;
+  secondary?: number;
+  attribute?: number;
+}
+
+interface IOpenView {
+  viewType: string;
+  viewConfigs?: any;
+}
+
+interface IDeleteElement {
+  type: 'main' | 'primary' | 'secondary' | 'attribute';
+  main?: IMainObjective;
+  primary?: number;
+  secondary?: number;
+  attribute?: number;
+}
+
+function Attribute({
   attribute,
   style,
   className,
   onChange: changeHandler,
   onDelete: deleteHandler,
   onSelect: selectHandler,
-}: any & { style?: CSSProperties; className: string }) {
+}: {
+  attribute: IAttribute;
+  style?: CSSProperties;
+  className?: string;
+  onChange: (field: string) => (value: any) => void;
+  onDelete: (params: IDeleteElement) => void;
+  onSelect: (params: IOpenView) => void;
+}) {
   const [focused, setFocused] = React.useState(false);
   const [editing, setEditing] = React.useState<string | undefined>();
 
@@ -22,19 +55,15 @@ function AttributeRow({
     <div
       className={
         'small d-flex flex-row rounded' +
-        (focused ? ' bg-light' : '') +
+        (focused || editing !== undefined ? ' bg-light' : '') +
         (className ? ` ${className}` : '')
       }
       style={{
         cursor: 'pointer',
         ...style,
       }}
-      onMouseEnter={e => {
-        setFocused(true);
-      }}
-      onMouseLeave={e => {
-        setFocused(false);
-      }}
+      onMouseEnter={() => setFocused(true)}
+      onMouseLeave={() => setFocused(false)}
     >
       <input
         className={
@@ -43,9 +72,9 @@ function AttributeRow({
         }
         style={{ boxShadow: 'none' }}
         defaultValue={attribute.name}
-        onClick={e => e.stopPropagation()}
-        onChange={e => changeHandler('name')(e.target.value)}
-        key={editing !== 'name' && attribute.name}
+        onClick={(e: any) => e.stopPropagation()}
+        onChange={(e: any) => changeHandler('name')(e.target.value)}
+        key={editing !== 'name' ? attribute.name : undefined}
         autoFocus={editing === 'name'}
         onFocus={() => setEditing('name')}
         onBlur={() => setEditing(undefined)}
@@ -76,7 +105,7 @@ function AttributeRow({
   );
 }
 
-function SecondaryObjective({
+function SecondaryHierarchy({
   objective,
   style,
   className,
@@ -84,7 +113,15 @@ function SecondaryObjective({
   onCreate: createHandler,
   onDelete: deleteHandler,
   onSelect: selectHandler,
-}: any & { style?: CSSProperties; className: string }) {
+}: {
+  objective: ISecondaryHierarchy;
+  onCreate: (params: ICreateElement) => void;
+  onChange: (field: string) => (value: any) => void;
+  onDelete: (params: IDeleteElement) => void;
+  onSelect: (params: IOpenView) => void;
+  style?: CSSProperties;
+  className?: string;
+}) {
   const [editing, setEditing] = React.useState<string | undefined>();
 
   const attributes = objective.attributes || [];
@@ -108,9 +145,9 @@ function SecondaryObjective({
           }
           defaultValue={objective.name}
           style={{ resize: 'none', boxShadow: 'none' }}
-          onClick={e => e.stopPropagation()}
-          onChange={e => changeHandler('name')(e.target.value)}
-          key={editing !== 'name' && objective.name}
+          onClick={(e: any) => e.stopPropagation()}
+          onChange={(e: any) => changeHandler('name')(e.target.value)}
+          key={editing !== 'name' ? objective.name : undefined}
           autoFocus={editing === 'name'}
           onFocus={() => setEditing('name')}
           onBlur={() => setEditing(undefined)}
@@ -143,20 +180,20 @@ function SecondaryObjective({
         </small>
         {attributes.length > 0 && (
           <ul className="list-unstyled fst-italic mb-0">
-            {attributes.map((attribute: any, index: number) => (
-              <li key={attribute.name + index} className="text-truncate">
-                <AttributeRow
+            {attributes.map((attribute: IAttribute, index: number) => (
+              <li
+                key={`${attributes.length}${index}`}
+                className="text-truncate"
+              >
+                <Attribute
                   attribute={attribute}
-                  onDelete={(options: any) =>
+                  onChange={(partialKey: string) =>
+                    changeHandler(`attributes.${index}.${partialKey}`)
+                  }
+                  onDelete={(options: IDeleteElement) =>
                     deleteHandler({ ...options, attribute: index })
                   }
-                  onSelect={({
-                    viewType,
-                    viewConfigs,
-                  }: {
-                    viewType: string;
-                    viewConfigs: any;
-                  }) =>
+                  onSelect={({ viewType, viewConfigs }: IOpenView) =>
                     selectHandler({
                       viewType,
                       viewConfigs: {
@@ -173,7 +210,7 @@ function SecondaryObjective({
       </div>
       <AddAttribute
         attributeCount={attributes.length ?? 0}
-        onCreate={(options: any) =>
+        onCreate={(options: ICreateElement) =>
           createHandler({
             ...options,
             type: 'attribute',
@@ -184,7 +221,7 @@ function SecondaryObjective({
   );
 }
 
-function PrimaryObjective({
+function PrimaryHierarchy({
   objective,
   style,
   className,
@@ -192,7 +229,15 @@ function PrimaryObjective({
   onChange: changeHandler,
   onCreate: createHandler,
   onDelete: deleteHandler,
-}: any & { style?: CSSProperties; className?: string }) {
+}: {
+  objective: IPrimaryHierarchy;
+  onCreate: (params: ICreateElement) => void;
+  onChange: (field: string) => (value: any) => void;
+  onDelete: (params: IDeleteElement) => void;
+  onSelect: (params: IOpenView) => void;
+  style?: CSSProperties;
+  className?: string;
+}) {
   const [focused, setFocused] = React.useState(false);
   const [editing, setEditing] = React.useState<string | undefined>();
 
@@ -229,8 +274,8 @@ function PrimaryObjective({
             }
             style={{ boxShadow: 'none' }}
             defaultValue={objective.name}
-            onChange={e => changeHandler('name')(e.target.value)}
-            key={editing !== 'name' && objective.name}
+            onChange={(e: any) => changeHandler('name')(e.target.value)}
+            key={editing !== 'name' ? objective.name : undefined}
             autoFocus={editing === 'name'}
             onFocus={() => setEditing('name')}
             onBlur={() => setEditing(undefined)}
@@ -256,27 +301,25 @@ function PrimaryObjective({
         </div>
         <div className="d-flex flex-column w-100 px-2 py-1 overflow-auto">
           {secondaryObjectives.map(
-            (objective: any, index: number, objectives: any[]) => (
-              <SecondaryObjective
-                key={objective + index}
+            (
+              objective: ISecondaryHierarchy,
+              index: number,
+              objectives: ISecondaryHierarchy[]
+            ) => (
+              <SecondaryHierarchy
+                key={`${objectives.length}${index}`}
                 objective={objective}
-                className={index < objectives.length - 1 && 'mb-2'}
+                className={index < objectives.length - 1 ? 'mb-2' : undefined}
                 onChange={(partialKey: string) =>
                   changeHandler(`secondaries.${index}.${partialKey}`)
                 }
-                onCreate={(options: any) =>
+                onCreate={(options: ICreateElement) =>
                   createHandler({ ...options, secondary: index })
                 }
-                onDelete={(options: any) => {
+                onDelete={(options: IDeleteElement) => {
                   deleteHandler({ ...options, secondary: index });
                 }}
-                onSelect={({
-                  viewType,
-                  viewConfigs,
-                }: {
-                  viewType: string;
-                  viewConfigs: any;
-                }) =>
+                onSelect={({ viewType, viewConfigs }: IOpenView) =>
                   selectHandler({
                     viewType,
                     viewConfigs: {
@@ -290,9 +333,9 @@ function PrimaryObjective({
           )}
         </div>
         <div className="d-flex flex-row pt-1">
-          <AddSecondaryObjective
+          <AddSecondaryHierarchy
             objectiveCount={secondaryObjectives.length}
-            onCreate={(options: any) =>
+            onCreate={(options: ICreateElement) =>
               createHandler({
                 ...options,
                 type: 'secondary',
@@ -310,7 +353,12 @@ function MainObjective({
   style,
   className,
   onChange: changeHandler,
-}: any & { style?: CSSProperties; className?: string }) {
+}: {
+  objective: string;
+  onChange: (field: string) => (value: any) => void;
+  style?: CSSProperties;
+  className?: string;
+}) {
   const [editing, setEditing] = React.useState<string | undefined>();
 
   return (
@@ -319,9 +367,9 @@ function MainObjective({
         'form-select form-select-sm' + (className ? ` ${className}` : '')
       }
       style={{ maxWidth: 200, ...style }}
-      onChange={e => changeHandler('main')(e.target.value)}
+      onChange={(e: any) => changeHandler('main')(e.target.value)}
       defaultValue={objective}
-      key={editing !== 'main' && objective}
+      key={editing !== 'main' ? objective : undefined}
       autoFocus={editing === 'main'}
       onFocus={() => setEditing('main')}
       onBlur={() => setEditing(undefined)}
@@ -332,12 +380,17 @@ function MainObjective({
   );
 }
 
-function AddPrimaryObjective({
+function AddPrimaryHierarchy({
   style,
   className,
   objectiveCount,
   onCreate: createHandler,
-}: any) {
+}: {
+  objectiveCount: number;
+  onCreate: (options: ICreateElement) => void;
+  style?: CSSProperties;
+  className?: string;
+}) {
   const [focused, setFocused] = React.useState(false);
 
   const createDefaultOptions = {};
@@ -364,7 +417,7 @@ function AddPrimaryObjective({
       >
         <button
           className="btn btn-sm btn-outline-secondary w-100 text-truncate"
-          onClick={e => {
+          onClick={(e: any) => {
             e.stopPropagation();
             createHandler(createDefaultOptions);
           }}
@@ -377,17 +430,27 @@ function AddPrimaryObjective({
   );
 }
 
-function AddSecondaryObjective({
+function AddSecondaryHierarchy({
   objectiveCount,
   onCreate: createHandler,
-}: any) {
+  style,
+  className,
+}: {
+  objectiveCount: number;
+  onCreate: (options: ICreateElement) => void;
+  style?: CSSProperties;
+  className?: string;
+}) {
   const createDefaultOptions = {};
 
   return (
-    <div className="w-100 px-2">
+    <div
+      className={'w-100 px-2' + (className ? ` ${className}` : '')}
+      style={style}
+    >
       <button
         className="btn btn-sm w-100 text-start text-secondary"
-        onClick={e => {
+        onClick={(e: any) => {
           e.stopPropagation();
           createHandler(createDefaultOptions);
         }}
@@ -399,14 +462,29 @@ function AddSecondaryObjective({
   );
 }
 
-function AddAttribute({ attributeCount, onCreate: createHandler }: any) {
+function AddAttribute({
+  attributeCount,
+  onCreate: createHandler,
+  className,
+  style,
+}: {
+  attributeCount: number;
+  onCreate: (options: ICreateElement) => void;
+  style?: CSSProperties;
+  className?: string;
+}) {
   const createDefaultOptions = {};
 
   const [focused, setFocused] = useState(false);
 
   return (
     <div
-      className={'w-100 rounded' + (focused ? ' bg-light' : '')}
+      className={
+        'w-100 rounded' +
+        (focused ? ' bg-light' : '') +
+        (className ? ` ${className}` : '')
+      }
+      style={style}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       onMouseEnter={() => setFocused(true)}
@@ -414,7 +492,7 @@ function AddAttribute({ attributeCount, onCreate: createHandler }: any) {
     >
       <button
         className="btn btn-sm text-secondary w-100 text-start fst-italic"
-        onClick={e => {
+        onClick={(e: any) => {
           e.stopPropagation();
           createHandler(createDefaultOptions);
         }}
@@ -427,7 +505,7 @@ function AddAttribute({ attributeCount, onCreate: createHandler }: any) {
 }
 
 function SSantoHierarchyEditor({ view }: any) {
-  const dispatch: any = useAppDispatch();
+  const dispatch = useAppDispatch();
   const publishChanges = (changes: any) =>
     dispatch(
       call({
@@ -439,10 +517,10 @@ function SSantoHierarchyEditor({ view }: any) {
   const changeHandler = (field: string) => (value: any) =>
     publishChanges({ [field]: value });
 
-  const createHandler = (payload: any) =>
+  const createHandler = (payload: ICreateElement) =>
     publishChanges({ ':create': payload });
 
-  const deleteHandler = (payload: any) =>
+  const deleteHandler = (payload: IDeleteElement) =>
     publishChanges({ ':delete': payload });
 
   const selectHandler = ({
@@ -451,7 +529,7 @@ function SSantoHierarchyEditor({ view }: any) {
   }: {
     viewType: string;
     viewConfigs: {
-      main?: 'needs' | 'opportunities';
+      main?: IMainObjective;
       primary?: number;
       secondary?: number;
       attribute?: number;
@@ -464,9 +542,10 @@ function SSantoHierarchyEditor({ view }: any) {
       })
     );
 
-  const mainObjective = view.content?.objectives?.main;
-  const primaryObjectives =
-    view.content?.objectives?.[mainObjective].primaries || [];
+  const objectives: IObjectiveHierarchy = view.content!.objectives!;
+  const mainObjective: IMainObjective = objectives.main!;
+  const primaryObjectives: IPrimaryHierarchy[] =
+    objectives[mainObjective].primaries || [];
 
   return (
     <div className="d-flex flex-column h-100 w-100">
@@ -479,50 +558,50 @@ function SSantoHierarchyEditor({ view }: any) {
         />
       </div>
       <div className="p-2 d-flex flex-row flex-fill overflow-auto">
-        {primaryObjectives.map((primaryObjective: any, index: number) => (
-          <PrimaryObjective
-            key={primaryObjective + index}
-            objective={primaryObjective}
-            onChange={(partialKey: string) =>
-              changeHandler(
-                `objectives.${mainObjective}.primaries.${index}.${partialKey}`
-              )
-            }
-            onCreate={(options: any) =>
-              createHandler({
-                ...options,
-                main: mainObjective,
-                primary: index,
-              })
-            }
-            onDelete={(options: any) =>
-              deleteHandler({
-                ...options,
-                main: mainObjective,
-                primary: index,
-              })
-            }
-            onSelect={({
-              viewType,
-              viewConfigs,
-            }: {
-              viewType: string;
-              viewConfigs: any;
-            }) =>
-              selectHandler({
-                viewType,
-                viewConfigs: {
-                  ...viewConfigs,
+        {primaryObjectives.map(
+          (
+            primaryObjective: IPrimaryHierarchy,
+            index: number,
+            objectives: IPrimaryHierarchy[]
+          ) => (
+            <PrimaryHierarchy
+              key={`${objectives.length}${index}`}
+              objective={primaryObjective}
+              onChange={(partialKey: string) =>
+                changeHandler(
+                  `objectives.${mainObjective}.primaries.${index}.${partialKey}`
+                )
+              }
+              onCreate={(options: ICreateElement) =>
+                createHandler({
+                  ...options,
                   main: mainObjective,
                   primary: index,
-                },
-              })
-            }
-          />
-        ))}
-        <AddPrimaryObjective
+                })
+              }
+              onDelete={(options: IDeleteElement) =>
+                deleteHandler({
+                  ...options,
+                  main: mainObjective,
+                  primary: index,
+                })
+              }
+              onSelect={({ viewType, viewConfigs }: IOpenView) =>
+                selectHandler({
+                  viewType,
+                  viewConfigs: {
+                    ...viewConfigs,
+                    main: mainObjective,
+                    primary: index,
+                  },
+                })
+              }
+            />
+          )
+        )}
+        <AddPrimaryHierarchy
           objectiveCount={primaryObjectives.length}
-          onCreate={(options: any) =>
+          onCreate={(options: ICreateElement) =>
             createHandler({
               ...options,
               type: 'primary',
