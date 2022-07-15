@@ -76,9 +76,13 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             "secondary": self.__handle_secondary_deletion,
             "attribute": self.__handle_attribute_deletion,
         }
+        self.supported_run_types = {
+            "analysis": self.__handle_run_analysis,
+        }
         self.pre_update_hooks = [
             self.__handle_create_directive,
             self.__handle_delete_directive,
+            self.__handle_run_directive,
             self.__handle_any_change,
             self.__handle_study_area_change,
         ]
@@ -238,6 +242,18 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             changes = self.supported_delete_types[payload["type"]](changes, **payload)
 
         return changes
+
+    def __handle_run_directive(self, changes: dict):
+        if ":run" in changes:
+            payload = changes[":run"]
+            del changes[":run"]
+
+            changes = self.supported_run_types[payload["type"]](changes, **payload)
+
+        return changes
+
+    def __handle_run_analysis(self, options: dict = {}):
+        print("Running the analysis...")
 
     def _update(self, changes: dict):
 

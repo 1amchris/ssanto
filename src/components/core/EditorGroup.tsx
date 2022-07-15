@@ -235,6 +235,7 @@ function EditorTabBar({
               {(codicons as { [name: string]: IconType })[action.iconName]({
                 title: action.label,
                 ...iconBaseProps,
+                style: { ...iconBaseProps.style, ...action.style },
               })}
             </button>
           ))}

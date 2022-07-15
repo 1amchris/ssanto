@@ -58,6 +58,19 @@ function Main() {
       ),
   });
 
+  const runAnalysis = () => ({
+    label: 'Run Analysis',
+    iconName: 'VscPlay',
+    // style: { color: Color.Primary },
+    action: ({ view }: ViewActionCallbackProps) =>
+      dispatch(
+        call({
+          target: ServerCallTarget.WorkspaceViewsPublishChanges,
+          args: [view.source, { ':run': { type: 'analysis' } }],
+        } as CallModel)
+      ),
+  });
+
   const [factories, setFactories] = useState({
     ['file-explorer']: {
       actions: [
@@ -137,7 +150,7 @@ function Main() {
       ),
     },
     ['ssanto-map']: {
-      actions: [showObjectiveHierarchy(), showSettings()],
+      actions: [runAnalysis(), showObjectiveHierarchy(), showSettings()],
       factory: React.lazy(() => import('components/views/ssanto/SSantoMap')),
     },
     ['ssanto-settings']: {
@@ -147,7 +160,7 @@ function Main() {
       ),
     },
     ['ssanto-hierarchy']: {
-      actions: [showSettings(), showMap()],
+      actions: [runAnalysis(), showSettings(), showMap()],
       factory: React.lazy(
         () => import('components/views/ssanto/SSantoHierarchyEditor')
       ),
