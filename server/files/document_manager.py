@@ -12,7 +12,7 @@ class DocumentsManager:
         self.__documents_refs: defaultdict[int] = defaultdict(int)
         self.__documents: dict[str:DocumentEditor] = dict()
 
-        self.__logger.info("[Documents] Documents manager initialized")
+        self.__logger.info("[Documents] initialized.")
 
     def get(self, uri: str) -> DocumentEditor:
         if uri in self.__documents:

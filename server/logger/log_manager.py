@@ -29,8 +29,7 @@ class LogsManager(Serializable):
         self.logs = self.subjects.create("logger.logs", Logs())
 
         # Probably shouldn't be in the logs manager itself, and should be in some parent logger class
-        self.info("Starting up...")
-        self.info("Logs manager initialized.")
+        self.info("[Logs] initialized.")
 
     def serialize(self) -> dict:
         return self.logs.value().serialize()

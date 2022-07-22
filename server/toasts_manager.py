@@ -80,7 +80,7 @@ class ToastsManager:
         self.__logger = logger
         self.__toasts = self.__subjects.create("toaster.toasts", [])
 
-        self.__logger.info("ToastsManager initialized.")
+        self.__logger.info("[Toasts] initialized.")
 
     def add_toast(
         self,

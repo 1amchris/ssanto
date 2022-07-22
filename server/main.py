@@ -12,6 +12,7 @@ from files.document_manager import DocumentsManager
 
 from logger.logger import *
 from logger.log_manager import LogsManager
+from tasks.task_manager import TasksManager
 
 from views.builtin import FileExplorerView, FileSearcherView, ProblemExplorerView, OutputView
 from views.controllers.ssanto_map import SSantoMapViewController
@@ -65,6 +66,12 @@ def populate_views(views_manager: ViewsManager):
     views_manager.sidebar.select_activity(explorer_uri, allow_none=False)
 
 
+async def normal_method(content):
+    print("normal method before:", content)
+    await TasksManager.sleep(2)
+    print("normal method after:", content)
+
+
 async def main():
     server = ServerSocket("localhost", 15649)
     subjects = SubjectsManager(server)
@@ -72,7 +79,12 @@ async def main():
     documents = DocumentsManager(logger)
     toaster = ToastsManager(subjects, logger)
     views = ViewsManager(subjects, logger, documents, toaster)
+    tasks = TasksManager(subjects, logger)
     workspace = WorkspaceManager(subjects, logger, views, toaster)
+
+    tasks.add_task(normal_method("Some content"), lambda *_, **__: print("normal method finished"))
+    await TasksManager.sleep(1)
+    print("main:", "before")
 
     populate_registries()
     populate_views(workspace.views)

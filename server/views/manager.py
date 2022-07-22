@@ -22,7 +22,7 @@ class ViewsManager(Serializable):
         self.panel = PanelManager(subjects, logger, toaster)
         self.sidebar = SideBarManager(subjects, logger, toaster)
 
-        self.__logger.info("ViewManager initialized.")
+        self.__logger.info("[Views] initialized.")
 
     def serialize(self) -> dict:
         return {
