@@ -107,7 +107,7 @@ class ToastsManager(TenantInstance, metaclass=TenantSingleton):
 
         self.__logger.info(f"[Toast Manager] Created toast with id {toast.id}")
 
-    def remove_toast(self, toast, fail_quietly=False):
+    def remove_toast(self, toast: Toast, fail_quietly=False):
         try:
             self.__toasts.value().remove(toast)
             self.__toasts.update()
@@ -146,7 +146,7 @@ class ToastsManager(TenantInstance, metaclass=TenantSingleton):
 
         action(toastId, actionId)
         self.__logger.info(f"[Toast Manager] Action triggered {actionId} for toast {toastId}")
-        self.remove_toast(toast)
+        self.remove_toast(toast, fail_quietly=True)
 
     def clear_toasts(self):
         for toast in self.__toasts.value():
