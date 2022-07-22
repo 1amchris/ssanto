@@ -66,7 +66,7 @@ class TasksManager:
         if task is not None and not task.done():
             # TODO: There should probably some error handling here.
             task.cancel(message)
-            self.tasks.update()
+            self.tasks.update()  # TODO: I don't know if this is necessary. When the task is cancelled, the task might be done, and the task is removed when done
             self.logger.info(f'[Tasks] Removed task with id "{task_id}"')
 
     def get_task(self, task_id):
