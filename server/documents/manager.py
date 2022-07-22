@@ -27,14 +27,14 @@ class DocumentsManager(TenantInstance, metaclass=TenantSingleton):
 
     def update(self, uri: str, changes: dict) -> DocumentEditor:
         document = self.get(uri)
-        document.update(changes)
+        document.handle_event(changes)
         self.__logger.info(f"[Documents] Updated document: {uri}")
         return document
 
     def open(self, uri: str) -> Union[DocumentEditor, None]:
         try:
             if self.__documents_refs[uri] == 0:
-                self.__documents[uri] = DocumentEditorRegistry()[uri](uri)
+                self.__documents[uri] = DocumentEditorRegistry()[uri](self.tenant_id, uri)
             self.__documents_refs[uri] += 1
             self.__logger.info(f"[Documents] Opened document [{self.__documents_refs[uri]} refs]: {uri}")
             return self.get(uri)

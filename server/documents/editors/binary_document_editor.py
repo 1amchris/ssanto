@@ -3,7 +3,7 @@ from documents.utils import uri_to_path
 
 
 class BinaryDocumentEditor(DocumentEditor):
-    def _update(self, changes: dict):
+    def _handle_event(self, changes: dict):
         if self.content != changes["content"]:
             self.content = changes["content"]
             return True

@@ -5,7 +5,7 @@ import json
 
 
 class JSONDocumentEditor(DocumentEditor):
-    def _update(self, changes: dict):
+    def _handle_event(self, changes: dict):
         if changes:
             self.content.update(changes)
             return True

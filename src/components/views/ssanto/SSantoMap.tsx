@@ -44,7 +44,7 @@ function SSantoMap({ view }: any) {
   const publishChanges = (key: string, data: any) => {
     dispatch(
       call({
-        target: ServerCallTarget.WorkspaceViewsPublishChanges,
+        target: ServerCallTarget.WorkspaceViewsPublishEvent,
         args: [
           uri,
           {

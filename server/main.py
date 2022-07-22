@@ -89,7 +89,7 @@ async def main():
     server.bind_command("workspace.open_workspace", workspace.open_workspace)
     server.bind_command("workspace.close_workspace", workspace.close_workspace)
 
-    server.bind_command("workspace.views.publish_changes", workspace.views.update)
+    server.bind_command("workspace.views.handle_event", workspace.views.handle_event)
 
     server.bind_command("workspace.views.editor.save", workspace.views.editor.save)
     server.bind_command("workspace.views.editor.save_all", workspace.views.editor.save_all)

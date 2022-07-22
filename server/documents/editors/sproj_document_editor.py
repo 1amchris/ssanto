@@ -1,5 +1,6 @@
 from functools import reduce
 from io import UnsupportedOperation
+from time import time
 from typing import Union
 from datetime import datetime
 
@@ -9,6 +10,8 @@ import rasterio
 import numpy as np
 
 from documents.editors.json_document_editor import JSONDocumentEditor
+from logger.manager import LogsManager
+from tasks.manager import TasksManager
 
 
 class StudyAreaHelper:
@@ -89,7 +92,7 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             self.__handle_study_area_change,
         ]
 
-    def __handle_primary_creation(self, changes: dict, type: str, main: str, options: dict = {}):
+    def __handle_primary_creation(self, changes: dict, main: str, options: dict = {}, **kwargs):
         primaries: list = self.get_content()["objectives"][main]["primaries"]
         index = 0 if primaries is None else len(primaries)
 
@@ -103,9 +106,7 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         changes[f"objectives.{main}.primaries.{index}"] = prototype
         return changes
 
-    def __handle_primary_deletion(
-        self, changes: dict, type: str, main: str, primary: Union[str, int], options: dict = {}
-    ):
+    def __handle_primary_deletion(self, changes: dict, main: str, primary: Union[str, int], **kwargs):
         primary = int(primary)
         primaries: list = self.get_content()["objectives"][main]["primaries"]
         primaries.remove(primaries[primary])
@@ -115,10 +116,10 @@ class SSantoDocumentEditor(JSONDocumentEditor):
     def __handle_secondary_creation(
         self,
         changes: dict,
-        type: str,
         main: str,
         primary: Union[int, str],
         options: dict = {},
+        **kwargs,
     ):
         primary = int(primary)
         secondaries: list = self.get_content()["objectives"][main]["primaries"][primary]["secondaries"]
@@ -137,11 +138,10 @@ class SSantoDocumentEditor(JSONDocumentEditor):
     def __handle_secondary_deletion(
         self,
         changes: dict,
-        type: str,
         main: str,
         primary: Union[int, str],
         secondary: Union[int, str],
-        options: dict = {},
+        **kwargs,
     ):
         primary, secondary = int(primary), int(secondary)
         secondaries: list = self.get_content()["objectives"][main]["primaries"][primary]["secondaries"]
@@ -152,11 +152,11 @@ class SSantoDocumentEditor(JSONDocumentEditor):
     def __handle_attribute_creation(
         self,
         changes: dict,
-        type: str,
         main: str,
         primary: Union[int, str],
         secondary: Union[int, str],
         options: dict = {},
+        **kwargs,
     ):
         primary, secondary = int(primary), int(secondary)
 
@@ -178,12 +178,11 @@ class SSantoDocumentEditor(JSONDocumentEditor):
     def __handle_attribute_deletion(
         self,
         changes: dict,
-        type: str,
         main: str,
         primary: Union[int, str],
         secondary: Union[int, str],
         attribute: Union[int, str],
-        options: dict = {},
+        **kwargs,
     ):
         primary, secondary, attribute = int(primary), int(secondary), int(attribute)
 
@@ -195,7 +194,8 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         return changes
 
     def __handle_any_change(self, changes: dict):
-        changes["analysis.modifiedOn"] = str(datetime.date(datetime.now()))
+        if isinstance(changes, dict) and changes:
+            changes["analysis.modifiedOn"] = str(datetime.date(datetime.now()))
         return changes
 
     def __get_value(self, key):
@@ -254,10 +254,24 @@ class SSantoDocumentEditor(JSONDocumentEditor):
 
         return changes
 
-    def __handle_run_analysis(self, options: dict = {}):
-        print("Running the analysis...")
+    def __handle_run_analysis(self, changes: dict, options: dict = {}, **kwargs):
+        tasker = TasksManager(self.tenant_id)
+        logger = LogsManager(self.tenant_id)
 
-    def _update(self, changes: dict):
+        async def run_analysis(timeout: int):
+            logger.info("Starting analysis...")
+            await TasksManager.sleep(timeout)
+
+        def on_complete():
+            logger.info("Analysis completed.")
+
+        analysis_name = self.get_content()["analysis"]["name"]
+        tasker.add_task(
+            run_analysis(5), display_name=f"Analysis: {analysis_name}", on_complete=lambda *_, **__: on_complete()
+        )
+        return changes
+
+    def _handle_event(self, changes: dict):
 
         if self.pre_update_hooks is not None:
             changes = reduce(lambda changes, hook: hook(changes), self.pre_update_hooks, changes)
@@ -282,4 +296,4 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             else:
                 scope[segments[-1]] = res
 
-        return segments is not None
+        return changes and segments is not None

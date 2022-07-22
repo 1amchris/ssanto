@@ -65,8 +65,8 @@ function Main() {
     action: ({ view }: ViewActionCallbackProps) =>
       dispatch(
         call({
-          target: ServerCallTarget.WorkspaceViewsPublishChanges,
-          args: [view.source, { ':run': { type: 'analysis' } }],
+          target: ServerCallTarget.WorkspaceViewsPublishEvent,
+          args: [view.uri, { ':run': { type: 'analysis' } }],
         } as CallModel)
       ),
   });

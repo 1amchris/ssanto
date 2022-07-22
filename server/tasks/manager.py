@@ -6,13 +6,14 @@ from logger.manager import LogsManager
 
 
 class Task(Serializable):
-    def __init__(self, task, on_error=None):
+    def __init__(self, task, display_name=None, on_error=None):
         self.task = asyncio.create_task(task)
+        self.name = display_name or self.task.get_name()
         # not currently used, but should be used to handle errors if specified
         self.on_error = on_error
 
     def serialize(self):
-        return {"name": self.get_id(), "running": not self.is_done()}
+        return {"id": self.get_id(), "name": self.display_name, "running": not self.is_done()}
 
     def get_id(self):
         return self.task.get_name()
@@ -43,8 +44,8 @@ class TasksManager(TenantInstance, metaclass=TenantSingleton):
 
         self.logger.info("[Tasks] initialized.")
 
-    def add_task(self, task, on_complete=None, on_error=None):
-        task = Task(task, on_error)
+    def add_task(self, task, display_name, on_complete=None, on_error=None):
+        task = Task(task, display_name, on_error)
         if on_complete is not None:
             task.add_done_callback(on_complete)
         task_id = task.get_id()

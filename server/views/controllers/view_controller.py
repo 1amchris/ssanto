@@ -29,7 +29,7 @@ class ViewController(Serializable):
         self.subscriptions = (
             [
                 self.document.subscribe(DocumentEvent.ERROR, self.on_document_error, latent=True),
-                self.document.subscribe(DocumentEvent.UPDATE, self.on_document_change),
+                self.document.subscribe(DocumentEvent.EVENT, self.on_document_change),
                 self.document.subscribe(DocumentEvent.SAVE, self.on_document_save),
             ]
             if self.document is not None
@@ -62,7 +62,7 @@ class ViewController(Serializable):
 
     def update(self, changes: dict = None):
         if self.document is not None and changes is not None:
-            self.document.update(changes)
+            self.document.handle_event(changes)
 
     # All derived class should redefine the get_view_type() method to return the name of the view_type it supports
     def get_view_type(self):

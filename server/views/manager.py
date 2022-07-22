@@ -24,10 +24,10 @@ class ViewsManager(TenantInstance, Serializable, metaclass=TenantSingleton):
             "sidebar": self.sidebar.serialize(),
         }
 
-    def update(self, view_uri, changes):
+    def handle_event(self, view_uri, params):
         # for manager in [self.sidebar, self.editor, self.panel]:
         for manager in [self.editor]:  # sidebar and panel don't implement has_view and update_view yet
             if manager.has_view(view_uri):
-                manager.update_view(view_uri, changes)
+                manager.handle_event(view_uri, params)
 
         # self.logger.info(f"[Workspace] Updated view: {view_uri}")

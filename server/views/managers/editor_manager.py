@@ -293,7 +293,7 @@ class EditorManager(TenantInstance, Serializable, metaclass=TenantSingleton):
         self.__active_views.update()
         return view_uri
 
-    def update_view(self, view_uri: str, changes: dict):
+    def handle_event(self, view_uri: str, params: dict):
         for group in self.__editor_views.value():
             for view in group.views:
                 if view.uri == view_uri:
@@ -309,5 +309,4 @@ class EditorManager(TenantInstance, Serializable, metaclass=TenantSingleton):
             raise KeyError(f"No view found for {view_uri}")
 
         else:
-            # self.logger.info(f"[Editor] Updating view {view_uri}")
-            return view.update(changes)
+            return view.update(params)

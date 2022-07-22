@@ -16,7 +16,7 @@ function SSantoSettingsEditor({ view }: any) {
     const changes = { [field]: value };
     dispatch(
       call({
-        target: ServerCallTarget.WorkspaceViewsPublishChanges,
+        target: ServerCallTarget.WorkspaceViewsPublishEvent,
         args: [view.uri, changes],
       })
     );

@@ -6,7 +6,7 @@ from documents.utils import uri_to_path
 
 class DocumentEvent(Enum):
     SAVE = "save"
-    UPDATE = "update"
+    EVENT = "event"
     ERROR = "error"
 
 
@@ -29,7 +29,8 @@ class DocumentEditor(Serializable):
 
     default_view = None
 
-    def __init__(self, uri: str):
+    def __init__(self, tenant_id: str, uri: str):
+        self.tenant_id: str = tenant_id
         self.uri: str = uri
         self.is_modified: bool = False
         self.content = self._get_content()
@@ -49,13 +50,11 @@ class DocumentEditor(Serializable):
             subscription(self, *args, **kwargs)
         return subscription
 
-    # The "changes" dictionary is a dictionary of changes to be applied to the document
-    # There is no standard structure here. It is based on the needs of the derived editor.
-    def update(self, changes: dict):
+    def handle_event(self, params: dict):
         try:
-            if self._update(changes):
+            if self._handle_event(params):
                 self.is_modified = True
-                self.notify(DocumentEvent.UPDATE)
+                self.notify(DocumentEvent.EVENT)
         except Exception as e:
             self.notify(DocumentEvent.ERROR, e)
 
@@ -88,17 +87,17 @@ class DocumentEditor(Serializable):
                 subscription(self, *args, **kwargs)
 
     # The following methods should be overriden by the derived editor to specify behaviour
-    def _update(self, changes: dict):
+    def _handle_event(self, params: dict):
         """
-        Updates the local document with the changes.
-        Returns True if the local document has been succesfully modified, else False.
+        Handles the document event.
+        Returns True if the local document has been modified, else False.
         """
         raise Exception("Not implemented")
 
     def _save(self):
         """
         Saves the document to the source file.
-        Returns True if the document has been succesfully saved, else False.
+        Returns True if the document has been saved, else False.
         """
         if self.is_modified:
             with open(uri_to_path(self.uri), "w") as file:

@@ -19,7 +19,7 @@ function SSantoSecondaryObjectiveEditor({ view }: any) {
   const publishChanges = (changes: any) =>
     dispatch(
       call({
-        target: ServerCallTarget.WorkspaceViewsPublishChanges,
+        target: ServerCallTarget.WorkspaceViewsPublishEvent,
         args: [view.uri, changes],
       })
     );
