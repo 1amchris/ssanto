@@ -2,7 +2,7 @@ from collections import defaultdict
 from typing import Union
 from documents.editor_registry import DocumentEditorRegistry
 from documents.editors.document_editor import DocumentEditor
-from files.errors import UnsavedFileError
+from documents.errors import UnsavedFileError
 from logger.manager import LogsManager
 from singleton import TenantInstance, TenantSingleton
 

@@ -1,5 +1,5 @@
 import os
-from files.errors import UnsavedFileError
+from documents.errors import UnsavedFileError
 from files.file_metadata import FileMetaData
 from logger.manager import LogsManager
 from singleton import TenantInstance, TenantSingleton

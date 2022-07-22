@@ -1,5 +1,5 @@
 from documents.manager import DocumentsManager
-from files.errors import UnsavedFileError
+from documents.errors import UnsavedFileError
 from serializable import Serializable
 from logger.manager import LogsManager
 from singleton import TenantInstance, TenantSingleton
