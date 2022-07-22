@@ -2,7 +2,8 @@ import websockets
 import asyncio
 import json
 
-from files.serializable import Serializable
+from serializable import Serializable
+from singleton import TenantInstance, TenantSingleton
 
 from .network_definitions import Field, SendType
 import traceback
@@ -13,9 +14,12 @@ class CallException(Exception):
 
 
 # TODO Split command handling and networking from this class
-class ServerSocket:
+class ServerSocket(TenantInstance, metaclass=TenantSingleton):
     REQUEST_SUCCEEDED = 0
     REQUEST_FAILED = -1
+
+    DEFAULT_HOST = None
+    DEFAULT_PORT = None
 
     class CommandFunctor:
         def __init__(self, callable, allow_return):
@@ -34,18 +38,18 @@ class ServerSocket:
 
             return code, return_data
 
-    def __init__(self, host_address, port):
+    def __init__(self, tenant_id):
+        super().__init__(tenant_id)
         self.server_socket = None
-        self.host = host_address
-        self.port = port
+        self.host = ServerSocket.DEFAULT_HOST
+        self.port = ServerSocket.DEFAULT_PORT
 
         self.commands_handlers = {}
 
     def bind_command(self, command_name, callable, allow_return=True):
         self.commands_handlers[command_name] = self.CommandFunctor(callable, allow_return)
 
-    # Type can be 0: subject update, 1: call return, -1: error (use SendType enum)
-    def send(self, send_type, data):
+    def send(self, send_type: SendType, data):
         send_data = {"type": send_type, "data": data}
         json_data = json.dumps(
             send_data, default=lambda o: o.serialize() if issubclass(type(o), Serializable) else o.__dict__

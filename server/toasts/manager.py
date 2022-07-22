@@ -2,9 +2,10 @@ import asyncio
 from enum import Enum
 from typing import Callable
 from uuid import uuid4
-from files.serializable import Serializable
-from logger.log_manager import LogsManager
-from subjects.subjects_manager import SubjectsManager
+from serializable import Serializable
+from logger.manager import LogsManager
+from singleton import TenantInstance, TenantSingleton
+from subjects.manager import SubjectsManager
 
 
 class ToastAction(Serializable):
@@ -74,10 +75,11 @@ class Toast(Serializable):
         return hash(self.message) + hash(self.duration)
 
 
-class ToastsManager:
-    def __init__(self, subjects: SubjectsManager, logger: LogsManager):
-        self.__subjects = subjects
-        self.__logger = logger
+class ToastsManager(TenantInstance, metaclass=TenantSingleton):
+    def __init__(self, tenant_id: str):
+        super().__init__(tenant_id)
+        self.__subjects = SubjectsManager(tenant_id)
+        self.__logger = LogsManager(tenant_id)
         self.__toasts = self.__subjects.create("toaster.toasts", [])
 
         self.__logger.info("[Toasts] initialized.")
@@ -145,6 +147,10 @@ class ToastsManager:
         action(toastId, actionId)
         self.__logger.info(f"[Toast Manager] Action triggered {actionId} for toast {toastId}")
         self.remove_toast(toast)
+
+    def clear_toasts(self):
+        for toast in self.__toasts.value():
+            self.remove_toast(toast)
 
     # shortcuts (convenient)
     def info(self, *args, **kwargs):

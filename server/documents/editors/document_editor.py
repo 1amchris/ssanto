@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Callable
-from files.serializable import Serializable
-from files.utils import uri_to_path
+from serializable import Serializable
+from documents.utils import uri_to_path
 
 
 class DocumentEvent(Enum):

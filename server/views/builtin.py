@@ -1,4 +1,4 @@
-from views.views import ViewMetadata
+from views.view_metadata import ViewMetadata
 
 
 class FileExplorerView(ViewMetadata):

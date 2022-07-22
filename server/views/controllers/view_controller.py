@@ -1,8 +1,8 @@
 from typing import Callable
 from uuid import uuid4
 
-from files.serializable import Serializable
-from files.document_editors.document_editor import DocumentEditor, DocumentEvent
+from serializable import Serializable
+from documents.editors.document_editor import DocumentEditor, DocumentEvent
 
 
 class ViewController(Serializable):

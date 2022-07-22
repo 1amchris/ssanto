@@ -1,20 +1,22 @@
 import os
 from files.errors import UnsavedFileError
 from files.file_metadata import FileMetaData
-from logger.log_manager import LogsManager
-from subjects.subjects_manager import SubjectsManager
-from toasts_manager import ToastAction
+from logger.manager import LogsManager
+from singleton import TenantInstance, TenantSingleton
+from subjects.manager import SubjectsManager
+from toasts.manager import ToastAction
 from views.manager import ViewsManager
-from toasts_manager import ToastsManager
+from toasts.manager import ToastsManager
 
 
-class WorkspaceManager:
-    def __init__(self, subjects: SubjectsManager, logger: LogsManager, views: ViewsManager, toaster: ToastsManager):
-        self.subjects = subjects
-        self.logger = logger
-        self.toaster = toaster
+class WorkspaceManager(TenantInstance, metaclass=TenantSingleton):
+    def __init__(self, tenant_id: str):
+        super().__init__(tenant_id)
+        self.subjects = SubjectsManager(tenant_id)
+        self.logger = LogsManager(tenant_id)
+        self.toaster = ToastsManager(tenant_id)
+        self.views = ViewsManager(tenant_id)
         self.workspace = None
-        self.views = views
         self.files = self.subjects.create("workspace.files", dict())
 
     def open_workspace(self, path):
@@ -32,6 +34,7 @@ class WorkspaceManager:
                 self.views.editor.remove_all(save=save, allow_closing_if_modified=allow_closing_if_modified)
                 self.files.notify([])
                 self.workspace = None
+                self.toaster.clear_toasts()
                 self.logger.info(f"[Workspace] Closed the workspace.")
 
             except UnsavedFileError as e:

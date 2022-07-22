@@ -1,7 +1,7 @@
 from datetime import datetime
 import string
-from files.serializable import Serializable
-from logger.log_types import LogType
+from serializable import Serializable
+from logger.types import LogType
 
 
 class LogMessage(Serializable):

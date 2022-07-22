@@ -1,8 +1,9 @@
 from collections import defaultdict
-from files.serializable import Serializable
-from logger.log_message import LogMessage
-from logger.log_types import LogType
-from subjects.subjects_manager import SubjectsManager
+from singleton import TenantInstance, TenantSingleton
+from serializable import Serializable
+from logger.message import LogMessage
+from logger.types import LogType
+from subjects.manager import SubjectsManager
 
 
 class Logs(Serializable):
@@ -22,10 +23,10 @@ class Logs(Serializable):
         self.logs = defaultdict(list)
 
 
-class LogsManager(Serializable):
-    def __init__(self, subjects: SubjectsManager):
-        super().__init__()
-        self.subjects = subjects
+class LogsManager(TenantInstance, Serializable, metaclass=TenantSingleton):
+    def __init__(self, tenant_id: str):
+        super().__init__(tenant_id)
+        self.subjects = SubjectsManager(tenant_id)
         self.logs = self.subjects.create("logger.logs", Logs())
 
         # Probably shouldn't be in the logs manager itself, and should be in some parent logger class

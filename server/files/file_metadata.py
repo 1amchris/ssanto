@@ -1,4 +1,4 @@
-from files.serializable import Serializable
+from serializable import Serializable
 
 
 class FileMetaData(Serializable):

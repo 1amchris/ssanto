@@ -1,12 +1,14 @@
 from functools import reduce
 from io import UnsupportedOperation
 from typing import Union
-from files.document_editors.json_document_editor import JSONDocumentEditor
 from datetime import datetime
+
 import geopandas
 import json
 import rasterio
 import numpy as np
+
+from documents.editors.json_document_editor import JSONDocumentEditor
 
 
 class StudyAreaHelper:

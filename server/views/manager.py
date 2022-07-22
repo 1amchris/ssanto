@@ -1,26 +1,19 @@
-from files.serializable import Serializable
-from files.document_manager import DocumentsManager
-from logger.log_manager import LogsManager
-from subjects.subjects_manager import SubjectsManager
-from views.components.editor_manager import EditorManager
-from views.components.sidebar_manager import SideBarManager
-from views.components.panel_manager import PanelManager
-from toasts_manager import ToastsManager
+from serializable import Serializable
+from logger.manager import LogsManager
+from singleton import TenantInstance, TenantSingleton
+from views.managers.editor_manager import EditorManager
+from views.managers.sidebar_manager import SideBarManager
+from views.managers.panel_manager import PanelManager
 
 
-class ViewsManager(Serializable):
-    def __init__(
-        self, subjects: SubjectsManager, logger: LogsManager, documents: DocumentsManager, toaster: ToastsManager
-    ):
-        super().__init__()
-        self.__subjects = subjects
-        self.__logger = logger
-        self.__documents = documents
-        self.__toaster = toaster
+class ViewsManager(TenantInstance, Serializable, metaclass=TenantSingleton):
+    def __init__(self, tenant_id: str):
+        super().__init__(tenant_id)
+        self.__logger = LogsManager(tenant_id)
 
-        self.editor = EditorManager(subjects, logger, documents, toaster)
-        self.panel = PanelManager(subjects, logger, toaster)
-        self.sidebar = SideBarManager(subjects, logger, toaster)
+        self.editor = EditorManager(tenant_id)
+        self.panel = PanelManager(tenant_id)
+        self.sidebar = SideBarManager(tenant_id)
 
         self.__logger.info("[Views] initialized.")
 

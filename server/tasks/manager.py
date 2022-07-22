@@ -1,7 +1,8 @@
 import asyncio
-from files.serializable import Serializable
-from subjects.subjects_manager import SubjectsManager
-from logger.log_manager import LogsManager
+from serializable import Serializable
+from singleton import TenantInstance, TenantSingleton
+from subjects.manager import SubjectsManager
+from logger.manager import LogsManager
 
 
 class Task(Serializable):
@@ -29,15 +30,15 @@ class Task(Serializable):
         self.task.remove_done_callback(callback)
 
 
-class TasksManager:
+class TasksManager(TenantInstance, metaclass=TenantSingleton):
     @staticmethod
     async def sleep(seconds):
         await asyncio.sleep(seconds)
 
-    def __init__(self, subjects: SubjectsManager, logger: LogsManager):
-        super().__init__()
-        self.subjects = subjects
-        self.logger = logger
+    def __init__(self, tenant_id: str):
+        super().__init__(tenant_id)
+        self.subjects = SubjectsManager(tenant_id)
+        self.logger = LogsManager(tenant_id)
         self.tasks = self.subjects.create("tasker.tasks", [])
 
         self.logger.info("[Tasks] initialized.")

@@ -1,14 +1,16 @@
 from collections import defaultdict
 from typing import Union
-from files.document_editor_registry import DocumentEditorRegistry
-from files.document_editors.document_editor import DocumentEditor
+from documents.editor_registry import DocumentEditorRegistry
+from documents.editors.document_editor import DocumentEditor
 from files.errors import UnsavedFileError
-from logger.log_manager import LogsManager
+from logger.manager import LogsManager
+from singleton import TenantInstance, TenantSingleton
 
 
-class DocumentsManager:
-    def __init__(self, logger: LogsManager):
-        self.__logger: LogsManager = logger
+class DocumentsManager(TenantInstance, metaclass=TenantSingleton):
+    def __init__(self, tenant_id: str):
+        super().__init__(tenant_id)
+        self.__logger: LogsManager = LogsManager(tenant_id)
         self.__documents_refs: defaultdict[int] = defaultdict(int)
         self.__documents: dict[str:DocumentEditor] = dict()
 

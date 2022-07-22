@@ -6,8 +6,8 @@ import geopandas as gpd
 from files.file_metadata import FileMetaData
 from files.file import File
 from files.shapefile import Shapefile
-from logger.log_manager import LogsManager
-from subjects.subjects_manager import SubjectsManager
+from logger.manager import LogsManager
+from subjects.manager import SubjectsManager
 
 
 class FileParser:

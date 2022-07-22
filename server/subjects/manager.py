@@ -1,11 +1,14 @@
+from network.server_socket import ServerSocket
+from singleton import TenantInstance, TenantSingleton
 from .subject import Subject
 from network.network_definitions import Field, SendType
 
 
-class SubjectsManager:
-    def __init__(self, server_socket):
+class SubjectsManager(TenantInstance, metaclass=TenantSingleton):
+    def __init__(self, tenant_id):
+        super().__init__(tenant_id)
         self.subjects = {}
-        self.server_socket = server_socket
+        self.server_socket = ServerSocket(tenant_id)
 
     def create(self, name, data=None):
         self.subjects[name] = Subject(self, name, data)

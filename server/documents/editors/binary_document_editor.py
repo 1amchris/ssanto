@@ -1,5 +1,5 @@
-from files.document_editors.document_editor import DocumentEditor
-from files.utils import uri_to_path
+from documents.editors.document_editor import DocumentEditor
+from documents.utils import uri_to_path
 
 
 class BinaryDocumentEditor(DocumentEditor):

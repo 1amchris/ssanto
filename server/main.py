@@ -1,33 +1,33 @@
 import signal
 import platform
-
 import asyncio
+from uuid import uuid4
 
 from network.server_socket import ServerSocket
-from subjects.subjects_manager import SubjectsManager
+from subjects.manager import SubjectsManager
 
-from files.document_editor_registry import DocumentEditorRegistry
-from files.document_editors.sproj_document_editor import SSantoDocumentEditor
-from files.document_manager import DocumentsManager
+from documents.editor_registry import DocumentEditorRegistry
+from documents.editors.sproj_document_editor import SSantoDocumentEditor
 
 from logger.logger import *
-from logger.log_manager import LogsManager
-from tasks.task_manager import TasksManager
+from logger.manager import LogsManager
+
+# from task_manager import TasksManager
+from guide.builder import GuideBuilder
+from toasts.manager import ToastsManager
+from workspace.manager import WorkspaceManager
+from views.manager import ViewsManager
 
 from views.builtin import FileExplorerView, FileSearcherView, ProblemExplorerView, OutputView
 from views.controllers.ssanto_map import SSantoMapViewController
 from views.controllers.ssanto_settings import SSantoSettingsViewController
 from views.controllers.ssanto_hierarchy import SSantoHierarchyViewController
 from views.controllers.ssanto_attribute import SSantoAttributeViewController
-from views.manager import ViewsManager
-from views.view_controller_registry import ViewControllerRegistry
+from views.controller_registry import ViewControllerRegistry
 
-from analysis.analysis import Analysis
 from analysis.map import Map
+from analysis.analysis import Analysis
 from files.file_manager import FilesManager
-from guide_builder import GuideBuilder
-from toasts_manager import ToastsManager
-from workspace_manager import WorkspaceManager
 
 
 def populate_registries():
@@ -66,25 +66,15 @@ def populate_views(views_manager: ViewsManager):
     views_manager.sidebar.select_activity(explorer_uri, allow_none=False)
 
 
-async def normal_method(content):
-    print("normal method before:", content)
-    await TasksManager.sleep(2)
-    print("normal method after:", content)
-
-
 async def main():
-    server = ServerSocket("localhost", 15649)
-    subjects = SubjectsManager(server)
-    logger = LogsManager(subjects)
-    documents = DocumentsManager(logger)
-    toaster = ToastsManager(subjects, logger)
-    views = ViewsManager(subjects, logger, documents, toaster)
-    tasks = TasksManager(subjects, logger)
-    workspace = WorkspaceManager(subjects, logger, views, toaster)
+    tenant_id = str(uuid4())
 
-    tasks.add_task(normal_method("Some content"), lambda *_, **__: print("normal method finished"))
-    await TasksManager.sleep(1)
-    print("main:", "before")
+    server = ServerSocket(tenant_id)
+    subjects = SubjectsManager(tenant_id)
+    logger = LogsManager(tenant_id)
+    toaster = ToastsManager(tenant_id)
+    workspace = WorkspaceManager(tenant_id)
+    # tasks = TasksManager(tenant_id)
 
     populate_registries()
     populate_views(workspace.views)
@@ -98,9 +88,6 @@ async def main():
     server.bind_command("workspace.open_view", workspace.open_editor)
     server.bind_command("workspace.open_workspace", workspace.open_workspace)
     server.bind_command("workspace.close_workspace", workspace.close_workspace)
-
-    files = FilesManager(subjects, logger)
-    server.bind_command("files.get_files", files.get_files_metadatas)
 
     server.bind_command("workspace.views.publish_changes", workspace.views.update)
 
@@ -120,6 +107,10 @@ async def main():
     server.bind_command("workspace.views.sidebar.select_view", workspace.views.sidebar.select_view)
     server.bind_command("workspace.views.sidebar.select_activity", workspace.views.sidebar.select_activity)
 
+    # legacy
+    files = FilesManager(subjects, logger)
+    server.bind_command("files.get_files", files.get_files_metadatas)
+
     analysis = Analysis(subjects, files)
     server.bind_command("analysis.update", analysis.update)
     server.bind_command("analysis.set_study_area", analysis.receive_study_area)
@@ -137,6 +128,7 @@ async def main():
 
     map = Map(subjects, analysis.get_informations_at_position)
     server.bind_command("map.set_cursor", map.set_cursor)
+    # end: legacy
 
     guide_builder = GuideBuilder()
     server.bind_command("guide.get", guide_builder.generate_guide_data)
@@ -156,4 +148,7 @@ async def main():
 
 
 if __name__ == "__main__":
+    ServerSocket.DEFAULT_HOST = "localhost"
+    ServerSocket.DEFAULT_PORT = 15649
+
     asyncio.run(main())

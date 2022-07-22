@@ -1,4 +1,4 @@
-from files.document_editors.document_editor import DocumentEditor
+from documents.editors.document_editor import DocumentEditor
 from views.controllers.view_controller import ViewController
 
 

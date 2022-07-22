@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from files.serializable import Serializable
+from serializable import Serializable
 from views.controllers.view_controller import ViewController
 
 

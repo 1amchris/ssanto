@@ -1,17 +1,16 @@
-from files.serializable import Serializable
-from logger.log_manager import LogsManager
-from subjects.subjects_manager import SubjectsManager
+from serializable import Serializable
+from logger.manager import LogsManager
+from singleton import TenantInstance, TenantSingleton
+from subjects.manager import SubjectsManager
 from views.groups import IconedViewGroup
-from views.views import ViewMetadata
-from toasts_manager import ToastsManager
+from views.view_metadata import ViewMetadata
 
 
-class PanelManager(Serializable):
-    def __init__(self, subjects: SubjectsManager, logger: LogsManager, toaster: ToastsManager):
-        super().__init__()
-        self.__subjects = subjects
-        self.__logger = logger
-        self.__toaster = toaster
+class PanelManager(TenantInstance, Serializable, metaclass=TenantSingleton):
+    def __init__(self, tenant_id: str):
+        super().__init__(tenant_id)
+        self.__subjects = SubjectsManager(tenant_id)
+        self.__logger = LogsManager(tenant_id)
 
         self.__activities = self.__subjects.create("workspace.views.panel.activities", [])
         self.__active = self.__subjects.create("workspace.views.panel.active_view", None)
