@@ -9,6 +9,8 @@ enum ServerSubscriptionTarget {
 
   ToasterToasts = 'toaster.toasts',
 
+  TaskerTasks = 'tasker.tasks',
+
   WorkspaceViewsEditorViews = 'workspace.views.editor.views',
   WorkspaceViewsActiveEditorViews = 'workspace.views.editor.active_views',
   WorkspaceViewsPanelViews = 'workspace.views.panel.activities',

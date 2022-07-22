@@ -4,8 +4,71 @@ import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { IconBaseProps, IconType } from 'react-icons';
 import * as codicons from 'react-icons/vsc';
 import { useAppSelector } from 'store/hooks';
-import { selectStatusBar } from 'store/reducers/status-bar';
+import { selectTasker } from 'store/reducers/tasker';
 import ColorsUtils from 'utils/colors-utils';
+import Task from 'models/ITask';
+
+const { left, right } = {
+  left: [
+    {
+      id: 'ssanto.git-branch',
+      label: 'ui-overhaul*+',
+      iconName: 'VscGitMerge',
+    },
+    {
+      id: 'ssanto.git-synchronize',
+      iconName: 'VscSync',
+      description: 'Synchronize with Git',
+    },
+    {
+      id: 'ssanto.start',
+      iconName: 'VscDebugAlt',
+      description: 'Start Analysing',
+    },
+    {
+      id: 'ssanto.person-account',
+      label: 'Christophe',
+      iconName: 'VscPerson',
+      description: 'Sign in to Github.',
+    },
+    {
+      id: 'ssanto.live-share',
+      label: 'Live Share',
+      iconName: 'VscLiveShare',
+      description: 'Start Collaborative Session',
+    },
+  ],
+  right: [
+    {
+      id: 'ssanto.end-of-line',
+      label: 'LF',
+      description: 'Select End of Line Sequence',
+    },
+    {
+      id: 'ssanto.language',
+      label: 'TypeScript React',
+      iconName: 'VscSymbolNamespace',
+      description: 'Select Language Mode',
+    },
+    {
+      id: 'ssanto.tslint',
+      label: 'TSLint',
+      iconName: 'VscWarning',
+      description: 'Linter is running.',
+    },
+    { id: 'ssanto.prettier', label: 'Prettier', iconName: 'VscCheck' },
+    {
+      id: 'ssanto.feedback',
+      iconName: 'VscFeedback',
+      description: 'Tweet Feedback',
+    },
+    {
+      id: 'ssanto.notifications',
+      iconName: 'VscBell',
+      description: 'No Notifications',
+    },
+  ],
+};
 
 const backgroundColors = {
   disabled: ColorsUtils.applyOpacity(Color.Black, Opacity.Transparent),
@@ -89,7 +152,7 @@ function StatusItem({
  * @return {JSX.Element} Html.
  */
 function StatusBar({ style }: any) {
-  const { left, right } = useAppSelector(selectStatusBar);
+  const { tasks } = useAppSelector(selectTasker);
 
   function handleItemClick(item: any) {
     console.log(`clicked on status item: "${item.id}"`);
@@ -97,8 +160,14 @@ function StatusBar({ style }: any) {
 
   return (
     <nav
-      className="d-flex flex-row justify-content-between bg-primary px-2"
-      style={style}
+      className="d-flex flex-row justify-content-between px-2"
+      style={{
+        ...style,
+        backgroundColor:
+          tasks?.filter((task: Task) => task.running)?.length > 0
+            ? Color.Orange
+            : Color.Primary,
+      }}
     >
       <div className="d-flex flex-row overflow-auto">
         {left?.map(item => (

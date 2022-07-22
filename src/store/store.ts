@@ -6,7 +6,7 @@ import guideReducer from 'store/reducers/guide';
 import mapReducer from 'store/reducers/map';
 import outputReducer from 'store/reducers/logger';
 import toasterReducer from 'store/reducers/toaster';
-import statusBarReducer from 'store/reducers/status-bar';
+import taskerReducer from 'store/reducers/tasker';
 import viewsManagerReducer from 'store/reducers/views-manager';
 import webViewReducer from 'store/reducers/web-view';
 import ServerMiddleware from 'store/middlewares/ServerMiddleware';
@@ -22,7 +22,7 @@ export const store = configureStore({
     guide: guideReducer,
     map: mapReducer,
     logger: outputReducer,
-    statusBar: statusBarReducer,
+    tasker: taskerReducer,
     toaster: toasterReducer,
     viewsManager: viewsManagerReducer,
     webView: webViewReducer,

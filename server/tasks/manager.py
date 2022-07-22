@@ -1,4 +1,5 @@
 import asyncio
+from calendar import c
 from serializable import Serializable
 from singleton import TenantInstance, TenantSingleton
 from subjects.manager import SubjectsManager
@@ -13,7 +14,7 @@ class Task(Serializable):
         self.on_error = on_error
 
     def serialize(self):
-        return {"id": self.get_id(), "name": self.display_name, "running": not self.is_done()}
+        return {"id": self.get_id(), "name": self.name, "running": not self.is_done()}
 
     def get_id(self):
         return self.task.get_name()
@@ -38,11 +39,11 @@ class TasksManager(TenantInstance, metaclass=TenantSingleton):
 
     def __init__(self, tenant_id: str):
         super().__init__(tenant_id)
-        self.subjects = SubjectsManager(tenant_id)
-        self.logger = LogsManager(tenant_id)
-        self.tasks = self.subjects.create("tasker.tasks", [])
+        self.__subjects = SubjectsManager(tenant_id)
+        self.__logger = LogsManager(tenant_id)
+        self.__tasks = self.__subjects.create("tasker.tasks", [])
 
-        self.logger.info("[Tasks] initialized.")
+        self.__logger.info("[Tasks] initialized.")
 
     def add_task(self, task, display_name, on_complete=None, on_error=None):
         task = Task(task, display_name, on_error)
@@ -51,28 +52,30 @@ class TasksManager(TenantInstance, metaclass=TenantSingleton):
         task_id = task.get_id()
         task.add_done_callback(lambda *_, **__: self.remove_task(task_id))
 
-        self.tasks.notify(self.tasks.value() + [task])
-        self.logger.info(f'[Tasks] Added task with id "{task_id}"')
+        self.__tasks.value().append(task)
+        self.__tasks.update()
+
+        self.__logger.info(f'[Tasks] Added task with id "{task_id}"')
         return task.get_id()
 
     def remove_task(self, task_id):
-        tasks = self.tasks.value()
+        tasks = self.__tasks.value()
         task_ids = [task.get_id() for task in tasks]
         if task_id in task_ids:
             task_index = task_ids.index(task_id)
-            self.tasks.notify(tasks[:task_index] + tasks[task_index + 1 :])
-            self.logger.info(f'[Tasks] Removed task with id "{task_id}"')
+            self.__tasks.notify(tasks[:task_index] + tasks[task_index + 1 :])
+            self.__logger.info(f'[Tasks] Removed task with id "{task_id}"')
 
     def cancel_task(self, task_id, message=None):
         task = self.get_task(task_id)
         if task is not None and not task.done():
             # TODO: There should probably some error handling here.
             task.cancel(message)
-            self.tasks.update()  # TODO: I don't know if this is necessary. When the task is cancelled, the task might be done, and the task is removed when done
-            self.logger.info(f'[Tasks] Removed task with id "{task_id}"')
+            self.__tasks.update()  # TODO: I don't know if this is necessary. When the task is cancelled, the task might be done, and the task is removed when done
+            self.__logger.info(f'[Tasks] Removed task with id "{task_id}"')
 
     def get_task(self, task_id):
-        if task_id in self.tasks.value():
-            return self.tasks.value()[task_id]
+        if task_id in self.__tasks.value():
+            return self.__tasks.value()[task_id]
         else:
             return None

@@ -28,6 +28,7 @@ import { LayersGroups } from 'models/map/Layers';
 import { setWorkspace } from 'store/reducers/files';
 import { setLogs } from 'store/reducers/logger';
 import { setToasts } from 'store/reducers/toaster';
+import { setTasks } from 'store/reducers/tasker';
 import {
   setEditorViews,
   setActiveEditorViews,
@@ -64,6 +65,13 @@ function App() {
       subscribe({
         subject: ServerSubscriptionTarget.ToasterToasts,
         onAction: setToasts,
+      })
+    );
+
+    dispatch(
+      subscribe({
+        subject: ServerSubscriptionTarget.TaskerTasks,
+        onAction: setTasks,
       })
     );
 
