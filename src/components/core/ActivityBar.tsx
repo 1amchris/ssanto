@@ -8,8 +8,9 @@ import { IconBaseProps, IconType } from 'react-icons';
 import * as codicons from 'react-icons/vsc';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { call } from 'store/reducers/server';
-import { selectViewsManager } from 'store/reducers/views-manager';
+import { selectViewer } from 'store/reducers/viewer';
 import ColorsUtils from 'utils/colors-utils';
+import ViewGroupModel from 'models/ViewGroupModel';
 
 const backgroundColors = {
   disabled: ColorsUtils.applyOpacity(Color.LightGray, Opacity.Half),
@@ -97,7 +98,7 @@ function ActivityItem({
 function ActivityBar() {
   const {
     sidebar: { active, activities, options },
-  } = useAppSelector(selectViewsManager);
+  } = useAppSelector(selectViewer);
   const dispatch = useAppDispatch();
 
   function handleActivityClick(activity: any) {
@@ -117,7 +118,7 @@ function ActivityBar() {
   return (
     <nav className="d-flex flex-column justify-content-between bg-light">
       <div className="d-flex flex-column overflow-auto">
-        {activities?.map(activity => (
+        {activities?.map((activity: ViewGroupModel) => (
           <ActivityItem
             {...activity}
             key={`${activity.uri}${active === activity.uri}`}

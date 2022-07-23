@@ -76,9 +76,6 @@ export default class ServerCom {
   private onMessage(message: MessageEvent) {
     const received: ReceiveData = this.convertEventToObject(message);
 
-    // Debug purpose
-    // console.log('onMessage subject', received);
-
     if (received.type === SendType.Subject) {
       this.subjectListeners
         .get(received.data.subject)

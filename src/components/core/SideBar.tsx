@@ -4,7 +4,7 @@ import { useAppSelector } from 'store/hooks';
 import { Color } from 'enums/Color';
 import DefaultView from 'components/common/DefaultView';
 import * as codicons from 'react-icons/vsc';
-import { selectViewsManager } from 'store/reducers/views-manager';
+import { selectViewer } from 'store/reducers/viewer';
 import useViewsRegistry from 'hooks/useViewsRegistry';
 import ViewAction from 'models/ViewAction';
 import ViewModel from 'models/ViewModel';
@@ -18,7 +18,7 @@ function SideBar({ style }: any) {
 
   const {
     sidebar: { active: activeId, activities },
-  } = useAppSelector(selectViewsManager);
+  } = useAppSelector(selectViewer);
   const activity = activities.find(
     (activity: any) => activity.uri === activeId
   )!;

@@ -7,7 +7,7 @@ import ColorsUtils from 'utils/colors-utils';
 import { ColorPalette } from 'models/ColorPalette';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectViewsManager } from 'store/reducers/views-manager';
+import { selectViewer } from 'store/reducers/viewer';
 import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import { call } from 'store/reducers/server';
@@ -98,7 +98,7 @@ function PanelBar({ style }: any) {
   const dispatch = useAppDispatch();
   const {
     panel: { active: activeId, activities: panels },
-  } = useAppSelector(selectViewsManager);
+  } = useAppSelector(selectViewer);
   const panel = panels.find((panel: any) => panel.uri === activeId)!;
 
   const iconBaseProps: IconBaseProps = {

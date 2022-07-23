@@ -36,7 +36,7 @@ import {
   setActivePanelView,
   setSidebarViews,
   setActiveSidebarView,
-} from 'store/reducers/views-manager';
+} from 'store/reducers/viewer';
 
 /**
  * App component.

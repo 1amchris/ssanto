@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
 import ViewGroupModel from 'models/ViewGroupModel';
 
-export const viewsManagerSlice = createSlice({
-  name: 'views-manager',
+export const viewerSlice = createSlice({
+  name: 'viewer',
   initialState: {
     editor: {
       active: [] as string[],
@@ -96,8 +96,8 @@ export const {
   setActivePanelView,
   setSidebarViews,
   setActiveSidebarView,
-} = viewsManagerSlice.actions;
+} = viewerSlice.actions;
 
-export const selectViewsManager = (state: RootState) => state.viewsManager;
+export const selectViewer = (state: RootState) => state.viewer;
 
-export default viewsManagerSlice.reducer;
+export default viewerSlice.reducer;

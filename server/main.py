@@ -14,6 +14,7 @@ from logger.manager import LogsManager
 
 # from task_manager import TasksManager
 from guide.builder import GuideBuilder
+from tasks.manager import TasksManager
 from toasts.manager import ToastsManager
 from workspace.manager import WorkspaceManager
 from views.manager import ViewsManager
@@ -74,7 +75,6 @@ async def main():
     logger = LogsManager(tenant_id)
     toaster = ToastsManager(tenant_id)
     workspace = WorkspaceManager(tenant_id)
-    # tasks = TasksManager(tenant_id)
 
     populate_registries()
     populate_views(workspace.views)

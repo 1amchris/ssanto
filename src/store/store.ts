@@ -7,7 +7,7 @@ import mapReducer from 'store/reducers/map';
 import outputReducer from 'store/reducers/logger';
 import toasterReducer from 'store/reducers/toaster';
 import taskerReducer from 'store/reducers/tasker';
-import viewsManagerReducer from 'store/reducers/views-manager';
+import viewerReducer from 'store/reducers/viewer';
 import webViewReducer from 'store/reducers/web-view';
 import ServerMiddleware from 'store/middlewares/ServerMiddleware';
 import AnalysisMiddleware from 'store/middlewares/AnalysisMiddleware';
@@ -24,7 +24,7 @@ export const store = configureStore({
     logger: outputReducer,
     tasker: taskerReducer,
     toaster: toasterReducer,
-    viewsManager: viewsManagerReducer,
+    viewer: viewerReducer,
     webView: webViewReducer,
   },
   middleware: getDefaultMiddleware =>

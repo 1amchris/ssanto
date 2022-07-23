@@ -2,12 +2,13 @@ import React from 'react';
 import EditorGroup from 'components/core/EditorGroup';
 import SplitView from 'components/core/SplitView';
 import { useAppSelector } from 'store/hooks';
-import { selectViewsManager } from 'store/reducers/views-manager';
+import { selectViewer } from 'store/reducers/viewer';
+import ViewGroupModel from 'models/ViewGroupModel';
 
 function EditorGroups({ style }: any) {
   const {
     editor: { groups, active },
-  } = useAppSelector(selectViewsManager);
+  } = useAppSelector(selectViewer);
 
   return (
     <SplitView
@@ -15,7 +16,7 @@ function EditorGroups({ style }: any) {
       direction="row"
       style={style}
     >
-      {groups.map(group => (
+      {groups.map((group: ViewGroupModel) => (
         <EditorGroup
           key={group.uri}
           focused={group.uri === active[0]}
