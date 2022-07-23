@@ -1,40 +1,69 @@
 import { Color, Opacity } from 'enums/Color';
 import React, { useState } from 'react';
-import { OverlayTrigger, Popover } from 'react-bootstrap';
-import { IconBaseProps, IconType } from 'react-icons';
-import * as codicons from 'react-icons/vsc';
+import { OverlayTrigger, Popover, Spinner } from 'react-bootstrap';
 import { useAppSelector } from 'store/hooks';
 import { selectTasker } from 'store/reducers/tasker';
 import ColorsUtils from 'utils/colors-utils';
 import Task from 'models/ITask';
+import {
+  VscBell,
+  VscCheck,
+  VscDebugAlt,
+  VscError,
+  VscFeedback,
+  VscGitMerge,
+  VscLiveShare,
+  VscPerson,
+  VscSymbolNamespace,
+  VscSync,
+  VscWarning,
+} from 'react-icons/vsc';
 
 const { left, right } = {
   left: [
     {
       id: 'ssanto.git-branch',
-      label: 'ui-overhaul*+',
-      iconName: 'VscGitMerge',
+      label: (
+        <React.Fragment>
+          <VscGitMerge /> ui-overhaul*+
+        </React.Fragment>
+      ),
     },
     {
       id: 'ssanto.git-synchronize',
-      iconName: 'VscSync',
+      label: <VscSync />,
       description: 'Synchronize with Git',
     },
     {
+      id: 'ssanto.diagnostics',
+      label: (
+        <React.Fragment>
+          <VscError /> 15 <VscWarning /> 0
+        </React.Fragment>
+      ),
+      description: 'Errors: 15, Warnings: 0',
+    },
+    {
       id: 'ssanto.start',
-      iconName: 'VscDebugAlt',
+      label: <VscDebugAlt />,
       description: 'Start Analysing',
     },
     {
       id: 'ssanto.person-account',
-      label: 'Christophe',
-      iconName: 'VscPerson',
+      label: (
+        <React.Fragment>
+          <VscPerson /> Christophe
+        </React.Fragment>
+      ),
       description: 'Sign in to Github.',
     },
     {
       id: 'ssanto.live-share',
-      label: 'Live Share',
-      iconName: 'VscLiveShare',
+      label: (
+        <React.Fragment>
+          <VscLiveShare /> Live Share
+        </React.Fragment>
+      ),
       description: 'Start Collaborative Session',
     },
   ],
@@ -46,25 +75,38 @@ const { left, right } = {
     },
     {
       id: 'ssanto.language',
-      label: 'TypeScript React',
-      iconName: 'VscSymbolNamespace',
+      label: (
+        <React.Fragment>
+          <VscSymbolNamespace /> TypeScript React
+        </React.Fragment>
+      ),
       description: 'Select Language Mode',
     },
     {
       id: 'ssanto.tslint',
-      label: 'TSLint',
-      iconName: 'VscWarning',
+      label: (
+        <React.Fragment>
+          <VscWarning /> TSLint
+        </React.Fragment>
+      ),
       description: 'Linter is running.',
     },
-    { id: 'ssanto.prettier', label: 'Prettier', iconName: 'VscCheck' },
+    {
+      id: 'ssanto.prettier',
+      label: (
+        <React.Fragment>
+          <VscCheck /> Prettier
+        </React.Fragment>
+      ),
+    },
     {
       id: 'ssanto.feedback',
-      iconName: 'VscFeedback',
+      label: <VscFeedback />,
       description: 'Tweet Feedback',
     },
     {
       id: 'ssanto.notifications',
-      iconName: 'VscBell',
+      label: <VscBell />,
       description: 'No Notifications',
     },
   ],
@@ -82,14 +124,16 @@ const iconColors = {
   default: ColorsUtils.applyOpacity(Color.White, Opacity.Opaque),
 };
 
-function StatusItem({
-  id,
-  label,
-  iconName,
-  description,
-  disabled,
-  onClick,
-}: any) {
+function Loading() {
+  return (
+    <Spinner
+      style={{ borderWidth: 1, height: 12.25, width: 12.25 }}
+      animation="border"
+    />
+  );
+}
+
+function StatusItem({ label, description, disabled, onClick }: any) {
   const [focused, setFocused] = useState(false);
 
   const options = { disabled, focused };
@@ -98,12 +142,6 @@ function StatusItem({
     cursor: disabled ? 'default' : 'cursor',
     color: ColorsUtils.getRelevantColor(iconColors, options),
     backgroundColor: ColorsUtils.getRelevantColor(backgroundColors, options),
-  };
-
-  const iconBaseProps: IconBaseProps = {
-    size: 14,
-    color: activity.color,
-    title: label,
   };
 
   return (
@@ -130,18 +168,7 @@ function StatusItem({
         onFocus={() => !disabled && setFocused(true)}
         onBlur={() => !disabled && setFocused(false)}
       >
-        {iconName &&
-          (codicons as { [iconName: string]: IconType })[iconName](
-            iconBaseProps
-          )}
-        {label && (
-          <small
-            className={codicons ? 'ps-1' : ''}
-            style={{ color: activity.color }}
-          >
-            {label}
-          </small>
-        )}
+        {label && <small style={{ color: activity.color }}>{label}</small>}
       </div>
     </OverlayTrigger>
   );
@@ -152,7 +179,10 @@ function StatusItem({
  * @return {JSX.Element} Html.
  */
 function StatusBar({ style }: any) {
-  const { tasks } = useAppSelector(selectTasker);
+  const { tasks = [] } = useAppSelector(selectTasker);
+
+  const runningTasksCount =
+    tasks.filter((task: Task) => task.running).length || 0;
 
   function handleItemClick(item: any) {
     console.log(`clicked on status item: "${item.id}"`);
@@ -163,13 +193,10 @@ function StatusBar({ style }: any) {
       className="d-flex flex-row justify-content-between px-2"
       style={{
         ...style,
-        backgroundColor:
-          tasks?.filter((task: Task) => task.running)?.length > 0
-            ? Color.Orange
-            : Color.Primary,
+        backgroundColor: runningTasksCount > 0 ? Color.Orange : Color.Primary,
       }}
     >
-      <div className="d-flex flex-row overflow-auto">
+      <div className="d-flex flex-row overflow-visible">
         {left?.map(item => (
           <StatusItem
             {...item}
@@ -178,7 +205,22 @@ function StatusBar({ style }: any) {
           />
         ))}
       </div>
-      <div className="d-flex flex-row overflow-auto">
+      <div className="d-flex flex-row overflow-visible">
+        <StatusItem
+          id="ssanto.tasks"
+          label={
+            runningTasksCount > 0 ? (
+              <React.Fragment>
+                <Loading /> {runningTasksCount} Task
+                {runningTasksCount > 1 ? 's' : ''} Running
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <VscCheck /> No Tasks Running
+              </React.Fragment>
+            )
+          }
+        />
         {right?.map(item => (
           <StatusItem
             {...item}
