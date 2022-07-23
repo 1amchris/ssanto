@@ -216,7 +216,7 @@ function StatusBar({ style }: any) {
               </React.Fragment>
             ) : (
               <React.Fragment>
-                <VscCheck /> No Tasks Running
+                <VscCheck /> No Task Running
               </React.Fragment>
             )
           }
