@@ -1,5 +1,6 @@
 import asyncio
 from calendar import c
+from typing import Callable
 from serializable import Serializable
 from singleton import TenantInstance, TenantSingleton
 from subjects.manager import SubjectsManager
@@ -45,10 +46,10 @@ class TasksManager(TenantInstance, metaclass=TenantSingleton):
 
         self.__logger.info("[Tasks] initialized.")
 
-    def add_task(self, task, display_name, on_complete=None, on_error=None):
+    def add_task(self, task, display_name: str, on_complete: Callable = None, on_error: Callable = None):
         task = Task(task, display_name, on_error)
         if on_complete is not None:
-            task.add_done_callback(on_complete)
+            task.add_done_callback(lambda task: on_complete(task.result()))
         task_id = task.get_id()
         task.add_done_callback(lambda *_, **__: self.remove_task(task_id))
 

@@ -1,4 +1,5 @@
 import os
+from typing import Union
 from documents.errors import UnsavedFileError
 from files.file_metadata import FileMetaData
 from logger.manager import LogsManager
@@ -18,6 +19,9 @@ class WorkspaceManager(TenantInstance, metaclass=TenantSingleton):
         self.views = ViewsManager(tenant_id)
         self.workspace = None
         self.files = self.subjects.create("workspace.files", dict())
+
+    def get_workspace_path(self) -> Union[str, None]:
+        return self.workspace
 
     def open_workspace(self, path):
         if self.workspace is not None:

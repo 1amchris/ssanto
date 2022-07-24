@@ -8,13 +8,13 @@
   "homepage": "./",
   "main": "electron.js",
   "scripts": {
-    "start": "concurrently \"npm run start-web\" \"wait-on http://localhost:3000 && electron .\"",
+    "start": "concurrently \"npm run start:web\" \"wait-on http://localhost:3000 && electron .\"",
     "start:react": "react-scripts start",
     "build:react": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start-web": "cross-env BROWSER=none npm run start:react",
-    "start-electron": "electron .",
+    "start:web": "cross-env BROWSER=none npm run start:react",
+    "start:electron": "electron .",
     "build:electron": "electron-packager . --platform=win32 --arch=x64 --icon=./public/favicon.ico --no-asar --prune=true --ignore='(README.md|tsconfig.json|.git*|.prettier*|.eslint*|requirements.txt|.husky|/node_modules|/public|/src)' --overwrite --out=./release",
     "prepare": "husky install"
   },

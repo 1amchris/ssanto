@@ -8,8 +8,10 @@ import geopandas
 import json
 import rasterio
 import numpy as np
+from analysis.analysis import Analysis
 
 from documents.editors.json_document_editor import JSONDocumentEditor
+from documents.utils import uri_to_path
 from logger.manager import LogsManager
 from tasks.manager import TasksManager
 
@@ -258,17 +260,23 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         tasker = TasksManager(self.tenant_id)
         logger = LogsManager(self.tenant_id)
 
-        async def run_analysis(timeout: int):
-            logger.info("Starting analysis...")
-            await TasksManager.sleep(timeout)
+        # def on_complete(result):
+        #     logger.info(f"Analysis result:\n{result}")
 
-        def on_complete():
-            logger.info("Analysis completed.")
+        content = self.get_content()
+        analysis_name = content["analysis"]["name"]
+        cell_size = content["map"]["cellSize"]
+        study_area_path = uri_to_path(content["analysis"]["studyArea"])
+        objectives = content["objectives"]["needs"]
 
-        analysis_name = self.get_content()["analysis"]["name"]
         tasker.add_task(
-            run_analysis(5), display_name=f"Analysis: {analysis_name}", on_complete=lambda *_, **__: on_complete()
+            Analysis(self.tenant_id).compute_suitability(
+                raw_objectives=objectives, cell_size=cell_size, study_area_path=study_area_path
+            ),
+            display_name=f"Analysis: {analysis_name}",
+            # on_complete=lambda result, *_, **__: on_complete(result),
         )
+
         return changes
 
     def _handle_event(self, changes: dict):

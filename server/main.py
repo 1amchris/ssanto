@@ -10,11 +10,8 @@ from documents.editor_registry import DocumentEditorRegistry
 from documents.editors.sproj_document_editor import SSantoDocumentEditor
 
 from logger.logger import *
-from logger.manager import LogsManager
 
-# from task_manager import TasksManager
 from guide.builder import GuideBuilder
-from tasks.manager import TasksManager
 from toasts.manager import ToastsManager
 from workspace.manager import WorkspaceManager
 from views.manager import ViewsManager
@@ -25,10 +22,6 @@ from views.controllers.ssanto_settings import SSantoSettingsViewController
 from views.controllers.ssanto_hierarchy import SSantoHierarchyViewController
 from views.controllers.ssanto_attribute import SSantoAttributeViewController
 from views.controller_registry import ViewControllerRegistry
-
-from analysis.map import Map
-from analysis.analysis import Analysis
-from files.file_manager import FilesManager
 
 
 def populate_registries():
@@ -72,7 +65,6 @@ async def main():
 
     server = ServerSocket(tenant_id)
     subjects = SubjectsManager(tenant_id)
-    logger = LogsManager(tenant_id)
     toaster = ToastsManager(tenant_id)
     workspace = WorkspaceManager(tenant_id)
 
@@ -108,26 +100,26 @@ async def main():
     server.bind_command("workspace.views.sidebar.select_activity", workspace.views.sidebar.select_activity)
 
     # legacy
-    files = FilesManager(subjects, logger)
-    server.bind_command("files.get_files", files.get_files_metadatas)
+    # files = FilesManager(subjects, logger)
+    # server.bind_command("files.get_files", files.get_files_metadatas)
 
-    analysis = Analysis(subjects, files)
-    server.bind_command("analysis.update", analysis.update)
-    server.bind_command("analysis.set_study_area", analysis.receive_study_area)
-    server.bind_command("analysis.update_suitability_threshold", analysis.update_suitability_threshold)
-    server.bind_command("analysis.compute_suitability", analysis.compute_suitability)
+    # analysis = Analysis(subjects, files)
+    # server.bind_command("analysis.update", analysis.update)
+    # server.bind_command("analysis.set_study_area", analysis.receive_study_area)
+    # server.bind_command("analysis.update_suitability_threshold", analysis.update_suitability_threshold)
+    # server.bind_command("analysis.compute_suitability", analysis.compute_suitability)
 
-    server.bind_command("analysis.add_files", analysis.add_files, False)
-    server.bind_command("analysis.remove_file", analysis.remove_file, False)
+    # server.bind_command("analysis.add_files", analysis.add_files, False)
+    # server.bind_command("analysis.remove_file", analysis.remove_file, False)
 
-    server.bind_command("analysis.export_tiff", analysis.export_tiff)
-    server.bind_command("analysis.get_layer", analysis.get_layer)
+    # server.bind_command("analysis.export_tiff", analysis.export_tiff)
+    # server.bind_command("analysis.get_layer", analysis.get_layer)
 
-    server.bind_command("analysis.save_project", analysis.export_project_save)
-    server.bind_command("analysis.open_project", analysis.import_project_save)
+    # server.bind_command("analysis.save_project", analysis.export_project_save)
+    # server.bind_command("analysis.open_project", analysis.import_project_save)
 
-    map = Map(subjects, analysis.get_informations_at_position)
-    server.bind_command("map.set_cursor", map.set_cursor)
+    # map = Map(subjects, analysis.get_informations_at_position)
+    # server.bind_command("map.set_cursor", map.set_cursor)
     # end: legacy
 
     guide_builder = GuideBuilder()
