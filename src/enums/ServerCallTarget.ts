@@ -30,6 +30,7 @@ enum ServerCallTarget {
   WorkspaceViewsOpenActivityView = 'workspace.views.sidebar.open_view',
   WorkspaceViewsCloseActivityView = 'workspace.views.sidebar.close_view',
 
+  /* legacy */
   AnalysisAddFiles = 'analysis.add_files',
   AnalysisRemoveFile = 'analysis.remove_file',
   AnalysisExportTiff = 'analysis.export_tiff',
@@ -44,6 +45,7 @@ enum ServerCallTarget {
   AnalysisComputeSuitability = 'analysis.compute_suitability',
 
   MapSetCursor = 'map.set_cursor',
+  /* end legacy */
 
   GuideGet = 'guide.get',
 }
