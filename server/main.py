@@ -2,6 +2,7 @@ import signal
 import platform
 import asyncio
 from uuid import uuid4
+from documents.editors.geojson_document_editor import GeoJsonDocumentEditor
 
 from network.server_socket import ServerSocket
 from subjects.manager import SubjectsManager
@@ -13,6 +14,7 @@ from logger.logger import *
 
 from guide.builder import GuideBuilder
 from toasts.manager import ToastsManager
+from views.controllers.geojson_map import GeoJsonMapViewController
 from workspace.manager import WorkspaceManager
 from views.manager import ViewsManager
 
@@ -28,9 +30,11 @@ def populate_registries():
     # examples of registering new document editors for given extensions
     editor_registry = DocumentEditorRegistry()
     editor_registry["sproj"] = SSantoDocumentEditor
+    editor_registry["geojson"] = GeoJsonDocumentEditor
 
     # example of registering new view controllers for given view types
     controller_registry = ViewControllerRegistry()
+    controller_registry["geojson-map"] = GeoJsonMapViewController
     controller_registry["ssanto-map"] = SSantoMapViewController
     controller_registry["ssanto-settings"] = SSantoSettingsViewController
     controller_registry["ssanto-hierarchy"] = SSantoHierarchyViewController

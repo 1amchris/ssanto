@@ -171,6 +171,10 @@ function Main() {
         () => import('components/views/ssanto/SSantoAttributeEditor')
       ),
     },
+    ['geojson-map']: {
+      actions: [],
+      factory: React.lazy(() => import('components/views/core/GeoJsonMap')),
+    },
   });
 
   const value = {

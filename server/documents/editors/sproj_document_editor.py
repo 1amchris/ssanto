@@ -1,6 +1,5 @@
 from functools import reduce
 from io import UnsupportedOperation
-from time import time
 from typing import Union
 from datetime import datetime
 
