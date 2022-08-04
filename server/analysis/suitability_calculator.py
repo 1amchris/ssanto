@@ -98,7 +98,7 @@ class SuitabilityCalculator:
             image = src.read()  # first band
             image = np.int16(image)
             results = (
-                {"properties": {"sutability": suitability}, "geometry": geometry}
+                {"properties": {"suitability": suitability}, "geometry": geometry}
                 for geometry, suitability in shapes(image, mask=mask, transform=data["transform"])
             )
             geoms = list(results)
