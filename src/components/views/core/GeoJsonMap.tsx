@@ -6,9 +6,14 @@ import {
   TileLayer,
   LayerGroup,
   GeoJSON,
+  useMapEvents,
 } from 'react-leaflet';
 import { useTranslation } from 'react-i18next';
 import ColorsUtils from 'utils/colors-utils';
+import { useAppDispatch } from 'store/hooks';
+import { call } from 'store/reducers/server';
+import ServerCallTarget from 'enums/ServerCallTarget';
+import CallModel from 'models/server-coms/CallModel';
 
 // TODO: Remove me. This is custom, and will fail for any normal geojson. It's a hack, but all if any information should be accessible/customizable/idk
 const style = (feature: any) => {
@@ -30,20 +35,58 @@ const style = (feature: any) => {
 };
 
 function GeoJsonMap({ view }: any) {
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const { content: geojson } = view;
+  const { content, uri } = view;
+
+  const publishChanges = (key: string, data: any) => {
+    dispatch(
+      call({
+        target: ServerCallTarget.WorkspaceViewsPublishEvent,
+        args: [uri, { [key]: data }],
+      } as CallModel)
+    );
+  };
+
+  const MapEvents = () => {
+    useMapEvents({
+      zoomend: e => {
+        const { lat, lng: long } = e.target.getCenter();
+        publishChanges('coords', {
+          center: { lat, long },
+          zoom: e.target.getZoom(),
+        });
+      },
+      dragend: e => {
+        const { lat, lng: long } = e.target.getCenter();
+        publishChanges('coords', {
+          center: { lat, long },
+          zoom: e.target.getZoom(),
+        });
+      },
+    });
+    return null;
+  };
 
   return (
     <MapContainer
-      center={[0, 0]}
-      zoom={1}
-      minZoom={1}
       crs={L.CRS.EPSG3857}
       style={{
         width: '100%',
         height: '100%',
       }}
+      center={[content.coords?.center.lat, content.coords?.center.long]}
+      zoom={content.coords?.zoom}
+      bounds={
+        content.coords === undefined
+          ? [
+              [content.bounds[0].lat, content.bounds[0].long],
+              [content.bounds[1].lat, content.bounds[1].long],
+            ]
+          : undefined
+      }
     >
+      <MapEvents />
       <LayersControl position="bottomleft">
         <LayersControl.BaseLayer name={t('osm')} checked>
           <TileLayer
@@ -55,7 +98,7 @@ function GeoJsonMap({ view }: any) {
           <TileLayer url="" />
         </LayersControl.BaseLayer>
         <LayerGroup>
-          <GeoJSON data={geojson} style={style} />
+          <GeoJSON data={content.geojson} style={style} />
         </LayerGroup>
       </LayersControl>
     </MapContainer>
