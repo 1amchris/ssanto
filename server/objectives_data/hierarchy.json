@@ -1,0 +1,531 @@
+{
+  "name": "ObjectivesHierarchy",
+  "mains": [
+    {
+      "main": "Needs",
+      "primaries": [
+        
+
+        {
+          "primary": "Socio-Economic",
+          "secondaries": [
+            {
+              "secondary": "Education Level",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                
+                1,
+                4,
+                2,
+                3,
+                6
+              ]
+            },
+            {
+              "secondary": "Relative Wealth",
+               
+              "default_hierarchy" : [],"allowed_nbs": [1]
+            },
+            {
+              "secondary": "Environmental Awareness",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                1,
+                4,
+                0,
+                2,
+                3,
+                6
+              ]
+            },
+            {
+              "secondary": "Sense of Community",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                4,
+                0,
+                2,
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "primary": "Urban Form",
+          "secondaries": [
+            {
+              "secondary": "Airports Distance to",
+               
+              "default_hierarchy" : [],"allowed_nbs": [5, 6]
+            },
+            {
+              "secondary": "Capital Works Program",
+               
+              "default_hierarchy" : [],"allowed_nbs": []
+            },
+            {
+              "secondary": "Utility Infrastructure",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                0,
+                2,
+                5,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Drainage Infrastructure Distance",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                4,
+                0,
+                2,
+                3,
+                5,
+                6
+              ]
+            },
+            {
+              "secondary": "Street width/type",
+               
+              "default_hierarchy" : [],"allowed_nbs": [4, 0, 5, 6]
+            },
+            {
+              "secondary": "Planned (re)Developments",
+               
+              "default_hierarchy" : [],"allowed_nbs": []
+            },
+            {
+              "secondary": "Cultural Heritage Sites",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                4,
+                0,
+                2,
+                3,
+                5,
+                6
+              ]
+            },
+            {
+              "secondary": "Natural Heritage Sites",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                4,
+                0,
+                2,
+                5,
+                6
+              ]
+            },
+            {
+              "secondary": "Geological Heritage Sites",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                4,
+                0,
+                2,
+                5,
+                6
+              ]
+            },
+            {
+              "secondary": "Land Value",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                0,
+                3,
+                5,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Land Ownership",
+               
+              "default_hierarchy" : [],"allowed_nbs": [4, 0, 2]
+            },
+            {
+              "secondary": "Lot Size",
+               
+              "default_hierarchy" : [],"allowed_nbs": [5, 6]
+            },
+            {
+              "secondary": "Land Use Type",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                0,
+                2,
+                3,
+                5,
+                4,
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "primary": "Regulating",
+          "secondaries": [
+            {
+              "secondary": "Heat Vulnerability",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                0,
+                2,
+                3,
+                5,
+                1,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Urban Heat Island Effect",
+               
+              "default_hierarchy" : [],"allowed_nbs": []
+            },
+            {
+              "secondary": "Effective Imperviousness",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                0,
+                2,
+                3,
+                5,
+                1,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Total Imperviousness",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                0,
+                2,
+                3,
+                5,
+                1,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Current WSUD",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                1,
+                0,
+                2,
+                3,
+                5,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Floods",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                0,
+                2,
+                3,
+                5,
+                1,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Flood Risk",
+               
+              "default_hierarchy" : [],"allowed_nbs": []
+            }
+          ]
+        },
+        {
+          "primary": "Cultural",
+          "secondaries": [
+            {
+              "secondary": "Visibility",
+               
+              "default_hierarchy" : [],"allowed_nbs": []
+            },
+            {
+              "secondary": "Visibility Distance ",
+               
+              "default_hierarchy" : [],"allowed_nbs": [
+                0,
+                2,
+                3,
+                5,
+                4,
+                6
+              ]
+            },
+            {
+              "secondary": "Green Cover",
+               
+              "default_hierarchy" : [],"allowed_nbs": []
+            },
+            {
+              "secondary": "Recreation",
+               
+              "default_hierarchy" : [],"allowed_nbs": [5, 6]
+            },
+            {
+              "secondary": "Social Cohesion",
+               
+              "default_hierarchy" : [],"allowed_nbs": [0, 5, 6]
+            }
+          ]
+        },
+        {
+          "primary": "Habitat",
+          "secondaries": [
+            {
+              "secondary": "Biodiversity",
+               
+              "default_hierarchy" : [],"allowed_nbs": [3, 4, 6]
+            },
+            {
+              "secondary": "Connectedness",
+              "otherName": "Connected impervious area",
+               
+              "default_hierarchy" : [],"allowed_nbs": [3, 4, 6]
+            },
+            {
+              "secondary": "Total Habitat",
+               
+              "default_hierarchy" : [],"allowed_nbs": [3, 4, 5,6 ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "main": "Opportunities",
+      "primaries": [
+        {
+        "primary": "Biophysical",
+        "secondaries": [
+          {
+            "secondary": "Soil Type",
+             
+            "default_hierarchy" : [0, 1, 2, 3, 4, 5, 6],"allowed_nbs": [0, 1, 2]
+          },
+          {
+            "secondary": "Hydraulic Conductivity",
+             
+            "default_hierarchy" : [0, 1, 2, 3, 4, 5, 6],"allowed_nbs": [1, 2]
+          },
+          {
+            "secondary": "Contamination",
+             
+            "default_hierarchy" : [],"allowed_nbs": [1, 2]
+          },
+          {
+            "secondary": "Landfill Distance",
+             
+            "default_hierarchy" : [],"allowed_nbs": [
+              4,
+              0,
+              2,
+              5,
+              6
+            ]
+          },
+          {
+            "secondary": "Slope",
+             
+            "default_hierarchy" : [],"allowed_nbs": [
+              0,
+              4,
+              2,
+              6
+            ]
+          },
+          {
+            "secondary": "Building Footprints",
+            "otherName": "Building foundations",
+             
+            "default_hierarchy" : [],"allowed_nbs": [
+              0,
+              2,
+              3,
+              5,
+              1,
+              4,
+              6
+            ]
+          },
+          {
+            "secondary": "Soil Salinity",
+             
+            "default_hierarchy" : [],"allowed_nbs": [3]
+          },
+          {
+            "secondary": "Groundwater Table",
+             
+            "default_hierarchy" : [],"allowed_nbs": [2]
+          },
+          {
+            "secondary": "Greenery",
+             
+            "default_hierarchy" : [],"allowed_nbs": [
+              0,
+              2,
+              3,
+              6,
+              4
+            ]
+          },
+          {
+            "secondary": "Rainfall Variability",
+             
+            "default_hierarchy" : [],"allowed_nbs": [1, 3]
+          },
+          {
+            "secondary": "Surface Water",
+             
+            "default_hierarchy" : [],"allowed_nbs": [1, 2]
+          },
+          {
+            "secondary": "Waterways Distance to",
+             
+            "default_hierarchy" : [],"allowed_nbs": [4, 0, 5, 6]
+          },
+          {
+            "secondary": "Pre-human Wetland Structure",
+             
+            "default_hierarchy" : [],"allowed_nbs": [0, 5, 6]
+          }
+        ]
+      },
+      {
+        "primary": "Urban Form",
+        "secondaries": [
+          {
+            "secondary": "Airports Distance to",
+             
+            "default_hierarchy" : [0, 1, 2, 3, 4, 5, 6],"allowed_nbs": [5, 6]
+          },
+          {
+            "secondary": "Capital Works Program",
+             
+            "default_hierarchy" : [],"allowed_nbs": []
+          },
+          {
+            "secondary": "Utility Infrastructure",
+             
+            "default_hierarchy" : [0, 1, 2, 3, 4, 5, 6],"allowed_nbs": [
+              0,
+              2,
+              5,
+              4,
+              6
+            ]
+          },
+          {
+            "secondary": "Street width/type",
+             
+            "default_hierarchy" : [],"allowed_nbs": [4, 0, 5, 6]
+          },
+          {
+            "secondary": "Planned (re)Developments",
+             
+            "default_hierarchy" : [],"allowed_nbs": []
+          },
+          {
+            "secondary": "Cultural Heritage Sites",
+             
+            "default_hierarchy" : [],"allowed_nbs": [
+              4,
+              0,
+              2,
+              3,
+              5,
+              6
+            ]
+          },
+          {
+            "secondary": "Natural Heritage Sites",
+             
+            "default_hierarchy" : [],"allowed_nbs": [
+              4,
+              0,
+              2,
+              5,
+              6
+            ]
+          },
+          {
+            "secondary": "Geological Heritage Sites",
+             
+            "default_hierarchy" : [],"allowed_nbs": [
+              4,
+              0,
+              2,
+              5,
+              6
+            ]
+          },
+          {
+            "secondary": "Land Value",
+             
+            "default_hierarchy" : [],"allowed_nbs": [
+              0,
+              3,
+              5,
+              4,
+              6
+            ]
+          },
+          {
+            "secondary": "Land Ownership",
+             
+            "default_hierarchy" : [],"allowed_nbs": [4, 0, 2]
+          },
+          {
+            "secondary": "Lot Size",
+             
+            "default_hierarchy" : [],"allowed_nbs": [5, 6]
+          },
+          {
+            "secondary": "Land Use Type",
+             
+            "default_hierarchy" : [],"allowed_nbs": [
+              0,
+              2,
+              3,
+              5,
+              4,
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "primary": "Provisioning",
+        "secondaries": [
+          {
+            "secondary": "Irrigation Demand Distance",
+            "otherName": "Proximity to water demand",
+             
+            "default_hierarchy" : [4, 5 ],"allowed_nbs": [0, 1, 2, 3, 4, 5, 6]
+          },
+          {
+            "secondary": "Current Rainwater Harvesting",
+             
+            "default_hierarchy" : [1, 2],"allowed_nbs": [0, 1, 2]
+          }
+        ]
+      }
+
+
+      ]
+    }
+  ]
+}

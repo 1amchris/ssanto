@@ -1,0 +1,8 @@
+websockets
+matplotlib
+rasterio
+pyshp
+geopandas
+geojson-rewind
+geojson
+rtree

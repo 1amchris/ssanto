@@ -125,6 +125,7 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+.vscode
 
 # yarn v2
 .yarn/cache
@@ -154,6 +155,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+release/
 develop-eggs/
 dist/
 downloads/
@@ -307,3 +309,7 @@ thumb
 sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/python,react,node
+
+# We assume the content of any folder called temp/ should be ignored (but keep the folder itself)
+temp/
+!temp/.gitkeep
