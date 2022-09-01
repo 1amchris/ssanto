@@ -1,0 +1,103 @@
+<mxfile host="app.diagrams.net" modified="2022-08-18T14:16:20.726Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.5 Safari/605.1.15" etag="5gek9kOKm2xbHNLWOvrJ" version="20.2.3" type="github">
+  <diagram id="64DuCIQcL4uZSUzE0FqQ" name="Page-1">
+    <mxGraphModel dx="1454" dy="1026" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="dCPXczHfRvb9AmBlDA_u-29" target="dCPXczHfRvb9AmBlDA_u-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-29" value="Tenant Environments" style="swimlane;rounded=1;shadow=1;glass=0;strokeColor=#23445d;fillColor=#bac8d3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="650" height="660" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-1" value="Tenant A" style="swimlane;rounded=1;shadow=1;glass=0;strokeColor=#806d33;fillColor=#FFE599;gradientColor=none;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-29">
+          <mxGeometry x="20" y="200" width="290" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-4" value="ToastsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#b46504;fillColor=#fad7ac;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-1">
+          <mxGeometry x="150" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-5" value="TasksManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#0e8088;fillColor=#b0e3e6;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-1">
+          <mxGeometry x="20" y="110" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-6" value="WorkspaceManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#10739e;fillColor=#b1ddf0;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-1">
+          <mxGeometry x="150" y="110" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-7" value="ViewsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#56517e;fillColor=#d0cee2;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-1">
+          <mxGeometry x="20" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-8" value="DocumentsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#23445d;fillColor=#bac8d3;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-1">
+          <mxGeometry x="150" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-3" value="LogsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#ae4132;fillColor=#fad9d5;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-1">
+          <mxGeometry x="20" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-9" value="..." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-1">
+          <mxGeometry x="130" y="250" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-19" value="Tenant C" style="swimlane;rounded=1;shadow=1;glass=0;strokeColor=#806d33;fillColor=#FFE599;gradientColor=none;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-29">
+          <mxGeometry x="340" y="350" width="290" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-20" value="ToastsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#b46504;fillColor=#fad7ac;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-19">
+          <mxGeometry x="150" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-21" value="TasksManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#0e8088;fillColor=#b0e3e6;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-19">
+          <mxGeometry x="20" y="110" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-22" value="WorkspaceManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#10739e;fillColor=#b1ddf0;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-19">
+          <mxGeometry x="150" y="110" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-23" value="ViewsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#56517e;fillColor=#d0cee2;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-19">
+          <mxGeometry x="20" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-24" value="DocumentsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#23445d;fillColor=#bac8d3;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-19">
+          <mxGeometry x="150" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-25" value="LogsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#ae4132;fillColor=#fad9d5;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-19">
+          <mxGeometry x="20" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-26" value="..." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-19">
+          <mxGeometry x="130" y="250" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-11" value="Tenant B" style="swimlane;rounded=1;shadow=1;glass=0;strokeColor=#806d33;fillColor=#FFE599;gradientColor=none;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-29">
+          <mxGeometry x="340" y="40" width="290" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-12" value="ToastsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#b46504;fillColor=#fad7ac;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-11">
+          <mxGeometry x="150" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-13" value="TasksManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#0e8088;fillColor=#b0e3e6;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-11">
+          <mxGeometry x="20" y="110" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-14" value="WorkspaceManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#10739e;fillColor=#b1ddf0;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-11">
+          <mxGeometry x="150" y="110" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-15" value="ViewsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#56517e;fillColor=#d0cee2;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-11">
+          <mxGeometry x="20" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-16" value="DocumentsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#23445d;fillColor=#bac8d3;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-11">
+          <mxGeometry x="150" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-17" value="LogsManager" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;strokeColor=#ae4132;fillColor=#fad9d5;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-11">
+          <mxGeometry x="20" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-18" value="..." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-11">
+          <mxGeometry x="130" y="250" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-30" value="Functionalities" style="swimlane;rounded=1;shadow=1;glass=0;strokeColor=#23445d;fillColor=#bac8d3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1010" width="650" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-31" value="&lt;pre&gt;# Using the LogsManager service for the calling tenant&lt;/pre&gt;&lt;pre&gt;logger = LogsManager(self.tenant_id)&lt;/pre&gt;&lt;pre&gt;logger.info(&#39;Logging pertinent information to this tenant only&#39;)&lt;/pre&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-30">
+          <mxGeometry x="45" y="50" width="480" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="dCPXczHfRvb9AmBlDA_u-34" target="dCPXczHfRvb9AmBlDA_u-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-34" value="Tenant Singleton Class" style="swimlane;rounded=1;shadow=1;glass=0;strokeColor=#23445d;fillColor=#bac8d3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="650" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="dCPXczHfRvb9AmBlDA_u-35" value="&lt;pre&gt;class LogsManager(TenantInstance, metaclass=TenantSingleton):&lt;/pre&gt;&lt;pre&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;	pass&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="dCPXczHfRvb9AmBlDA_u-34">
+          <mxGeometry x="45" y="60" width="460" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
