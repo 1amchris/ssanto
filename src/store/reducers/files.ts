@@ -13,7 +13,7 @@ export const filesSlice = createSlice({
     focusedFile: undefined as string | undefined,
   },
   reducers: {
-    openWorkspace: (state, path: PayloadAction<string>) => {},
+    openWorkspace: (state, path: PayloadAction<string | undefined>) => {},
     setWorkspace: (
       state,
       { payload: files }: PayloadAction<FileMetadataModel[]>

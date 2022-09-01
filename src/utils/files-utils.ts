@@ -45,8 +45,10 @@ namespace FilesUtils {
     return path.slice(_root.length - _root.split('/').pop()!.length);
   };
 
-  export const extractRootPath = (paths: string[]): string =>
-    paths.length === 1
+  export const extractRootPath = (paths: string[]): string | undefined =>
+    paths[0] === undefined
+      ? undefined
+      : paths.length === 1
       ? paths[0].split('/').slice(0, -1).join('/')
       : (Array.from(paths).reduce((acc: string | undefined, curr: string) => {
           if (acc === undefined) return curr;
@@ -66,6 +68,9 @@ namespace FilesUtils {
     }
 
     const rootPath = extractRootPath(files.map(f => pathFromUri(f.uri)));
+
+    if (rootPath === undefined) throw new Error('Root path is undefined.');
+
     const rootFolderName = rootPath.split('/').pop()!;
     const root: FolderMetadataModel = {
       uri: `file://${rootPath}`,

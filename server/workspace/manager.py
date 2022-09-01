@@ -27,6 +27,12 @@ class WorkspaceManager(TenantInstance, metaclass=TenantSingleton):
         if self.workspace is not None:
             self.close_workspace()
 
+        if path is None:
+            self.toaster.error(
+                message="Your browser does not currently support this feature.", source=self.__class__.__name__
+            )
+            return
+
         self.workspace = path
         all_files = [FileMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
         self.files.notify(all_files)
