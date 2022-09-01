@@ -21,6 +21,16 @@ from .raster_transform import *
 
 
 class Analysis(TenantInstance, metaclass=TenantSingleton):
+    DEFAULT_IS_CALCULATED = True
+    DEFAULT_COLUMN_NAME = ""
+    DEFAULT_WEIGHT = 1
+    DEFAULT_SCALING_FUNCTION = "x"
+    DEFAULT_MISSING_DATA = 0
+    DEFAULT_GRANULARITY = 1
+    DEFAULT_CENTROID = False
+    DEFAULT_MAX_SCALING_DISTANCE = 100
+    DEFAULT_DATASET_TYPE = "Continuous"
+
     # @staticmethod
     # def __export(filename, content):
     #     return {
@@ -365,13 +375,48 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
                     builder.add_subobjective(primary["name"], secondary["name"], float(secondary["weight"]))
 
                     for attribute in secondary["attributes"]:
-                        dataset_path = uri_to_path(attribute["dataset"])
-                        weight = float(attribute["weight"])
-                        column_type = "Continuous"  # dataset["type"]
-                        column_name = None  # dataset["column"]
-                        is_calculated = False  # bool(dataset["isCalculated"])
-                        scaling_function = "x"  # dataset["properties"]["valueScalingFunction"]
-                        missing_data_default_value = 0  # dataset["properties"]["missingDataSuitability"]
+                        dataset_path = uri_to_path(attribute["dataset"]["uri"])
+                        weight = float(attribute["weight"]) if "weight" in attribute else Analysis.DEFAULT_WEIGHT
+                        column_type = (
+                            attribute["dataset"]["type"]
+                            if "type" in attribute["dataset"]
+                            else Analysis.DEFAULT_DATASET_TYPE
+                        )
+                        column_name = (
+                            attribute["dataset"]["column"]
+                            if "column" in attribute["dataset"]
+                            else Analysis.DEFAULT_COLUMN_NAME
+                        )
+                        is_calculated = (
+                            not bool(attribute["dataset"]["column"])
+                            if "column" in attribute["dataset"]
+                            else Analysis.DEFAULT_IS_CALCULATED
+                        )
+                        scaling_function = (
+                            attribute["scale"]["function"]
+                            if "function" in attribute["scale"]
+                            else Analysis.DEFAULT_SCALING_FUNCTION
+                        )
+                        missing_data_default_value = (
+                            attribute["scale"]["defaultValue"]
+                            if "defaultValue" in attribute["scale"]
+                            else Analysis.DEFAULT_MISSING_DATA
+                        )
+                        granularity = (
+                            int(attribute["scale"]["granularity"])
+                            if "granularity" in attribute["scale"]
+                            else Analysis.DEFAULT_GRANULARITY
+                        )
+                        centroid = (
+                            bool(attribute["scale"]["centroid"])
+                            if "centroid" in attribute["scale"]
+                            else Analysis.DEFAULT_CENTROID
+                        )
+                        max_scaling_distance = (
+                            attribute["scale"]["max"]
+                            if "max" in attribute["scale"]
+                            else Analysis.DEFAULT_MAX_SCALING_DISTANCE
+                        )
                         minimum = 0  # dataset["min_value"]
                         maximum = 1  # dataset["max_value"]
                         if column_type != "Categorical":
@@ -387,8 +432,8 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
                                 scaling_function=scaling_function,
                                 missing_data_default_val=missing_data_default_value,
                             )
+
                         elif is_calculated and column_type == "Boolean":
-                            max_distance = 20  # dataset["calculationDistance"]
                             builder.add_calculated_attribute_to_subobjective(
                                 attribute_name=attribute["name"],
                                 objective_name=primary["name"],
@@ -397,10 +442,11 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
                                 weight=weight,
                                 scaling_function=scaling_function,
                                 missing_data_default_val=missing_data_default_value,
-                                max_distance=max_distance,
-                                # granularity=int(dataset["granularity"]),
-                                # centroid=bool(dataset["centroid"]),
+                                max_distance=max_scaling_distance,
+                                granularity=granularity,
+                                centroid=centroid,
                             )
+
                         elif column_type == "Categorical":
                             categories = []  # dataset["properties"]["distribution"]
                             categories_value = []  # dataset["properties"]["distribution_value"]

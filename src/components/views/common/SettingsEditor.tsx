@@ -115,11 +115,13 @@ function SettingsEditor({ settings }: any) {
     },
   };
 
+  const _settings = settings.flat(Infinity).filter(Boolean);
+
   return (
     <div className="p-3">
       <SettingsEditorRegistry.Provider value={value}>
-        {settings &&
-          settings.map((setting: ISettingProps<any>) => (
+        {_settings &&
+          _settings.map((setting: ISettingProps<any>) => (
             <SettingRow key={setting.uri} setting={setting} />
           ))}
       </SettingsEditorRegistry.Provider>

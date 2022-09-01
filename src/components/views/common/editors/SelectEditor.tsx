@@ -2,11 +2,12 @@ import { uniqueId } from 'lodash';
 import { ISettingWithValidationProps } from 'models/SettingsEditorProps';
 import React from 'react';
 
-interface SelectEditorProps {
+export interface SelectEditorProps {
   setting: SelectSettingProps;
 }
 
-interface SelectSettingProps extends ISettingWithValidationProps<string> {
+export interface SelectSettingProps
+  extends ISettingWithValidationProps<string> {
   type: 'select';
   value?: string;
   options: SelectOptionProps[];

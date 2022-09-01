@@ -33,6 +33,7 @@ class WorkspaceManager(TenantInstance, metaclass=TenantSingleton):
             )
             return
 
+        print("Opening workspace:", path)
         self.workspace = path
         all_files = [FileMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
         self.files.notify(all_files)

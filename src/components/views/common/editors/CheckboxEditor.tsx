@@ -2,11 +2,11 @@ import { uniqueId } from 'lodash';
 import { ISettingProps } from 'models/SettingsEditorProps';
 import React from 'react';
 
-interface CheckboxEditorProps {
+export interface CheckboxEditorProps {
   setting: CheckboxSettingProps;
 }
 
-interface CheckboxSettingProps extends ISettingProps<boolean> {
+export interface CheckboxSettingProps extends ISettingProps<boolean> {
   type: 'checkbox';
   checked?: boolean;
 }
