@@ -69,7 +69,7 @@ function SideBar({ style }: any) {
                 onClick={() =>
                   action.action({
                     view: activity.views.find(
-                      (view: ViewModel) => view.uri === activity.active[0]
+                      (view: ViewModel) => view.uri === activity.active
                     )!,
                   })
                 }

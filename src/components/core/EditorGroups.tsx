@@ -19,7 +19,7 @@ function EditorGroups({ style }: any) {
       {groups.map((group: ViewGroupModel) => (
         <EditorGroup
           key={group.uri}
-          focused={group.uri === active[0]}
+          focused={group.uri === active}
           group={group}
           closeable={groups.length > 1}
           style={{ minWidth: 200 }}

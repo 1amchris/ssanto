@@ -164,7 +164,7 @@ function PanelBar({ style }: any) {
                 onClick={() =>
                   action.action({
                     view: panel.views.find(
-                      (view: ViewModel) => view.uri === panel.active[0]
+                      (view: ViewModel) => view.uri === panel.active
                     )!,
                   })
                 }

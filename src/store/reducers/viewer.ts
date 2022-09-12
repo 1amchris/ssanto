@@ -6,11 +6,11 @@ export const viewerSlice = createSlice({
   name: 'viewer',
   initialState: {
     editor: {
-      active: [] as string[],
+      active: undefined as string | undefined,
       groups: [
         {
           uri: 'view-group://editor-placeholder',
-          active: [],
+          active: undefined as string | undefined,
           views: [],
         },
       ] as ViewGroupModel[],
@@ -20,7 +20,7 @@ export const viewerSlice = createSlice({
       activities: [
         {
           uri: 'view-group://panel-placeholder',
-          active: [],
+          active: undefined as string | undefined,
           views: [],
           icon: 'VscRefresh',
           label: 'placeholder',
@@ -32,7 +32,7 @@ export const viewerSlice = createSlice({
       activities: [
         {
           uri: 'view-group://sidebar-placeholder',
-          active: [],
+          active: undefined as string | undefined,
           views: [],
           icon: 'VscRefresh',
           label: 'placeholder',
@@ -61,7 +61,7 @@ export const viewerSlice = createSlice({
     },
     setActiveEditorViews: (
       state,
-      { payload: active }: PayloadAction<string[]>
+      { payload: active }: PayloadAction<string>
     ) => {
       state.editor.active = active;
     },

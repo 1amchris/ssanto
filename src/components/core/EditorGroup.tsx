@@ -193,7 +193,7 @@ function EditorTabBar({
     },
   ];
 
-  const viewsActions = getActions(active?.[0]);
+  const viewsActions = getActions(active);
 
   return (
     <div
@@ -208,7 +208,7 @@ function EditorTabBar({
           <EditorTab
             tab={tab}
             key={tab.uri + index}
-            active={tab.uri === active[0]}
+            active={tab.uri === active}
             onClick={() => onFocus(tab.uri)}
             onClose={() => onClose(tab.uri)}
           />
@@ -248,7 +248,7 @@ function EditorGroup({ closeable, focused, group, style }: any) {
   const dispatch = useAppDispatch();
 
   const selectedView = group.views.find(
-    (view: any) => view.uri === group.active[0]
+    (view: any) => view.uri === group.active
   );
 
   return (

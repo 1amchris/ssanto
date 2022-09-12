@@ -56,6 +56,14 @@ class ViewController(Serializable):
             "configs": self.configs,
         }
 
+    def metadata(self):
+        return {
+            "name": self.name,
+            "uri": self.uri,
+            "source": self.source,
+            "modified": self.document.is_modified if self.document else False,
+        }
+
     def save(self):
         if self.document is not None:
             self.document.save()

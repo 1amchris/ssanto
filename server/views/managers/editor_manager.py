@@ -22,8 +22,9 @@ class EditorManager(TenantInstance, Serializable, metaclass=TenantSingleton):
         self.__active_views = self.__subjects.create("workspace.views.editor.active_views", [initial_group.uri])
 
     def serialize(self):
+        active_views = self.__active_views.value()
         return {
-            "active": self.__active_views.value(),
+            "active": active_views if len(active_views) > 0 else None,
             "groups": [group.serialize() for group in self.__editor_views.value()],
         }
 

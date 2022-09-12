@@ -11,7 +11,14 @@ class ViewGroup(Serializable):
         self.views: list[ViewController] = []
 
     def serialize(self):
-        return {"uri": self.uri, "active": self.active, "views": [view.serialize() for view in self.views]}
+        active = self.active[0] if len(self.active) > 0 else None
+        return {
+            "uri": self.uri,
+            "active": active,
+            "views": []
+            if active is None
+            else [view.serialize() if active == view.uri else view.metadata() for view in self.views],
+        }
 
 
 class IconedViewGroup(ViewGroup):
