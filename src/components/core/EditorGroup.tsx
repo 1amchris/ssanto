@@ -228,7 +228,7 @@ function EditorTabBar({
               className="btn btn-sm"
               onClick={() =>
                 action.action({
-                  view: views.find((view: ViewModel) => view.uri === active[0]),
+                  view: views.find((view: ViewModel) => view.uri === active),
                 })
               }
             >

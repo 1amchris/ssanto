@@ -5,110 +5,98 @@ import { useAppSelector } from 'store/hooks';
 import { selectTasker } from 'store/reducers/tasker';
 import ColorsUtils from 'utils/colors-utils';
 import Task from 'models/ITask';
-import {
-  VscBell,
-  VscCheck,
-  VscDebugAlt,
-  VscError,
-  VscFeedback,
-  VscGitMerge,
-  VscLiveShare,
-  VscPerson,
-  VscSymbolNamespace,
-  VscSync,
-  VscWarning,
-} from 'react-icons/vsc';
+import { VscCheck } from 'react-icons/vsc';
 
 const { left, right } = {
   left: [
-    {
-      id: 'ssanto.git-branch',
-      label: (
-        <React.Fragment>
-          <VscGitMerge /> ui-overhaul*+
-        </React.Fragment>
-      ),
-    },
-    {
-      id: 'ssanto.git-synchronize',
-      label: <VscSync />,
-      description: 'Synchronize with Git',
-    },
-    {
-      id: 'ssanto.diagnostics',
-      label: (
-        <React.Fragment>
-          <VscError /> 15 <VscWarning /> 0
-        </React.Fragment>
-      ),
-      description: 'Errors: 15, Warnings: 0',
-    },
-    {
-      id: 'ssanto.start',
-      label: <VscDebugAlt />,
-      description: 'Start Analysing',
-    },
-    {
-      id: 'ssanto.person-account',
-      label: (
-        <React.Fragment>
-          <VscPerson /> Christophe
-        </React.Fragment>
-      ),
-      description: 'Sign in to Github.',
-    },
-    {
-      id: 'ssanto.live-share',
-      label: (
-        <React.Fragment>
-          <VscLiveShare /> Live Share
-        </React.Fragment>
-      ),
-      description: 'Start Collaborative Session',
-    },
+    // {
+    //   id: 'ssanto.git-branch',
+    //   label: (
+    //     <React.Fragment>
+    //       <VscGitMerge /> ui-overhaul*+
+    //     </React.Fragment>
+    //   ),
+    // },
+    // {
+    //   id: 'ssanto.git-synchronize',
+    //   label: <VscSync />,
+    //   description: 'Synchronize with Git',
+    // },
+    // {
+    //   id: 'ssanto.diagnostics',
+    //   label: (
+    //     <React.Fragment>
+    //       <VscError /> 15 <VscWarning /> 0
+    //     </React.Fragment>
+    //   ),
+    //   description: 'Errors: 15, Warnings: 0',
+    // },
+    // {
+    //   id: 'ssanto.start',
+    //   label: <VscDebugAlt />,
+    //   description: 'Start Analysing',
+    // },
+    // {
+    //   id: 'ssanto.person-account',
+    //   label: (
+    //     <React.Fragment>
+    //       <VscPerson /> Christophe
+    //     </React.Fragment>
+    //   ),
+    //   description: 'Sign in to Github.',
+    // },
+    // {
+    //   id: 'ssanto.live-share',
+    //   label: (
+    //     <React.Fragment>
+    //       <VscLiveShare /> Live Share
+    //     </React.Fragment>
+    //   ),
+    //   description: 'Start Collaborative Session',
+    // },
   ],
   right: [
-    {
-      id: 'ssanto.end-of-line',
-      label: 'LF',
-      description: 'Select End of Line Sequence',
-    },
-    {
-      id: 'ssanto.language',
-      label: (
-        <React.Fragment>
-          <VscSymbolNamespace /> TypeScript React
-        </React.Fragment>
-      ),
-      description: 'Select Language Mode',
-    },
-    {
-      id: 'ssanto.tslint',
-      label: (
-        <React.Fragment>
-          <VscWarning /> TSLint
-        </React.Fragment>
-      ),
-      description: 'Linter is running.',
-    },
-    {
-      id: 'ssanto.prettier',
-      label: (
-        <React.Fragment>
-          <VscCheck /> Prettier
-        </React.Fragment>
-      ),
-    },
-    {
-      id: 'ssanto.feedback',
-      label: <VscFeedback />,
-      description: 'Tweet Feedback',
-    },
-    {
-      id: 'ssanto.notifications',
-      label: <VscBell />,
-      description: 'No Notifications',
-    },
+    // {
+    //   id: 'ssanto.end-of-line',
+    //   label: 'LF',
+    //   description: 'Select End of Line Sequence',
+    // },
+    // {
+    //   id: 'ssanto.language',
+    //   label: (
+    //     <React.Fragment>
+    //       <VscSymbolNamespace /> TypeScript React
+    //     </React.Fragment>
+    //   ),
+    //   description: 'Select Language Mode',
+    // },
+    // {
+    //   id: 'ssanto.tslint',
+    //   label: (
+    //     <React.Fragment>
+    //       <VscWarning /> TSLint
+    //     </React.Fragment>
+    //   ),
+    //   description: 'Linter is running.',
+    // },
+    // {
+    //   id: 'ssanto.prettier',
+    //   label: (
+    //     <React.Fragment>
+    //       <VscCheck /> Prettier
+    //     </React.Fragment>
+    //   ),
+    // },
+    // {
+    //   id: 'ssanto.feedback',
+    //   label: <VscFeedback />,
+    //   description: 'Tweet Feedback',
+    // },
+    // {
+    //   id: 'ssanto.notifications',
+    //   label: <VscBell />,
+    //   description: 'No Notifications',
+    // },
   ],
 };
 
@@ -188,6 +176,8 @@ function StatusBar({ style }: any) {
     console.log(`clicked on status item: "${item.id}"`);
   }
 
+  // TODO this whole status bar could be redone. It currently has it's limitations, and is not very flexible.
+
   return (
     <nav
       className="d-flex flex-row justify-content-between px-2"
@@ -197,13 +187,19 @@ function StatusBar({ style }: any) {
       }}
     >
       <div className="d-flex flex-row overflow-visible">
-        {left?.map(item => (
-          <StatusItem
-            {...item}
-            key={`status/status-${item.id}`}
-            onClick={() => handleItemClick(item)}
-          />
-        ))}
+        {left?.map(
+          (item: {
+            id: string;
+            label: React.ReactNode;
+            description: string;
+          }) => (
+            <StatusItem
+              {...item}
+              key={`status/status-${item.id}`}
+              onClick={() => handleItemClick(item)}
+            />
+          )
+        )}
       </div>
       <div className="d-flex flex-row overflow-visible">
         <StatusItem
@@ -221,13 +217,19 @@ function StatusBar({ style }: any) {
             )
           }
         />
-        {right?.map(item => (
-          <StatusItem
-            {...item}
-            key={`status/status-${item.id}`}
-            onClick={() => handleItemClick(item)}
-          />
-        ))}
+        {right?.map(
+          (item: {
+            id: string;
+            label: React.ReactNode;
+            description: string;
+          }) => (
+            <StatusItem
+              {...item}
+              key={`status/status-${item.id}`}
+              onClick={() => handleItemClick(item)}
+            />
+          )
+        )}
       </div>
     </nav>
   );

@@ -39,16 +39,16 @@ export const viewerSlice = createSlice({
         },
       ] as ViewGroupModel[],
       options: [
-        {
-          uri: `accounts://`,
-          label: 'accounts',
-          icon: 'VscAccount',
-        },
-        {
-          uri: `settings://`,
-          label: 'manage',
-          icon: 'VscSettingsGear',
-        },
+        // {
+        //   uri: `accounts://`,
+        //   label: 'accounts',
+        //   icon: 'VscAccount',
+        // },
+        // {
+        //   uri: `settings://`,
+        //   label: 'manage',
+        //   icon: 'VscSettingsGear',
+        // },
       ],
     },
   },

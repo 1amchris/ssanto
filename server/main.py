@@ -58,8 +58,7 @@ def populate_views(views_manager: ViewsManager):
     searcher_uri = views_manager.sidebar.add_activity("Search", "VscSearch")
     views_manager.sidebar.add_view(FileSearcherView("file:///Users/src/"), searcher_uri)
 
-    extensions_uri = views_manager.sidebar.add_activity("Extensions", "VscExtensions")
-    # empty on purpose
+    # extensions_uri = views_manager.sidebar.add_activity("Extensions", "VscExtensions")
 
     views_manager.sidebar.select_activity(explorer_uri, allow_none=False)
 

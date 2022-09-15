@@ -2,3 +2,13 @@
 .dropdown-toggle::after {
   display: none !important;
 }
+
+/* Removes bootstrap's border around plain buttons when hovering */
+.btn-check:active + .btn,
+.btn-check:checked + .btn,
+.btn.active,
+.btn.show,
+.btn:active,
+.btn:hover {
+  border-color: transparent !important;
+}
