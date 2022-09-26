@@ -86,10 +86,10 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             "analysis": self.__handle_run_analysis,
         }
         self.pre_update_hooks = [
+            self.__handle_any_change,
             self.__handle_create_directive,
             self.__handle_delete_directive,
             self.__handle_run_directive,
-            self.__handle_any_change,
             self.__handle_study_area_change,
         ]
 
@@ -238,9 +238,6 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         if ":delete" in changes:
             payload = changes[":delete"]
             del changes[":delete"]
-
-            # We should probably request some kind of confirmation here
-            #  (perhaps a toast) before proceeding
 
             changes = self.supported_delete_types[payload["type"]](changes, **payload)
 
