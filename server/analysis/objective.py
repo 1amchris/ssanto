@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List
 
 from analysis.study_area import StudyArea
 from analysis.feature import ContinuousFeature, CategoricalFeature, DistanceFeature
@@ -7,26 +8,39 @@ import numpy as np
 
 
 class Objective:
-    def __init__(self, objective_name: str, weight: float, cell_size: float, crs: str, study_area: StudyArea):
-        self.id = objective_name
-        self.name = objective_name
-        self.weight = weight
+    def __init__(
+        self, objective_name: str, weight: float, cell_size: float, crs: str, study_area: StudyArea, root_id=""
+    ):
+        self.id: str = f"{root_id}{'.' if root_id else ''}{objective_name}"
+        self.name: str = objective_name
+        self.weight: float = weight
 
-        self.cell_size = cell_size
-        self.crs = crs
-        self.study_area = study_area
+        self.cell_size: float = cell_size
+        self.crs: str = crs
+        self.study_area: StudyArea = study_area
 
-        self.subobjectives = []
+        self.subobjectives: List[Objective] = []
         self.missing_mask_dict = {}
 
-    def get_subobjective_by_index(self, index) -> Objective:
+    def __str__(self) -> str:
+        return f"{self.id} [{len(self.subobjectives)}]: [{', '.join([str(o) for o in self.subobjectives])}]"
+
+    def get_subobjective_by_index(self, index: int) -> Objective:
         return self.subobjectives[index]
 
-    def get_subobjective_by_name(self, name) -> Objective:
-        for subobjective in self.subobjectives:
-            if subobjective.name == name:
-                return subobjective
-        raise KeyError("Subobjective not found")
+    def get_subobjective_by_id(self, id: str) -> Objective:
+
+        if self.id == id:
+            print("Found:", self.id, id)
+            return self
+
+        elif id.startswith(self.id):
+            print("Starts with:", self.id, id)
+            index = int(id[len(self.id) + 1 :].split(".")[0])
+            if index < len(self.subobjectives):
+                return self.subobjectives[index].get_subobjective_by_id(id)
+
+        raise KeyError(f"Subobjective {id} not found")
 
     def get_missing_mask(self):
         return self.missing_mask_dict
@@ -128,26 +142,23 @@ class Objective:
         return self.subobjectives[-1]
 
     def add_subobjective(self, name, weight) -> Objective:
-        self.subobjectives.append(Objective(name, weight, self.cell_size, self.crs, self.study_area))
+        root_id = f"{self.id}.{len(self.subobjectives)}"
+        self.subobjectives.append(Objective(name, weight, self.cell_size, self.crs, self.study_area, root_id=root_id))
         return self.subobjectives[-1]
 
     def process_value_matrix(self):
-        total_weight = 0
-        subobjective_arrays_dict = {}
+        objective_arrays_dict = {}
         self.missing_mask_dict = {}
-        output_array = np.zeros(self.study_area.as_array.shape)
-        for subobjective in self.subobjectives:
+        output_matrix = np.zeros(self.study_area.as_array.shape)
+        total_weight = 0
+        for objective in self.subobjectives:
+            value_matrix, subobjective_arrays_dict = objective.process_value_matrix()
+            self.missing_mask_dict.update(objective.get_missing_mask())
+            objective_arrays_dict[objective.id] = value_matrix
+            objective_arrays_dict.update(subobjective_arrays_dict)
+            output_matrix += objective_arrays_dict[objective.id] * objective.weight
+            total_weight += objective.weight
 
-            total_weight += subobjective.weight
-            value_matrix, subsubobjective_arrays_dict = subobjective.process_value_matrix()
-
-            subobjective_missing_mask = subobjective.get_missing_mask()
-
-            subobjective_arrays_dict[subobjective.name] = value_matrix
-            subobjective_arrays_dict.update(subsubobjective_arrays_dict)
-            self.missing_mask_dict.update(subobjective_missing_mask)
-            output_array += value_matrix * subobjective.weight
-
-        output_array = output_array / total_weight
-        output_array = np.multiply(output_array, self.study_area.as_array)
-        return output_array, subobjective_arrays_dict
+        output_matrix /= total_weight
+        output_matrix = np.multiply(output_matrix, self.study_area.as_array)
+        return output_matrix, objective_arrays_dict

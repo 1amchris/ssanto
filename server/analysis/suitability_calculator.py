@@ -9,6 +9,7 @@ import geopandas as gp
 from .study_area import StudyArea
 import os
 from .raster_transform import DEFAULT_EMPTY_VAL, convert_projection
+import json
 
 
 class SuitabilityCalculator:
@@ -131,156 +132,135 @@ class SuitabilityCalculator:
     #             return {}
     #     return cell_values
 
-    def run(self, objectives):
-        self.objectives_arrays_dict = {}
-        self.missing_mask_dict = {}
-        output_matrix = np.zeros(self.study_area.as_array.shape)
-        total_weight = 0
-        for objective in objectives:
-            data, sub_objective_array_dict = objective.process_value_matrix()
-            partial_missing_mask_dict = objective.get_missing_mask()
-            self.missing_mask_dict.update(partial_missing_mask_dict)
-            objective_weight = objective.weight
-            self.objectives_arrays_dict[objective.name] = data
-            self.objectives_arrays_dict.update(sub_objective_array_dict)
-            output_matrix += self.objectives_arrays_dict[objective.name] * objective_weight
-            total_weight += objective_weight
+    def run(self, hierarchy: Objective):
+        (self.output_matrix, self.objectives_arrays_dict) = hierarchy.process_value_matrix()
+        # self.objectives_arrays_dict = {}
+        # self.missing_mask_dict = {}
+        # self.output_matrix = np.zeros(self.study_area.as_array.shape)
+        # total_weight = 0
+        # for objective in hierarchy.subobjectives:
+        #     data, sub_objective_array_dict = objective.process_value_matrix()
+        #     self.missing_mask_dict.update(objective.get_missing_mask())
+        #     self.objectives_arrays_dict[objective.id] = data
+        #     self.objectives_arrays_dict.update(sub_objective_array_dict)
+        #     self.output_matrix += self.objectives_arrays_dict[objective.id] * objective.weight
+        #     total_weight += objective.weight
 
-        output_matrix = output_matrix / total_weight * 100
-        mask = self.study_area.as_array == DEFAULT_EMPTY_VAL
-        output_matrix[mask] = -1
-        self.output_matrix = output_matrix
-        self.objectives_arrays_dict["ANALYSIS"] = output_matrix / 100
+        # self.output_matrix /= total_weight
+        # self.output_matrix = np.multiply(self.output_matrix, self.study_area.as_array)
+        # # self.output_matrix[self.study_area.as_array == DEFAULT_EMPTY_VAL] = -1
+        # self.objectives_arrays_dict[hierarchy.id] = self.output_matrix
 
-        return output_matrix
+        return self.output_matrix
 
-    def process_sub_objectives(self):
-        sub_objectives_json = {}
-        for key in self.objectives_arrays_dict:
-            if key != "ANALYSIS":
-                output_matrix = self.objectives_arrays_dict[key] * 100
-                mask = self.study_area.as_array == DEFAULT_EMPTY_VAL
-                output_matrix[mask] = -1
-                path = self.matrix_to_raster(output_matrix)
-                analysis_df = self.tiff_to_geojson(path)
-                sub_objectives_json[key] = {
-                    "file_name": key,
-                    "area": analysis_df.to_json(),
-                }
+    # def process_sub_objectives(self):
+    #     sub_objectives_json = {}
+    #     for key in self.objectives_arrays_dict:
+    #         if key != "ANALYSIS":
+    #             output_matrix = self.objectives_arrays_dict[key] * 100
+    #             mask = self.study_area.as_array == DEFAULT_EMPTY_VAL
+    #             output_matrix[mask] = -1
+    #             path = self.matrix_to_raster(output_matrix)
+    #             analysis_df = self.tiff_to_geojson(path)
+    #             sub_objectives_json[key] = {
+    #                 "file_name": key,
+    #                 "area": analysis_df.to_json(),
+    #             }
 
-        return sub_objectives_json
+    #     return sub_objectives_json
+
+    def to_json(self):
+        jsons = {}
+        for attribute_name, output_matrix in self.objectives_arrays_dict.items():
+            output_matrix *= 100
+            output_matrix[self.study_area.as_array == DEFAULT_EMPTY_VAL] = -1
+
+            # converting to raster and reading it into a dataframe (converted into a python dictionary)
+            area = json.loads(self.tiff_to_geojson(self.matrix_to_raster(output_matrix)).to_json())
+
+            jsons[attribute_name] = {
+                "attribute": attribute_name,
+                "area": area,
+            }
+
+        return jsons
 
 
 class ObjectiveHierarchyBuilder:
-    def __init__(self, working_path: str):
-        self.hierarchy: list[Objective] = []
+    def __init__(self, working_path: str, main: str, cell_size: float, crs: str, study_area: StudyArea):
+        self.root: Objective = Objective(main, 1, cell_size, crs, study_area)
         self.path: str = working_path
+        self.output_path: str = "output.tiff"
 
-    def get_objectives(self) -> list[Objective]:
-        return self.hierarchy
+    def get_objectives(self) -> Objective:
+        return self.root
 
-    def get_objective_by_index(self, index: int) -> Objective:
-        return self.hierarchy[index]
-
-    def get_objective_by_name(self, objective_name: str) -> Objective:
-        for obj in self.hierarchy:
-            if obj.name == objective_name:
-                return obj
-        raise KeyError("Objective not found")
-
-    def add_objective(self, name: str, weight: float, cell_size: float, crs: str, study_area: StudyArea) -> Objective:
-        self.hierarchy.append(Objective(name, weight, cell_size, crs, study_area))
-        return self.hierarchy[-1]
-
-    def add_subobjective(self, parent_name: str, subobjective_name: str, weight: float) -> Objective:
-        return self.get_objective_by_name(parent_name).add_subobjective(subobjective_name, weight)
+    def add_objective(self, name: str, weight: float, parent_id=None) -> Objective:
+        parent = self.root if not parent_id else self.root.get_subobjective_by_id(parent_id)
+        return parent.add_subobjective(name, weight)
 
     def add_continuous_attribute_to_subobjective(
         self,
+        parent_id,
         attribute_name,
-        objective_name,
-        subobjective_name,
         dataset_path,
         weight,
         scaling_function,
-        missing_data_default_val,
+        missing_data_default_value,
         field_name=False,
     ) -> ContinuousFeature:
-        input_path = os.path.join(self.path, dataset_path)
-        output_name = "output.tiff"
-        output_path = os.path.join(self.path, output_name)
-
-        objective = self.get_objective_by_name(objective_name)
-        subobjective = objective.get_subobjective_by_name(subobjective_name)
-        return subobjective.add_continuous_attribute(
+        return self.root.get_subobjective_by_id(parent_id).add_continuous_attribute(
             attribute_name=attribute_name,
-            path=input_path,
-            output_tiff=output_path,
+            path=os.path.join(self.path, dataset_path),
+            output_tiff=os.path.join(self.path, self.output_path),
             weight=weight,
             scaling_function=scaling_function,
-            missing_data_default_value=missing_data_default_val,
+            missing_data_default_value=missing_data_default_value,
             field_name=field_name,
         )
 
     def add_categorical_attribute_to_subobjective(
         self,
+        parent_id,
         attribute_name,
-        objective_name,
-        subobjective_name,
         dataset_path,
         weight,
         scaling_function,
-        missing_data_default_val,
+        missing_data_default_value,
         categories,
-        categories_value,
         field_name,
     ) -> CategoricalFeature:
-        input_path = os.path.join(self.path, dataset_path)
-        output_name = "output.tiff"
-        output_path = os.path.join(self.path, output_name)
-
-        categories_dic = dict(zip(categories, categories_value))
-
-        objective = self.get_objective_by_name(objective_name)
-        subobjective = objective.get_subobjective_by_name(subobjective_name)
-        return subobjective.add_categorical_attribute(
+        return self.root.get_subobjective_by_id(parent_id).add_categorical_attribute(
             file_name=attribute_name,
-            path=input_path,
-            output_tiff=output_path,
+            path=os.path.join(self.path, dataset_path),
+            output_tiff=os.path.join(self.path, self.output_path),
             weight=weight,
             scaling_function=scaling_function,
-            missing_data_default_value=missing_data_default_val,
-            categories=categories_dic,
+            missing_data_default_value=missing_data_default_value,
+            categories=categories,
             field_name=field_name,
         )
 
     def add_calculated_attribute_to_subobjective(
         self,
+        parent_id,
         attribute_name,
-        objective_name,
-        subobjective_name,
         dataset_path,
         weight,
         scaling_function,
-        missing_data_default_val,
+        missing_data_default_value,
         max_distance,
         granularity=10,
         centroid=True,
         field_name=False,
     ) -> ContinuousFeature:
-        input_path = os.path.join(self.path, dataset_path)
-        output_name = "output.tiff"
-        output_path = os.path.join(self.path, output_name)
-
-        objective = self.get_objective_by_name(objective_name)
-        subobjective = objective.get_subobjective_by_name(subobjective_name)
-        return subobjective.add_distance_attribute(
+        return self.root.get_subobjective_by_id(parent_id).add_distance_attribute(
             file_name=attribute_name,
-            path=input_path,
-            output_tiff=output_path,
+            path=os.path.join(self.path, dataset_path),
+            output_tiff=os.path.join(self.path, self.output_path),
             weight=weight,
             scaling_function=scaling_function,
-            missing_data_default_value=missing_data_default_val,
+            missing_data_default_value=missing_data_default_value,
             maximize_distance=True,
             max_distance=max_distance,
             centroid=centroid,

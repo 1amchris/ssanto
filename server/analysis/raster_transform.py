@@ -2,7 +2,7 @@ from osgeo import gdal, ogr, osr
 import os
 import geopandas
 
-DEFAULT_EMPTY_VAL = -99999999999
+DEFAULT_EMPTY_VAL = -99_999_999_999
 
 
 def convert_projection(in_proj, out_proj, p1, p2):
@@ -37,7 +37,7 @@ def get_center_latitude_longitude(shape_file_path):
     return latitude, longitude
 
 
-def shape_to_Raster(
+def shape_to_raster(
     cell_size,
     input,
     output,
@@ -57,8 +57,8 @@ def shape_to_Raster(
     input_lyr = input_source.GetLayer()
     input_srs = input_lyr.GetSpatialRef()
     # projection = osr.SpatialReference(wkt=input_source.GetProjection())
-    input_crs = int(input_srs.GetAttrValue("AUTHORITY", 1))
-    output_crs = 3857
+    # input_crs = int(input_srs.GetAttrValue("AUTHORITY", 1))
+    # output_crs = 3857
 
     x_min, x_max, y_min, y_max = input_lyr.GetExtent()
 
@@ -76,9 +76,7 @@ def shape_to_Raster(
     if os.path.exists(output):
         output_driver.Delete(output)
 
-    output_source = output_driver.Create(
-        output, x_nb_cell, y_nb_cells, 1, gdal.GDT_Float64
-    )
+    output_source = output_driver.Create(output, x_nb_cell, y_nb_cells, 1, gdal.GDT_Float64)
     output_source.SetGeoTransform((x_min, cell_size, 0, y_max, 0, -cell_size))
     output_source.SetProjection(input_srs.ExportToWkt())
     output_lyr = output_source.GetRasterBand(1)
@@ -87,9 +85,7 @@ def shape_to_Raster(
     output_source.FlushCache()
 
     if field_name:
-        gdal.RasterizeLayer(
-            output_source, [1], input_lyr, options=["ATTRIBUTE={}".format(field_name)]
-        )
+        gdal.RasterizeLayer(output_source, [1], input_lyr, options=["ATTRIBUTE={}".format(field_name)])
 
     else:
         gdal.RasterizeLayer(output_source, [1], input_lyr, burn_values=[1])
@@ -101,11 +97,9 @@ def shape_to_Raster(
 
 
 def process_raster(cell_size, crs, input, output, field_name=False, study_area=None):
-    print("process_raster", input, "****", output)
+    print("\nProcessing file: ", input, "\nOutput: ", output)
     if input.endswith(".shp"):
-        shape_to_Raster(
-            cell_size, input, output, field_name=field_name, study_area=study_area
-        )
+        shape_to_raster(cell_size, input, output, field_name=field_name, study_area=study_area)
 
         # --- Convert to Mercantor ---
         file_raster = gdal.Open(output)

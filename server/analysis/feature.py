@@ -73,6 +73,7 @@ class ContinuousFeature(Feature):
         self.scaling_function = scaling_function
 
     def update(self):
+        print("study area", self.study_area)
         self.as_raster = process_raster(
             self.cell_size,
             self.crs,

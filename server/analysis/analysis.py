@@ -97,9 +97,9 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
         # )
 
         # self.layers = subjects_manager.create("layers", {})
-        self.tiffs = {}  # layername {string}: tiff {bytes}
-        self.analysis = self.subjects_manager.create("analysis", {})
-        self.sub_analysis = self.subjects_manager.create("sub_analysis", [])
+        # self.tiffs = {}  # layername {string}: tiff {bytes}
+        # self.analysis = self.subjects_manager.create("analysis", {})
+        # self.sub_analysis = self.subjects_manager.create("sub_analysis", [])
 
         # suitability categories: ([0-10[, [10-20[, [20-30[, [30-40[, [40-50[, [50-60[, [60-70[, [70-80[, [80-90[, [90-100]) or None
         # self.suitability_categories = subjects_manager.create("analysis.visualization.suitability_categories", None)
@@ -351,7 +351,7 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
 
     async def compute_suitability(self, cell_size, raw_objectives, study_area_path):
         id = str(uuid4())
-        self.logger.info(f"[Analysis] Starting analysis: {id}")
+        self.logger.info(f"[Analysis] Starting analysis for {'needs'}: {id}")
 
         working_dir = self.workspace.get_workspace_path()
         if study_area_path is None or working_dir is None:
@@ -359,20 +359,18 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
 
         else:
             crs = "epsg:3857"
-            builder = ObjectiveHierarchyBuilder(working_dir)
             study_area = StudyArea(study_area_path)
             study_area.update(working_dir=working_dir, cell_size=cell_size, crs=crs)
+            builder = ObjectiveHierarchyBuilder(
+                working_dir, main="needs", cell_size=cell_size, crs=crs, study_area=study_area
+            )
             for primary in raw_objectives["primaries"]:
-                builder.add_objective(
-                    name=primary["name"],
-                    weight=float(primary["weight"]),
-                    cell_size=cell_size,
-                    crs=crs,
-                    study_area=study_area,
-                )
+                objective = builder.add_objective(name=primary["name"], weight=float(primary["weight"]))
 
                 for secondary in primary["secondaries"]:
-                    builder.add_subobjective(primary["name"], secondary["name"], float(secondary["weight"]))
+                    subobjective = builder.add_objective(
+                        parent_id=objective.id, name=secondary["name"], weight=float(secondary["weight"])
+                    )
 
                     for attribute in secondary["attributes"]:
                         dataset_path = uri_to_path(attribute["dataset"]["uri"])
@@ -424,55 +422,52 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
 
                         if not is_calculated and column_type == "Boolean":
                             builder.add_continuous_attribute_to_subobjective(
+                                parent_id=subobjective.id,
                                 attribute_name=attribute["name"],
-                                objective_name=primary["name"],
-                                subobjective_name=secondary["name"],
                                 dataset_path=dataset_path,
                                 weight=weight,
                                 scaling_function=scaling_function,
-                                missing_data_default_val=missing_data_default_value,
+                                missing_data_default_value=missing_data_default_value,
                             )
 
                         elif is_calculated and column_type == "Boolean":
                             builder.add_calculated_attribute_to_subobjective(
+                                parent_id=subobjective.id,
                                 attribute_name=attribute["name"],
-                                objective_name=primary["name"],
-                                subobjective_name=secondary["name"],
                                 dataset_path=dataset_path,
                                 weight=weight,
                                 scaling_function=scaling_function,
-                                missing_data_default_val=missing_data_default_value,
+                                missing_data_default_value=missing_data_default_value,
                                 max_distance=max_scaling_distance,
                                 granularity=granularity,
                                 centroid=centroid,
                             )
 
                         elif column_type == "Categorical":
-                            categories = []  # dataset["properties"]["distribution"]
-                            categories_value = []  # dataset["properties"]["distribution_value"]
+                            categories = {}
+                            # categories = dict(
+                            #     zip(dataset["properties"]["distribution"], dataset["properties"]["distribution_value"])
+                            # )
 
                             builder.add_categorical_attribute_to_subobjective(
+                                parent_id=subobjective.id,
                                 attribute_name=attribute["name"],
-                                objective_name=primary["name"],
-                                subobjective_name=secondary["name"],
                                 dataset_path=dataset_path,
                                 weight=weight,
                                 scaling_function=scaling_function,
-                                missing_data_default_val=missing_data_default_value,
+                                missing_data_default_value=missing_data_default_value,
                                 categories=categories,
-                                categories_value=categories_value,
                                 field_name=column_name,
                             )
 
                         else:
                             builder.add_continuous_attribute_to_subobjective(
+                                parent_id=subobjective.id,
                                 attribute_name=attribute["name"],
-                                objective_name=primary["name"],
-                                subobjective_name=secondary["name"],
                                 dataset_path=dataset_path,
                                 weight=weight,
                                 scaling_function=scaling_function,
-                                missing_data_default_val=missing_data_default_value,
+                                missing_data_default_value=missing_data_default_value,
                                 field_name=column_name,
                             )
 
@@ -483,15 +478,18 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
 
             # what is an output_matrix? a pandas dataframe?
             # can we skip the tiff path step, and generate it on command instead?
-            output_matrix = self.suitability_calculator.run(objectives=builder.get_objectives())
+            output_matrix = self.suitability_calculator.run(hierarchy=builder.get_objectives())
             tiff_path = self.suitability_calculator.matrix_to_raster(output_matrix)
             analysis_df = self.suitability_calculator.tiff_to_geojson(tiff_path)
 
-            with open(os.path.join(working_dir, tiff_path), "rb") as tiff:
-                self.tiffs["analysis"] = tiff.read()
+            # with open(os.path.join(working_dir, tiff_path), "rb") as tiff:
+            #     self.tiffs["analysis"] = tiff.read()
 
             # can it not be done while running the suitability calculator?
-            sub_objectives_json = self.suitability_calculator.process_sub_objectives()
+            # sub_objectives_json = self.suitability_calculator.process_sub_objectives()
+            objectives_json = self.suitability_calculator.to_json()
+
+            print(objectives_json)
 
             # self.compute_suitability_above_threshold()
             # self.compute_suitability_categories()
@@ -503,7 +501,7 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
 
         self.logger.info(f"[Analysis] Completed: {id}")
 
-        self.sub_analysis.notify(sub_objectives_json)
-        self.analysis.notify(return_value)
+        # self.sub_analysis.notify(sub_objectives_json)
+        # self.analysis.notify(return_value)
 
         return return_value
