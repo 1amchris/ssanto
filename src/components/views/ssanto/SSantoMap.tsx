@@ -68,12 +68,7 @@ function SSantoMap({ view }: any) {
     return possibles.length > 0 ? possibles[0] : null;
   };
 
-  const MapCreated = (map: any) => {
-    // new SimpleMapScreenshoter({
-    //   mimeType: 'image/jpeg',
-    // }).addTo(map);
-    // console.log({ map });
-  };
+  const MapCreated = (map: any) => {};
 
   const MapEvents = () => {
     useMapEvents({

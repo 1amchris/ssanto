@@ -1,9 +1,8 @@
 from __future__ import annotations
+import numpy as np
 
 from analysis.study_area import StudyArea
 from analysis.feature import ContinuousFeature, CategoricalFeature, DistanceFeature
-
-import numpy as np
 
 
 class Objective:

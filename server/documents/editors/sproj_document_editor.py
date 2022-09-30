@@ -269,8 +269,8 @@ class SSantoDocumentEditor(JSONDocumentEditor):
                     "geojson": value,
                     "checked": False,
                 }
-
-            self.content["map"]["layers"]["results"][keys[0]]["checked"] = True
+            if keys is not None and len(keys) > 0:
+                self.content["map"]["layers"]["results"][keys[0]]["checked"] = True
 
         content = self.get_content()
         analysis_name = content["analysis"]["name"]

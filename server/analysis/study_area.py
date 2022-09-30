@@ -1,8 +1,9 @@
 import os
 import matplotlib.pyplot as plt
-from analysis.raster_transform import process_raster
 import fiona
 import geopandas
+
+from analysis.raster_transform import process_raster
 
 
 class StudyArea:

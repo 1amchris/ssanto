@@ -19,8 +19,6 @@ class SuitabilityCalculator:
     def __init__(self, working_path):
         self.path = working_path
 
-        # what's the difference?
-        # self.objectives = {} # the objectives builder has been moved to the ObjectiveHierarchyBuilder class
         self.objectives_arrays_dict = {}
 
         self.missing_mask_dict = {}
@@ -138,42 +136,7 @@ class SuitabilityCalculator:
     def run(self, hierarchy: Objective):
         (self.output_matrix, self.objectives_arrays_dict) = hierarchy.process_value_matrix()
         self.objectives_arrays_dict[hierarchy.id] = self.output_matrix
-
-        # self.objectives_arrays_dict = {}
-        # self.missing_mask_dict = {}
-        # self.output_matrix = np.zeros(self.study_area.as_array.shape)
-        # total_weight = 0
-        # for objective in hierarchy.subobjectives:
-        #     data, sub_objective_array_dict = objective.process_value_matrix()
-        #     self.missing_mask_dict.update(objective.get_missing_mask())
-        #     self.objectives_arrays_dict[objective.id] = data
-        #     self.objectives_arrays_dict.update(sub_objective_array_dict)
-        #     self.output_matrix += self.objectives_arrays_dict[objective.id] * objective.weight
-        #     total_weight += objective.weight
-
-        # self.output_matrix /= total_weight
-        # self.output_matrix = np.multiply(self.output_matrix, self.study_area.as_array)
-        # # self.output_matrix[self.study_area.as_array == DEFAULT_EMPTY_VAL] = -1
-        # self.objectives_arrays_dict[hierarchy.id] = self.output_matrix
-
-        # return self.output_matrix
         return self.output_matrix, self.objectives_arrays_dict
-
-    # def process_sub_objectives(self):
-    #     sub_objectives_json = {}
-    #     for key in self.objectives_arrays_dict:
-    #         if key != "ANALYSIS":
-    #             output_matrix = self.objectives_arrays_dict[key] * 100
-    #             mask = self.study_area.as_array == DEFAULT_EMPTY_VAL
-    #             output_matrix[mask] = -1
-    #             path = self.matrix_to_raster(output_matrix)
-    #             analysis_df = self.tiff_to_geojson(path)
-    #             sub_objectives_json[key] = {
-    #                 "file_name": key,
-    #                 "area": analysis_df.to_json(),
-    #             }
-
-    #     return sub_objectives_json
 
     def to_json(self) -> dict:
         return json.dumps(self.objectives_arrays_dict, cls=NumpyEncoder)

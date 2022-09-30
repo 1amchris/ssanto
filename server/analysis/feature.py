@@ -1,11 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import geopandas
 
 from analysis.raster_transform import *
-
 from analysis.study_area import StudyArea
 from analysis.math_operation import MATH_OPERATION
-import geopandas
 
 
 class Feature:
