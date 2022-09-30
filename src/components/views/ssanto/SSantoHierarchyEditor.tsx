@@ -547,8 +547,6 @@ function SSantoHierarchyEditor({ view }: any) {
   const primaryObjectives: IPrimaryHierarchy[] =
     objectives[mainObjective].primaries || [];
 
-  console.log({ objectives });
-
   return (
     <div className="d-flex flex-column h-100 w-100">
       <div className="p-2">

@@ -60,12 +60,19 @@ function SSantoMap({ view }: any) {
     content: { map },
   } = view;
 
-  const findLayerOverlayByName = (name: string) => {
-    const possibles = Object.entries(map?.layers?.overlays)
+  const findLayerByName = (name: string, source: object) => {
+    const possibles = Object.entries(source)
       .filter(([, layer]) => (layer as any).name === name)
       .map(([key]) => key);
 
     return possibles.length > 0 ? possibles[0] : null;
+  };
+
+  const MapCreated = (map: any) => {
+    // new SimpleMapScreenshoter({
+    //   mimeType: 'image/jpeg',
+    // }).addTo(map);
+    // console.log({ map });
   };
 
   const MapEvents = () => {
@@ -75,26 +82,39 @@ function SSantoMap({ view }: any) {
       },
       overlayadd: e => {
         // For lack of a better way to do this, we'll just find it using it's name
-        const overlayId = findLayerOverlayByName(e.name);
+        const overlayId = findLayerByName(e.name, map!.layers!.overlays);
         if (overlayId !== null) {
           publishChanges(`map.layers.overlays.${overlayId}.checked`, true);
-        } else {
-          console.warn(
-            `Could not find layer ${e.name}. Couldn't publish changes`
-          );
+          return;
         }
+
+        const resultId = findLayerByName(e.name, map!.layers!.results);
+        if (resultId !== null) {
+          publishChanges(`map.layers.results.${resultId}.checked`, true);
+          return;
+        }
+
+        console.warn(
+          `Could not find layer ${e.name}. Couldn't publish changes`
+        );
       },
       overlayremove: e => {
-        console.log('overlayadd', e);
         // For lack of a better way to do this, we'll just find it using it's name
-        const overlayId = findLayerOverlayByName(e.name);
+        const overlayId = findLayerByName(e.name, map!.layers!.overlays);
         if (overlayId !== null) {
           publishChanges(`map.layers.overlays.${overlayId}.checked`, false);
-        } else {
-          console.warn(
-            `Couldn't find layer "${e.name}". Failed to publish changes`
-          );
+          return;
         }
+
+        const resultId = findLayerByName(e.name, map!.layers!.results);
+        if (resultId !== null) {
+          publishChanges(`map.layers.results.${resultId}.checked`, false);
+          return;
+        }
+
+        console.warn(
+          `Couldn't find layer "${e.name}". Failed to publish changes`
+        );
       },
       zoomend: e => {
         publishChanges('map.coords.zoom', e.target.getZoom());
@@ -113,8 +133,6 @@ function SSantoMap({ view }: any) {
     return null;
   };
 
-  // console.log({ geojson: map.studyArea });
-
   return (
     <MapContainer
       center={[map?.coords?.center?.lat || 0, map?.coords?.center?.long || 0]}
@@ -125,11 +143,7 @@ function SSantoMap({ view }: any) {
         width: '100%',
         height: '100%',
       }}
-      // whenCreated={map => {
-      //   new SimpleMapScreenshoter({
-      //     mimeType: 'image/jpeg',
-      //   }).addTo(map);
-      // }}
+      whenCreated={MapCreated}
     >
       <MapEvents />
       <LayersControl position="bottomleft">
@@ -152,6 +166,21 @@ function SSantoMap({ view }: any) {
           key={`${uri}-${JSON.stringify(map?.layers?.overlays || {})}`}
         >
           {Object.values(map?.layers?.overlays || {}).map(
+            (overlay: any, index: number) => (
+              <LayersControl.Overlay
+                key={`${uri}-${index}-${JSON.stringify(overlay)}`}
+                checked={overlay.checked != false}
+                name={overlay.name}
+              >
+                <GeoJSON data={overlay.geojson} style={style} />
+              </LayersControl.Overlay>
+            )
+          )}
+        </LayerGroup>
+        <LayerGroup
+          key={`${uri}-${JSON.stringify(map?.layers?.results || {})}`}
+        >
+          {Object.values(map?.layers?.results || {}).map(
             (overlay: any, index: number) => (
               <LayersControl.Overlay
                 key={`${uri}-${index}-${JSON.stringify(overlay)}`}

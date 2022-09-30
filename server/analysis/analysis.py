@@ -1,5 +1,5 @@
-import os
 from uuid import uuid4
+import json
 from analysis.study_area import StudyArea
 from documents.utils import uri_to_path
 from logger.manager import LogsManager
@@ -355,7 +355,8 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
 
         working_dir = self.workspace.get_workspace_path()
         if study_area_path is None or working_dir is None:
-            return_value = {"file_name": "current analysis", "area": {}}
+            # return_value = {"file_name": "current analysis", "area": {}}
+            return_value = {}
 
         else:
             crs = "epsg:3857"
@@ -473,31 +474,22 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
 
             self.suitability_calculator = SuitabilityCalculator(working_dir)
             self.suitability_calculator.set_cell_size(cell_size)
-            # self.suitability_calculator.set_crs(crs)
             self.suitability_calculator.set_study_area_input(path=study_area_path, crs=crs)
 
-            # what is an output_matrix? a pandas dataframe?
             # can we skip the tiff path step, and generate it on command instead?
-            output_matrix = self.suitability_calculator.run(hierarchy=builder.get_objectives())
-            tiff_path = self.suitability_calculator.matrix_to_raster(output_matrix)
-            analysis_df = self.suitability_calculator.tiff_to_geojson(tiff_path)
+            # output_matrix, objectives_arrays_dict = self.suitability_calculator.run(hierarchy=builder.get_objectives())
+            self.suitability_calculator.run(hierarchy=builder.get_objectives())
+            # tiff_path = self.suitability_calculator.matrix_to_raster(output_matrix)
+            # analysis_df = self.suitability_calculator.tiff_to_geojson(tiff_path)
 
             # with open(os.path.join(working_dir, tiff_path), "rb") as tiff:
             #     self.tiffs["analysis"] = tiff.read()
 
-            # can it not be done while running the suitability calculator?
-            # sub_objectives_json = self.suitability_calculator.process_sub_objectives()
-            objectives_json = self.suitability_calculator.to_json()
-
-            print(objectives_json)
-
             # self.compute_suitability_above_threshold()
             # self.compute_suitability_categories()
 
-            return_value = {
-                "file_name": "current analysis",
-                "area": analysis_df.to_json(),
-            }
+            # return_value = analysis_df.to_json()
+            return_value = self.suitability_calculator.to_geojson()
 
         self.logger.info(f"[Analysis] Completed: {id}")
 

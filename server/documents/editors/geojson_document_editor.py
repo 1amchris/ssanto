@@ -9,8 +9,8 @@ class GeoJsonDocumentEditor(JSONDocumentEditor):
         super()._handle_event(changes)
         return False  # it is currently impossible to update the file directly from the editor (it's more of a viewer than anything else)
 
-    def _get_content(self):
-        geojson = super()._get_content()
+    def _load_content(self):
+        geojson = super()._load_content()
         bounds = gpd.GeoDataFrame.from_features(geojson).total_bounds
         return {
             "geojson": geojson,

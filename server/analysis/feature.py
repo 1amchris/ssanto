@@ -13,7 +13,7 @@ class Feature:
         self,
         id,
         name,
-        path,
+        dataset_path,
         output_tiff,
         weight,
         cell_size,
@@ -24,12 +24,13 @@ class Feature:
     ):
         self.id = id
         self.name = name
-        self.path = path
+        self.path = dataset_path
         self.output_tiff = output_tiff
         self.cell_size = cell_size
         self.crs = crs
         self.study_area = study_area
         self.weight = weight
+        self.scaling_function = scaling_function
         self.missing_data_default_val = missing_data_default_val
 
     def get_missing_mask(self):
@@ -46,7 +47,7 @@ class ContinuousFeature(Feature):
         self,
         id,
         name,
-        path,
+        dataset_path,
         output_tiff,
         weight,
         cell_size,
@@ -59,7 +60,7 @@ class ContinuousFeature(Feature):
         super().__init__(
             id,
             name,
-            path,
+            dataset_path,
             output_tiff,
             weight,
             cell_size,
@@ -73,7 +74,6 @@ class ContinuousFeature(Feature):
         self.scaling_function = scaling_function
 
     def update(self):
-        print("study area", self.study_area)
         self.as_raster = process_raster(
             self.cell_size,
             self.crs,
@@ -151,7 +151,7 @@ class DistanceFeature(ContinuousFeature):
         self,
         id,
         name,
-        path,
+        dataset_path,
         output_tiff,
         weight,
         max_distance,
@@ -169,7 +169,7 @@ class DistanceFeature(ContinuousFeature):
         super().__init__(
             id,
             name,
-            path,
+            dataset_path,
             output_tiff,
             weight,
             cell_size,
@@ -330,7 +330,7 @@ class CategoricalFeature(ContinuousFeature):
         self,
         id,
         name,
-        path,
+        dataset_path,
         output_tiff,
         weight,
         cell_size,
@@ -344,7 +344,7 @@ class CategoricalFeature(ContinuousFeature):
         super().__init__(
             id,
             name,
-            path,
+            dataset_path,
             output_tiff,
             weight,
             cell_size,

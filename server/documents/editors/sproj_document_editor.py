@@ -16,6 +16,8 @@ from tasks.manager import TasksManager
 
 
 class StudyAreaHelper:
+    # TODO: There are multiple functions in this class that should be moved to a geojson helper class instead
+
     @staticmethod
     def get_registry():
         return [
@@ -40,8 +42,8 @@ class StudyAreaHelper:
             image = f.read()  # first band
             image = np.int16(image)
             geoms = list(
-                {"properties": {"suitability": v}, "geometry": s}
-                for s, v in rasterio.features.shapes(image, mask=None, transform=data["transform"])
+                {"properties": {"suitability": suitability}, "geometry": geometry}
+                for geometry, suitability in rasterio.features.shapes(image, mask=None, transform=data["transform"])
             )
             gdf = geopandas.GeoDataFrame.from_features(geoms, crs=data["crs"])
             return json.loads(gdf.to_crs("epsg:4326").to_json())
@@ -256,8 +258,19 @@ class SSantoDocumentEditor(JSONDocumentEditor):
         tasker = TasksManager(self.tenant_id)
         logger = LogsManager(self.tenant_id)
 
-        # def on_complete(result):
-        #     logger.info(f"Analysis result:\n{result}")
+        def on_complete(result):
+            if not "results" in self.content["map"]["layers"]:
+                self.content["map"]["layers"]["results"] = {}
+
+            for key, value in result.items():
+                keys = key.split(".")
+                self.content["map"]["layers"]["results"]["/".join([keys[0]] + keys[1:][::2])] = {
+                    "name": keys[-1],
+                    "geojson": value,
+                    "checked": False,
+                }
+
+            self.content["map"]["layers"]["results"][keys[0]]["checked"] = True
 
         content = self.get_content()
         analysis_name = content["analysis"]["name"]
@@ -270,13 +283,12 @@ class SSantoDocumentEditor(JSONDocumentEditor):
                 raw_objectives=objectives, cell_size=cell_size, study_area_path=study_area_path
             ),
             display_name=f"Analysis: {analysis_name}",
-            # on_complete=lambda result, *_, **__: on_complete(result),
+            on_complete=lambda result, *_, **__: on_complete(result),
         )
 
         return changes
 
     def _handle_event(self, changes: dict):
-
         if self.pre_update_hooks is not None:
             changes = reduce(lambda changes, hook: hook(changes), self.pre_update_hooks, changes)
 

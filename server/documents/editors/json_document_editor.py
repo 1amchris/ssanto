@@ -18,6 +18,6 @@ class JSONDocumentEditor(DocumentEditor):
             return True
         return False
 
-    def _get_content(self):
+    def _load_content(self):
         with open(uri_to_path(self.uri), "r") as file:
             return json.load(file)

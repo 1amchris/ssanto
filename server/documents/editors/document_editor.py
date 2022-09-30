@@ -33,7 +33,7 @@ class DocumentEditor(Serializable):
         self.tenant_id: str = tenant_id
         self.uri: str = uri
         self.is_modified: bool = False
-        self.content = self._get_content()
+        self.content = self._load_content()
         self.__subscriptions: dict[DocumentEvent : list[DocumentSubscription]] = {}
 
     def serialize(self) -> dict:
@@ -68,7 +68,7 @@ class DocumentEditor(Serializable):
 
     def get_content(self):
         try:
-            return self.content if self.content is not None else self._get_content()
+            return self._get_content() if self.content is not None else self._load_content()
         except Exception as e:
             self.notify(DocumentEvent.ERROR, e)
 
@@ -106,6 +106,12 @@ class DocumentEditor(Serializable):
         return True
 
     def _get_content(self):
+        """
+        Returns the filtered content of the `self.content` variable.
+        """
+        return self.content
+
+    def _load_content(self):
         """
         Returns the payload of the `self.content` variable.
         """

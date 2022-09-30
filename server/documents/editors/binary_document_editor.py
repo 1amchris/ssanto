@@ -16,6 +16,6 @@ class BinaryDocumentEditor(DocumentEditor):
             return True
         return False
 
-    def _get_content(self):
+    def _load_content(self):
         with open(uri_to_path(self.uri), "rb") as file:
             return file.read()

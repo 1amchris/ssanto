@@ -1,15 +1,18 @@
-from analysis.feature import CategoricalFeature, ContinuousFeature
-from .objective import Objective
-from osgeo import gdal, osr
 import numpy as np
-from osgeo.gdalconst import *
 import rasterio
-from rasterio.features import shapes
-import geopandas as gp
-from .study_area import StudyArea
 import os
-from .raster_transform import DEFAULT_EMPTY_VAL, convert_projection
 import json
+import geopandas as gp
+
+from numpy_encoder import NumpyEncoder
+from osgeo import gdal
+from osgeo.gdalconst import *
+from rasterio.features import shapes
+
+from analysis.feature import CategoricalFeature, ContinuousFeature
+from analysis.objective import Objective
+from analysis.study_area import StudyArea
+from analysis.raster_transform import DEFAULT_EMPTY_VAL, convert_projection
 
 
 class SuitabilityCalculator:
@@ -134,6 +137,8 @@ class SuitabilityCalculator:
 
     def run(self, hierarchy: Objective):
         (self.output_matrix, self.objectives_arrays_dict) = hierarchy.process_value_matrix()
+        self.objectives_arrays_dict[hierarchy.id] = self.output_matrix
+
         # self.objectives_arrays_dict = {}
         # self.missing_mask_dict = {}
         # self.output_matrix = np.zeros(self.study_area.as_array.shape)
@@ -151,7 +156,8 @@ class SuitabilityCalculator:
         # # self.output_matrix[self.study_area.as_array == DEFAULT_EMPTY_VAL] = -1
         # self.objectives_arrays_dict[hierarchy.id] = self.output_matrix
 
-        return self.output_matrix
+        # return self.output_matrix
+        return self.output_matrix, self.objectives_arrays_dict
 
     # def process_sub_objectives(self):
     #     sub_objectives_json = {}
@@ -169,21 +175,19 @@ class SuitabilityCalculator:
 
     #     return sub_objectives_json
 
-    def to_json(self):
-        jsons = {}
-        for attribute_name, output_matrix in self.objectives_arrays_dict.items():
+    def to_json(self) -> dict:
+        return json.dumps(self.objectives_arrays_dict, cls=NumpyEncoder)
+
+    def to_geojson(self) -> dict:
+        areas = {}
+        for id, output_matrix in self.objectives_arrays_dict.items():
             output_matrix *= 100
             output_matrix[self.study_area.as_array == DEFAULT_EMPTY_VAL] = -1
+            raster_path = self.matrix_to_raster(output_matrix)
+            geojson = self.tiff_to_geojson(raster_path).to_json()
+            areas[id] = json.loads(geojson)
 
-            # converting to raster and reading it into a dataframe (converted into a python dictionary)
-            area = json.loads(self.tiff_to_geojson(self.matrix_to_raster(output_matrix)).to_json())
-
-            jsons[attribute_name] = {
-                "attribute": attribute_name,
-                "area": area,
-            }
-
-        return jsons
+        return areas
 
 
 class ObjectiveHierarchyBuilder:
@@ -210,8 +214,8 @@ class ObjectiveHierarchyBuilder:
         field_name=False,
     ) -> ContinuousFeature:
         return self.root.get_subobjective_by_id(parent_id).add_continuous_attribute(
-            attribute_name=attribute_name,
-            path=os.path.join(self.path, dataset_path),
+            name=attribute_name,
+            dataset_path=os.path.join(self.path, dataset_path),
             output_tiff=os.path.join(self.path, self.output_path),
             weight=weight,
             scaling_function=scaling_function,
@@ -231,8 +235,8 @@ class ObjectiveHierarchyBuilder:
         field_name,
     ) -> CategoricalFeature:
         return self.root.get_subobjective_by_id(parent_id).add_categorical_attribute(
-            file_name=attribute_name,
-            path=os.path.join(self.path, dataset_path),
+            name=attribute_name,
+            dataset_path=os.path.join(self.path, dataset_path),
             output_tiff=os.path.join(self.path, self.output_path),
             weight=weight,
             scaling_function=scaling_function,
@@ -255,8 +259,8 @@ class ObjectiveHierarchyBuilder:
         field_name=False,
     ) -> ContinuousFeature:
         return self.root.get_subobjective_by_id(parent_id).add_distance_attribute(
-            file_name=attribute_name,
-            path=os.path.join(self.path, dataset_path),
+            name=attribute_name,
+            dataset_path=os.path.join(self.path, dataset_path),
             output_tiff=os.path.join(self.path, self.output_path),
             weight=weight,
             scaling_function=scaling_function,

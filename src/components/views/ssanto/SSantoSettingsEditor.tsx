@@ -112,6 +112,16 @@ function SSantoSettingsEditor({ view }: any) {
       disabled: true,
       onValidChange: updateField('analysis.modifiedOn'),
     } as ISettingProps<string>,
+    {
+      uri: 'map.cellSize',
+      type: 'number',
+      displayName: 'Cell Size',
+      value: view.content?.map?.cellSize,
+      family: 'Map',
+      shortDescription: 'The cell size used for the computations.',
+      validators: [ValidatorsUtils.atLeast(1), ValidatorsUtils.required],
+      onValidChange: updateField('map.cellSize'),
+    } as ISettingWithValidationProps<number>,
   ];
 
   return <SettingsEditor settings={settings} />;

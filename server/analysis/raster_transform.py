@@ -97,7 +97,7 @@ def shape_to_raster(
 
 
 def process_raster(cell_size, crs, input, output, field_name=False, study_area=None):
-    print("\nProcessing file: ", input, "\nOutput: ", output)
+    # print("\nProcessing file: ", input, "\nOutput: ", output)
     if input.endswith(".shp"):
         shape_to_raster(cell_size, input, output, field_name=field_name, study_area=study_area)
 

@@ -3,15 +3,18 @@ from views.controllers.view_controller import ViewController
 
 
 class SSantoSettingsViewController(ViewController):
-    def get_view_type(self):
+    def _get_view_type(self):
         return "ssanto-settings"
 
-    def get_content(self):
+    def _get_content(self):
         try:
-            return {"analysis": self.document.content["analysis"]}
+            return {
+                "analysis": self.document.content["analysis"],
+                "map": {"cellSize": self.document.content["map"]["cellSize"]},
+            }
         except Exception:
-            return super().get_content()
+            return super()._get_content()
 
-    def on_document_change(self, document: DocumentEditor):
-        self.content = self.get_content()
-        super().on_document_change(document)
+    def _on_document_change(self, document: DocumentEditor):
+        self.content = self._get_content()
+        super()._on_document_change(document)

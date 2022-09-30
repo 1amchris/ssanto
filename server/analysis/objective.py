@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import List
 
 from analysis.study_area import StudyArea
 from analysis.feature import ContinuousFeature, CategoricalFeature, DistanceFeature
@@ -19,7 +18,7 @@ class Objective:
         self.crs: str = crs
         self.study_area: StudyArea = study_area
 
-        self.subobjectives: List[Objective] = []
+        self.subobjectives: list[Objective] = []
         self.missing_mask_dict = {}
 
     def __str__(self) -> str:
@@ -29,13 +28,10 @@ class Objective:
         return self.subobjectives[index]
 
     def get_subobjective_by_id(self, id: str) -> Objective:
-
         if self.id == id:
-            print("Found:", self.id, id)
             return self
 
         elif id.startswith(self.id):
-            print("Starts with:", self.id, id)
             index = int(id[len(self.id) + 1 :].split(".")[0])
             if index < len(self.subobjectives):
                 return self.subobjectives[index].get_subobjective_by_id(id)
@@ -47,8 +43,8 @@ class Objective:
 
     def add_continuous_attribute(
         self,
-        attribute_name,
-        path,
+        name,
+        dataset_path,
         output_tiff,
         weight,
         scaling_function,
@@ -57,9 +53,9 @@ class Objective:
     ) -> ContinuousFeature:
         self.subobjectives.append(
             ContinuousFeature(
-                id=len(self.subobjectives),
-                name=attribute_name,
-                path=path,
+                id=f"{self.id}.{len(self.subobjectives)}.{name}",
+                name=name,
+                dataset_path=dataset_path,
                 output_tiff=output_tiff,
                 weight=weight,
                 cell_size=self.cell_size,
@@ -74,8 +70,8 @@ class Objective:
 
     def add_categorical_attribute(
         self,
-        file_name,
-        path,
+        name,
+        dataset_path,
         output_tiff,
         weight,
         scaling_function,
@@ -88,9 +84,9 @@ class Objective:
         """
         self.subobjectives.append(
             CategoricalFeature(
-                id=len(self.subobjectives),
-                name=file_name,
-                path=path,
+                id=f"{self.id}.{len(self.subobjectives)}.{name}",
+                name=name,
+                dataset_path=dataset_path,
                 output_tiff=output_tiff,
                 weight=weight,
                 cell_size=self.cell_size,
@@ -106,8 +102,8 @@ class Objective:
 
     def add_distance_attribute(
         self,
-        file_name,
-        path,
+        name,
+        dataset_path,
         output_tiff,
         weight,
         scaling_function,
@@ -121,9 +117,9 @@ class Objective:
     ) -> DistanceFeature:
         self.subobjectives.append(
             DistanceFeature(
-                id=len(self.subobjectives),
-                name=file_name,
-                path=path,
+                id=f"{self.id}.{len(self.subobjectives)}.{name}",
+                name=name,
+                dataset_path=dataset_path,
                 output_tiff=output_tiff,
                 weight=weight,
                 max_distance=max_distance,
