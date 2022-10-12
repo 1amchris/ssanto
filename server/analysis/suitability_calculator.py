@@ -115,23 +115,23 @@ class SuitabilityCalculator:
             return gpd_polygonized_raster
 
     # I believe this should be moved to a utils class
-    # def get_informations_at(self, latitude, longitude):
-    #     x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
-    #     cell_values = {}
-    #     for key in self.objectives_arrays_dict:
-    #         obj = self.objectives_arrays_dict[key]
-    #         if (
-    #             y >= 0
-    #             and y < obj.shape[0]
-    #             and x >= 0
-    #             and x < obj.shape[1]
-    #             and self.study_area.as_array[y, x] != DEFAULT_EMPTY_VAL
-    #         ):
+    def get_informations_at(self, latitude, longitude):
+        x, y = self.geo_coordinate_to_matrix_coordinate(latitude, longitude)
+        cell_values = {}
+        for key in self.objectives_arrays_dict:
+            obj = self.objectives_arrays_dict[key]
+            if (
+                y >= 0
+                and y < obj.shape[0]
+                and x >= 0
+                and x < obj.shape[1]
+                and self.study_area.as_array[y, x] != DEFAULT_EMPTY_VAL
+            ):
 
-    #             cell_values[key] = obj[y, x]
-    #         else:
-    #             return {}
-    #     return cell_values
+                cell_values[key] = obj[y, x]
+            else:
+                return {}
+        return cell_values
 
     def run(self, hierarchy: Objective):
         (self.output_matrix, self.objectives_arrays_dict) = hierarchy.process_value_matrix()

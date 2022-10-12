@@ -1,3 +1,4 @@
+from typing import Union
 from uuid import uuid4
 
 from analysis.raster_transform import *
@@ -37,6 +38,9 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
         # )
 
         self.logger.info("[Analysis] initialized.")
+
+    def from_geojson(self, geojson: dict):
+        pass
 
     # def update_suitability_threshold(self, value):
     #     self.suitability_threshold.notify(value)
@@ -78,11 +82,13 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
     #     else:
     #         self.suitability_above_threshold.notify(None)
 
-    # def get_informations_at_position(self, cursor: LatLng) -> MapCursorInformations:
-    #     base = MapCursorInformations()
-    #     if calculator := self.suitability_calculator:
-    #         base.objectives = calculator.get_informations_at(cursor.lat, cursor.long)
-    #     return base
+    def get_informations_at_position(self, lat, long) -> Union[None, dict]:
+
+        self.logger.info(f"[Analysis] Getting informations for position: lat={lat:.04f}, long={long:.04f}")
+
+        if self.suitability_calculator is not None:
+            return self.suitability_calculator.get_informations_at(lat, long)
+        return None
 
     # def export_tiff(self, layer):
     #     if layer in self.tiffs:

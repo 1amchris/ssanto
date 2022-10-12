@@ -93,6 +93,7 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             self.__handle_delete_directive,
             self.__handle_run_directive,
             self.__handle_study_area_change,
+            self.__handle_map_click,
         ]
 
     def __handle_primary_creation(self, changes: dict, main: str, options: dict = {}, **kwargs):
@@ -285,6 +286,15 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             display_name=f"Analysis: {analysis_name}",
             on_complete=lambda result, *_, **__: on_complete(result),
         )
+
+        return changes
+
+    def __handle_map_click(self, changes: dict):
+        if "map.lastClick.coords" in changes:
+            coords = changes["map.lastClick.coords"]
+            changes["map.lastClick.meta"] = Analysis(self.tenant_id).get_informations_at_position(
+                coords["lat"], coords["long"]
+            )
 
         return changes
 

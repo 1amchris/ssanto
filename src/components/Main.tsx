@@ -207,7 +207,7 @@ function Main() {
             <SideBar style={{ minWidth: 200, width: 240 }} />
             <SplitView style={{ minWidth: 120 }} direction="column">
               <EditorGroups />
-              <PanelBar style={{ height: '30%', minHeight: '35px' }} />
+              <PanelBar style={{ height: '12%', minHeight: '35px' }} />
             </SplitView>
           </SplitView>
         </div>

@@ -13,7 +13,12 @@
   },
   "map": {
     "cellSize": 20,
-    "lastClickCoords": { "lat": 45.46803908413262, "long": -73.74160766601564 },
+    "lastClick": {
+      "coords": {
+        "lat": 45.46803908413262,
+        "long": -73.74160766601564
+      }
+    },
     "layers": {
       "base": "street",
       "overlays": {

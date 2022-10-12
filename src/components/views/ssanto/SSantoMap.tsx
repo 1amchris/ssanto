@@ -8,6 +8,7 @@ import {
   useMapEvents,
   LayerGroup,
   GeoJSON,
+  Popup,
 } from 'react-leaflet';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from 'store/hooks';
@@ -119,7 +120,7 @@ function SSantoMap({ view }: any) {
         publishChanges('map.coords.center', { lat, long });
       },
       click: e => {
-        publishChanges('map.lastClickCoords', {
+        publishChanges('map.lastClick.coords', {
           lat: e.latlng.lat,
           long: e.latlng.lng,
         });
@@ -189,12 +190,45 @@ function SSantoMap({ view }: any) {
         </LayerGroup>
       </LayersControl>
 
-      {map.lastClickCoords && (
+      {map.lastClick.coords && (
         <Marker
           position={
-            new LatLng(map.lastClickCoords.lat, map.lastClickCoords.long)
+            new LatLng(map.lastClick.coords.lat, map.lastClick.coords.long)
           }
-        />
+        >
+          {
+            <Popup closeButton={false} closeOnEscapeKey closeOnClick>
+              {(map.lastClick.meta && (
+                <table className="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Layer</th>
+                      <th>Suitability</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(map.lastClick.meta)
+                      .map(([key, value]: any) => {
+                        return {
+                          layer: key.substring(key.lastIndexOf('.') + 1),
+                          value: value.toPrecision(2),
+                        };
+                      })
+                      .sort((a, b) => a.layer.localeCompare(b.layer))
+                      .map(({ layer, value }: any) => (
+                        <tr key={layer}>
+                          <td>{layer}</td>
+                          <td>{value}%</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )) ||
+                (!map.lastClick.meta &&
+                  'Data is currently unavailable for this location')}
+            </Popup>
+          }
+        </Marker>
       )}
     </MapContainer>
   );
