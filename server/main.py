@@ -116,17 +116,7 @@ async def main():
     # server.bind_command("analysis.update_suitability_threshold", analysis.update_suitability_threshold)
     # server.bind_command("analysis.compute_suitability", analysis.compute_suitability)
 
-    # server.bind_command("analysis.add_files", analysis.add_files, False)
-    # server.bind_command("analysis.remove_file", analysis.remove_file, False)
-
-    # server.bind_command("analysis.export_tiff", analysis.export_tiff)
     # server.bind_command("analysis.get_layer", analysis.get_layer)
-
-    # server.bind_command("analysis.save_project", analysis.export_project_save)
-    # server.bind_command("analysis.open_project", analysis.import_project_save)
-
-    # map = Map(subjects, analysis.get_informations_at_position)
-    # server.bind_command("map.set_cursor", map.set_cursor)
     # end: legacy
 
     # Main loop

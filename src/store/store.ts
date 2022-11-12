@@ -4,7 +4,6 @@ import analysisReducer from 'store/reducers/analysis';
 import blobReducer from 'store/reducers/blobber';
 import exportReducer from 'store/reducers/export';
 import fileReducer from 'store/reducers/files';
-// import mapReducer from 'store/reducers/map';
 import outputReducer from 'store/reducers/logger';
 import toastReducer from 'store/reducers/toaster';
 import taskReducer from 'store/reducers/tasker';
@@ -37,12 +36,7 @@ export const store = configureStore({
           call.type, // May contain a callback function
         ],
       },
-    }).concat([
-      ServerMiddleware,
-      // AnalysisMiddleware,
-      BlobberMiddleware,
-      FilesMiddleware,
-    ]),
+    }).concat([ServerMiddleware, BlobberMiddleware, FilesMiddleware]),
 });
 
 export type AppDispatch = typeof store.dispatch;
