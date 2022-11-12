@@ -1,25 +1,28 @@
 import React from 'react';
 import { capitalize } from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { TileLayer, LayersControl, GeoJSON, LayerGroup } from 'react-leaflet';
-import { removeLayer, selectMap, upsertLayer } from 'store/reducers/map';
-import { Layer, Layers, LayersUpdateGroups } from 'models/map/Layers';
-import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { useEffect, useRef } from 'react';
-import ServerCallTarget from 'enums/ServerCallTarget';
-import { call } from 'store/reducers/server';
-import CallModel from 'models/server-coms/CallModel';
-import { InsertLayerModel } from 'models/map/InsertLayerModel';
-import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
-import ColorsUtils from 'utils/colors-utils';
+import {
+  TileLayer,
+  LayersControl /* GeoJSON, LayerGroup */,
+} from 'react-leaflet';
+// import { removeLayer, selectMap, upsertLayer } from 'store/reducers/map';
+// import { Layer, Layers, LayersUpdateGroups } from 'models/map/Layers';
+// import { useAppDispatch, useAppSelector } from 'store/hooks';
+// import { useEffect, useRef } from 'react';
+// import ServerCallTarget from 'enums/ServerCallTarget';
+// import { call } from 'store/reducers/server';
+// import CallModel from 'models/server-coms/CallModel';
+// import { InsertLayerModel } from 'models/map/InsertLayerModel';
+// import { RemoveLayerModel } from 'models/map/RemoveLayerModel';
+// import ColorsUtils from 'utils/colors-utils';
 
-const usePrevious = (value: any) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-};
+// const usePrevious = (value: any) => {
+//   const ref = useRef();
+//   useEffect(() => {
+//     ref.current = value;
+//   });
+//   return ref.current;
+// };
 
 /**
  * @deprecated
@@ -28,80 +31,80 @@ const usePrevious = (value: any) => {
  * @return {JSX.Element} Html.
  */
 const LayersGroups = ({ t }: any) => {
-  const { layers, update_layers: updateLayers } = useAppSelector(selectMap);
-  const dispatch = useAppDispatch();
+  // const { layers, update_layers: updateLayers } = useAppSelector(selectMap);
+  // const dispatch = useAppDispatch();
 
-  const style = (feature: any) => {
-    if (
-      feature.properties !== undefined &&
-      feature.properties.sutability >= 0
-    ) {
-      const color = ColorsUtils.greenToRed(feature.properties.sutability);
-      return {
-        color: color,
-        fillColor: color,
-        fillOpacity: 0.65,
-        weight: 0.35,
-      };
-    } else if (
-      feature.properties !== undefined &&
-      feature.properties.sutability < 0
-    ) {
-      return { color: '#00000000', fillOpacity: 0 };
-    } else {
-      return { color: '#0000ff', fillOpacity: 0 };
-    }
-  };
+  // const style = (feature: any) => {
+  //   if (
+  //     feature.properties !== undefined &&
+  //     feature.properties.sutability >= 0
+  //   ) {
+  //     const color = ColorsUtils.greenToRed(feature.properties.sutability);
+  //     return {
+  //       color: color,
+  //       fillColor: color,
+  //       fillOpacity: 0.65,
+  //       weight: 0.35,
+  //     };
+  //   } else if (
+  //     feature.properties !== undefined &&
+  //     feature.properties.sutability < 0
+  //   ) {
+  //     return { color: '#00000000', fillOpacity: 0 };
+  //   } else {
+  //     return { color: '#0000ff', fillOpacity: 0 };
+  //   }
+  // };
 
-  const prevUpdateLayers: LayersUpdateGroups | undefined =
-    usePrevious(updateLayers);
-  useEffect(() => {
-    if (prevUpdateLayers === undefined) return;
-    const p: LayersUpdateGroups = prevUpdateLayers;
+  // const prevUpdateLayers: LayersUpdateGroups | undefined =
+  //   usePrevious(updateLayers);
+  // useEffect(() => {
+  //   if (prevUpdateLayers === undefined) return;
+  //   const p: LayersUpdateGroups = prevUpdateLayers;
 
-    const newPairs: string[][] = [];
-    const oldPairs: string[][] = [];
+  //   const newPairs: string[][] = [];
+  //   const oldPairs: string[][] = [];
 
-    for (const [group, names] of Object.entries(updateLayers)) {
-      for (const name of names) {
-        newPairs.push([group, name]);
-      }
-    }
+  //   for (const [group, names] of Object.entries(updateLayers)) {
+  //     for (const name of names as string) {
+  //       newPairs.push([group, name]);
+  //     }
+  //   }
 
-    for (const [group, names] of Object.entries(prevUpdateLayers as any)) {
-      for (const name of names as any) {
-        oldPairs.push([group, name]);
-      }
-    }
+  //   for (const [group, names] of Object.entries(prevUpdateLayers as any)) {
+  //     for (const name of names as any) {
+  //       oldPairs.push([group, name]);
+  //     }
+  //   }
 
-    const toAdd: string[][] = newPairs.filter((x: string[]) => {
-      if (p[x[0]]) return !p[x[0]].includes(x[1]);
-      else return true;
-    });
-    const toRemove: string[][] = oldPairs.filter((x: string[]) => {
-      if (updateLayers[x[0]]) return !updateLayers[x[0]].includes(x[1]);
-      else return true;
-    });
+  //   const toAdd: string[][] = newPairs.filter((x: string[]) => {
+  //     if (p[x[0]]) return !p[x[0]].includes(x[1]);
+  //     else return true;
+  //   });
+  //   const toRemove: string[][] = oldPairs.filter((x: string[]) => {
+  //     if (updateLayers[x[0]]) return !updateLayers[x[0]].includes(x[1]);
+  //     else return true;
+  //   });
 
-    for (const layer of toAdd) {
-      dispatch(
-        call({
-          target: ServerCallTarget.AnalysisGetLayer,
-          args: [layer[0], layer[1]],
-          onSuccessAction: upsertLayer,
-        } as CallModel<string[], InsertLayerModel, void, void, void>)
-      );
-    }
+  //   for (const layer of toAdd) {
+  //     dispatch(
+  //       call({
+  //         target: ServerCallTarget.AnalysisGetLayer,
+  //         args: [layer[0], layer[1]],
+  //         onSuccessAction: upsertLayer,
+  //       } as CallModel<string[], InsertLayerModel, void, void, void>)
+  //     );
+  //   }
 
-    for (const layer of toRemove) {
-      dispatch(
-        removeLayer({
-          group: layer[0],
-          name: layer[1],
-        } as RemoveLayerModel)
-      );
-    }
-  }, [prevUpdateLayers, updateLayers]);
+  //   for (const layer of toRemove) {
+  //     dispatch(
+  //       removeLayer({
+  //         group: layer[0],
+  //         name: layer[1],
+  //       } as RemoveLayerModel)
+  //     );
+  //   }
+  // }, [prevUpdateLayers, updateLayers]);
   return (
     <LayersControl position="bottomleft">
       <LayersControl.BaseLayer checked name={capitalize(t('osm'))}>
@@ -113,7 +116,7 @@ const LayersGroups = ({ t }: any) => {
       <LayersControl.BaseLayer name={capitalize(t('none'))}>
         <TileLayer url="" />
       </LayersControl.BaseLayer>
-      {Object.entries(layers).map(([group, layers]: [string, Layers]) => (
+      {/* {Object.entries(layers).map(([group, layers]: [string, Layers]) => (
         <LayerGroup
           key={`${group}/${Object.keys(layers).reduce(
             (prev, curr) => prev + curr
@@ -129,7 +132,7 @@ const LayersGroups = ({ t }: any) => {
             </LayersControl.Overlay>
           ))}
         </LayerGroup>
-      ))}
+      ))} */}
     </LayersControl>
   );
 };

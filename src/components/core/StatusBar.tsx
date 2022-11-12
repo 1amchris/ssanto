@@ -6,6 +6,7 @@ import { selectTasker } from 'store/reducers/tasker';
 import ColorsUtils from 'utils/colors-utils';
 import Task from 'models/ITask';
 import { VscCheck } from 'react-icons/vsc';
+import { selectBlobber } from 'store/reducers/blobber';
 
 const { left, right } = {
   left: [
@@ -168,6 +169,7 @@ function StatusItem({ label, description, disabled, onClick }: any) {
  */
 function StatusBar({ style }: any) {
   const { tasks = [] } = useAppSelector(selectTasker);
+  const { requestedBlobs = [] } = useAppSelector(selectBlobber);
 
   const runningTasksCount =
     tasks.filter((task: Task) => task.running).length || 0;
@@ -202,6 +204,21 @@ function StatusBar({ style }: any) {
         )}
       </div>
       <div className="d-flex flex-row overflow-visible">
+        <StatusItem
+          id="ssanto.blobs"
+          label={
+            requestedBlobs.length > 0 ? (
+              <React.Fragment>
+                <Loading /> Awaiting {requestedBlobs.length} Blob
+                {requestedBlobs.length > 1 ? 's' : ''}
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                {/* <VscCheck /> No Blob Requested */}
+              </React.Fragment>
+            )
+          }
+        />
         <StatusItem
           id="ssanto.tasks"
           label={

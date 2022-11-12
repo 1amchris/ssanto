@@ -28,7 +28,8 @@ python.stdout.on('data', data => {
     createWindow();
     return;
   }
-  process.stdout.write(`[Python][stdout] ${data}`);
+  // process.stdout.write(`[Python][stdout] ${data}`);
+  process.stdout.write(`${data}`);
 });
 
 python.stderr.on('data', data => {

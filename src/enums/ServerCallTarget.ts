@@ -1,6 +1,10 @@
 /* eslint-disable no-unused-vars */
 
 enum ServerCallTarget {
+  AdvisorGetGuide = 'advisor.get_guide',
+
+  BlobberGetObject = 'blobber.get_object',
+
   FilesGetFiles = 'files.get_files',
 
   ToasterCloseToast = 'toaster.close_toast',
@@ -46,8 +50,6 @@ enum ServerCallTarget {
 
   MapSetCursor = 'map.set_cursor',
   /* end legacy */
-
-  GuideGet = 'guide.get',
 }
 
 export default ServerCallTarget;

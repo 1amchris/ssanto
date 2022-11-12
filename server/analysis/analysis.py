@@ -42,10 +42,6 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
     def from_geojson(self, geojson: dict):
         pass
 
-    # def update_suitability_threshold(self, value):
-    #     self.suitability_threshold.notify(value)
-    #     self.compute_suitability_above_threshold()
-
     # def compute_suitability_categories(self):
     #     if self.suitability_calculator is not None and (array := self.suitability_calculator.get_array()).any():
     #         study_area = self.suitability_calculator.get_study_area()
@@ -83,21 +79,11 @@ class Analysis(TenantInstance, metaclass=TenantSingleton):
     #         self.suitability_above_threshold.notify(None)
 
     def get_informations_at_position(self, lat, long) -> Union[None, dict]:
-
-        self.logger.info(f"[Analysis] Getting informations for position: lat={lat:.04f}, long={long:.04f}")
-
         if self.suitability_calculator is not None:
-            return self.suitability_calculator.get_informations_at(lat, long)
+            infos = self.suitability_calculator.get_informations_at(lat, long)
+            self.logger.info(f"[Analysis] Fetched informations for position: lat={lat:.04f}, long={long:.04f}")
+            return infos
         return None
-
-    # def export_tiff(self, layer):
-    #     if layer in self.tiffs:
-    #         return {
-    #             "name": f"{layer}.{self.__get_project_name()}.tiff",
-    #             "content": b64encode(self.tiffs[layer]).decode("utf-8"),
-    #         }
-    #     else:
-    #         raise CallException("There are no existing tiff with this name")
 
     async def compute_suitability(self, cell_size, raw_objectives, study_area_path):
         id = str(uuid4())

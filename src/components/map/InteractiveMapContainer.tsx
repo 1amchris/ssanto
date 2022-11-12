@@ -1,8 +1,11 @@
 import React from 'react';
-import L, { LatLng } from 'leaflet';
-import { MapContainer, Marker, useMapEvents } from 'react-leaflet';
-import { useAppSelector, useAppDispatch } from 'store/hooks';
-import { selectMap } from 'store/reducers/map';
+// import L, { LatLng } from 'leaflet';
+// import { MapContainer, Marker, useMapEvents } from 'react-leaflet';
+// import { useAppSelector, useAppDispatch } from 'store/hooks';
+import L from 'leaflet';
+import { MapContainer, useMapEvents } from 'react-leaflet';
+import { useAppDispatch } from 'store/hooks';
+// import { selectMap } from 'store/reducers/map';
 import { call } from 'store/reducers/server';
 import LayersGroups from 'components/map/LayersGroups';
 import ServerCallTarget from 'enums/ServerCallTarget';
@@ -16,7 +19,7 @@ import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
  * @return {JSX.Element} Html.
  */
 function InteractiveMapContainer({ className, style, id }: any) {
-  const { map_center: mapCenter, zoom, cursor } = useAppSelector(selectMap);
+  // const { map_center: mapCenter, zoom, cursor } = useAppSelector(selectMap);
   const dispatch = useAppDispatch();
 
   const MapEvents = () => {
@@ -42,10 +45,10 @@ function InteractiveMapContainer({ className, style, id }: any) {
   return (
     <MapContainer
       id={id}
-      key={mapCenter.lat + mapCenter.long}
-      center={[mapCenter.lat, mapCenter.long]}
+      // key={mapCenter.lat + mapCenter.long}
+      // center={[mapCenter.lat, mapCenter.long]}
       crs={L.CRS.EPSG3857}
-      zoom={zoom}
+      // zoom={zoom}
       className={className}
       style={{ ...style }}
       whenCreated={map => {
@@ -56,7 +59,7 @@ function InteractiveMapContainer({ className, style, id }: any) {
     >
       <MapEvents />
       <LayersGroups />
-      {cursor && <Marker position={new LatLng(cursor.lat, cursor.long)} />}
+      {/* {cursor && <Marker position={new LatLng(cursor.lat, cursor.long)} />} */}
     </MapContainer>
   );
 }

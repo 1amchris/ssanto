@@ -4,7 +4,7 @@ import { FcPrevious } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { capitalize } from 'lodash';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectGuide, updateCategories } from 'store/reducers/guide';
+import { selectAdvisor, updateCategories } from 'store/reducers/advisor';
 import MenuBar from 'components/menu-bar/MenuBar';
 import Categories from 'components/guide/Categories';
 import CategoryLinks from 'components/guide/CategoryLinks';
@@ -19,13 +19,13 @@ import ServerCallTarget from 'enums/ServerCallTarget';
  * @return {JSX.Element} Html.
  */
 function Guide({ t }: any) {
-  const categories = useAppSelector(selectGuide).categories;
+  const categories = useAppSelector(selectAdvisor).categories;
   const dispatch = useAppDispatch();
 
   useEffectOnce(() => {
     dispatch(
       call({
-        target: ServerCallTarget.GuideGet,
+        target: ServerCallTarget.AdvisorGetGuide,
         onSuccessAction: updateCategories,
       } as CallModel)
     );

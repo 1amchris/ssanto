@@ -18,6 +18,7 @@ import {
   setSidebarViews,
   setActiveSidebarView,
 } from 'store/reducers/viewer';
+import { filterBlobs } from 'store/reducers/blobber';
 
 /**
  * App component.
@@ -28,72 +29,52 @@ function App() {
   const dispatch = useAppDispatch();
   useEffectOnce(() => {
     dispatch(openConnection());
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTarget.WorkspaceFiles,
-        onAction: setWorkspace,
-      })
-    );
-
-    dispatch(
-      subscribe({
+    [
+      {
+        subject: ServerSubscriptionTarget.BlobberObjectIds,
+        onAction: filterBlobs,
+      },
+      {
         subject: ServerSubscriptionTarget.LoggerLogs,
         onAction: setLogs,
-      })
-    );
-
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTarget.ToasterToasts,
-        onAction: setToasts,
-      })
-    );
-
-    dispatch(
-      subscribe({
+      },
+      {
         subject: ServerSubscriptionTarget.TaskerTasks,
         onAction: setTasks,
-      })
-    );
-
-    dispatch(
-      subscribe({
+      },
+      {
+        subject: ServerSubscriptionTarget.ToasterToasts,
+        onAction: setToasts,
+      },
+      {
+        subject: ServerSubscriptionTarget.WorkspaceFiles,
+        onAction: setWorkspace,
+      },
+      {
         subject: ServerSubscriptionTarget.WorkspaceViewsEditorViews,
         onAction: setEditorViews,
-      })
-    );
-    dispatch(
-      subscribe({
+      },
+      {
         subject: ServerSubscriptionTarget.WorkspaceViewsActiveEditorViews,
         onAction: setActiveEditorViews,
-      })
-    );
-
-    dispatch(
-      subscribe({
+      },
+      {
         subject: ServerSubscriptionTarget.WorkspaceViewsPanelViews,
         onAction: setPanelViews,
-      })
-    );
-    dispatch(
-      subscribe({
+      },
+      {
         subject: ServerSubscriptionTarget.WorkspaceViewsActivePanelView,
         onAction: setActivePanelView,
-      })
-    );
-
-    dispatch(
-      subscribe({
+      },
+      {
         subject: ServerSubscriptionTarget.WorkspaceViewsSidebarViews,
         onAction: setSidebarViews,
-      })
-    );
-    dispatch(
-      subscribe({
+      },
+      {
         subject: ServerSubscriptionTarget.WorkspaceViewsActiveSidebarView,
         onAction: setActiveSidebarView,
-      })
-    );
+      },
+    ].forEach(subscription => dispatch(subscribe(subscription)));
   });
 
   return (

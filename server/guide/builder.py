@@ -29,5 +29,5 @@ class GuideBuilder:
         return id
 
     # WARN: Maybe we would want to reload the files from disk everytime ?
-    def generate_guide_data(self):
+    def get_guide(self):
         return self.categories

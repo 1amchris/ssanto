@@ -1,41 +1,48 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import advisorReducer from 'store/reducers/advisor';
 import analysisReducer from 'store/reducers/analysis';
+import blobReducer from 'store/reducers/blobber';
 import exportReducer from 'store/reducers/export';
-import filesReducer from 'store/reducers/files';
-import guideReducer from 'store/reducers/guide';
-import mapReducer from 'store/reducers/map';
+import fileReducer from 'store/reducers/files';
+// import mapReducer from 'store/reducers/map';
 import outputReducer from 'store/reducers/logger';
-import toasterReducer from 'store/reducers/toaster';
-import taskerReducer from 'store/reducers/tasker';
-import viewerReducer from 'store/reducers/viewer';
+import toastReducer from 'store/reducers/toaster';
+import taskReducer from 'store/reducers/tasker';
+import viewReducer from 'store/reducers/viewer';
 import webViewReducer from 'store/reducers/web-view';
 import ServerMiddleware from 'store/middlewares/ServerMiddleware';
-import AnalysisMiddleware from 'store/middlewares/AnalysisMiddleware';
 import FilesMiddleware from './middlewares/FilesMiddleware';
 import { call, subscribe } from 'store/reducers/server';
+import BlobberMiddleware from './middlewares/BlobberMiddleware';
 
 export const store = configureStore({
   reducer: {
+    advisor: advisorReducer,
     analysis: analysisReducer,
+    blobber: blobReducer,
     export: exportReducer,
-    files: filesReducer,
-    guide: guideReducer,
-    map: mapReducer,
+    files: fileReducer,
     logger: outputReducer,
-    tasker: taskerReducer,
-    toaster: toasterReducer,
-    viewer: viewerReducer,
+    tasker: taskReducer,
+    toaster: toastReducer,
+    viewer: viewReducer,
     webView: webViewReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
+        warnAfter: 100,
         ignoredActions: [
           subscribe.type, // May contain a callback function
           call.type, // May contain a callback function
         ],
       },
-    }).concat([ServerMiddleware, AnalysisMiddleware, FilesMiddleware]),
+    }).concat([
+      ServerMiddleware,
+      // AnalysisMiddleware,
+      BlobberMiddleware,
+      FilesMiddleware,
+    ]),
 });
 
 export type AppDispatch = typeof store.dispatch;

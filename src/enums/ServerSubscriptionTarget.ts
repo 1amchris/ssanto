@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 enum ServerSubscriptionTarget {
-  WorkspaceFiles = 'workspace.files',
+  BlobberObjectIds = 'blobber.object_ids',
 
   FilesShapefiles = 'files.shapefiles',
 
@@ -10,6 +10,8 @@ enum ServerSubscriptionTarget {
   ToasterToasts = 'toaster.toasts',
 
   TaskerTasks = 'tasker.tasks',
+
+  WorkspaceFiles = 'workspace.files',
 
   WorkspaceViewsEditorViews = 'workspace.views.editor.views',
   WorkspaceViewsActiveEditorViews = 'workspace.views.editor.active_views',

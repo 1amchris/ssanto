@@ -15,7 +15,7 @@ import ServerCallTarget from 'enums/ServerCallTarget';
 import LoadingValue from 'models/LoadingValue';
 import CallModel from 'models/server-coms/CallModel';
 import { Modal } from 'react-bootstrap';
-import { selectMap } from 'store/reducers/map';
+// import { selectMap } from 'store/reducers/map';
 import { exportData } from 'store/reducers/export';
 import FileContentModel from 'models/file/FileContentModel';
 
@@ -34,10 +34,11 @@ function NbsSystem({ t, disabled }: any) {
   const getErrors = selector.properties.nbs_systemError;
   const isLoading = selector.properties.nbs_systemLoading;
 
-  const { layers } = useAppSelector(selectMap);
+  // const { layers } = useAppSelector(selectMap);
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [fields, setFields] = useState(undefined);
+  // const [fields, setFields] = useState(undefined);
+  const [fields] = useState(undefined);
 
   const dispatchSystemType = (fields: any) => {
     dispatch(
@@ -151,15 +152,15 @@ function NbsSystem({ t, disabled }: any) {
         errors={getErrors}
         disabled={isLoading || disabled}
         onSubmit={(fields: any) => {
-          if (
-            layers?.analysis &&
-            layers?.analysis['current analysis'] !== undefined
-          ) {
-            setFields(fields);
-            setShowConfirmDialog(true);
-          } else {
-            dispatchSystemType(fields);
-          }
+          // if (
+          //   layers?.analysis &&
+          //   layers?.analysis['current analysis'] !== undefined
+          // ) {
+          //   setFields(fields);
+          //   setShowConfirmDialog(true);
+          // } else {
+          //   dispatchSystemType(fields);
+          // }
         }}
       />
       {confirmActionModal}

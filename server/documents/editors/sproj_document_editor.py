@@ -12,6 +12,7 @@ from analysis.analysis import Analysis
 from documents.editors.json_document_editor import JSONDocumentEditor
 from documents.utils import uri_to_path
 from logger.manager import LogsManager
+from network.blob_manager import BlobManager
 from tasks.manager import TasksManager
 
 
@@ -95,6 +96,38 @@ class SSantoDocumentEditor(JSONDocumentEditor):
             self.__handle_study_area_change,
             self.__handle_map_click,
         ]
+
+    def _save(self):
+        if self.is_modified:
+            with open(uri_to_path(self.uri), "w") as file:
+                blobber = BlobManager(self.tenant_id)
+                content = blobber.unblobify(self.content)
+                json.dump(content, file)
+            return True
+        return False
+
+    def _load_content(self):
+        with open(uri_to_path(self.uri), "r") as file:
+            content = json.load(file)
+
+            if "map" in content and "layers" in content["map"]:
+                blobber = BlobManager(self.tenant_id)
+                layers = content["map"]["layers"]
+                if (
+                    "overlays" in layers
+                    and "studyArea" in (overlays := layers["overlays"])
+                    and "geojson" in (study_area := overlays["studyArea"])
+                ):
+                    study_area["geojson"] = blobber.insert(study_area["geojson"], prevent_notify=True)
+
+                if "results" in layers:
+                    for value in layers["results"].values():
+                        if "geojson" in value:
+                            value["geojson"] = blobber.insert(value["geojson"], prevent_notify=True)
+
+                blobber.notify()
+
+            return content
 
     def __handle_primary_creation(self, changes: dict, main: str, options: dict = {}, **kwargs):
         primaries: list = self.get_content()["objectives"][main]["primaries"]
@@ -258,6 +291,7 @@ class SSantoDocumentEditor(JSONDocumentEditor):
     def __handle_run_analysis(self, changes: dict, options: dict = {}, **kwargs):
         tasker = TasksManager(self.tenant_id)
         logger = LogsManager(self.tenant_id)
+        blobber = BlobManager(self.tenant_id)
 
         def on_complete(result):
             if not "results" in self.content["map"]["layers"]:
@@ -265,11 +299,16 @@ class SSantoDocumentEditor(JSONDocumentEditor):
 
             for key, value in result.items():
                 keys = key.split(".")
-                self.content["map"]["layers"]["results"]["/".join([keys[0]] + keys[1:][::2])] = {
+                layer_path = "/".join([keys[0]] + keys[1:][::2])
+                blob_uri = blobber.insert(value, prevent_notify=True)
+                self.content["map"]["layers"]["results"][layer_path] = {
                     "name": keys[-1],
-                    "geojson": value,
+                    "geojson": blob_uri,
                     "checked": False,
                 }
+
+            blobber.notify()
+
             if keys is not None and len(keys) > 0:
                 self.content["map"]["layers"]["results"][keys[0]]["checked"] = True
 
@@ -291,10 +330,15 @@ class SSantoDocumentEditor(JSONDocumentEditor):
 
     def __handle_map_click(self, changes: dict):
         if "map.lastClick.coords" in changes:
+            logger = LogsManager(self.tenant_id)
             coords = changes["map.lastClick.coords"]
-            changes["map.lastClick.meta"] = Analysis(self.tenant_id).get_informations_at_position(
-                coords["lat"], coords["long"]
-            )
+            try:
+                changes["map.lastClick.meta"] = Analysis(self.tenant_id).get_informations_at_position(
+                    coords["lat"], coords["long"]
+                )
+
+            except AttributeError as e:
+                logger.error(e)
 
         return changes
 

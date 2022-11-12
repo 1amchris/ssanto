@@ -82,7 +82,7 @@ class ToastsManager(TenantInstance, metaclass=TenantSingleton):
         self.__logger = LogsManager(tenant_id)
         self.__toasts = self.__subjects.create("toaster.toasts", [])
 
-        self.__logger.info("[Toasts] initialized.")
+        self.__logger.info("[Toast Manager] initialized.")
 
     def add_toast(
         self,

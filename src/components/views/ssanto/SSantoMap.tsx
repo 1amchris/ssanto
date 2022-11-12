@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import L, { LatLng } from 'leaflet';
 import {
   LayersControl,
@@ -11,13 +11,13 @@ import {
   Popup,
 } from 'react-leaflet';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch } from 'store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { call } from 'store/reducers/server';
 import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import ColorsUtils from 'utils/colors-utils';
-// import LayersGroups from 'components/map/LayersGroups';
-// import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
+import useBlobber from 'hooks/useBlobber';
+import { selectBlobber } from 'store/reducers/blobber';
 
 const style = (feature: any) => {
   if (feature.properties !== undefined && feature.properties.suitability >= 0) {
@@ -38,9 +38,31 @@ const style = (feature: any) => {
   }
 };
 
+const GeoJsonLayer = ({
+  blob,
+  checked,
+}: {
+  blob: string;
+  checked: boolean;
+}) => {
+  const [data, setData] = useState<any | null>(null);
+  const { getBlob } = useBlobber();
+
+  useEffect(() => {
+    setData(getBlob(blob));
+  }, []);
+
+  return checked && data !== null ? (
+    <GeoJSON data={data} style={style} />
+  ) : (
+    <LayerGroup />
+  );
+};
+
 function SSantoMap({ view }: any) {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const { blobs } = useAppSelector(selectBlobber);
 
   const publishChanges = (key: string, data: any) => {
     dispatch(
@@ -161,32 +183,40 @@ function SSantoMap({ view }: any) {
         <LayerGroup
           key={`${uri}-${JSON.stringify(map?.layers?.overlays || {})}`}
         >
-          {Object.values(map?.layers?.overlays || {}).map(
-            (overlay: any, index: number) => (
+          {Object.values(map?.layers?.overlays || {})
+            .sort((overlay: any) => overlay.name.toLowerCase())
+            .map((overlay: any, index: number) => (
               <LayersControl.Overlay
                 key={`${uri}-${index}-${JSON.stringify(overlay)}`}
                 checked={overlay.checked != false}
                 name={overlay.name}
               >
-                <GeoJSON data={overlay.geojson} style={style} />
+                <GeoJsonLayer
+                  key={JSON.stringify(blobs[overlay.geojson])}
+                  blob={overlay.geojson as string}
+                  checked={overlay.checked}
+                />
               </LayersControl.Overlay>
-            )
-          )}
+            ))}
         </LayerGroup>
         <LayerGroup
           key={`${uri}-${JSON.stringify(map?.layers?.results || {})}`}
         >
-          {Object.values(map?.layers?.results || {}).map(
-            (overlay: any, index: number) => (
+          {Object.values(map?.layers?.results || {})
+            .sort((overlay: any) => overlay.name.toLowerCase())
+            .map((overlay: any, index: number) => (
               <LayersControl.Overlay
                 key={`${uri}-${index}-${JSON.stringify(overlay)}`}
                 checked={overlay.checked != false}
                 name={overlay.name}
               >
-                <GeoJSON data={overlay.geojson} style={style} />
+                <GeoJsonLayer
+                  key={JSON.stringify(blobs[overlay.geojson])}
+                  blob={overlay.geojson}
+                  checked={overlay.checked}
+                />
               </LayersControl.Overlay>
-            )
-          )}
+            ))}
         </LayerGroup>
       </LayersControl>
 

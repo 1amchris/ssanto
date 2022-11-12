@@ -1,4 +1,4 @@
-from network.server_socket import ServerSocket
+from network.manager import NetworkManager
 from singleton import TenantInstance, TenantSingleton
 from .subject import Subject
 from network.network_definitions import Field, SendType
@@ -9,7 +9,7 @@ class SubjectsManager(TenantInstance, metaclass=TenantSingleton):
         super().__init__(tenant_id)
         self.__subjects = {}
         self.__missing_subjects = set()
-        self.__server_socket = ServerSocket(tenant_id)
+        self.__server_socket = NetworkManager(tenant_id)
 
     def create(self, name, data=None):
         subject = Subject(self, name, data)
@@ -37,7 +37,7 @@ class SubjectsManager(TenantInstance, metaclass=TenantSingleton):
             self.send(subject)
         else:
             self.__missing_subjects.add(subject)
-            print("subject not found", subject)
+            print(f"[Subject Manager] Subject not found with id {subject}")
 
     def unsubscribe(self, subject):
         # TODO: Handle sid unavailable

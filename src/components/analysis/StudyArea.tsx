@@ -13,7 +13,7 @@ import { call } from 'store/reducers/server';
 import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import LoadingValue from 'models/LoadingValue';
-import { selectMap } from 'store/reducers/map';
+// import { selectMap } from 'store/reducers/map';
 import { Modal } from 'react-bootstrap';
 import FileContentModel from 'models/file/FileContentModel';
 import { exportData } from 'store/reducers/export';
@@ -38,10 +38,11 @@ function StudyArea({ t, disabled }: any) {
   const getErrors = selector.properties.study_areaError;
   const isLoading = selector.properties.study_areaLoading;
 
-  const { layers } = useAppSelector(selectMap);
+  // const { layers } = useAppSelector(selectMap);
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [fields, setFields] = useState(undefined);
+  // const [fields, setFields] = useState(undefined);
+  const [fields] = useState(undefined);
 
   const dispatchStudyArea = (fields: any) => {
     dispatch(
@@ -148,15 +149,15 @@ function StudyArea({ t, disabled }: any) {
         controls={controls}
         errors={getErrors}
         onSubmit={(fields: any) => {
-          if (
-            layers?.analysis &&
-            layers?.analysis['current analysis'] !== undefined
-          ) {
-            setFields(fields);
-            setShowConfirmDialog(true);
-          } else {
-            dispatchStudyArea(fields);
-          }
+          // if (
+          //   layers?.analysis &&
+          //   layers?.analysis['current analysis'] !== undefined
+          // ) {
+          //   setFields(fields);
+          //   setShowConfirmDialog(true);
+          // } else {
+          //   dispatchStudyArea(fields);
+          // }
         }}
       />
       {confirmActionModal}

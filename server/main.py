@@ -2,12 +2,13 @@ import signal
 import platform
 import asyncio
 from uuid import uuid4
-from documents.editors.geojson_document_editor import GeoJsonDocumentEditor
 
-from network.server_socket import ServerSocket
+from network.blob_manager import BlobManager
+from network.manager import NetworkManager
 from subjects.manager import SubjectsManager
 
 from documents.editor_registry import DocumentEditorRegistry
+from documents.editors.geojson_document_editor import GeoJsonDocumentEditor
 from documents.editors.sproj_document_editor import SSantoDocumentEditor
 
 from logger.logger import *
@@ -66,41 +67,44 @@ def populate_views(views_manager: ViewsManager):
 async def main():
     tenant_id = str(uuid4())
 
-    server = ServerSocket(tenant_id)
+    server = NetworkManager(tenant_id)
     subjects = SubjectsManager(tenant_id)
     toaster = ToastsManager(tenant_id)
     workspace = WorkspaceManager(tenant_id)
+    blobber = BlobManager(tenant_id)
+    advisor = GuideBuilder()
 
     populate_registries()
     populate_views(workspace.views)
 
-    server.bind_command("subscribe", subjects.subscribe)
-    server.bind_command("unsubscribe", subjects.unsubscribe)
+    commands = {
+        "subscribe": subjects.subscribe,
+        "unsubscribe": subjects.unsubscribe,
+        "advisor.get_guide": advisor.get_guide,
+        "blobber.get_object": blobber.get,
+        "toaster.close_toast": toaster.close_toast,
+        "toaster.trigger_action": toaster.trigger_action,
+        "workspace.open_view": workspace.open_editor,
+        "workspace.open_workspace": workspace.open_workspace,
+        "workspace.close_workspace": workspace.close_workspace,
+        "workspace.views.handle_event": workspace.views.handle_event,
+        "workspace.views.editor.save": workspace.views.editor.save,
+        "workspace.views.editor.save_all": workspace.views.editor.save_all,
+        "workspace.views.editor.add_group": workspace.views.editor.add_group,
+        "workspace.views.editor.select_group": workspace.views.editor.select_group,
+        "workspace.views.editor.close_group": workspace.views.editor.remove_group,
+        "workspace.views.editor.close_view": workspace.views.editor.remove_view,
+        "workspace.views.editor.select_view": workspace.views.editor.select_view,
+        "workspace.views.panel.close_view": workspace.views.panel.remove_view,
+        "workspace.views.panel.select_view": workspace.views.panel.select_view,
+        "workspace.views.panel.select_activity": workspace.views.panel.select_activity,
+        "workspace.views.sidebar.close_view": workspace.views.sidebar.remove_view,
+        "workspace.views.sidebar.select_view": workspace.views.sidebar.select_view,
+        "workspace.views.sidebar.select_activity": workspace.views.sidebar.select_activity,
+    }
 
-    server.bind_command("toaster.close_toast", toaster.close_toast)
-    server.bind_command("toaster.trigger_action", toaster.trigger_action)
-
-    server.bind_command("workspace.open_view", workspace.open_editor)
-    server.bind_command("workspace.open_workspace", workspace.open_workspace)
-    server.bind_command("workspace.close_workspace", workspace.close_workspace)
-
-    server.bind_command("workspace.views.handle_event", workspace.views.handle_event)
-
-    server.bind_command("workspace.views.editor.save", workspace.views.editor.save)
-    server.bind_command("workspace.views.editor.save_all", workspace.views.editor.save_all)
-    server.bind_command("workspace.views.editor.add_group", workspace.views.editor.add_group)
-    server.bind_command("workspace.views.editor.select_group", workspace.views.editor.select_group)
-    server.bind_command("workspace.views.editor.close_group", workspace.views.editor.remove_group)
-    server.bind_command("workspace.views.editor.close_view", workspace.views.editor.remove_view)
-    server.bind_command("workspace.views.editor.select_view", workspace.views.editor.select_view)
-
-    server.bind_command("workspace.views.panel.close_view", workspace.views.panel.remove_view)
-    server.bind_command("workspace.views.panel.select_view", workspace.views.panel.select_view)
-    server.bind_command("workspace.views.panel.select_activity", workspace.views.panel.select_activity)
-
-    server.bind_command("workspace.views.sidebar.close_view", workspace.views.sidebar.remove_view)
-    server.bind_command("workspace.views.sidebar.select_view", workspace.views.sidebar.select_view)
-    server.bind_command("workspace.views.sidebar.select_activity", workspace.views.sidebar.select_activity)
+    for command, handler in commands.items():
+        server.bind_command(command, handler)
 
     # legacy
     # files = FilesManager(subjects, logger)
@@ -125,13 +129,10 @@ async def main():
     # server.bind_command("map.set_cursor", map.set_cursor)
     # end: legacy
 
-    guide_builder = GuideBuilder()
-    server.bind_command("guide.get", guide_builder.generate_guide_data)
-
     # Main loop
     loop = asyncio.get_running_loop()
     stop = loop.create_future()
-    # Windows doesn't implement these...
+    # Windows doesn't implement these signals
     if platform.system() != "Windows":
         loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
         loop.add_signal_handler(signal.SIGINT, stop.set_result, None)
@@ -143,7 +144,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    ServerSocket.DEFAULT_HOST = "localhost"
-    ServerSocket.DEFAULT_PORT = 15649
+    NetworkManager.DEFAULT_HOST = "localhost"
+    NetworkManager.DEFAULT_PORT = 15649
 
     asyncio.run(main())
