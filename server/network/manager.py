@@ -6,7 +6,7 @@ import traceback
 from serializable import Serializable
 from singleton import TenantInstance, TenantSingleton
 
-from network.network_definitions import Field, SendType
+from network.definitions import Field, SendType
 
 
 class CallException(Exception):

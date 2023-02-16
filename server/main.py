@@ -3,13 +3,13 @@ import platform
 import asyncio
 from uuid import uuid4
 
-from network.blob_manager import BlobManager
+from blobs.manager import BlobsManager
 from network.manager import NetworkManager
 from subjects.manager import SubjectsManager
 
 from documents.editor_registry import DocumentEditorRegistry
-from documents.editors.geojson_document_editor import GeoJsonDocumentEditor
-from documents.editors.sproj_document_editor import SSantoDocumentEditor
+from documents.editors.geojson.geojson_document_editor import GeoJsonDocumentEditor
+from documents.editors.sproj.sproj_document_editor import SSantoDocumentEditor
 
 from logger.logger import *
 
@@ -71,7 +71,7 @@ async def main():
     subjects = SubjectsManager(tenant_id)
     toaster = ToastsManager(tenant_id)
     workspace = WorkspaceManager(tenant_id)
-    blobber = BlobManager(tenant_id)
+    blobber = BlobsManager(tenant_id)
     advisor = GuideBuilder()
 
     populate_registries()

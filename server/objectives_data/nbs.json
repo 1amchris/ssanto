@@ -1,8 +1,11 @@
-{"nbs_system": [
-    {  "value": "0", "label": "raingardens & bioretention systems" },
-    {  "value": "1", "label": "rain tanks" },
-    {  "value": "2", "label": "infiltration systems" },
-    {  "value": "3", "label": "green roofs" },
-    {  "value": "4", "label": "swales" },
-    {  "value": "5", "label": "ponds & lakes" },
-    {  "value": "6", "label": "constructed wetlands" }]}
+{
+  "nbs_system": [
+    { "value": "0", "label": "raingardens & bioretention systems" },
+    { "value": "1", "label": "rain tanks" },
+    { "value": "2", "label": "infiltration systems" },
+    { "value": "3", "label": "green roofs" },
+    { "value": "4", "label": "swales" },
+    { "value": "5", "label": "ponds & lakes" },
+    { "value": "6", "label": "constructed wetlands" }
+  ]
+}

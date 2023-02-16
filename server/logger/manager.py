@@ -1,4 +1,5 @@
 from collections import defaultdict
+from logger.logger import Logger
 from singleton import TenantInstance, TenantSingleton
 from serializable import Serializable
 from logger.message import LogMessage
@@ -37,9 +38,11 @@ class LogsManager(TenantInstance, Serializable, metaclass=TenantSingleton):
 
     def add_log(self, log_type: LogType, message: str):
         # TODO: it might become heavy over time (sends all of the logs all of the time).
-        # We should address this if it becomes a problem
-        self.logs.value()[log_type].append(LogMessage(log_type, message))
+        # We should address this when it becomes a problem
+        log = LogMessage(log_type, message)
+        self.logs.value()[log_type].append(log)
         self.logs.update()
+        print(log)
 
     def get_logs(self, log_type=None, start=None, end=None) -> list:
         if log_type is None:

@@ -1,7 +1,7 @@
 from network.manager import NetworkManager
 from singleton import TenantInstance, TenantSingleton
 from .subject import Subject
-from network.network_definitions import Field, SendType
+from network.definitions import Field, SendType
 
 
 class SubjectsManager(TenantInstance, metaclass=TenantSingleton):

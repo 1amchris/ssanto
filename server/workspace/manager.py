@@ -1,7 +1,7 @@
 import os
 from typing import Union
 from documents.errors import UnsavedFileError
-from files.file_metadata import FileMetaData
+from documents.document_metadata import DocumentMetaData
 from logger.manager import LogsManager
 from singleton import TenantInstance, TenantSingleton
 from subjects.manager import SubjectsManager
@@ -35,7 +35,7 @@ class WorkspaceManager(TenantInstance, metaclass=TenantSingleton):
 
         print("Opening workspace:", path)
         self.workspace = path
-        all_files = [FileMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
+        all_files = [DocumentMetaData(file, root) for root, dirs, files in os.walk(path) for file in files]
         self.files.notify(all_files)
         self.logger.info(f"[Workspace] Opened workspace: {self.workspace}")
 

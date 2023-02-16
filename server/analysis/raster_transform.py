@@ -22,19 +22,19 @@ def convert_projection(in_proj, out_proj, p1, p2):
     return x, y
 
 
-def get_center_latitude_longitude(shape_file_path):
-    df = geopandas.read_file(shape_file_path)
+# def get_center_latitude_longitude(shape_file_path):
+#     df = geopandas.read_file(shape_file_path)
 
-    df = df.to_crs({"init": "epsg:4326"})
-    df["Center_point"] = df["geometry"].centroid
+#     df = df.to_crs({"init": "epsg:4326"})
+#     df["Center_point"] = df["geometry"].centroid
 
-    df["long"] = df.Center_point.map(lambda p: p.x)
-    df["lat"] = df.Center_point.map(lambda p: p.y)
+#     df["long"] = df.Center_point.map(lambda p: p.x)
+#     df["lat"] = df.Center_point.map(lambda p: p.y)
 
-    latitude = (df["lat"].max() - df["lat"].min()) / 2 + df["lat"].min()
-    longitude = (df["long"].max() - df["long"].min()) / 2 + df["long"].min()
+#     latitude = (df["lat"].max() - df["lat"].min()) / 2 + df["lat"].min()
+#     longitude = (df["long"].max() - df["long"].min()) / 2 + df["long"].min()
 
-    return latitude, longitude
+#     return latitude, longitude
 
 
 def shape_to_raster(
