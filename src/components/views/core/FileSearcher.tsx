@@ -6,10 +6,10 @@ import FileMetadataModel from 'models/file/FileMetadataModel';
 import FolderMetadataModel from 'models/file/FolderMetadataModel';
 import NoWorkspaceSelected from 'components/views/core/NoWorkspaceSelected';
 import ListView from 'components/common/ListView';
-import FormControl from 'components/forms/components/FormControl';
 import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import { call } from 'store/reducers/server';
+import { Form } from 'react-bootstrap';
 
 /**
  * File searcher component.
@@ -66,12 +66,10 @@ function FileSearcher({ style }: any) {
       {files?.length > 0 && (
         <React.Fragment>
           <form style={{ padding: '6px 0', margin: '0 12px' }}>
-            <FormControl
-              hideLabel
+            <Form.Control
+              size="sm"
               value={search}
-              label="Search"
               placeholder="Search"
-              className="btn-sm"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleSearch(e.target.value)
               }
