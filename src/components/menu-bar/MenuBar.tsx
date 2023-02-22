@@ -1,64 +1,100 @@
 import React from 'react';
-import FileContentModel from 'models/file/FileContentModel';
+// import FileContentModel from 'models/file/FileContentModel';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { exportData } from 'store/reducers/export';
-import { Action, Divider, Import, Link } from './components';
+// import { exportData } from 'store/reducers/export';
+import { Action, Divider, ImportFolder, Link } from './components';
 import { call } from 'store/reducers/server';
 import Menu from './Menu';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 import CallModel from 'models/server-coms/CallModel';
 import FilesUtils from 'utils/files-utils';
-import { selectMap } from 'store/reducers/map';
-import { loadingFileComplete, resetError } from 'store/reducers/analysis';
+// import { selectMap } from 'store/reducers/map';
+import { openWorkspace, selectFiles } from 'store/reducers/files';
 
 /**
  * Menu bar component.
  * @param {any} param0 Parameters for the menu bar.
  * @return {JSX.Element} Html.
  */
-function MenuBar() {
-  const mapLayers = useAppSelector(selectMap).layers;
+function MenuBar({ style }: any) {
+  // const mapLayers = useAppSelector(selectMap).layers;
+  const { files } = useAppSelector(selectFiles);
   const dispatch = useAppDispatch();
 
   const getMenus = () => [
     <Menu key="menu-project" label="project">
-      <Import
-        key="import"
-        label="open project"
+      {/* <ImportFile
+        key="import-file"
+        label="open file"
         accept=".sproj"
         onFileImported={(file: File) => {
-            dispatch(resetError());
-            FilesUtils.extractContentFromFiles([file]).then(file => {
-                dispatch(
-                    call({
-                      target: ServerCallTargets.OpenProject,
-                      args: [file[0].content],
-                      onSuccessAction: loadingFileComplete,
-                      onErrorAction: loadingFileComplete
-                      // TODO: There should probably be an "onErrorAction"
-                    } as CallModel<string[], FileContentModel<string>>)
-                  )
-            }
-                
+          dispatch(resetError());
+          FilesUtils.extractContentFromFiles([file]).then(file => {
+            dispatch(
+              call({
+                target: ServerCallTarget.OpenProject,
+                args: [file[0].content],
+                onSuccessAction: loadingFileComplete,
+                onErrorAction: loadingFileComplete,
+                // TODO: There should probably be an "onErrorAction"
+              } as CallModel<string[], FileContentModel<string>>)
             );
-        }
-          
-        }
-      />
-      <Action
-        key="action"
-        label="save project"
-        onClick={() =>
+          });
+        }}
+      /> */}
+      <ImportFolder
+        key="open-workspace"
+        label="open workspace"
+        onFolderImported={(files: FileList) =>
           dispatch(
-            call({
-              target: ServerCallTargets.SaveProject,
-              onSuccessAction: exportData,
-              // TODO: There should probably be an "onErrorAction"
-            } as CallModel<void, FileContentModel<string>>)
+            openWorkspace(
+              FilesUtils.extractRootPath(
+                Array.from(files).map((f: /* File */ any) => f.path)
+              )
+            )
           )
         }
       />
       <Divider />
+      <Action
+        key="save-active"
+        label="save"
+        disabled={!files || files.length === 0}
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerCallTarget.WorkspaceViewsSaveActiveEditor,
+            } as CallModel)
+          )
+        }
+      />
+      <Action
+        key="save-all"
+        label="save all"
+        disabled={!files || files.length === 0}
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerCallTarget.WorkspaceViewsSaveAllEditors,
+            } as CallModel)
+          )
+        }
+      />
+      <Divider />
+      <Action
+        key="close-workspace"
+        label="close workspace"
+        disabled={!files || files.length === 0}
+        // TODO: There should probably be a "confirm action" dialog
+        onClick={() =>
+          dispatch(
+            call({
+              target: ServerCallTarget.WorkspaceCloseWorkspace,
+            } as CallModel)
+          )
+        }
+      />
+      {/* <Divider />
       <Action
         label="export analysis as tiff"
         disabled={
@@ -70,14 +106,14 @@ function MenuBar() {
         onClick={() =>
           dispatch(
             call({
-              target: ServerCallTargets.ExportTiff,
+              target: ServerCallTarget.AnalysisExportTiff,
               args: ['analysis'],
               onSuccessAction: exportData,
               // TODO: There should probably be an "onErrorAction"
             } as CallModel<[string], FileContentModel<string>>)
           )
         }
-      />
+      /> */}
     </Menu>,
     <Menu key="menu-help" label="help">
       <Link label="show guide" targetUrl="/guide" />
@@ -87,16 +123,16 @@ function MenuBar() {
   return (
     <nav
       className="navbar navbar-expand navbar-light border-bottom py-0 small"
-      style={{ height: '24px' }}
+      style={style}
     >
       <div className="container-fluid">
-        <img
+        {/* <img
           src="logo192.png"
           alt="SSanto"
           width="20"
           height="20"
           className="d-inline-block align-text-top me-2"
-        />
+        /> */}
         <ul className="navbar-nav me-auto">
           {getMenus()?.map((menu, index: number) => (
             <li className="nav-item dropdown" key={`menubar/menu-${index}`}>

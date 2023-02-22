@@ -1,30 +1,24 @@
 import React from 'react';
-import { useEffectOnce } from 'hooks';
+import { useEffectOnce } from 'hooks/useEffectOnce';
 import { useAppDispatch } from 'store/hooks';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Main from 'components/Main';
 import Guide from 'components/guide/Guide';
 import { subscribe, openConnection } from 'store/reducers/server';
+import ServerSubscriptionTarget from 'enums/ServerSubscriptionTarget';
+import { setWorkspace } from 'store/reducers/files';
+import { setLogs } from 'store/reducers/logger';
+import { setToasts } from 'store/reducers/toaster';
+import { setTasks } from 'store/reducers/tasker';
 import {
-  analysisSuccess,
-  injectReceivePropertiesCreator,
-  subAnalysisSuccess,
-} from 'store/reducers/analysis';
-import SubscriptionModel from 'models/server-coms/SubscriptionModel';
-import {
-  updateCursor,
-  updateCursorInformations,
-  updateSuitabilityAboveThreshold,
-  updateSuitabilityCategories,
-  updateSuitabilityThreshold,
-  updateLayers,
-  updateLocation,
-} from 'store/reducers/map';
-import { MapCursorInformationsModel } from 'models/map/MapCursorInformationsModel';
-import { LatLong } from 'models/map/LatLong';
-import SuitabilityCategoriesModel from 'models/map/SuitabilityCategoriesModel';
-import ServerSubscriptionTargets from 'enums/ServerSubscriptionTargets';
-import { LayersGroups } from 'models/map/Layers';
+  setEditorViews,
+  setActiveEditorViews,
+  setPanelViews,
+  setActivePanelView,
+  setSidebarViews,
+  setActiveSidebarView,
+} from 'store/reducers/viewer';
+import { filterBlobs } from 'store/reducers/blobber';
 
 /**
  * App component.
@@ -35,107 +29,52 @@ function App() {
   const dispatch = useAppDispatch();
   useEffectOnce(() => {
     dispatch(openConnection());
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.FileManagerFiles,
-        onAction: injectReceivePropertiesCreator('files'),
-      } as SubscriptionModel<string, string>)
-    );
-
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.FileManagerShapefiles,
-        onAction: injectReceivePropertiesCreator('shapefiles'),
-      } as SubscriptionModel<string, string>)
-    );
-
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.MapCursor,
-        onAction: updateCursor,
-      } as SubscriptionModel<LatLong>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.MapCursorInformations,
-        onAction: updateCursorInformations,
-      } as SubscriptionModel<MapCursorInformationsModel>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.Layer,
-        onAction: updateLayers,
-      } as SubscriptionModel<LayersGroups, void>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.MapCenter,
-        onAction: updateLocation,
-      } as SubscriptionModel<LatLong>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisResult,
-        onAction: analysisSuccess,
-      } as SubscriptionModel<LayersGroups, void>)
-    );
-
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.SubAnalysisResult,
-        onAction: subAnalysisSuccess,
-      } as SubscriptionModel<LayersGroups[], void>)
-    );
-
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisParameters,
-        onAction: injectReceivePropertiesCreator('parameters'),
-      } as SubscriptionModel<string, string>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisStudyArea,
-        onAction: injectReceivePropertiesCreator('study_area'),
-      } as SubscriptionModel<string, any>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisNbsSystem,
-        onAction: injectReceivePropertiesCreator('nbs_system'),
-      } as SubscriptionModel<string, string>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisObjectivesData,
-        onAction: injectReceivePropertiesCreator('objectives_data'),
-      } as SubscriptionModel<string, string>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisObjectives,
-        onAction: injectReceivePropertiesCreator('objectives'),
-      } as SubscriptionModel<string, string>)
-    );
-    dispatch(
-      subscribe({
-        subject:
-          ServerSubscriptionTargets.AnalysisGraphSuitabilityAboveThreshold,
-        onAction: updateSuitabilityAboveThreshold,
-      } as SubscriptionModel<number>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisGraphSuitabilityThreshold,
-        onAction: updateSuitabilityThreshold,
-      } as SubscriptionModel<number>)
-    );
-    dispatch(
-      subscribe({
-        subject: ServerSubscriptionTargets.AnalysisGraphSuitabilityCategories,
-        onAction: updateSuitabilityCategories,
-      } as SubscriptionModel<SuitabilityCategoriesModel>)
-    );
+    [
+      {
+        subject: ServerSubscriptionTarget.BlobberObjectIds,
+        onAction: filterBlobs,
+      },
+      {
+        subject: ServerSubscriptionTarget.LoggerLogs,
+        onAction: setLogs,
+      },
+      {
+        subject: ServerSubscriptionTarget.TaskerTasks,
+        onAction: setTasks,
+      },
+      {
+        subject: ServerSubscriptionTarget.ToasterToasts,
+        onAction: setToasts,
+      },
+      {
+        subject: ServerSubscriptionTarget.WorkspaceFiles,
+        onAction: setWorkspace,
+      },
+      {
+        subject: ServerSubscriptionTarget.WorkspaceViewsEditorViews,
+        onAction: setEditorViews,
+      },
+      {
+        subject: ServerSubscriptionTarget.WorkspaceViewsActiveEditorViews,
+        onAction: setActiveEditorViews,
+      },
+      {
+        subject: ServerSubscriptionTarget.WorkspaceViewsPanelViews,
+        onAction: setPanelViews,
+      },
+      {
+        subject: ServerSubscriptionTarget.WorkspaceViewsActivePanelView,
+        onAction: setActivePanelView,
+      },
+      {
+        subject: ServerSubscriptionTarget.WorkspaceViewsSidebarViews,
+        onAction: setSidebarViews,
+      },
+      {
+        subject: ServerSubscriptionTarget.WorkspaceViewsActiveSidebarView,
+        onAction: setActiveSidebarView,
+      },
+    ].forEach(subscription => dispatch(subscribe(subscription)));
   });
 
   return (

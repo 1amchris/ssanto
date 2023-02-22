@@ -1,7 +1,7 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { capitalize, concat } from 'lodash';
-import CategoryModel from 'models/guide/CategoryModel';
+import CategoryModel from 'models/advisor/CategoryModel';
 import Category from 'components/guide/Category';
 import { HashLink } from 'react-router-hash-link';
 

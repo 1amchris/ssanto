@@ -1,6 +1,6 @@
 import React from 'react';
 import { concat } from 'lodash';
-import TopicModel from 'models/guide/TopicModel';
+import TopicModel from 'models/advisor/TopicModel';
 import TopicLink from 'components/guide/TopicLink';
 
 /**

@@ -4,14 +4,14 @@ import { FcPrevious } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { capitalize } from 'lodash';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectGuide, updateCategories } from 'store/reducers/guide';
+import { selectAdvisor, updateCategories } from 'store/reducers/advisor';
 import MenuBar from 'components/menu-bar/MenuBar';
 import Categories from 'components/guide/Categories';
 import CategoryLinks from 'components/guide/CategoryLinks';
 import { call } from 'store/reducers/server';
-import { useEffectOnce } from 'hooks';
+import { useEffectOnce } from 'hooks/useEffectOnce';
 import CallModel from 'models/server-coms/CallModel';
-import ServerCallTargets from 'enums/ServerCallTargets';
+import ServerCallTarget from 'enums/ServerCallTarget';
 
 /**
  * Guide component.
@@ -19,13 +19,13 @@ import ServerCallTargets from 'enums/ServerCallTargets';
  * @return {JSX.Element} Html.
  */
 function Guide({ t }: any) {
-  const categories = useAppSelector(selectGuide).categories;
+  const categories = useAppSelector(selectAdvisor).categories;
   const dispatch = useAppDispatch();
 
   useEffectOnce(() => {
     dispatch(
       call({
-        target: ServerCallTargets.GuideGet,
+        target: ServerCallTarget.AdvisorGetGuide,
         onSuccessAction: updateCategories,
       } as CallModel)
     );
@@ -46,37 +46,35 @@ function Guide({ t }: any) {
         <aside className="h-100 bg-light border-end">
           <nav>
             <ul className="list-unstyled py-3 mb-0">
-              {
-                [
-                  <Link
-                    key="link"
-                    to="/"
-                    className="text-decoration-none text-muted small"
+              {[
+                <Link
+                  key="link"
+                  to="/"
+                  className="text-decoration-none text-muted small"
+                >
+                  <FcPrevious className="me-1" />
+                  <span>{capitalize(t('return'))}</span>
+                </Link>,
+                categories.length > 0 && (
+                  <CategoryLinks
+                    style={{
+                      overflow: 'auto',
+                      height: 'calc(100vh - 24px - 40px - 33px)',
+                    }}
                   >
-                    <FcPrevious className="me-1" />
-                    <span>{capitalize(t('return'))}</span>
-                  </Link>,
-                  categories.length > 0 && (
-                    <CategoryLinks
-                      style={{
-                        overflow: 'auto',
-                        height: 'calc(100vh - 24px - 40px - 33px)',
-                      }}
-                    >
-                      {categories}
-                    </CategoryLinks>
-                  ),
-                ]
-                  .filter(children => children)
-                  .map((child, index: number) => (
-                    <li
-                      key={`navigation/item-${index}`}
-                      className="ps-3 pb-2 border-bottom"
-                    >
-                      {child}
-                    </li>
-                  ))
-              }
+                    {categories}
+                  </CategoryLinks>
+                ),
+              ]
+                .filter(children => children)
+                .map((child, index: number) => (
+                  <li
+                    key={`navigation/item-${index}`}
+                    className="ps-3 pb-2 border-bottom"
+                  >
+                    {child}
+                  </li>
+                ))}
             </ul>
           </nav>
         </aside>

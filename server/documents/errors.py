@@ -1,0 +1,2 @@
+class UnsavedFileError(Exception):
+    pass

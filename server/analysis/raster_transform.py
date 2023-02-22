@@ -2,7 +2,7 @@ from osgeo import gdal, ogr, osr
 import os
 import geopandas
 
-DEFAULT_EMPTY_VAL = -99999999999
+DEFAULT_EMPTY_VAL = -99_999_999_999
 
 
 def convert_projection(in_proj, out_proj, p1, p2):
@@ -22,22 +22,22 @@ def convert_projection(in_proj, out_proj, p1, p2):
     return x, y
 
 
-def get_center_latitude_longitude(shape_file_path):
-    df = geopandas.read_file(shape_file_path)
+# def get_center_latitude_longitude(shape_file_path):
+#     df = geopandas.read_file(shape_file_path)
 
-    df = df.to_crs({"init": "epsg:4326"})
-    df["Center_point"] = df["geometry"].centroid
+#     df = df.to_crs({"init": "epsg:4326"})
+#     df["Center_point"] = df["geometry"].centroid
 
-    df["long"] = df.Center_point.map(lambda p: p.x)
-    df["lat"] = df.Center_point.map(lambda p: p.y)
+#     df["long"] = df.Center_point.map(lambda p: p.x)
+#     df["lat"] = df.Center_point.map(lambda p: p.y)
 
-    latitude = (df["lat"].max() - df["lat"].min()) / 2 + df["lat"].min()
-    longitude = (df["long"].max() - df["long"].min()) / 2 + df["long"].min()
+#     latitude = (df["lat"].max() - df["lat"].min()) / 2 + df["lat"].min()
+#     longitude = (df["long"].max() - df["long"].min()) / 2 + df["long"].min()
 
-    return latitude, longitude
+#     return latitude, longitude
 
 
-def shape_to_Raster(
+def shape_to_raster(
     cell_size,
     input,
     output,
@@ -57,8 +57,8 @@ def shape_to_Raster(
     input_lyr = input_source.GetLayer()
     input_srs = input_lyr.GetSpatialRef()
     # projection = osr.SpatialReference(wkt=input_source.GetProjection())
-    input_crs = int(input_srs.GetAttrValue("AUTHORITY", 1))
-    output_crs = 3857
+    # input_crs = int(input_srs.GetAttrValue("AUTHORITY", 1))
+    # output_crs = 3857
 
     x_min, x_max, y_min, y_max = input_lyr.GetExtent()
 
@@ -76,9 +76,7 @@ def shape_to_Raster(
     if os.path.exists(output):
         output_driver.Delete(output)
 
-    output_source = output_driver.Create(
-        output, x_nb_cell, y_nb_cells, 1, gdal.GDT_Float64
-    )
+    output_source = output_driver.Create(output, x_nb_cell, y_nb_cells, 1, gdal.GDT_Float64)
     output_source.SetGeoTransform((x_min, cell_size, 0, y_max, 0, -cell_size))
     output_source.SetProjection(input_srs.ExportToWkt())
     output_lyr = output_source.GetRasterBand(1)
@@ -87,9 +85,7 @@ def shape_to_Raster(
     output_source.FlushCache()
 
     if field_name:
-        gdal.RasterizeLayer(
-            output_source, [1], input_lyr, options=["ATTRIBUTE={}".format(field_name)]
-        )
+        gdal.RasterizeLayer(output_source, [1], input_lyr, options=["ATTRIBUTE={}".format(field_name)])
 
     else:
         gdal.RasterizeLayer(output_source, [1], input_lyr, burn_values=[1])
@@ -101,11 +97,10 @@ def shape_to_Raster(
 
 
 def process_raster(cell_size, crs, input, output, field_name=False, study_area=None):
-    print("process_raster", input, "****", output)
     if input.endswith(".shp"):
         raster_output = os.path.splitext(input)[0]
         raster_output += ".tiff"
-        shape_to_Raster(
+        shape_to_raster(
             cell_size, input, raster_output, field_name=field_name, study_area=study_area
         )
 

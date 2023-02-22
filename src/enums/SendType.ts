@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
+
 enum SendType {
-  SUBJECT = 0,
-  CALL = 1,
-  ERROR = -1,
+  Subject = 0,
+  Call = 1,
+  Error = -1,
 }
 
 export default SendType;

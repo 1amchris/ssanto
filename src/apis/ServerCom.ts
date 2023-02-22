@@ -1,5 +1,5 @@
-import ReceiveData from '../models/server-coms/ReceiveData';
-import SendType from '../enums/SendType';
+import ReceiveData from 'models/server-coms/ReceiveData';
+import SendType from 'enums/SendType';
 
 /**
  * Handle the communication between the client and the server
@@ -20,7 +20,7 @@ export default class ServerCom {
   // TODO: there should probably be a "isClosed" method [returns if the connection is closed]
   // TODO: there should probably be a "onOpened" subject [returns a promise to subscribe to]
   // TODO: there should probably be a "onClosed" subject [returns a promise to subscribe to]
-  /** 
+  /**
    * @constructor
    */
   constructor() {
@@ -76,19 +76,16 @@ export default class ServerCom {
   private onMessage(message: MessageEvent) {
     const received: ReceiveData = this.convertEventToObject(message);
 
-    // Debug purpose
-    // console.log('onMessage subject', received);
-
-    if (received.type === SendType.SUBJECT) {
+    if (received.type === SendType.Subject) {
       this.subjectListeners
         .get(received.data.subject)
         ?.call(null, received.data.data);
-    } else if (received.type === SendType.CALL) {
+    } else if (received.type === SendType.Call) {
       this.callListeners
         .get(received.data.call)
         ?.call(null, true, received.data.data);
       this.callListeners.delete(received.data.call);
-    } else if (received.type === SendType.ERROR) {
+    } else if (received.type === SendType.Error) {
       this.callListeners
         .get(received.data.call)
         ?.call(null, false, received.data.data);
