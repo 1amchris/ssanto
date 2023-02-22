@@ -27,6 +27,7 @@ class StudyArea:
             self.as_raster.GetGeoTransform()[0],
             self.as_raster.GetGeoTransform()[3],
         )
+        self.as_raster = None
 
     def get_crs(self, working_dir):
         c = fiona.open(os.path.join(working_dir, self.input))
